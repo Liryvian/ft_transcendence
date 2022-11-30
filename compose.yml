@@ -1,0 +1,55 @@
+services:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/src:/usr/src/app/src:ro
+      - ./frontend/shared:/usr/src/app/shared:ro
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/src:/svr/app/src:ro
+      - ./backend/test:/svr/app/test:ro
+      - ./backend/shared:/svr/app/shared:ro
+    restart: unless-stopped
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14
+    restart: always
+    volumes:
+      - .db:/var/lib/postgresql/data:rw
+# needs env file access once that is setup
+
+  adminer:
+    image: adminer:4.8.1-standalone
+    restart: always
+    ports:
+      - 8080:8080
+# needs env file access once that is setup
+
+
+  nginx:
+    image: nginx:1.23-alpine
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./nginx/reverse_proxy.conf
+        target: /etc/nginx/conf.d/default.conf
+        readonly: true
+    command: [nginx-debug, '-g', 'daemon off;']
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  .db:
