@@ -2,7 +2,11 @@
 
 !*.ts
 !*.js
-!package.json
+!.eslintrc.js
+!package*.json
+!tsconfig.json
+!tsconfig.build.json
+!nest-cli.json
 
 node_modules/*
 dist/*
