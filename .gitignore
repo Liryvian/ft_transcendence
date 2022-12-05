@@ -180,3 +180,6 @@ GitHub.sublime-settings
 
 # why would we need editor configuration files in our source control?
 .idea
+
+# database files from docker
+.db
