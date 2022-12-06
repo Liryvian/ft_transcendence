@@ -48,7 +48,7 @@ services:
         read_only: true
     command: [nginx-debug, '-g', 'daemon off;']
     ports:
-      - 80:80
+      - 8080:80
     depends_on:
       - frontend
       - backend
