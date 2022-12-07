@@ -19,6 +19,5 @@ jobs:
       - name: Install and run backend tests
         with: 
           context: ./backend
-          run: npm i --silent
-          run: npm run test
+        run: npm i --silent && npm run test
 
