@@ -31,8 +31,8 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
-        run: |
-          echo "${{ steps.docker_build.outputs.digest }}"
+        # run: |
+        #   echo "${{ steps.docker_build.outputs.digest }}"
         #   TEST: 1
         # run: npm i --silent && npm run test
 
