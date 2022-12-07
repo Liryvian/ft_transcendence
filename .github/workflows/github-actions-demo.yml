@@ -17,5 +17,5 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
-      - run: docker-compose build --parallel
-      - run: docker-compose up
+      - run: cd backend && npm run test
+      
