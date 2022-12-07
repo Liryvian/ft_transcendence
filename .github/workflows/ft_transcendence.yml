@@ -17,9 +17,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Install and run backend unit tests
         working-directory: ./backend
-        run: npm run test
+        run: npm i jest &&  npm run test
 
   Front-End-Tests:
     runs-on: ubuntu-latest
