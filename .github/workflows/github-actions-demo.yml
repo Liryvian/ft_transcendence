@@ -8,12 +8,12 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Install and run backend tests
+      - name: Install and run backend unit tests
         working-directory: ./backend
         run: npm i --silent && npm run test
 
 
-      - name: Install and run frontend tests
+      - name: Install and run frontend unit tests
         working-directory: ./frontend
-        run: npm i --silent && npm run test
+        run: npm i --silent && npm run test:unit
 
