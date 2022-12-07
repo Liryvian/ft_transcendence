@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     container: rynosaurusrex/backend:latest
     steps:
-      - run: echo "Backend server" 
+      - run: npm run test 
 
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
