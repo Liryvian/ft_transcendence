@@ -5,9 +5,10 @@ jobs:
   Using-Custom-Docker-Images:
     runs-on: ubuntu-latest
     container: rynosaurusrex/backend:latest
-    working-directory: ./backend
     steps:
-      - run: npm run test 
+      - name: Running tests in container I think
+      working-directory: ./backend
+      run: npm run test 
 
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
