@@ -1,9 +1,9 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Ft_Trancendence CI
+run-name: ${{ github.actor }} is pushing 🚀
 on: [push]
 jobs:
 
-  Tests:
+  Backend-End-Tests:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -13,6 +13,9 @@ jobs:
         working-directory: ./backend
         run: npm i --silent && npm run test
 
+  Front-End-Tests:
+    runs-on: ubuntu-latest
+    steps:
       - name: Check out repository code
         uses: actions/checkout@v3
 

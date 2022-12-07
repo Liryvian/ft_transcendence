@@ -7,7 +7,5 @@
 !tsconfig.json
 !tsconfig.build.json
 !nest-cli.json
-!src/
-!test/
 
 node_modules/*
