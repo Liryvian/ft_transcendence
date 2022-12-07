@@ -5,7 +5,6 @@
 !package.json
 !tsconfig*.json
 !*.html
-!*.vue
 
 node_modules/*
 dist/*
