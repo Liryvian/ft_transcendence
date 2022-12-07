@@ -35,7 +35,6 @@ services:
       - .env
     volumes:
       - .db:/var/lib/postgresql/data:rw
-# needs env file access once that is setup
 
   adminer:
     container_name: adminer
@@ -43,7 +42,6 @@ services:
     restart: always
     ports:
       - 8123:8080
-# needs env file access once that is setup
 
   nginx:
     container_name: nginx
@@ -52,7 +50,7 @@ services:
     volumes:
       - type: bind
         source: ./nginx/reverse_proxy.conf
-        target: /etc/nginx/nginx.conf
+        target: /etc/nginx/conf.d/default.conf
         read_only: false
     command: [nginx-debug, '-g', 'daemon off;']
     env_file:
