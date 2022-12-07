@@ -2,36 +2,42 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
+  Using-Custom-Docker-Images:
+    runs-on: ubuntu-latest
+    container: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+    steps:
+      - run: echo "Backend server" 
+
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      # - name: Install and run backend unit tests
-      #   working-directory: ./backend
-      #   env:
-      #     TEST: 1
-      #   run: npm i --silent && npm run test
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+      - name: Install and run backend unit tests
+        working-directory: ./backend
+        env:
+          TEST: 1
+        run: npm i --silent && npm run test
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
       
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
 
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v1
         # with:
         #   username: ${{ secrets.DOCKERHUB_USERNAME }}
         #   password: ${{ secrets.DOCKERHUB_PW }}
 
-      - name: Build and run backend tests
-        working-directory: ./backend
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
-        # run: |
+      # - name: Build and run backend tests
+      #   working-directory: ./backend
+      #   uses: addnab/docker-run-action@v3
+      #   with:
+      #     image: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+      #   # run: |
         #   echo "${{ steps.docker_build.outputs.digest }}"
         #   TEST: 1
         # run: npm i --silent && npm run test
