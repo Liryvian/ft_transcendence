@@ -8,9 +8,26 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Install and run backend unit tests
+      # - name: Install and run backend unit tests
+      #   working-directory: ./backend
+      #   env:
+      #     TEST: 1
+      #   run: npm i --silent && npm run test
+
+      - name: Login to DockerHub
+            uses: docker/login-action@v1
+            with:
+              username: ${{ secrets.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_PW }}
+
+      - name: Build and run backend tests
         working-directory: ./backend
-        run: npm i --silent && npm run test
+        uses: addnab/docker-run-action@v3
+        with:
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/backend:latest
+        # env:
+        #   TEST: 1
+        # run: npm i --silent && npm run test
 
 
       - name: Install and run frontend unit tests
