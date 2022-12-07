@@ -12,3 +12,8 @@ jobs:
         working-directory: ./backend
         run: npm i --silent && npm run test
 
+
+      - name: Install and run frontend tests
+        working-directory: ./frontend
+        run: npm i --silent && npm run test
+
