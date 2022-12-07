@@ -1,6 +1,7 @@
 services:
 
   frontend:
+    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -8,48 +9,57 @@ services:
       - ./frontend/src:/usr/src/app/src:ro
       - ./frontend/shared:/usr/src/app/shared:ro
     restart: unless-stopped
+    env_file:
+      - .env
 
   backend:
+    container_name: backend
     build:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-      - ./backend/src:/svr/app/src:ro
-      - ./backend/test:/svr/app/test:ro
-      - ./backend/shared:/svr/app/shared:ro
+      - ./backend/src:/src/app/src:ro
+      - ./backend/test:/src/app/test:ro
+      - ./backend/shared:/src/app/shared:ro
     restart: unless-stopped
     depends_on:
       - database
+    ports:
+      - 3000:3000
 
   database:
+    container_name: database
     image: postgres:14
     restart: always
+    env_file:
+      - .env
     volumes:
       - .db:/var/lib/postgresql/data:rw
-# needs env file access once that is setup
 
   adminer:
+    container_name: adminer
     image: adminer:4.8.1-standalone
     restart: always
     ports:
-      - 8080:8080
-# needs env file access once that is setup
-
+      - 8123:8080
 
   nginx:
+    container_name: nginx
     image: nginx:1.23-alpine
     restart: unless-stopped
     volumes:
       - type: bind
         source: ./nginx/reverse_proxy.conf
         target: /etc/nginx/conf.d/default.conf
-        readonly: true
+        read_only: false
     command: [nginx-debug, '-g', 'daemon off;']
+    env_file:
+      - .env
     ports:
-      - 80:80
+      - 8080:8080
     depends_on:
-      - backend
       - frontend
+      - backend
 
 volumes:
   .db:
