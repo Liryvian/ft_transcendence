@@ -24,8 +24,6 @@ services:
     restart: unless-stopped
     depends_on:
       - database
-    ports:
-      - 3000:3000
 
   database:
     container_name: database
@@ -40,8 +38,6 @@ services:
     container_name: adminer
     image: adminer:4.8.1-standalone
     restart: always
-    ports:
-      - 8123:8080
 
   nginx:
     container_name: nginx
@@ -57,6 +53,7 @@ services:
       - .env
     ports:
       - 8080:8080
+      - 8123:8123
     depends_on:
       - frontend
       - backend
