@@ -14,11 +14,10 @@ jobs:
 
   Front-End-Tests:
     runs-on: ubuntu-latest
-      steps:
-        - name: Check out repository code
-          uses: actions/checkout@v3
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
 
-        - name: Run tests
-          working-directory: ./frontend
-          run: npm i --silent && npm run test:unit
-
+      - name: Run tests
+        working-directory: ./frontend
+        run: npm i --silent && npm run test:unit
