@@ -8,7 +8,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
-      - name: Install and run tests
-        context: ./backend
+      - name: Install and run backend tests
+        working-directory: ./backend
         run: npm i --silent && npm run test
 
