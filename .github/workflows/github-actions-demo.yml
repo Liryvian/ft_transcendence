@@ -16,8 +16,5 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - name: Install and run backend tests
-        with: 
-          context: ./backend
-        run: npm i --silent && npm run test
+      - run: cd backend && npm i --silent && npm run test
 
