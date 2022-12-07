@@ -9,8 +9,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install and run tests
-        with:
-          context: ./   
-          run: cd backend && npm i --silent &&
-          run: npm run test
+        context: ./backend
+        run: npm i --silent && npm run test
 
