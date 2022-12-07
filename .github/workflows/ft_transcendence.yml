@@ -5,13 +5,21 @@ jobs:
 
   Backend-End-Tests:
     runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
 
+    strategy:
+     matrix:
+       node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Install and run backend unit tests
         working-directory: ./backend
-        run: npm i --silent && npm run test
+        run: npm run test
 
   Front-End-Tests:
     runs-on: ubuntu-latest
