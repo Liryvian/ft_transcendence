@@ -8,4 +8,4 @@ COPY . .
 
 RUN npm i --silent
 
-CMD ["npm", "run", "test"]
+CMD ["npm", "run", "start:dev"]
