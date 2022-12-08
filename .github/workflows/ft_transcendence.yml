@@ -22,6 +22,10 @@ jobs:
         working-directory: ./backend
         run: npm i jest &&  npm run test
 
+      - name: Run backend e2e tests
+        working-directory: ./backend
+        run: npm run test:e2e
+
   Front-End-Tests:
     runs-on: ubuntu-latest
 
