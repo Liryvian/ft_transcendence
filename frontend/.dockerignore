@@ -1,0 +1,10 @@
+*
+
+!*.ts
+!*.js
+!package.json
+!tsconfig*.json
+!*.html
+
+node_modules/*
+dist/*
