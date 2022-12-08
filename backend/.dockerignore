@@ -9,3 +9,4 @@
 !nest-cli.json
 
 node_modules/*
+dist/*
