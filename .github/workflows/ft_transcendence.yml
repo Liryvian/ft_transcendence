@@ -27,7 +27,7 @@ jobs:
       # Jest still needs to be installed at this point the rest of this block is self explanatory I hope
       - name: Install and run backend unit tests
         working-directory: ./backend
-        run: npm i jest &&  npm run test
+        run: npm ci &&  npm run test
 
       - name: Run backend e2e tests
         working-directory: ./backend
