@@ -5,15 +5,15 @@ import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 	@Inject(ConfigService)
-  	private readonly config: ConfigService;
+	private readonly config: ConfigService;
 
 	public createTypeOrmOptions(): TypeOrmModuleOptions {
 		return {
-			type: this.config.get<string>('DB_CONNECTION_TYPE'),
+			type: 'postgres',
 			host: this.config.get<string>('POSTGRES_SERVER'),
 			port: this.config.get<number>('POSTGRES_PORT'),
 			database: this.config.get<string>('POSTGRES_DB'),
-			username: this.config.get<string>('POSTGRES_USERNAME'),
+			username: this.config.get<string>('POSTGRES_USER'),
 			password: this.config.get<string>('POSTGRES_PASSWORD'),
 			autoLoadEntities: true, // do not have this turned on for production!
 			// entities: ['dist/**/*.entity.{ts,js}'],
