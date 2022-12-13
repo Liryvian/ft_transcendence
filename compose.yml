@@ -22,17 +22,22 @@ services:
       - ./backend/test:/src/app/test:ro
       - ./backend/shared:/src/app/shared:ro
     restart: unless-stopped
+    env_file:
+      - .env
     depends_on:
       - database
 
   database:
     container_name: database
+    command: postgres -c stats_temp_directory=/tmp
     image: postgres:14
     restart: always
     env_file:
       - .env
     volumes:
       - .db:/var/lib/postgresql/data:rw
+    ports:
+      - 5432:5432
 
   adminer:
     container_name: adminer
