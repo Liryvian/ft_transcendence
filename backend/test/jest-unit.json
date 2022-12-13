@@ -1,0 +1,9 @@
+{
+	"rootDir": "../src/",
+	"transform": {
+		"^.+\\.(t|j)s$": "ts-jest"
+	},
+	"setupFiles": [
+		"../test/dotenv-config.ts"
+	]
+}
