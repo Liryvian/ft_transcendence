@@ -24,8 +24,8 @@ export class TypeORmTestingModule implements TypeOrmOptionsFactory {
 
 	public createTypeOrmOptions(): TypeOrmModuleOptions {
 		return {
-      name: this.config.get("DATABASE_NAME_FOR_TEST"),
-      type: 'better-sqlite3',
+      		name: this.config.get("DATABASE_NAME_FOR_TEST"),
+     		type: 'better-sqlite3',
 			database: ':memory:',
 			autoLoadEntities: true, // do not have this turned on for production!
 			// entities: ['dist/**/*.entity.{ts,js}'],
