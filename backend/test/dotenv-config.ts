@@ -1,3 +1,4 @@
 require('dotenv').config({
-    path: '.env',
-  });
+  path: '.env',
+});
+console.log({ hello: 'universe' });
