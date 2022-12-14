@@ -32,7 +32,7 @@ jobs:
       # Jest still needs to be installed at this point the rest of this block is self explanatory I hope
       - name: Install and run backend unit tests
         working-directory: ./backend
-        run: cat ./.env && npm i jest && npm run test
+        run: pwd && ls -lA && cat .env && npm i jest && npm run test
 
       - name: Run backend e2e tests
         working-directory: ./backend
