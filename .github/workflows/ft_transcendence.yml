@@ -27,8 +27,7 @@ jobs:
       - name: Load backend .env file
         uses: xom9ikk/dotenv@v2
         with:
-          path: ./backend/.env
-          mode: development
+          path: ./backend
 
       # Jest still needs to be installed at this point the rest of this block is self explanatory I hope
       - name: Install and run backend unit tests
