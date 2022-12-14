@@ -24,12 +24,7 @@ describe('TypeOrmConfigService', () => {
 	it('should be have required keys and values', async () => {
 		const optionsContent = await service.createTypeOrmOptions();
 		const desiredObject = {
-			database: expect.any(String),
-			username: expect.any(String),
-			password: expect.any(String),
-			host: expect.any(String),
-			port: expect.any(String),
-			type: 'postgres',
+			type: 'better-sqlite3',
 		};
 		expect(optionsContent).toMatchObject(desiredObject);
 	});
