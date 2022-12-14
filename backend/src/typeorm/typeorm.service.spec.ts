@@ -21,8 +21,8 @@ describe('TypeOrmConfigService', () => {
 		expect(service.createTypeOrmOptions()).toBeDefined();
 	});
 
-	it('should be have a password', () => {
-		// const optionsContent = service.createTypeOrmOptions();
+	it('should be have required keys and values', async () => {
+		const optionsContent = await service.createTypeOrmOptions();
 		const desiredObject = {
 			database: expect.any(String),
 			username: expect.any(String),
@@ -31,6 +31,6 @@ describe('TypeOrmConfigService', () => {
 			port: expect.any(String),
 			type: 'postgres',
 		};
-		expect(service.createTypeOrmOptions()).toMatchObject(desiredObject);
+		expect(optionsContent).toMatchObject(desiredObject);
 	});
 });

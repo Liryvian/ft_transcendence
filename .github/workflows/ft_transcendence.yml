@@ -24,6 +24,12 @@ jobs:
         with:
           node-version: 18
 
+      # DEBDUG
+      - name: List files in backend directory
+        working-directory: ./backend
+        run: ls -lAh && ls -lAh test
+      # DEBDUG
+
       # Jest still needs to be installed at this point the rest of this block is self explanatory I hope
       - name: Install and run backend unit tests
         working-directory: ./backend
