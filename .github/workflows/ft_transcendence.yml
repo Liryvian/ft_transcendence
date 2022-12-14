@@ -24,10 +24,16 @@ jobs:
         with:
           node-version: 18
 
+      - name: Load backend .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: ./backend/.env
+          mode: development
+
       # Jest still needs to be installed at this point the rest of this block is self explanatory I hope
       - name: Install and run backend unit tests
         working-directory: ./backend
-        run: cat .env && npm i jest && env POSTGRES_PASSWORD=password_value POSTGRES_USER=user_value POSTGRES_DB=db_value POSTGRES_SERVER=server_value POSTGRES_PORT=port_value npm run test
+        run: cat .env && npm i jest && npm run test
 
       - name: Run backend e2e tests
         working-directory: ./backend
