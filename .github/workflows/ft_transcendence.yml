@@ -36,7 +36,7 @@ jobs:
         run: npm i jest && npm run test
 
       - name: Pre-db checks
-        run: where sqlite3 && sqlite3 --version
+        run: sqlite3 --version
 
       - name: Run backend e2e tests
         working-directory: ./backend
