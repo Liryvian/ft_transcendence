@@ -5,10 +5,12 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Seasnail } from "./entities/seasnail.entity";
 
 @Module({
-  imports:[
-      TypeOrmModule.forFeature([Seasnail])
-  ],
-  controllers: [SeasnailController],
-  providers: [SeasnailService]
+    imports:[
+      TypeOrmModule.forFeature([Seasnail]),
+    ],
+    controllers: [SeasnailController],
+    providers: [SeasnailService],
+    exports: [SeasnailService],
 })
+
 export class SeasnailModule {}

@@ -6,11 +6,16 @@ import {Seasnail} from "./entities/seasnail.entity";
 @Injectable()
 export class SeasnailService {
   constructor(
-      @InjectRepository(Seasnail) private readonly userRepository: Repository<Seasnail>
+      @InjectRepository(Seasnail) private readonly seasnailRepository: Repository<Seasnail>
   ) {
   }
   async all(): Promise<Seasnail[]>{
-    return await this.userRepository.find();
+    return this.seasnailRepository.find();
+  }
+
+  async create(data): Promise<Seasnail[]> {
+    return this.seasnailRepository.save(data);
+
   }
 }
 
