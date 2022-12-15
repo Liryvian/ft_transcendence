@@ -6,6 +6,6 @@ RUN npm i -g @nestjs/cli --silent
 
 COPY . .
 
-RUN npm ci --silent
+RUN npm ci
 
 CMD ["npm", "run", "start:debug"]
