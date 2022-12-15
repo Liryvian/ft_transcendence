@@ -1,14 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmConfigService } from './typeorm.service';
-import { ConfigService } from '@nestjs/config';
-
 
 describe('TypeOrmConfigService', () => {
 	let service: TypeOrmConfigService;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [ConfigService, TypeOrmConfigService],
+			providers: [TypeOrmConfigService, ConfigService],
 		}).compile();
 
 		service = module.get<TypeOrmConfigService>(TypeOrmConfigService);
@@ -18,15 +17,15 @@ describe('TypeOrmConfigService', () => {
 		expect(service).toBeDefined();
 	});
 
-    it('should be have a password', () => {
+	it('should have a createTypeOrmOptions method', () => {
+		expect(service.createTypeOrmOptions()).toBeDefined();
+	});
+
+	it('should be have required keys and values', async () => {
+		const optionsContent = await service.createTypeOrmOptions();
 		const desiredObject = {
-			database: expect.any(String),
-			username: expect.any(String),
-			password: expect.any(String),
-			host: expect.any(String),
-			port: expect.any(Number),
-			type: 'postgres',
+			type: 'better-sqlite3',
 		};
-		expect(service.createTypeOrmOptions()).toMatchObject(desiredObject);
+		expect(optionsContent).toMatchObject(desiredObject);
 	});
 });
