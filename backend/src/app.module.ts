@@ -9,6 +9,11 @@ import { MessageModule } from './chat/message/message.module';
 @Module({
   controllers: [AppController],
   providers: [AppService],
-  imports: [ChatMembershipModule, MembershipStateModule, ChatroomModule, MessageModule],
+  imports: [
+    ChatMembershipModule,
+    MembershipStateModule,
+    ChatroomModule,
+    MessageModule,
+  ],
 })
 export class AppModule {}

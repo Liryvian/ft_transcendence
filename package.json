@@ -8,5 +8,8 @@
     "postgres_rebuild": "docker compose up -d --no-deps postgres",
     "prod": "docker compose up --build",
     "purge": "docker system prune -fa && docker volume prune"
+  },
+  "dependencies": {
+    "@nestjs/mapped-types": "^1.2.0"
   }
 }
