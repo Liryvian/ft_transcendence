@@ -7,7 +7,6 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "setupFiles": [
-    "./dotenv-config.ts",
     "../test/dotenv-config.ts"
   ]
 }
