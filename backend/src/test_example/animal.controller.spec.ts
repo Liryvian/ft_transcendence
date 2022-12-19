@@ -5,16 +5,21 @@ import { AnimalService } from './animal.service';
 
 describe('AnimalController', () => {
   let controller: AnimalController;
+  let testingModule: TestingModule;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    const testingModule: TestingModule = await Test.createTestingModule({
       imports: [...TypeORmTestingModule()],
       controllers: [AnimalController],
       providers: [AnimalService],
     }).compile();
 
-    controller = module.get<AnimalController>(AnimalController);
+    controller = testingModule.get<AnimalController>(AnimalController);
   });
+
+  afterAll(async () => {
+     await testingModule.close()
+  })
 
   it('Post 3 Animals',async () => {
     const animals = ["Pikkewyn", "Renoster" ,"Kameelperd"];
