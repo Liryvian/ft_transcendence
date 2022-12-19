@@ -7,8 +7,8 @@ describe('AnimalController', () => {
   let controller: AnimalController;
   let testingModule: TestingModule;
 
-  beforeAll(async () => {
-    const testingModule: TestingModule = await Test.createTestingModule({
+  beforeEach(async () => {
+      testingModule = await Test.createTestingModule({
       imports: [...TypeORmTestingModule()],
       controllers: [AnimalController],
       providers: [AnimalService],
@@ -16,10 +16,6 @@ describe('AnimalController', () => {
 
     controller = testingModule.get<AnimalController>(AnimalController);
   });
-
-  afterAll(async () => {
-     await testingModule.close()
-  })
 
   it('Post 3 Animals',async () => {
     const animals = ["Pikkewyn", "Renoster" ,"Kameelperd"];
