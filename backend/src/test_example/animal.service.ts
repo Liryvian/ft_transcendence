@@ -16,6 +16,11 @@ export class AnimalService {
     return this.animalRepo.save(newUser);
   }
 
+  pagination(): String
+  {
+    return "15 animals";
+  }
+
   async findAll(): Promise<Animal[]>{
     return this.animalRepo.find();
   }

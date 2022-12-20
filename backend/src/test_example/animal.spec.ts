@@ -41,6 +41,9 @@ describe('AnimalController', () => {
     for (let i = 0; i < repoOfAnimals.length; i++) {await controller.remove(i + 1);}
   })
 
+  it('check that pagination returns 15 animals', async () => {
+      expect(service.pagination()).toEqual("15 animals");
+  })
   
   it('Get all seed animals', async () => {
     const list = await controller.findAll();
