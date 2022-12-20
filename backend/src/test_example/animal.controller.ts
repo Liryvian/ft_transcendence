@@ -15,13 +15,13 @@ export class AnimalController {
 
   @Get()
   async findAll() {
-    return this.animalService.findAll();
+    return this.animalService.all();
   }
 
   @Get(':id')
   async getOne(@Param('id') id: number): Promise<Animal> 
   {
-    return this.animalService.findOne(id);
+    return this.animalService.findOne({where: {id}});
   }
 
   @Patch(':id')
@@ -31,6 +31,6 @@ export class AnimalController {
 
   @Delete(':id')
   async remove(@Param('id') id: number) {
-    return this.animalService.remove(id);
+    return this.animalService.delete(id);
   }
 }

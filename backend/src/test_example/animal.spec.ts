@@ -59,10 +59,11 @@ describe('AnimalController', () => {
   })
   
   it("Update item",async () => {
-      const updatedAnimal: string = "Seekat";
+      const updatedAnimalName: string = "Seekat";
+      const idOfAnimalToUpdate: number = 1;
 
-      await controller.update(1, {name: updatedAnimal});
-      expect((await controller.getOne(1)).name).toBe(updatedAnimal);
+      await controller.update(idOfAnimalToUpdate, {name: updatedAnimalName});
+      expect((await controller.getOne(idOfAnimalToUpdate)).name).toBe(updatedAnimalName);
   })
 
   it("Delete items from db",async () => {

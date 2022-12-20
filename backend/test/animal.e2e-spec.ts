@@ -71,14 +71,12 @@ describe("AnimalController (e2e)", () => {
                 .send(mockAnimal)
                 .expect(HttpStatus.CREATED)
                 .expect((response: request.Response) => {
-                    console.log(response.body)
                     const {
                         id,
                         name
                     } = response.body;
                     expect(typeof id).toBe("number"),
                     expect(name).toEqual(mockAnimal.name);
-                    console.log(name);
                 })
             })
         })
