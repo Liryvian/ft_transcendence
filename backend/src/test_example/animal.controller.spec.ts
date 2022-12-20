@@ -17,6 +17,7 @@ describe('AnimalController', () => {
       providers: [AnimalService],
     }).compile();
 
+    // get an instance of the service and or controller you want to test
     controller = testingModule.get<AnimalController>(AnimalController);
     service = testingModule.get<AnimalService>(AnimalService);
 
