@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateAnimalDto } from './dto/create-animal.dto';
@@ -30,6 +30,9 @@ export class AnimalService {
   }
 
   async remove(id: number): Promise<any> {
+    const userToDelete = await this.animalRepo.findOneBy({id});
+    if (!userToDelete)
+      throw new HttpException("User doesn't exists", HttpStatus.NO_CONTENT);
     return this.animalRepo.delete(id);
   }
 }
