@@ -2,34 +2,24 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './models/user.entity';
 import { Repository } from 'typeorm';
-
-// TODO - These functions are general and should be placed in an abstract class.
+import { AbstractService } from '../shared/abstract.service';
 
 @Injectable()
-export class UserService {
+export class UserService extends AbstractService {
 	constructor(
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
-	) {}
-
-	async all(): Promise<User[]> {
-		return this.userRepository.find();
+	) {
+		super(userRepository);
 	}
 
-	// TODO - Check if it is a problem that the create function doesn't return the user anymore
-
-	// async create(data): Promise<User> {
-	// 	return this.userRepository.save(data);
-	// }
-
-	async create(data) {
+	async create(data): Promise<User> {
 		try {
-			await this.userRepository.save(data);
+			const user = await this.userRepository.save(data);
+			if (user) {
+				return user;
+			}
 		} catch (e) {
 			throw new BadRequestException('User name should be unique');
 		}
-	}
-
-	async findOne(condition): Promise<User> {
-		return this.userRepository.findOne(condition);
 	}
 }

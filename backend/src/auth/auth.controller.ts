@@ -19,8 +19,6 @@ import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
-// TODO - With the registration I get the hashed password returned: password should be excluded
-
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AuthController {
@@ -32,6 +30,7 @@ export class AuthController {
 
 	@Post('register')
 	async register(@Body() body: RegisterDto) {
+		console.log('register');
 		if (body.password !== body.password_confirm) {
 			throw new BadRequestException('Passwords do not match!');
 		}
