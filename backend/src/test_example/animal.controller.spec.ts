@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeORmTestingModule } from './databaseForTesting/TypeORMTestingModule';
 import { AnimalController } from './animal.controller';
 import { AnimalService } from './animal.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
-import { AnimalModule } from './animal.module';
 import { Animal } from './entities/animals.entity';
 
 describe('AnimalController', () => {

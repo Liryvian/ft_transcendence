@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { TypeORmTestingModule } from '../src/test_example/databaseForTesting/TypeORMTestingModule';
 
 //  use ternary to determin testDb in app.module 
 
