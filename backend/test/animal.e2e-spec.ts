@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
+import { UpdateAnimalDto } from 'src/test_example/dto/update-animal.dto';
 
 describe("AnimalController (e2e)", () => {
     let app: INestApplication;
@@ -37,7 +38,7 @@ describe("AnimalController (e2e)", () => {
     afterAll(async () => {
         app.close();
     })
-
+    
     describe("/test  (GET)", () => {
         it("it should retrun an array of all users", () => {
             return request(app.getHttpServer())
@@ -46,6 +47,22 @@ describe("AnimalController (e2e)", () => {
         })
     })
 
+    describe("/test/3  (GET)", () => {
+        it("it should retrun an array of all users", () => {
+            return request(app.getHttpServer())
+                .get("/test/3")
+                .expect(HttpStatus.OK)
+                .expect((response: request.Response) => {
+                    const {
+                        id,
+                        name
+                    } = response.body;
+                    expect(typeof id).toBe("number"),
+                    expect(name).toEqual(testAnimals[2]);
+                })
+        })
+    })
+    
     describe("/test  (POST)", () => {
         it("it should return a the created user data", () => {
             return request(app.getHttpServer())
@@ -54,28 +71,40 @@ describe("AnimalController (e2e)", () => {
                 .send(mockAnimal)
                 .expect(HttpStatus.CREATED)
                 .expect((response: request.Response) => {
+                    console.log(response.body)
                     const {
                         id,
                         name
                     } = response.body;
                     expect(typeof id).toBe("number"),
                     expect(name).toEqual(mockAnimal.name);
+                    console.log(name);
                 })
             })
         })
-
-    describe("/test/1  (delete)", () => {
-        it("it should delete a user", () => {
-            let body;
-            request(app.getHttpServer()).get("/test")
-            .expect((response: request.Response) => {
-                body = response.body;
-            });
-            // console.log(body);
-            return request(app.getHttpServer())
+        
+        describe("/test/1  (delete)", () => {
+            it("it should delete a user", () => {
+                return request(app.getHttpServer())
                 .delete("/test/1")
                 .expect(HttpStatus.OK)
+            })
         })
-
-    })
+        
+        describe("/test/2  (patch)", () => {
+            it("update animal with id 2", () => {
+                const updateData: UpdateAnimalDto = {name: "Nagapie"}
+                return request(app.getHttpServer())
+                    .patch("/test/2")
+                    .set('Accept', 'application/json')
+                    .send(updateData)
+                    .expect(HttpStatus.OK)
+                    .expect((response: request.Response) => {
+                        const {
+                            affected
+                        } = response.body;
+                        expect(affected).toEqual(1);
+                    })
+                })
+            })
 });
