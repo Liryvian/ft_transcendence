@@ -5,6 +5,7 @@ import { AnimalService } from './animal.service';
 
 describe('AnimalController', () => {
   let controller: AnimalController;
+  let service: AnimalService;
   let testingModule: TestingModule;
 
   const testAnimals = ["Pikkewyn", "Renoster" ,"Kameelperd"];
@@ -17,11 +18,20 @@ describe('AnimalController', () => {
     }).compile();
 
     controller = testingModule.get<AnimalController>(AnimalController);
+    service = testingModule.get<AnimalService>(AnimalService);
 
+    // seed db with animals for each testcase
     for (const animal in testAnimals) {
       await controller.create({name: testAnimals[animal]})
     }
   });
+
+  // delete all data in db for each test
+  afterEach(async () => {
+    let repoOfAnimals = await controller.findAll();
+    
+    for (let i = 0; i < repoOfAnimals.length; i++) {await controller.remove(i + 1);}
+  })
 
   
   it('Get all seed animals', async () => {
