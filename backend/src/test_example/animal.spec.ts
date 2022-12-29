@@ -4,7 +4,7 @@ import { AnimalService } from './animal.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
-import { Animal } from './entities/animals.entity';
+import { AnimalEntity } from './entities/animals.entity';
 
 describe('AnimalController', () => {
   let controller: AnimalController;
@@ -18,7 +18,7 @@ describe('AnimalController', () => {
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-        TypeOrmModule.forFeature([Animal])
+        TypeOrmModule.forFeature([AnimalEntity])
       ],
       controllers: [AnimalController],
       providers: [AnimalService],

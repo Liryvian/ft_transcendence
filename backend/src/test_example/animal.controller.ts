@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AnimalService } from './animal.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
-import { Animal } from './entities/animals.entity';
+import { AnimalEntity } from './entities/animals.entity';
 
 @Controller('test')
 export class AnimalController {
@@ -19,7 +19,7 @@ export class AnimalController {
   }
 
   @Get(':id')
-  async getOne(@Param('id') id: number): Promise<Animal> 
+  async getOne(@Param('id') id: number): Promise<AnimalEntity> 
   {
     return this.animalService.findOne({where: {id}});
   }
