@@ -15,9 +15,7 @@ export class UserService extends AbstractService {
 	async create(data): Promise<User> {
 		try {
 			const user = await this.userRepository.save(data);
-			if (user) {
-				return user;
-			}
+			return user;
 		} catch (e) {
 			throw new BadRequestException('User name should be unique');
 		}

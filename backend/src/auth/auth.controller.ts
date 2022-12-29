@@ -30,7 +30,6 @@ export class AuthController {
 
 	@Post('register')
 	async register(@Body() body: RegisterDto) {
-		console.log('register');
 		if (body.password !== body.password_confirm) {
 			throw new BadRequestException('Passwords do not match!');
 		}
