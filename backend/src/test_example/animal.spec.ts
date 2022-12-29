@@ -32,7 +32,7 @@ describe('AnimalController', () => {
     for (const animal in testAnimals) {
       await controller.create({name: testAnimals[animal]})
     }
-  });
+  })
 
   // delete all data in db for each test
   afterEach(async () => {
@@ -45,12 +45,22 @@ describe('AnimalController', () => {
       expect(service.pagination()).toEqual("15 animals");
   })
   
-  it('Get all seed animals', async () => {
-    const list = await controller.findAll();
-    expect(list).toHaveLength(3);
+  it('Get all seed animals (findAll)', async () => {
+    const allAnimals = await controller.findAll();
+    expect(allAnimals).toHaveLength(3);
+    for (let index = 0; index < allAnimals.length; index++) {
+      expect(allAnimals[index].id).toBe(index + 1) // starts indexing in table from 1 not 0
+      expect(allAnimals[index].name).toBe(testAnimals[index])
+    }
+  });
+
+  it('Get a specific animal (getOne)', async () => {
+    const animalToGet: number = 1;
+    const animal = await controller.getOne(animalToGet);
+    expect(animal.id).toBe(1);
   });
   
-  it('Post new Animals',async () => {
+  it('Post new Animals (create)',async () => {
     const newAnimal = "Sonbeesie";
     const newAnimalId = 4;
     const createdAnimal = await controller.create({name: newAnimal});
@@ -58,7 +68,7 @@ describe('AnimalController', () => {
     expect(createdAnimal.id).toBe(newAnimalId);
   })
   
-  it("Update item",async () => {
+  it("Update item (Update)",async () => {
       const updatedAnimalName: string = "Seekat";
       const idOfAnimalToUpdate: number = 1;
 
@@ -66,7 +76,7 @@ describe('AnimalController', () => {
       expect((await controller.getOne(idOfAnimalToUpdate)).name).toBe(updatedAnimalName);
   })
 
-  it("Delete items from db",async () => {
+  it("Delete items from db (remove)",async () => {
     let repoOfAnimals = await controller.findAll();
     
     for (let i = 0; i < repoOfAnimals.length; i++) {await controller.remove(i + 1);}

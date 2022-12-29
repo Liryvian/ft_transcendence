@@ -20,7 +20,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 		const productionConfig: TypeOrmModuleOptions = {
 			type: 'postgres',
 			host: this.config.get<string>('POSTGRES_SERVER'),
-			port: parseInt(this.config.get<string>('POSTGRES_PORT')),
+			port: this.config.get<number>('POSTGRES_PORT'),
 			database: this.config.get<string>('POSTGRES_DB'),
 			username: this.config.get<string>('POSTGRES_USER'),
 			password: this.config.get<string>('POSTGRES_PASSWORD'),
