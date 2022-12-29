@@ -12,8 +12,8 @@ import {
 	ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import * as bcrypt from 'bcryptjs';
-import { RegisterDto } from './models/register.dto';
+import * as bcrypt from 'bcrypt';
+import { RegisterDto } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';

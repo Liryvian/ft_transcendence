@@ -7,7 +7,7 @@ import {
 	UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './models/user.entity';
+import { User } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
