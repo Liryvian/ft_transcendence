@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn, Unique} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 @Unique(['name'])
@@ -16,19 +16,4 @@ export class User {
 	@Column()
 	@Exclude()
 	password: string;
-
-	// @Column()
-	// avatar: string;
-
-	// @Column()
-	// status: string;
-	//
-	// @Column()
-	// wins: number;
-	//
-	// @Column()
-	// draws: number;
-	//
-	// @Column()
-	// losses: number;
 }

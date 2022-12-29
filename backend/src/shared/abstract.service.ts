@@ -17,11 +17,11 @@ export abstract class AbstractService {
 		return this.repository.findOne(condition);
 	}
 
-    async update(id: number, data): Promise<any> {
-        return this.repository.update(id, data)
-    }
+	async update(id: number, data): Promise<any> {
+		return this.repository.update(id, data);
+	}
 
-    async delete(id: number): Promise<any> {
-        return this.repository.delete(id);
-    }
+	async delete(id: number): Promise<any> {
+		return this.repository.delete(id);
+	}
 }
