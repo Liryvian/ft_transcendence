@@ -1,0 +1,55 @@
+name: Ft_Trancendence CI
+
+run-name: ${{ github.actor }} is pushing 🚀
+
+#  When will the jobs defined below be run:
+on: [push]
+
+# Define jobs with a name, they run in parallel
+# I think every jobs is it's own container
+jobs:
+
+  Backend-End-Tests:
+  # OS image for the github actions(GA) env
+    runs-on: ubuntu-latest
+
+    # Define steps to perform for each jobs
+    steps:
+      # Prefab GA definition for checking out latest pushed version of the branch
+      - uses: actions/checkout@v3
+
+      # GA Runner image, way fster than doing "npm i" everytime
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Load backend .env file
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: ./backend/
+          mode: test
+
+      # Jest still needs to be installed at this point the rest of this block is self explanatory I hope
+      - name: Install and run backend unit tests
+        working-directory: ./backend
+        run: npm i jest && npm run test
+
+      - name: Run backend e2e tests
+        working-directory: ./backend
+        run: npm run test:e2e
+
+  Front-End-Tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Run tests
+        working-directory: ./frontend
+        run: npm i vitest && npm run test:unit

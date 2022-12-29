@@ -21,6 +21,7 @@ services:
       - ./backend/src:/src/app/src:ro
       - ./backend/test:/src/app/test:ro
       - ./backend/shared:/src/app/shared:ro
+      - ./backend/.env.test:/src/app/.env.test:ro
     restart: unless-stopped
     env_file:
       - .env
