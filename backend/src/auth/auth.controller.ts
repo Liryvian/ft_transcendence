@@ -55,6 +55,8 @@ export class AuthController {
 		if (!user || !(await bcrypt.compare(password, user.password))) {
 			throw new BadRequestException('Invalid user/password combination');
 		}
+		// signAsync can throw, but only in a few very specific cases where invalid options are send
+		// since we are only sending a plain object and no options we can "safely" ignore to add try/catch
 		const jwt = await this.jwtService.signAsync({ id: user.id });
 		response.cookie('jwt', jwt, { httpOnly: true });
 		return user;
