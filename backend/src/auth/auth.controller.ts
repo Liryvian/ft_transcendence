@@ -34,7 +34,7 @@ export class AuthController {
 		if (body.password !== body.password_confirm) {
 			throw new BadRequestException('Passwords do not match!');
 		}
-		const hashed = await bcrypt.hash(body.password, 12);
+		const hashed = await bcrypt.hash(body.password, 11);
 		return this.userService.create({
 			is_intra: false,
 			name: body.name,
