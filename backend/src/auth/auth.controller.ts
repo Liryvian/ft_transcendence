@@ -52,11 +52,8 @@ export class AuthController {
 				name: name,
 			},
 		});
-		if (!user) {
-			throw new NotFoundException('User not found');
-		}
-		if (!(await bcrypt.compare(password, user.password))) {
-			throw new BadRequestException('Invalid credentials');
+		if (!user || !(await bcrypt.compare(password, user.password))) {
+			throw new BadRequestException('Invalid user/password combination');
 		}
 		const jwt = await this.jwtService.signAsync({ id: user.id });
 		response.cookie('jwt', jwt, { httpOnly: true });
