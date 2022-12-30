@@ -100,7 +100,6 @@ describe('AnimalController (e2e)', () => {
 
 		it('should return 400 on posting an empty animal', () => {
 			const emptyAnimal = {};
-			console.log('Printing!!!\n', emptyAnimal);
 			return request(app.getHttpServer())
 				.post('/test')
 				.set('Accept', 'application/json')
