@@ -34,11 +34,16 @@ export class AuthController {
 			throw new BadRequestException('Passwords do not match!');
 		}
 		const hashed = await bcrypt.hash(body.password, 11);
-		return this.userService.create({
-			is_intra: false,
-			name: body.name,
-			password: hashed,
-		});
+		try {
+			const newUser = this.userService.create({
+				is_intra: false,
+				name: body.name,
+				password: hashed,
+			});
+			return newUser;
+		} catch (e) {
+			throw new BadRequestException('Username should be unique');
+		}
 	}
 
 	@Post('login')

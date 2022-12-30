@@ -1,23 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AbstractService } from '../shared/abstract.service';
 
 @Injectable()
-export class UserService extends AbstractService {
+export class UserService extends AbstractService<User> {
 	constructor(
 		@InjectRepository(User) private readonly userRepository: Repository<User>,
 	) {
 		super(userRepository);
-	}
-
-	async create(data): Promise<User> {
-		try {
-			const user = await this.userRepository.save(data);
-			return user;
-		} catch (e) {
-			throw new BadRequestException('User name should be unique');
-		}
 	}
 }
