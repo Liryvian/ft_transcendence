@@ -11,10 +11,9 @@ describe('AnimalController', () => {
 	let controller: AnimalController;
 	let service: AnimalService;
 	let testingModule: TestingModule;
-
 	const testAnimals = ['Pikkewyn', 'Renoster', 'Kameelperd'];
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
@@ -36,9 +35,8 @@ describe('AnimalController', () => {
 	});
 
 	// delete all data in db for each test
-	afterEach(async () => {
+	afterAll(async () => {
 		const repoOfAnimals: AnimalEntity[] = await controller.findAll();
-
 		for (let i = 0; i < repoOfAnimals.length; i++) {
 			await controller.remove(i + 1);
 		}
