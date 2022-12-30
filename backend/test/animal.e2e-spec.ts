@@ -48,13 +48,13 @@ describe('AnimalController (e2e)', () => {
 	});
 
 	describe('/test  (GET)', () => {
-		it('should retrun an array of all animals', () => {
+		it('should return an array of all animals', () => {
 			return request(app.getHttpServer()).get('/test').expect(HttpStatus.OK);
 		});
 	});
 
 	describe('/test/:id (GET)', () => {
-		it('should retrun an animal', () => {
+		it('should return an animal', () => {
 			const animalId: number = 3;
 			return request(app.getHttpServer())
 				.get('/test/' + animalId)
