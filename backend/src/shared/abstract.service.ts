@@ -1,27 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
-export abstract class AbstractService {
-	protected constructor(protected readonly repository: Repository<any>) {}
+export abstract class AbstractService<T> {
+	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async all(): Promise<any[]> {
+	async all(): Promise<T[]> {
 		return this.repository.find();
 	}
 
-	async create(data): Promise<any> {
+	async create(data): Promise<T> {
 		return this.repository.save(data);
 	}
 
-	async findOne(condition): Promise<any> {
-		return this.repository.findOne(condition);
+	async findOne(condition) {
+		const foundRepoItem = await this.repository.findOne(condition);
+		if (!foundRepoItem) {
+			throw new NotFoundException();
+		}
+		return foundRepoItem;
 	}
 
-    async update(id: number, data): Promise<any> {
-        return this.repository.update(id, data)
-    }
+	async update(id: number, data): Promise<UpdateResult> {
+		const itemToUpdate = await this.findOne({ where: { id } });
+		if (!itemToUpdate) {
+			throw new NotFoundException();
+		}
+		return this.repository.update(id, data);
+	}
 
-    async delete(id: number): Promise<any> {
-        return this.repository.delete(id);
-    }
+	async delete(id: number): Promise<DeleteResult> {
+		return this.repository.delete(id);
+	}
 }
