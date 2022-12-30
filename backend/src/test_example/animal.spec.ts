@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
@@ -62,10 +63,17 @@ describe('AnimalController', () => {
 		}
 	});
 
-	it('Get a specific animal (getOne)', async () => {
+	it('should get a specific animal (getOne)', async () => {
 		const animalToGet: number = 1;
 		const animal: AnimalEntity = await controller.getOne(animalToGet);
 		expect(animal.id).toBe(animalToGet);
+	});
+
+	it('should throw a NotFoundError when animal doesnt exist', async () => {
+		const animalToGet: number = 10000;
+		await expect(controller.getOne(animalToGet)).rejects.toThrow(
+			NotFoundException,
+		);
 	});
 
 	it('Post new Animal (create)', async () => {
