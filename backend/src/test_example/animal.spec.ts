@@ -28,13 +28,13 @@ describe('AnimalController', () => {
 		controller = testingModule.get<AnimalController>(AnimalController);
 		service = testingModule.get<AnimalService>(AnimalService);
 
-		// seed db with animals for each testcase
+		// seed db with animals for entire describe block
 		for (const animal in testAnimals) {
 			await controller.create({ name: testAnimals[animal] });
 		}
 	});
 
-	// delete all data in db for each test
+	// delete all data in db for entire describe block
 	afterAll(async () => {
 		const repoOfAnimals: AnimalEntity[] = await controller.findAll();
 		for (let i = 0; i < repoOfAnimals.length; i++) {
