@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	PrimaryGeneratedColumn,
+	Unique,
+	UpdateDateColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 @Unique(['name'])
@@ -10,10 +17,16 @@ export class User {
 	@Column()
 	is_intra: boolean;
 
-	@Column()
+	@Column({ unique: true })
 	name: string;
 
 	@Column()
 	@Exclude()
 	password: string;
+
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 }
