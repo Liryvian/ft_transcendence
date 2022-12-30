@@ -10,7 +10,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 	public createTypeOrmOptions(): TypeOrmModuleOptions {
 		const testingConfig: TypeOrmModuleOptions = {
 			type: 'better-sqlite3',
-			database: ':memory:'
+			database: ':memory:',
+			autoLoadEntities: true,
+			dropSchema: true,
+			synchronize: true,
 		};
 
 		const productionConfig: TypeOrmModuleOptions = {
@@ -28,7 +31,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 			synchronize: true, // never use TRUE in production!
 		};
 
-		if (this.config.get<string>('USE_TEST_DB') == "1") {
+		if (this.config.get<string>('USE_TEST_DB') == '1') {
 			return testingConfig;
 		}
 
