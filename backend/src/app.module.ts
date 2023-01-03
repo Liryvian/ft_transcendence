@@ -7,12 +7,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { GameModule } from './game/game.module';
 
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-			TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AnimalModule,
-		GameModule
+		GameModule,
+		UserModule,
+		AuthModule,
+		SharedModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
