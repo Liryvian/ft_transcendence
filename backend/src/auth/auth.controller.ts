@@ -53,9 +53,7 @@ export class AuthController {
 		@Res({ passthrough: true }) response: Response,
 	) {
 		const user = await this.userService.findOne({
-			where: {
-				name: name,
-			},
+			name,
 		});
 		if (!user || !(await bcrypt.compare(password, user.password))) {
 			throw new BadRequestException('Invalid user/password combination');
@@ -80,10 +78,6 @@ export class AuthController {
 	@Get('user')
 	async user(@Req() request: Request) {
 		const id = await this.authService.userId(request);
-		return this.userService.findOne({
-			where: {
-				id: id,
-			},
-		});
+		return this.userService.findOne({ id });
 	}
 }

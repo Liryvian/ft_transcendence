@@ -23,10 +23,6 @@ export class UserController {
 
 	@Get(':id')
 	async get(@Param('id') id: number) {
-		return this.userService.findOne({
-			where: {
-				id: id,
-			},
-		});
+		return this.userService.findOne({ id });
 	}
 }

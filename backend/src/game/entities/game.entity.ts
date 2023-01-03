@@ -1,8 +1,11 @@
+import { User } from '../../user/entities/user.entity';
 import {
 	Column,
 	CreateDateColumn,
 	Entity,
 	JoinColumn,
+	ManyToOne,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -32,11 +35,11 @@ export class Game {
 	updated_at: Date;
 
 	// to be joined later on
-	// @ManyToOne(() => User)
-	// @JoinColumn({})
-	// player_one: User;
+	@ManyToOne(() => User)
+	@JoinColumn()
+	player_one: User;
 
-	// @ManyToOne(() => User)
-	// @JoinColumn({})
-	// player_two: User;
+	@OneToOne(() => User)
+	@JoinColumn()
+	player_two: User;
 }
