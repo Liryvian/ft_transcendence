@@ -10,13 +10,13 @@ export class ChatMembershipService {
   ) {
   }
 
-  async all(): Promise<ChatMembership[]> {
-    return this.chatMembershipRepository.find();
-  }
-
-  async create(data): Promise<ChatMembership> {
-    return this.chatMembershipRepository.save(data);
-  }
+  // async all(): Promise<ChatMembership[]> {
+  //   return this.chatMembershipRepository.find();
+  // }
+  //
+  // async create(data): Promise<ChatMembership> {
+  //   return this.chatMembershipRepository.save(data);
+  // }
 
 }
 
