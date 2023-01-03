@@ -13,7 +13,7 @@ export abstract class AbstractService<T> {
 		return this.repository.save(data);
 	}
 
-	async findOne(condition) {
+	async findOne(condition): Promise<T> {
 		const foundRepoItem = await this.repository.findOne(condition);
 		if (!foundRepoItem) {
 			throw new NotFoundException();
