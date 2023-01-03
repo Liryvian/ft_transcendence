@@ -4,7 +4,7 @@ import { Chatroom } from '../../chatroom/entities/chatroom.entity';
 
 @Entity('chat_memberships')
 export class ChatMembership {
-  @PrimaryGeneratedColumn() // we didn't designed this but my programme said: Primary column is required to have in all your entities. Use @PrimaryColumn decorator to add a primary column to your entity.
+  @PrimaryGeneratedColumn()
   id: number;
 
   // @ManyToOne(type => User, user => user.id) // connected to USER -> ID

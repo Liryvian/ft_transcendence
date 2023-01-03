@@ -9,5 +9,6 @@ import { AuthModule } from './auth/auth.module';
   imports: [TypeOrmModule.forFeature([Chatroom]), AuthModule],
   controllers: [ChatroomController],
   providers: [ChatroomService],
+  exports: [ChatroomService]
 })
 export class ChatroomModule {}
