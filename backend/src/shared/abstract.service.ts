@@ -6,7 +6,7 @@ export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
 	async findAll(): Promise<T[]> {
-		return this.repository.findAll();
+		return this.repository.find();
 	}
 
 	async create(data): Promise<T> {
@@ -29,7 +29,7 @@ export abstract class AbstractService<T> {
 		return this.repository.update(id, data);
 	}
 
-	async delete(id: number): Promise<DeleteResult> {
+	async remove(id: number): Promise<DeleteResult> {
 		return this.repository.delete(id);
 	}
 }
