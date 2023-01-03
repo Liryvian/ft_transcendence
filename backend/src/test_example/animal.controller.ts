@@ -34,7 +34,7 @@ export class AnimalController {
 
 	@Get()
 	async findAll() {
-		return this.animalService.all();
+		return this.animalService.findAll();
 	}
 
 	@Get(':id')
@@ -52,6 +52,6 @@ export class AnimalController {
 
 	@Delete(':id')
 	async remove(@Param('id') id: number): Promise<DeleteResult> {
-		return this.animalService.delete(id);
+		return this.animalService.remove(id);
 	}
 }
