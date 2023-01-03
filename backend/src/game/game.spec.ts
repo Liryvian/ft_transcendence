@@ -31,15 +31,21 @@ describe('GameService', () => {
 	});
 
 	it('should create a zeroed game instance', async () => {
-		const data: CreateGameDto = { player_one: 2, player_two: 4 };
+		const id_player_one: number = 1;
+		const id_player_two: number = 2;
+		const data: CreateGameDto = {
+			player_one: id_player_one,
+			player_two: id_player_two,
+		};
 		const newGame: Game = await controller.create(data);
 		const expectedResult = {
+			player_one: 1,
+			player_two: 2,
 			score_player_one: 0,
 			score_player_two: 0,
 			customization: null,
 			is_active: true,
 		};
-
 		expect(newGame).toMatchObject(expectedResult);
 	});
 });
