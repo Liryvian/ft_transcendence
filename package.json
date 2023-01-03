@@ -1,12 +1,15 @@
 {
   "scripts": {
     "dev": "docker compose up",
-    "build": "docker compose build --parallel",
-    "frontend_rebuild": "docker compose up -d --no-deps frontend",
-    "backend_rebuild": "docker compose up -d --no-deps backend",
-    "nginx_rebuild": "docker compose up -d --no-deps nginx",
-    "postgres_rebuild": "docker compose up -d --no-deps postgres",
+    "build": "docker compose build",
+    "frontend_rebuild": "docker compose up --build -d --no-deps frontend",
+    "backend_rebuild": "docker compose up --build -d --no-deps backend",
+    "nginx_rebuild": "docker compose up --build -d --no-deps nginx",
+    "postgres_rebuild": "docker compose up --build -d --no-deps postgres",
     "prod": "docker compose up --build",
     "purge": "docker system prune -fa && docker volume prune"
+  },
+  "devDependencies": {
+    "supertest": "^6.3.3"
   }
 }

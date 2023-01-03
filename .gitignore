@@ -184,3 +184,6 @@ GitHub.sublime-settings
 
 # database files from docker
 .db
+
+# local .vscode settings
+.vscode
