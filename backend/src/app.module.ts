@@ -5,10 +5,6 @@ import { AnimalModule } from './test_example/animal.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
-
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { ChatMembershipModule } from './chat/chat-membership/chat-membership.module';
 import { MembershipStateModule } from './chat/membership-state/membership-state.module';
 import { ChatroomModule } from './chat/chatroom/chatroom.module';

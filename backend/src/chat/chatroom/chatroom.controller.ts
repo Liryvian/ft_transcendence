@@ -1,23 +1,10 @@
-// import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-// import { ChatroomService } from './chatroom.service';
-// import { Chatroom } from "./entities/chatroom.entity";
-//
-// @Controller('chat-membership')
-// export class ChatroomController {
-//   constructor(private readonly chatroomService: ChatroomService) {
-//   }
-//   @Get()
-//   async all(): Promise<Chatroom[]> {
-//     return await this.chatroomService.all();
-//   }
-// }
-
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException} from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
 import { CreateChatroomDto } from './dto/create-chatroom.dto';
 import { UpdateChatroomDto } from './dto/update-chatroom.dto';
+import {DeleteResult, UpdateResult} from "typeorm";
 
-@Controller('chatroom')
+@Controller('message')
 export class ChatroomController {
   constructor(private readonly chatroomService: ChatroomService) {}
 
@@ -26,10 +13,10 @@ export class ChatroomController {
     return this.chatroomService.create(createChatroomDto);
   }
 
-  @Get()
-  findAll() {
-    return this.chatroomService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.chatroomService.findAll();
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -43,6 +30,22 @@ export class ChatroomController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.chatroomService.remove(+id);
+    return this.chatroomService.delete(+id);
   }
 }
+
+
+
+// import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+// import { ChatroomService } from './chatroom.service';
+// import { Chatroom } from "./entities/chatroom.entity";
+//
+// @Controller('chat-membership')
+// export class ChatroomController {
+//   constructor(private readonly chatroomService: ChatroomService) {
+//   }
+//   @Get()
+//   async all(): Promise<Chatroom[]> {
+//     return await this.chatroomService.all();
+//   }
+// }
