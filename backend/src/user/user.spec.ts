@@ -10,6 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
+import { UpdateResult } from 'typeorm';
 
 describe('User', () => {
 	let controller: UserController;
@@ -129,9 +130,46 @@ describe('User', () => {
 			);
 		});
 
-		it('should fail if you try to update to an existing username', async () => {
-			// const allUsers = await service.all();
-			console.log(await service.update(7456, {}));
+		it('should test insert', async () => {
+			const x = await service.create({
+				name: 'kees',
+				password: 'abc',
+				is_intra: false,
+			});
+			console.log(x);
+
+			const f = await service.create({
+				id: x.id,
+				name: 'kees',
+				password: 'abcd',
+				is_intra: false,
+			});
+			console.log(f);
+
+			const u = await service.all();
+			console.log(u);
 		});
+
+		// it('should fail if you try to update to an existing username', async () => {
+		// 	// make sure the users we want to change exist
+		// 	const testUsers = [
+		// 		{ name: 'n1', password: 'p1', is_intra: false, userId: -1 },
+		// 		{ name: 'n2', password: 'p2', is_intra: false, userId: -1 },
+		// 	];
+		// 	for (let index = 0; index < testUsers.length; index++) {
+		// 		const newUser = await service.create(testUsers[index]);
+		// 		testUsers[index].userId = newUser.id;
+		// 	}
+
+		// 	// here we should have the newly created users ready to be updated
+		// 	await expect(
+		// 		controller.update(testUsers[1].userId, { name: testUsers[0].name }),
+		// 	).rejects.toThrow('Something');
+
+		// 	// cleanup
+		// 	for (let index = 0; index < testUsers.length; index++) {
+		// 		service.delete(testUsers[index].userId);
+		// 	}
+		// });
 	});
 });
