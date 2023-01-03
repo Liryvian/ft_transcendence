@@ -2,6 +2,8 @@ import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
+import { User } from '../user/entities/user.entity';
+import { UserController } from '../user/user.controller';
 import { CreateGameDto } from './dto/create-game.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
@@ -9,21 +11,23 @@ import { GameService } from './game.service';
 
 describe('GameService', () => {
 	let service: GameService;
-	let controller: GameController;
+	let gameController: GameController;
+	let userController: UserController;
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Game]),
+				TypeOrmModule.forFeature([Game, User]),
 			],
-			controllers: [GameController],
+			controllers: [GameController, UserController],
 			providers: [GameService],
 		}).compile();
 
 		service = module.get<GameService>(GameService);
-		controller = module.get<GameController>(GameController);
+		gameController = module.get<GameController>(GameController);
+		userController = module.get<UserController>(UserController);
 	});
 
 	it('should be defined', () => {
@@ -37,7 +41,7 @@ describe('GameService', () => {
 			player_one: id_player_one,
 			player_two: id_player_two,
 		};
-		const newGame: Game = await controller.create(data);
+		const newGame: Game = await gameController.create(data);
 		const expectedResult = {
 			player_one: 1,
 			player_two: 2,
