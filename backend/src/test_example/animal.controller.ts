@@ -13,7 +13,6 @@ import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
-import { AnimalEntity } from './entities/animals.entity';
 
 @Controller('test')
 export class AnimalController {
