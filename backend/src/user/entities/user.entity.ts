@@ -2,11 +2,15 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
+	ManyToOne,
+	OneToMany,
 	PrimaryGeneratedColumn,
 	Unique,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Game } from '../..//game/entities/game.entity';
 
 @Unique(['name'])
 @Entity('users')
@@ -29,4 +33,8 @@ export class User {
 
 	@UpdateDateColumn()
 	updated_at: Date;
+
+	// @OneToMany(() => Game, (game) => game.id)
+	// @JoinColumn()
+	// games: Game[];
 }

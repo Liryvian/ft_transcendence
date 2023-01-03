@@ -5,8 +5,8 @@ export class CreateGameDto {
 
 	// player_one id
 	@IsNotEmpty()
-	player_one: number;
+	user_one: number;
 
 	@IsNotEmpty()
-	player_two: number;
+	user_two: number;
 }

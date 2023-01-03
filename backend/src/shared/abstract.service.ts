@@ -13,11 +13,8 @@ export abstract class AbstractService<T> {
 		return this.repository.save(data);
 	}
 
-	async findOne(condition, relations = []) {
-		const foundRepoItem = await this.repository.findOne({
-			where: condition,
-			relations: relations,
-		});
+	async findOne(condition) {
+		const foundRepoItem = await this.repository.findOne(condition);
 		if (!foundRepoItem) {
 			throw new NotFoundException();
 		}

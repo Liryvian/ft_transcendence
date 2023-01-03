@@ -35,18 +35,18 @@ describe('GameService', () => {
 	});
 
 	it('should create a zeroed game instance', async () => {
-		const id_player_one: number = 1;
-		const id_player_two: number = 2;
+		const id_user_one: number = 1;
+		const id_user_two: number = 2;
 		const data: CreateGameDto = {
-			player_one: id_player_one,
-			player_two: id_player_two,
+			user_one: id_user_one,
+			user_two: id_user_two,
 		};
 		const newGame: Game = await gameController.create(data);
 		const expectedResult = {
-			player_one: 1,
-			player_two: 2,
-			score_player_one: 0,
-			score_player_two: 0,
+			user_one: 1,
+			user_two: 2,
+			score_user_one: 0,
+			score_user_two: 0,
 			customization: null,
 			is_active: true,
 		};

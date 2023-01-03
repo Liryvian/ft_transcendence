@@ -16,10 +16,10 @@ export class Game {
 	id: number;
 
 	@Column({ default: 0 })
-	score_player_one: number;
+	score_user_one: number;
 
 	@Column({ default: 0 })
-	score_player_two: number;
+	score_user_two: number;
 
 	// for now empty customization
 	@Column({ default: null })
@@ -34,12 +34,11 @@ export class Game {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	// to be joined later on
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, (user_one) => user_one.id, { cascade: true })
 	@JoinColumn()
-	player_one: User;
+	user_one: User;
 
-	@OneToOne(() => User)
+	@OneToOne(() => User, (user_two) => user_two.id, { cascade: true })
 	@JoinColumn()
-	player_two: User;
+	user_two: User;
 }
