@@ -3,12 +3,10 @@ import { ChatMembershipService } from './chat-membership.service';
 import { ChatMembershipController } from './chat-membership.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatMembership } from './entities/chat-membership.entity';
-import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatMembership]), AuthModule],
+  imports: [TypeOrmModule.forFeature([ChatMembership])],
   controllers: [ChatMembershipController],
   providers: [ChatMembershipService],
-  exports: [ChatMembershipService]
 })
 export class ChatMembershipModule {}

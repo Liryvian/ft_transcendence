@@ -9,15 +9,6 @@ export class ChatroomService {
       @InjectRepository(Chatroom) private readonly chatroomRepository: Repository<Chatroom>
   ) {
   }
-
-  async all(): Promise<Chatroom[]> {
-    return this.chatroomRepository.find();
-  }
-
-  async create(data): Promise<Chatroom> {
-    return this.chatroomRepository.save(data);
-  }
-
 }
 
 
