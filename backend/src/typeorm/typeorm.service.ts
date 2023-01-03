@@ -23,7 +23,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 			database: this.config.get<string>('POSTGRES_DB'),
 			username: this.config.get<string>('POSTGRES_USER'),
 			password: this.config.get<string>('POSTGRES_PASSWORD'),
-			autoLoadEntities: true, // do not have this turned on for production!
+			autoLoadEntities: true,
 			// entities: ['dist/**/*.entity.{ts,js}'],
 			// migrations: ['dist/migrations/*.{ts,js}'],
 			// migrationsTableName: 'typeorm_migrations',
