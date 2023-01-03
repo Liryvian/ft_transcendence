@@ -13,10 +13,10 @@ export class ChatroomController {
     return this.chatroomService.create(createChatroomDto);
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.chatroomService.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.chatroomService.findAll();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

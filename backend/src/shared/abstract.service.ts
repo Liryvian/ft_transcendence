@@ -5,8 +5,8 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async all(): Promise<T[]> {
-		return this.repository.find();
+	async findAll(): Promise<T[]> {
+		return this.repository.findAll();
 	}
 
 	async create(data): Promise<T> {
