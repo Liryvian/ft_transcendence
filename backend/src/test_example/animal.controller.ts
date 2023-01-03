@@ -9,7 +9,7 @@ import {
 	HttpException,
 	HttpStatus,
 } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
@@ -23,10 +23,10 @@ export class AnimalController {
 	@Post()
 	async create(@Body() createAnimalDto: CreateAnimalDto) {
 		try {
-			const createdAnimal: AnimalEntity = await this.animalService.create(
+			const insertedAnimal: InsertResult = await this.animalService.create(
 				createAnimalDto,
 			);
-			return createdAnimal;
+			return insertedAnimal.identifiers;
 		} catch (e) {
 			throw new HttpException('Animal Already Exists', HttpStatus.CONFLICT);
 		}

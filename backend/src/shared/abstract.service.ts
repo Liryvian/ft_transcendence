@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export abstract class AbstractService<T> {
@@ -9,8 +9,8 @@ export abstract class AbstractService<T> {
 		return this.repository.find();
 	}
 
-	async create(data): Promise<T> {
-		return this.repository.save(data);
+	async create(data): Promise<InsertResult> {
+		return this.repository.insert(data);
 	}
 
 	async findOne(condition): Promise<T> {
