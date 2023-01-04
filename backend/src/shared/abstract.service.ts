@@ -22,10 +22,7 @@ export abstract class AbstractService<T> {
 	}
 
 	async update(id: number, data): Promise<UpdateResult> {
-		const itemToUpdate = await this.findOne({ where: { id } });
-		if (!itemToUpdate) {
-			throw new NotFoundException();
-		}
+		await this.findOne({ where: { id } });
 		return this.repository.update(id, data);
 	}
 
