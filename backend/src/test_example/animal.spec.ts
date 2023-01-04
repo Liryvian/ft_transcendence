@@ -76,11 +76,23 @@ describe('AnimalController', () => {
 
 	it('Post new Animal (create)', async () => {
 		const newAnimal = 'Sonbeesie';
+<<<<<<< HEAD
 		const createdAnimal: AnimalEntity = await controller.create({
 			name: newAnimal,
 		});
 		expect(createdAnimal.name).toBe(newAnimal);
 		expect(typeof createdAnimal.id).toBe('number');
+=======
+		const insertResult: ObjectLiteral = await controller.create({
+			name: newAnimal,
+		});
+
+		expect(insertResult[0].id).toBeGreaterThan(0);
+		const getById: AnimalEntity = await controller.getOne(insertResult[0].id);
+
+		expect(getById.name).toBe(newAnimal);
+		expect(typeof getById.id).toBe('number');
+>>>>>>> 7ea41b3a002c2022944246325d74e10c2315a209
 	});
 
 	it('Update item (Update)', async () => {

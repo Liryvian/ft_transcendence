@@ -7,8 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
-import { UpdateAnimalDto } from 'src/test_example/dto/update-animal.dto';
-import { AnimalEntity } from 'src/test_example/entities/animals.entity';
+import { UpdateAnimalDto } from '../src/test_example/dto/update-animal.dto';
+import { AnimalEntity } from '../src/test_example/entities/animals.entity';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
@@ -47,7 +47,7 @@ describe('AnimalController (e2e)', () => {
 		app.close();
 	});
 
-	describe('/test  (GET)', () => {
+	describe('/test (GET)', () => {
 		it('should return an array of all animals', () => {
 			return request(app.getHttpServer()).get('/test').expect(HttpStatus.OK);
 		});
@@ -75,17 +75,18 @@ describe('AnimalController (e2e)', () => {
 		});
 	});
 
-	describe('/test  (POST)', () => {
-		it('should return a the created animal data', () => {
+	describe('/test (POST)', () => {
+		it('should return the id of the created animal', () => {
 			return request(app.getHttpServer())
 				.post('/test')
 				.set('Accept', 'application/json')
 				.send(mockAnimal)
 				.expect(HttpStatus.CREATED)
 				.expect((response: request.Response) => {
-					const { id, name } = response.body;
-					expect(typeof id).toBe('number'),
-						expect(name).toEqual(mockAnimal.name);
+					const id = response.body;
+					expect(id.length).toBe(1);
+					expect(typeof id).toBe('object');
+					expect(typeof id[0].id).toBe('number');
 				});
 		});
 
@@ -133,7 +134,7 @@ describe('AnimalController (e2e)', () => {
 		});
 	});
 
-	describe('/test/:id  (patch)', () => {
+	describe('/test/:id (patch)', () => {
 		it('update animal with id 2', () => {
 			const ValidId: number = 2;
 			const updateData: UpdateAnimalDto = { name: 'Nagapie' };
