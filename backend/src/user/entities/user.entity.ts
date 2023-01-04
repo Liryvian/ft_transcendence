@@ -34,7 +34,4 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	// @OneToMany(() => Game, (game) => game.id)
-	// @JoinColumn()
-	// games: Game[];
 }

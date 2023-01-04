@@ -5,8 +5,8 @@ import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async findAll(): Promise<T[]> {
-		return this.repository.find();
+	async findAll(relations: string[] = []): Promise<T[]> {
+		return this.repository.find({ relations });
 	}
 
 	async create(data): Promise<InsertResult> {
@@ -18,6 +18,7 @@ export abstract class AbstractService<T> {
 			const foundRepoItem = await this.repository.findOneOrFail(condition);
 			return foundRepoItem;
 		} catch (e) {
+			console.log('Trhowing heere!');
 			throw new NotFoundException();
 		}
 	}

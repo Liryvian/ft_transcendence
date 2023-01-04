@@ -18,12 +18,10 @@ export class GameController {
 
 	@Post()
 	async create(@Body() data: CreateGameDto) {
-		let newGame: Game = await this.gameService.create({
+		return this.gameService.create({
 			user_one: data.user_one,
+			user_two: data.user_two,
 		});
-		console.log(newGame.user_one.name);
-		return newGame;
-		// return this.gameService.create(createGameDto);
 	}
 
 	@Get()
@@ -35,7 +33,7 @@ export class GameController {
 	findOne(@Param('id') id: number) {
 		return this.gameService.findOne({
 			where: { id },
-			relations: { user_one: true, user_two: true },
+			relations: { user_one: true },
 		});
 	}
 

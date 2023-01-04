@@ -53,7 +53,7 @@ export class AuthController {
 		@Res({ passthrough: true }) response: Response,
 	) {
 		const user = await this.userService.findOne({
-			name,
+			where: { name },
 		});
 		if (!user || !(await bcrypt.compare(password, user.password))) {
 			throw new BadRequestException('Invalid user/password combination');

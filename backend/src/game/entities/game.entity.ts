@@ -34,11 +34,9 @@ export class Game {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => User, (user_one) => user_one.id, { cascade: true })
-	@JoinColumn()
+	@ManyToOne(() => User, (user_one) => user_one.id)
 	user_one: User;
 
-	@OneToOne(() => User, (user_two) => user_two.id, { cascade: true })
-	@JoinColumn()
+	@ManyToOne(() => User, (user_two) => user_two.id)
 	user_two: User;
 }
