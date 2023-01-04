@@ -14,11 +14,12 @@ export abstract class AbstractService<T> {
 	}
 
 	async findOne(condition): Promise<T> {
-		const foundRepoItem = await this.repository.findOne(condition);
-		if (!foundRepoItem) {
+		try {
+			const foundRepoItem = await this.repository.findOneOrFail(condition);
+			return foundRepoItem;
+		} catch (e) {
 			throw new NotFoundException();
 		}
-		return foundRepoItem;
 	}
 
 	async update(id: number, data): Promise<UpdateResult> {
