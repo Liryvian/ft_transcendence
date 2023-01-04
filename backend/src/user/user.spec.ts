@@ -86,10 +86,6 @@ describe('User', () => {
 			await service.remove(firstUser.raw);
 			await service.remove(secondUser.raw);
 		});
-
-		it('does something on not found', async () => {
-			console.log(await service.update(24224, { name: 'kees' }));
-		});
 	});
 
 	describe('UserController', () => {
