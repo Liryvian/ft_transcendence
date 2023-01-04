@@ -3,12 +3,11 @@ import {
 	CreateDateColumn,
 	Entity,
 	PrimaryGeneratedColumn,
-	Unique,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { AnimalEntity } from 'backend/src/test_example/entities/animals.entity';
 
-@Unique(['name'])
 @Entity('users')
 export class User {
 	@PrimaryGeneratedColumn()

@@ -1,6 +1,5 @@
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as bcrypt from 'bcrypt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { UserController } from './user.controller';
@@ -113,7 +112,7 @@ describe('User', () => {
 		});
 
 		it('should get a specific user based on its ID', async () => {
-			await expect(controller.get(seedUsers[0].userId)).resolves.toEqual(
+			await expect(controller.findOne(seedUsers[0].userId)).resolves.toEqual(
 				expect.objectContaining({
 					name: seedUsers[0].name,
 					password: seedUsers[0].password,
@@ -125,26 +124,25 @@ describe('User', () => {
 			);
 		});
 
-		// it('should fail if you try to update to an existing username', async () => {
-		// 	// make sure the users we want to change exist
-		// 	const testUsers = [
-		// 		{ name: 'n1', password: 'p1', is_intra: false, userId: -1 },
-		// 		{ name: 'n2', password: 'p2', is_intra: false, userId: -1 },
-		// 	];
-		// 	for (let index = 0; index < testUsers.length; index++) {
-		// 		const newUser = await service.create(testUsers[index]);
-		// 		testUsers[index].userId = newUser.id;
-		// 	}
+		it('should fail if you try to update to an existing username', async () => {
+			// make sure the users we want to change exist
+			const testUsers = [
+				{ name: 'n1', password: 'p1', is_intra: false, userId: -1 },
+				{ name: 'n2', password: 'p2', is_intra: false, userId: -1 },
+			];
+			const newUsers: InsertResult = await service.create(testUsers);
+			testUsers[0].userId = newUsers.identifiers[0].id;
+			testUsers[1].userId = newUsers.identifiers[1].id;
 
-		// 	// here we should have the newly created users ready to be updated
-		// 	await expect(
-		// 		controller.update(testUsers[1].userId, { name: testUsers[0].name }),
-		// 	).rejects.toThrow('Something');
+			// here we should have the newly created users ready to be updated
+			await expect(
+				controller.update(testUsers[1].userId, { name: testUsers[0].name }),
+			).rejects.toThrow('Something');
 
-		// 	// cleanup
-		// 	for (let index = 0; index < testUsers.length; index++) {
-		// 		service.delete(testUsers[index].userId);
-		// 	}
-		// });
+			// cleanup
+			for (let index = 0; index < testUsers.length; index++) {
+				service.remove(testUsers[index].userId);
+			}
+		});
 	});
 });

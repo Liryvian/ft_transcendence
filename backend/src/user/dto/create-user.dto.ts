@@ -8,6 +8,5 @@ export class CreateUserDto {
 	password: string;
 
 	@IsBoolean()
-	@IsNotEmpty()
-	is_intra: boolean;
+	is_intra: boolean = false;
 }
