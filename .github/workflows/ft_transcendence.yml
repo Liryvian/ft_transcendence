@@ -50,6 +50,7 @@ jobs:
         with:
           node-version: 18
 
+
       - name: Run tests
         working-directory: ./frontend
         run: npm i vitest && npm run test:unit

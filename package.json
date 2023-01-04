@@ -8,5 +8,8 @@
     "postgres_rebuild": "docker compose up --build -d --no-deps postgres",
     "prod": "docker compose up --build",
     "purge": "docker system prune -fa && docker volume prune"
+  },
+  "devDependencies": {
+    "supertest": "^6.3.3"
   }
 }
