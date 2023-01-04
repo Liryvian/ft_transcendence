@@ -10,7 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
-import { UpdateResult } from 'typeorm';
+import { InsertResult, UpdateResult } from 'typeorm';
 
 describe('User', () => {
 	let controller: UserController;
@@ -48,8 +48,8 @@ describe('User', () => {
 				password: seedUsers[index].password,
 				is_intra: false,
 			};
-			const newUser = await service.create(data);
-			seedUsers[index].userId = newUser.id;
+			const newUser: InsertResult = await service.create(data);
+			seedUsers[index].userId = newUser.identifiers[0].id;
 		}
 	});
 
@@ -60,29 +60,8 @@ describe('User', () => {
 	};
 
 	describe('UserService', () => {
-		it('should create and delete a user', async () => {
-			const createdUser: User = await service.create(newUser);
-			expect(createdUser).toEqual(
-				expect.objectContaining({
-					name: expect.any(String),
-					password: expect.any(String),
-					is_intra: false,
-					id: expect.any(Number),
-					created_at: expect.any(Date),
-					updated_at: expect.any(Date),
-				}),
-			);
-			const deleteResult = await service.delete(createdUser.id);
-			expect(deleteResult).toEqual(
-				expect.objectContaining({
-					raw: expect.any(Array),
-					affected: 1,
-				}),
-			);
-		});
-
-		test('throw on duplicate usernames', async () => {
-			await expect(service.create(newUser)).resolves.toBeInstanceOf(Object);
+		it('throws on create with duplicate usernames', async () => {
+			const firstUser: InsertResult = await service.create(newUser);
 			await expect(
 				service.create({
 					name: newUser.name,
@@ -90,12 +69,32 @@ describe('User', () => {
 					is_intra: newUser.is_intra,
 				}),
 			).rejects.toThrow('UNIQUE constraint failed');
+			await service.remove(firstUser.raw);
+		});
+
+		it('throws on update with duplicate usernames', async () => {
+			const firstUser: InsertResult = await service.create(newUser);
+			const secondUser: InsertResult = await service.create({
+				name: newUser.name + 'a',
+				password: newUser.password + 'a',
+				is_intra: newUser.is_intra,
+			});
+
+			await expect(
+				service.update(secondUser.identifiers[0].id, { name: newUser.name }),
+			).rejects.toThrow('UNIQUE constraint failed');
+			await service.remove(firstUser.raw);
+			await service.remove(secondUser.raw);
+		});
+
+		it('does something on not found', async () => {
+			console.log(await service.update(24224, { name: 'kees' }));
 		});
 	});
 
 	describe('UserController', () => {
 		it('should get all users', async () => {
-			await expect(controller.all()).resolves.toEqual(
+			await expect(controller.findAll()).resolves.toEqual(
 				expect.arrayContaining([
 					expect.objectContaining({
 						name: seedUsers[0].name,
@@ -130,6 +129,9 @@ describe('User', () => {
 			);
 		});
 
+		/*
+		// this is testing the service, not the controller
+		// service is already tested with abstract/animal class
 		it('should test insert', async () => {
 			const x = await service.create({
 				name: 'kees',
@@ -146,9 +148,10 @@ describe('User', () => {
 			});
 			console.log(f);
 
-			const u = await service.all();
+			const u = await service.findAll();
 			console.log(u);
 		});
+		*/
 
 		// it('should fail if you try to update to an existing username', async () => {
 		// 	// make sure the users we want to change exist

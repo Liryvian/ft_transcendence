@@ -5,36 +5,29 @@ import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async all(): Promise<T[]> {
+	async findAll(): Promise<T[]> {
 		return this.repository.find();
 	}
 
-	async create(data): Promise<T> {
-		return this.repository.save(data);
-	}
-
-	async insert(data): Promise<InsertResult> {
-		console.log(data);
+	async create(data): Promise<InsertResult> {
 		return this.repository.insert(data);
 	}
 
 	async findOne(condition): Promise<T> {
-		const foundRepoItem = await this.repository.findOne(condition);
-		if (!foundRepoItem) {
+		try {
+			const foundRepoItem = await this.repository.findOneOrFail(condition);
+			return foundRepoItem;
+		} catch (e) {
 			throw new NotFoundException();
 		}
-		return foundRepoItem;
 	}
 
 	async update(id: number, data): Promise<UpdateResult> {
-		const itemToUpdate = await this.findOne({ where: { id } });
-		if (!itemToUpdate) {
-			throw new NotFoundException();
-		}
+		await this.findOne({ where: { id } });
 		return this.repository.update(id, data);
 	}
 
-	async delete(id: number): Promise<DeleteResult> {
+	async remove(id: number): Promise<DeleteResult> {
 		return this.repository.delete(id);
 	}
 }
