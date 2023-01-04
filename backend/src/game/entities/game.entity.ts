@@ -32,11 +32,15 @@ export class Game {
 	updated_at: Date;
 
 	// to be joined later on
-	// @ManyToOne(() => User)
+	// @ManyToOne(() => User,  user => user.id)
 	// @JoinColumn({})
 	// player_one: User;
+	@Column()
+	player_one: number;
 
-	// @ManyToOne(() => User)
+	// @ManyToOne(() => User, user => user.id)
 	// @JoinColumn({})
 	// player_two: User;
+	@Column()
+	player_two: number;
 }
