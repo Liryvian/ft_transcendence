@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
 import { NotFoundException } from '@nestjs/common';
+import { InsertResult, ObjectLiteral } from 'typeorm';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
@@ -28,13 +29,13 @@ describe('AnimalController', () => {
 		controller = testingModule.get<AnimalController>(AnimalController);
 		service = testingModule.get<AnimalService>(AnimalService);
 
-		// seed db with animals for entire describe block
+		// seed db with animals for each testcase
 		for (const animal in testAnimals) {
 			await controller.create({ name: testAnimals[animal] });
 		}
 	});
 
-	// delete all data in db for entire describe block
+	// delete all data in db for each test
 	afterAll(async () => {
 		const repoOfAnimals: AnimalEntity[] = await controller.findAll();
 		for (let i = 0; i < repoOfAnimals.length; i++) {
@@ -76,11 +77,15 @@ describe('AnimalController', () => {
 
 	it('Post new Animal (create)', async () => {
 		const newAnimal = 'Sonbeesie';
-		const createdAnimal: AnimalEntity = await controller.create({
+		const insertResult: ObjectLiteral = await controller.create({
 			name: newAnimal,
 		});
-		expect(createdAnimal.name).toBe(newAnimal);
-		expect(typeof createdAnimal.id).toBe('number');
+
+		expect(insertResult[0].id).toBeGreaterThan(0);
+		const getById: AnimalEntity = await controller.getOne(insertResult[0].id);
+
+		expect(getById.name).toBe(newAnimal);
+		expect(typeof getById.id).toBe('number');
 	});
 
 	it('Update item (Update)', async () => {
