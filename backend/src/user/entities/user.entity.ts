@@ -6,7 +6,6 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { AnimalEntity } from 'backend/src/test_example/entities/animals.entity';
 
 @Entity('users')
 export class User {
