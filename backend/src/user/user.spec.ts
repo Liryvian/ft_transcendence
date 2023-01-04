@@ -129,30 +129,6 @@ describe('User', () => {
 			);
 		});
 
-		/*
-		// this is testing the service, not the controller
-		// service is already tested with abstract/animal class
-		it('should test insert', async () => {
-			const x = await service.create({
-				name: 'kees',
-				password: 'abc',
-				is_intra: false,
-			});
-			console.log(x);
-
-			const f = await service.create({
-				id: x.id,
-				name: 'kees',
-				password: 'abcd',
-				is_intra: false,
-			});
-			console.log(f);
-
-			const u = await service.findAll();
-			console.log(u);
-		});
-		*/
-
 		// it('should fail if you try to update to an existing username', async () => {
 		// 	// make sure the users we want to change exist
 		// 	const testUsers = [
