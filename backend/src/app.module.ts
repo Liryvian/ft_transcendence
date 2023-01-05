@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { GameModule } from './pong/game/game.module';
-import { GameInvitesModule } from './pong/game_invites/game-invites.module';
+import { GameInvitesModule } from './pong/game_invite/game-invite.module';
 
 @Module({
 	imports: [

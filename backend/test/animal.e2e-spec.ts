@@ -7,8 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
-import { UpdateAnimalDto } from 'src/test_example/dto/update-animal.dto';
-import { AnimalEntity } from 'src/test_example/entities/animals.entity';
+import { UpdateAnimalDto } from '../src/test_example/dto/update-animal.dto';
+import { AnimalEntity } from '../src/test_example/entities/animals.entity';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;

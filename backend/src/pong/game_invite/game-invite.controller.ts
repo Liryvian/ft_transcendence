@@ -7,7 +7,7 @@ import {
 	Param,
 	Delete,
 } from '@nestjs/common';
-import { GameInvitesService } from './game-invites.service';
+import { GameInvitesService } from './game-invite.service';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 import { UpdateGameInviteDto } from './dto/update-game-invite.dto';
 
