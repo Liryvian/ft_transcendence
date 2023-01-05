@@ -1,1 +1,15 @@
-export class CreateMessageDto {}
+import { IsNotEmpty } from 'class-validator';
+
+export class CreateMessageDto {
+	@IsNotEmpty()
+	timestamp: number;
+
+	// @IsNotEmpty()
+	// sender_id: User;
+
+	@IsNotEmpty()
+	chat_id: number;
+
+	@IsNotEmpty()
+	content: string;
+}

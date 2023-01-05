@@ -5,8 +5,8 @@ import { MembershipState } from './entities/membership-state.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MembershipState])],
-  controllers: [MembershipStateController],
-  providers: [MembershipStateService],
+	imports: [TypeOrmModule.forFeature([MembershipState])],
+	controllers: [MembershipStateController],
+	providers: [MembershipStateService],
 })
 export class MembershipStateModule {}

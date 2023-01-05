@@ -1,26 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMembershipStateDto } from './dto/create-membership-state.dto';
-import { UpdateMembershipStateDto } from './dto/update-membership-state.dto';
+import { MembershipState } from './entities/membership-state.entity';
+import { Repository } from 'typeorm';
+import { AbstractService } from '../../shared/abstract.service';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class MembershipStateService {
-  create(createMembershipStateDto: CreateMembershipStateDto) {
-    return 'This action adds a new membershipState';
-  }
-
-  findAll() {
-    return `This action returns all membershipState`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} membershipState`;
-  }
-
-  update(id: number, updateMembershipStateDto: UpdateMembershipStateDto) {
-    return `This action updates a #${id} membershipState`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} membershipState`;
-  }
+export class MembershipStateService extends AbstractService<MembershipState> {
+	constructor(
+		@InjectRepository(MembershipState)
+		private readonly membershipRepository: Repository<MembershipState>,
+	) {
+		super(membershipRepository);
+	}
 }

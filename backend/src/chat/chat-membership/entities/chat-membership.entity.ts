@@ -19,5 +19,3 @@ export class ChatMembership {
   @JoinColumn({name: 'membership_id'})
   membership_id: MembershipState;
 }
-
-

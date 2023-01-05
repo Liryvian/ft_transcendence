@@ -11,16 +11,16 @@ import { ChatroomModule } from './chat/chatroom/chatroom.module';
 import { MessageModule } from './chat/message/message.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-    AnimalModule,
-    ChatMembershipModule,
-    MembershipStateModule,
-    ChatroomModule,
-    MessageModule,
-  ],
-    controllers: [AppController],
-    providers: [AppService],
+	imports: [
+		ConfigModule.forRoot({ isGlobal: true }),
+		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+		AnimalModule,
+		ChatMembershipModule,
+		MembershipStateModule,
+		ChatroomModule,
+		MessageModule,
+	],
+	controllers: [AppController],
+	providers: [AppService],
 })
 export class AppModule {}

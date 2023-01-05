@@ -1,4 +1,3 @@
-
 export class UpdateAnimalDto {
-    name: string;
+	name: string;
 }
