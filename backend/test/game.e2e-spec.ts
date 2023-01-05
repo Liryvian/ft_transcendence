@@ -42,9 +42,9 @@ describe('GameController (e2e)', () => {
 		app.close();
 	});
 
-	describe('/test (GET)', () => {
+	describe('/games (GET)', () => {
 		it('should return OK', () => {
-			return request(app.getHttpServer()).get('games').expect(HttpStatus.OK);
+			return request(app.getHttpServer()).get('/games').expect(HttpStatus.OK);
 		});
 	});
 });
