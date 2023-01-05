@@ -35,8 +35,10 @@ export class Game {
 	updated_at: Date;
 
 	@ManyToOne(() => User, (user_one) => user_one.id)
+	@JoinColumn()
 	user_one: User;
 
 	@ManyToOne(() => User, (user_two) => user_two.id)
+	@JoinColumn()
 	user_two: User;
 }

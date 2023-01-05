@@ -10,7 +10,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Game } from '../..//game/entities/game.entity';
+import { Game } from '../../game/entities/game.entity';
 
 @Unique(['name'])
 @Entity('users')
@@ -34,4 +34,12 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
+	@OneToMany(
+		() => Game,
+		(game) => {
+			return game.user_one.id | game.user_two.id;
+		},
+	)
+	@JoinColumn()
+	games: Game[];
 }

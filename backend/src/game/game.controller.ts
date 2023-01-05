@@ -33,7 +33,7 @@ export class GameController {
 	findOne(@Param('id') id: number) {
 		return this.gameService.findOne({
 			where: { id },
-			relations: { user_one: true },
+			relations: { user_one: true, user_two: true },
 		});
 	}
 

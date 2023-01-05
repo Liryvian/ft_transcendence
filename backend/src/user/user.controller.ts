@@ -18,14 +18,14 @@ export class UserController {
 
 	@Get()
 	async all(): Promise<User[]> {
-		return this.userService.findAll();
+		return this.userService.findAll(['games']);
 	}
 
 	@Get(':id')
 	async get(@Param('id') id: number) {
 		return this.userService.findOne({
 			where: { id },
-			// relations: { games: true },
+			relations: { games: true },
 		});
 	}
 }

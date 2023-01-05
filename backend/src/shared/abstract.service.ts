@@ -18,7 +18,8 @@ export abstract class AbstractService<T> {
 			const foundRepoItem = await this.repository.findOneOrFail(condition);
 			return foundRepoItem;
 		} catch (e) {
-			console.log('Trhowing heere!');
+			console.log('Throwing heere!');
+			console.log(e);
 			throw new NotFoundException();
 		}
 	}
