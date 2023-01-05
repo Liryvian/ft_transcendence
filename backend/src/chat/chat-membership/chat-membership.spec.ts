@@ -30,8 +30,8 @@ describe('ChatMembershipController', () => {
 		);
 		service = testingModule.get<ChatMembershipService>(ChatMembershipService);
 
-		// // seed db with testmemberships
-		// //use controller instance to put data in the db
+		// seed db with testmemberships
+		//use controller instance to put data in the db
 		// for (const membership in testMemberships) {
 		// 	await controller.create({ chat_id: testMemberships[membership] });
 		// }

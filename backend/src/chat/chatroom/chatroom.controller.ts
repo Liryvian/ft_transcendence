@@ -27,13 +27,13 @@ export class ChatroomController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.chatroomService.findOne(+id);
+	findOne(@Param('id') id: number) {
+		return this.chatroomService.findOne({ where: { id } });
 	}
 
 	@Patch(':id')
 	update(
-		@Param('id') id: string,
+		@Param('id') id: number,
 		@Body() updateChatroomDto: UpdateChatroomDto,
 	) {
 		return this.chatroomService.update(+id, updateChatroomDto);
@@ -44,9 +44,10 @@ export class ChatroomController {
 	// 	return this.chatroomService.delete(+id);
 	// }
 	@Delete(':id')
-	remove(@Param('id') id: string) {
+	remove(@Param('id') id: number) {
 		return this.chatroomService.remove(+id);
 	}
+
 }
 
 // import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
