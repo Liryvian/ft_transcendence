@@ -4,10 +4,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
-import { CreateGameInviteDto } from 'backend/src/pong/game_invite/dto/create-game-invite.dto';
-import { GameInvitesController } from 'backend/src/pong/game_invite/game-invite.controller';
-import { GameInvite } from 'backend/src/pong/game_invite/entities/game-invite.entity';
-import { GameInvitesModule } from 'backend/src/pong/game_invite/game-invite.module';
+import { CreateGameInviteDto } from '../src/pong/game_invite/dto/create-game-invite.dto';
+import { GameInvitesController } from '../src/pong/game_invite/game-invite.controller';
+import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -28,7 +28,9 @@ describe('GameInvite (e2e)', () => {
 		app.useGlobalPipes(new ValidationPipe());
 		await app.init();
 
-		invitesController = moduleFixture.get<GameInvitesController>(GameInvitesController);
+		invitesController = moduleFixture.get<GameInvitesController>(
+			GameInvitesController,
+		);
 
 		await invitesController.create(mockInvite);
 	});
@@ -47,3 +49,4 @@ describe('GameInvite (e2e)', () => {
 			return request(app.getHttpServer()).get('/games').expect(HttpStatus.OK);
 		});
 	});
+});
