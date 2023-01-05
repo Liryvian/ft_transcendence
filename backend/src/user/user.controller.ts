@@ -24,8 +24,7 @@ import { AuthService } from '../auth/auth.service';
 @Controller('users')
 export class UserController {
 	constructor(
-		private userService: UserService,
-		private authService: AuthService,
+		private userService: UserService, // private authService: AuthService,
 	) {}
 
 	@Post()
@@ -70,17 +69,17 @@ export class UserController {
 	@Patch(':id')
 	async update(
 		@Param('id') id: number,
-		@Body() updateAnimalDto: UpdateUserDto,
+		@Body() updateUserDto: UpdateUserDto,
 	): Promise<UpdateResult> {
 		try {
-			const updateResult = await this.userService.update(id, updateAnimalDto);
+			const updateResult = await this.userService.update(id, updateUserDto);
 			return updateResult;
 		} catch (e) {
-			console.log({ e });
 			if (e instanceof QueryFailedError) {
-				throw new BadRequestException('Username should be unique 1');
+				throw new BadRequestException('Username should be unique');
 			} else {
-				throw new BadRequestException('Username should be unique 2');
+				console.log(e);
+				throw new BadRequestException('something else went wrong..');
 			}
 		}
 	}

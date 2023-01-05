@@ -9,7 +9,8 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
-import { InsertResult, UpdateResult } from 'typeorm';
+import { InsertResult } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 describe('User', () => {
 	let controller: UserController;
@@ -124,6 +125,16 @@ describe('User', () => {
 			);
 		});
 
+		it('should fail if you try to set an empty username', async () => {
+			const u: InsertResult = await controller.create({
+				name: 'tryEmpty',
+				password: 'p',
+				password_confirm: 'p',
+			});
+			console.log(UpdateUserDto);
+			// const upd = await controller.update({ name: '' });
+		});
+
 		it('should fail if you try to update to an existing username', async () => {
 			// make sure the users we want to change exist
 			const testUsers = [
@@ -137,7 +148,7 @@ describe('User', () => {
 			// here we should have the newly created users ready to be updated
 			await expect(
 				controller.update(testUsers[1].userId, { name: testUsers[0].name }),
-			).rejects.toThrow('Something');
+			).rejects.toThrow('Username should be unique');
 
 			// cleanup
 			for (let index = 0; index < testUsers.length; index++) {
