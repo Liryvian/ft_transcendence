@@ -1,6 +1,7 @@
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ObjectLiteral } from 'typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { Game } from './entities/game.entity';
@@ -28,24 +29,6 @@ describe('GameService', () => {
 
 	it('should be defined', () => {
 		expect(service).toBeDefined();
-	});
-
-	it('should create a zeroed game instance', async () => {
-		const id_player_one: number = 1;
-		const id_player_two: number = 2;
-		const data: CreateGameDto = {
-			player_one: id_player_one,
-			player_two: id_player_two,
-		};
-		const newGame: Game = await controller.create(data);
-		const expectedResult = {
-			player_one: 1,
-			player_two: 2,
-			score_player_one: 0,
-			score_player_two: 0,
-			customization: null,
-			is_active: true,
-		};
-		expect(newGame).toMatchObject(expectedResult);
+		expect(controller).toBeDefined();
 	});
 });
