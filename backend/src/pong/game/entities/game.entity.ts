@@ -1,4 +1,5 @@
 import {
+	Check,
 	Column,
 	CreateDateColumn,
 	Entity,
@@ -41,6 +42,7 @@ export class Game {
 	// @ManyToOne(() => User, user => user.id)
 	// @JoinColumn({})
 	// player_two: User;
+	@Check(`"player_two" <> "player_one"`)
 	@Column()
 	player_two: number;
 }
