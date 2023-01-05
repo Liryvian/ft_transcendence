@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { DoesNotMatch } from 'src/shared/does-not-match.decorator';
+import { DoesNotMatch } from '../../../shared/does-not-match.decorator';
 
 export class CreateGameDto {
 	customization?: string;
