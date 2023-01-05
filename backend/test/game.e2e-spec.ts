@@ -2,10 +2,10 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CreateGameDto } from '../src/game/dto/create-game.dto';
-import { Game } from '../src/game/entities/game.entity';
-import { GameController } from '../src/game/game.controller';
-import { GameModule } from '../src/game/game.module';
+import { CreateGameDto } from '../src/pong/game/dto/create-game.dto';
+import { Game } from '../src/pong/game/entities/game.entity';
+import { GameController } from '../src/pong/game/game.controller';
+import { GameModule } from '../src/pong/game/game.module';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
 

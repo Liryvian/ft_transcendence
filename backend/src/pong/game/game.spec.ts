@@ -2,7 +2,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ObjectLiteral } from 'typeorm';
-import { TypeOrmConfigService } from '../typeorm/typeorm.service';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';

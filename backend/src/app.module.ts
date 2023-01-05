@@ -5,14 +5,16 @@ import { AnimalModule } from './test_example/animal.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
-import { GameModule } from './game/game.module';
+import { GameModule } from './pong/game/game.module';
+import { GameInvitesModule } from './pong/game_invites/game-invites.module';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-			TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AnimalModule,
-		GameModule
+		GameModule,
+		GameInvitesModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
