@@ -5,6 +5,7 @@ export class GameInvite {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	// Will either be linked with user, or a view table created
 	@Column()
 	source_id: number;
 
