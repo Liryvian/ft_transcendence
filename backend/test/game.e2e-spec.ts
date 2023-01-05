@@ -43,7 +43,7 @@ describe('GameController (e2e)', () => {
 	});
 
 	describe('/test (GET)', () => {
-		it('should retunr object containing all games', () => {
+		it('should return OK', () => {
 			return request(app.getHttpServer()).get('games').expect(HttpStatus.OK);
 		});
 	});
