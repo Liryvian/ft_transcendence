@@ -67,6 +67,10 @@ describe('ChatroomController', () => {
 		const chatroom: Chatroom = await controller.findOne(specificChatroom);
 		expect(chatroom.id).toBe(specificChatroom);
 	});
+
+	// Error test if the chatroom doesnt exist
+
+	//
 });
 
 // cosnt mockCR: createChatDTo = [{name: "hallo", visibility:  "Private", password: "1234"}, {data, data, data}, {}]

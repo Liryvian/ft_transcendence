@@ -5,12 +5,11 @@ import {
 	Body,
 	Patch,
 	Param,
-	Delete
+	Delete,
 } from '@nestjs/common';
 import { ChatroomService } from './chatroom.service';
 import { CreateChatroomDto } from './dto/create-chatroom.dto';
 import { UpdateChatroomDto } from './dto/update-chatroom.dto';
-import { DeleteResult } from 'typeorm';
 
 @Controller('message')
 export class ChatroomController {
@@ -39,27 +38,8 @@ export class ChatroomController {
 		return this.chatroomService.update(+id, updateChatroomDto);
 	}
 
-	// @Delete(':id')
-	// remove(@Param('id') id: string) {
-	// 	return this.chatroomService.delete(+id);
-	// }
 	@Delete(':id')
 	remove(@Param('id') id: number) {
 		return this.chatroomService.remove(+id);
 	}
-
 }
-
-// import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-// import { ChatroomService } from './chatroom.service';
-// import { Chatroom } from "./entities/chatroom.entity";
-//
-// @Controller('chat-membership')
-// export class ChatroomController {
-//   constructor(private readonly chatroomService: ChatroomService) {
-//   }
-//   @Get()
-//   async all(): Promise<Chatroom[]> {
-//     return await this.chatroomService.all();
-//   }
-// }

@@ -28,20 +28,20 @@ export class MembershipStateController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.membershipStateService.findOne(+id);
+	findOne(@Param('id') id: number) {
+		return this.membershipStateService.findOne({ where: { id } });
 	}
 
 	@Patch(':id')
 	update(
-		@Param('id') id: string,
+		@Param('id') id: number,
 		@Body() updateMembershipStateDto: UpdateMembershipStateDto,
 	) {
 		return this.membershipStateService.update(+id, updateMembershipStateDto);
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
+	remove(@Param('id') id: number) {
 		return this.membershipStateService.remove(+id);
 	}
 }
