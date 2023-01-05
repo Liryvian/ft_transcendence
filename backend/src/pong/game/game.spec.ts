@@ -8,7 +8,7 @@ import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';
 
-describe('GameService', () => {
+describe('Game unit tests', () => {
 	let service: GameService;
 	let controller: GameController;
 
