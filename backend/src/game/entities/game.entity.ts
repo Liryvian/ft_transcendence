@@ -16,10 +16,10 @@ export class Game {
 	id: number;
 
 	@Column({ default: 0 })
-	score_user_one: number;
+	score_player_1: number;
 
 	@Column({ default: 0 })
-	score_user_two: number;
+	score_player_2: number;
 
 	// for now empty customization
 	@Column({ default: null })
@@ -34,11 +34,11 @@ export class Game {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => User, (user_one) => user_one.id)
+	@ManyToOne(() => User, (user) => user.games)
 	@JoinColumn()
-	user_one: User;
+	player_1: User;
 
-	@ManyToOne(() => User, (user_two) => user_two.id)
+	@ManyToOne(() => User, (user) => user.games)
 	@JoinColumn()
-	user_two: User;
+	player_2: User;
 }

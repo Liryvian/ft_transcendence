@@ -34,12 +34,13 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@OneToMany(
-		() => Game,
-		(game) => {
-			return game.user_one.id | game.user_two.id;
-		},
-	)
+	@OneToMany(() => Game, (game) => /^player_[12]{1}$/)
 	@JoinColumn()
 	games: Game[];
 }
+
+// export class User {
+//     ...
+//     @OneToMany(() => Game, (Game) => /^p[12]{1}$/)
+//     player_in_game: Game[];
+// }

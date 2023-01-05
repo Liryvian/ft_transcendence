@@ -19,21 +19,21 @@ export class GameController {
 	@Post()
 	async create(@Body() data: CreateGameDto) {
 		return this.gameService.create({
-			user_one: data.user_one,
-			user_two: data.user_two,
+			player_1: data.player_1,
+			player_2: data.player_2,
 		});
 	}
 
 	@Get()
 	findAll() {
-		return this.gameService.findAll(['user_one', 'user_two']);
+		return this.gameService.findAll(['player_1', 'player_2']);
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
 		return this.gameService.findOne({
 			where: { id },
-			relations: { user_one: true, user_two: true },
+			relations: { player_1: true, player_2: true },
 		});
 	}
 
