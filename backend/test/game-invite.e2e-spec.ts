@@ -47,3 +47,4 @@ describe('GameInvite (e2e)', () => {
 			return request(app.getHttpServer()).get('/games').expect(HttpStatus.OK);
 		});
 	});
+});
