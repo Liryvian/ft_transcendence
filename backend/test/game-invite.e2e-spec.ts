@@ -44,9 +44,11 @@ describe('GameInvite (e2e)', () => {
 		app.close();
 	});
 
-	describe('/games (GET)', () => {
+	describe('/game-invites (GET)', () => {
 		it('should return OK', () => {
-			return request(app.getHttpServer()).get('/games').expect(HttpStatus.OK);
+			return request(app.getHttpServer())
+				.get('/game-invites')
+				.expect(HttpStatus.OK);
 		});
 	});
 });
