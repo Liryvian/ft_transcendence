@@ -60,4 +60,5 @@ describe('chatroom e2e', () => {
 				.expect(HttpStatus.OK);
 		});
 	});
+
 });
