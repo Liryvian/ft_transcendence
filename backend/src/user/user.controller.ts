@@ -44,8 +44,7 @@ export class UserController {
 			);
 			return newUser;
 		} catch (e) {
-			console.log('Error on creating user', { e });
-			throw new BadRequestException('Username should be unique');
+			throw new BadRequestException('Please pick a different username');
 		}
 	}
 
@@ -76,10 +75,12 @@ export class UserController {
 			return updateResult;
 		} catch (e) {
 			if (e instanceof QueryFailedError) {
-				throw new BadRequestException('Username should be unique');
+				throw new BadRequestException('Please pick a different username');
 			} else {
 				console.log(e);
-				throw new BadRequestException('something else went wrong..');
+				throw new BadRequestException(
+					'Something went wrong on updating the user',
+				);
 			}
 		}
 	}

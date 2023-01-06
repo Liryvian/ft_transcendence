@@ -11,6 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { identity } from 'rxjs';
 
 describe('User', () => {
 	let controller: UserController;
@@ -53,38 +55,21 @@ describe('User', () => {
 		}
 	});
 
-	const newUser: CreateUserDto = {
-		name: 'Username for user',
-		password: 'password for user',
-		is_intra: false,
-	};
-
 	describe('UserService', () => {
 		it('throws on create with duplicate usernames', async () => {
-			const firstUser: InsertResult = await service.create(newUser);
 			await expect(
 				service.create({
-					name: newUser.name,
-					password: newUser.password + 'a',
-					is_intra: newUser.is_intra,
+					name: seedUsers[0].name,
+					password: seedUsers[0].password + 'a',
+					is_intra: false,
 				}),
 			).rejects.toThrow('UNIQUE constraint failed');
-			await service.remove(firstUser.raw);
 		});
 
 		it('throws on update with duplicate usernames', async () => {
-			const firstUser: InsertResult = await service.create(newUser);
-			const secondUser: InsertResult = await service.create({
-				name: newUser.name + 'a',
-				password: newUser.password + 'a',
-				is_intra: newUser.is_intra,
-			});
-
 			await expect(
-				service.update(secondUser.identifiers[0].id, { name: newUser.name }),
+				service.update(seedUsers[0].userId, { name: seedUsers[1].name }),
 			).rejects.toThrow('UNIQUE constraint failed');
-			await service.remove(firstUser.raw);
-			await service.remove(secondUser.raw);
 		});
 	});
 
@@ -125,35 +110,44 @@ describe('User', () => {
 			);
 		});
 
-		it('should fail if you try to set an empty username', async () => {
+		it('should fail if you try to update to an empty username', async () => {
 			const u: InsertResult = await controller.create({
 				name: 'tryEmpty',
 				password: 'p',
 				password_confirm: 'p',
 			});
-			console.log(UpdateUserDto);
-			// const upd = await controller.update({ name: '' });
+			const upd = await controller.update(u.identifiers[0].identity, {
+				name: '',
+			});
+			console.log('should throw?', { upd });
 		});
 
 		it('should fail if you try to update to an existing username', async () => {
-			// make sure the users we want to change exist
-			const testUsers = [
-				{ name: 'n1', password: 'p1', is_intra: false, userId: -1 },
-				{ name: 'n2', password: 'p2', is_intra: false, userId: -1 },
-			];
-			const newUsers: InsertResult = await service.create(testUsers);
-			testUsers[0].userId = newUsers.identifiers[0].id;
-			testUsers[1].userId = newUsers.identifiers[1].id;
-
-			// here we should have the newly created users ready to be updated
 			await expect(
-				controller.update(testUsers[1].userId, { name: testUsers[0].name }),
-			).rejects.toThrow('Username should be unique');
+				controller.update(seedUsers[1].userId, { name: seedUsers[0].name }),
+			).rejects.toThrow('Please pick a different username');
+		});
 
-			// cleanup
-			for (let index = 0; index < testUsers.length; index++) {
-				service.remove(testUsers[index].userId);
-			}
+		it('should fail on not matching passwords', async () => {
+			const invalidPasswordUser: RegisterUserDto = {
+				name: 'name',
+				password: 'p1',
+				password_confirm: 'p2',
+			};
+			await expect(controller.create(invalidPasswordUser)).rejects.toThrow(
+				'Passwords do not match',
+			);
+		});
+
+		it('should not create user with duplicate username', async () => {
+			const duplicateUsernameUser: RegisterUserDto = {
+				name: seedUsers[0].name,
+				password: 'foo',
+				password_confirm: 'foo',
+			};
+			await expect(controller.create(duplicateUsernameUser)).rejects.toThrow(
+				'Please pick a different username',
+			);
 		});
 	});
 });
