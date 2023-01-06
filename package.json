@@ -12,8 +12,5 @@
   "devDependencies": {
     "prettier": "2.8.1",
     "supertest": "^6.3.3"
-  },
-  "dependencies": {
-    "class-validator": "^0.13.2"
   }
 }

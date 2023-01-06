@@ -45,8 +45,7 @@ describe('MessageController', () => {
 		messageService = testingModule.get<MessageService>(MessageService);
 		chatroomService = testingModule.get<ChatroomService>(ChatroomService);
 
-		// create one or two chatrooms that will exist till the "end"
-		//// create one or two users that will exist till the "end" (once ready)
+		// create one or two users that will exist till the "end" (once ready)
 
 		for (const chatroom in testChatrooms) {
 			await chatroomController.create(testChatrooms[chatroom]);
