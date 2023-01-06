@@ -10,7 +10,7 @@ import { MembershipStateService } from './membership-state.service';
 import { MembershipState } from './entities/membership-state.entity';
 
 describe('MembershipStateController', () => {
-	let membershipController: MembershipStateController;
+	let membershipStateController: MembershipStateController;
 	let service: MembershipStateService;
 	let testingModule: TestingModule;
 
@@ -31,27 +31,29 @@ describe('MembershipStateController', () => {
 			providers: [MembershipStateService],
 		}).compile();
 
-		membershipController = testingModule.get<MembershipStateController>(
+		membershipStateController = testingModule.get<MembershipStateController>(
 			MembershipStateController,
 		);
 		service = testingModule.get<MembershipStateService>(MembershipStateService);
 
 		for (const membershipState in testMembershipStates) {
-			await membershipController.create(testMembershipStates[membershipState]);
+			await membershipStateController.create(
+				testMembershipStates[membershipState],
+			);
 		}
 	});
 
 	afterAll(async () => {
 		const repoOfMembershipStates: MembershipState[] =
-			await membershipController.findAll();
+			await membershipStateController.findAll();
 		for (let i = 0; i < repoOfMembershipStates.length; i++) {
-			await membershipController.remove(i + 1);
+			await membershipStateController.remove(i + 1);
 		}
 	});
 
 	it('Get all MembershipStates', async () => {
 		const allMembershipStates: MembershipState[] =
-			await membershipController.findAll();
+			await membershipStateController.findAll();
 		expect(allMembershipStates).toHaveLength(3);
 		for (let index = 0; index < allMembershipStates.length; index++) {
 			expect(allMembershipStates).toEqual(
@@ -67,9 +69,8 @@ describe('MembershipStateController', () => {
 
 	it('Get a specific membership-state', async () => {
 		const specificMembershipState = 3;
-		const membershipState: MembershipState = await membershipController.findOne(
-			specificMembershipState,
-		);
+		const membershipState: MembershipState =
+			await membershipStateController.findOne(specificMembershipState);
 		expect(membershipState.id).toBe(specificMembershipState);
 	});
 });

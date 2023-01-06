@@ -16,7 +16,7 @@ export class ChatMembershipController {
 	constructor(private readonly chatMembershipService: ChatMembershipService) {}
 
 	@Post()
-	create(@Body() createChatMembershipDto: CreateChatMembershipDto) {
+	create(@Body() createChatMembershipDto: {}) {
 		return this.chatMembershipService.create(createChatMembershipDto);
 	}
 
