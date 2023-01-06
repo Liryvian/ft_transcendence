@@ -4,6 +4,7 @@ import {
 	ClassSerializerInterceptor,
 	Controller,
 	Get,
+	NotFoundException,
 	Param,
 	Patch,
 	Post,
@@ -15,7 +16,12 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
+import {
+	InsertResult,
+	InstanceChecker,
+	QueryFailedError,
+	UpdateResult,
+} from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AuthService } from '../auth/auth.service';
@@ -66,22 +72,24 @@ export class UserController {
 
 	@UseGuards(AuthGuard)
 	@Patch(':id')
-	async update(
-		@Param('id') id: number,
-		@Body() updateUserDto: UpdateUserDto,
-	): Promise<UpdateResult> {
+	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
-			const updateResult = await this.userService.update(id, updateUserDto);
+			const updateResult: UpdateResult = await this.userService.update(
+				id,
+				updateUserDto,
+			);
 			return updateResult;
 		} catch (e) {
 			if (e instanceof QueryFailedError) {
 				throw new BadRequestException('Please pick a different username');
-			} else {
-				console.log(e);
-				throw new BadRequestException(
-					'Something went wrong on updating the user',
-				);
 			}
+			if (e instanceof NotFoundException) {
+				throw e;
+			}
+			console.log(e);
+			throw new BadRequestException(
+				'Something went wrong on updating the user',
+			);
 		}
 	}
 }

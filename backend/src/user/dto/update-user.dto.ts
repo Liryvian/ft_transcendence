@@ -1,18 +1,21 @@
 import { Optional } from '@nestjs/common';
-import { IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsOptional, MinLength, ValidateIf } from 'class-validator';
 
 export class UpdateUserDto {
 	// @ValidateIf((o) => {
 	// 	return o.hasOwnProperty('name');
 	// })
-	// @IsNotEmpty()
+	// @IsOptional()
+	@Optional()
+	@IsNotEmpty()
+	@MinLength(1)
 	name?: string;
 
 	// @ValidateIf((o) => {
 	// 	return o.hasOwnProperty('password');
 	// })
-	// @IsNotEmpty()
 	// @Optional()
 	// @IsOptional()
+	// @IsNotEmpty()
 	password?: string;
 }

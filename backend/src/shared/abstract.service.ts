@@ -23,8 +23,16 @@ export abstract class AbstractService<T> {
 	}
 
 	async update(id: number, data): Promise<UpdateResult> {
-		await this.findOne({ where: { id } });
-		return this.repository.update(id, data);
+		const updateResult: UpdateResult = await this.repository.update(id, data);
+		if (updateResult.affected === 0) {
+			throw new NotFoundException();
+		}
+		return updateResult;
+		const property = await this.findOne({ where: { id } });
+		return this.repository.save({
+			...property,
+			...data,
+		});
 	}
 
 	async remove(id: number): Promise<DeleteResult> {

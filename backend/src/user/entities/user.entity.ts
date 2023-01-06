@@ -2,37 +2,33 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, MinLength } from 'class-validator';
 
 @Entity('users')
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
+	@Column({ default: true })
 	is_intra: boolean;
 
-	@Column({ unique: true })
-	@IsString()
+	@Column({ unique: true, nullable: false })
 	@IsNotEmpty()
+	@MinLength(1)
 	name: string;
 
-	@Column()
-	@Exclude()
-	@IsString()
+	@Column({ nullable: false })
 	@IsNotEmpty()
+	@Exclude()
 	password: string;
 
 	@CreateDateColumn()
-	@IsDate()
 	created_at: Date;
 
 	@UpdateDateColumn()
-	@IsDate()
 	updated_at: Date;
 }
