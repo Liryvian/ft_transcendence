@@ -1,11 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DeleteResult, InsertResult, Repository, UpdateResult } from 'typeorm';
+import {
+	DeleteResult,
+	FindManyOptions,
+	FindOneOptions,
+	InsertResult,
+	Repository,
+	UpdateResult,
+} from 'typeorm';
 
 @Injectable()
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async findAll(condition?): Promise<T[]> {
+	async findAll(condition?: FindManyOptions): Promise<T[]> {
 		return this.repository.find(condition);
 	}
 
@@ -13,7 +20,7 @@ export abstract class AbstractService<T> {
 		return this.repository.insert(data);
 	}
 
-	async findOne(condition): Promise<T> {
+	async findOne(condition: FindOneOptions): Promise<T> {
 		try {
 			const foundRepoItem = await this.repository.findOneOrFail(condition);
 			return foundRepoItem;
