@@ -47,10 +47,10 @@ describe('chatroom e2e', () => {
 	});
 
 	afterAll(async () => {
-		const allGames: Chatroom[] = await chatroomController.findAll();
+		const chatrooms: Chatroom[] = await chatroomController.findAll();
 
-		for (let index = 0; index < allGames.length; index++) {
-			await chatroomController.remove(allGames[index].id);
+		for (let index = 0; index < chatrooms.length; index++) {
+			await chatroomController.remove(chatrooms[index].id);
 		}
 		await app.close();
 	});
