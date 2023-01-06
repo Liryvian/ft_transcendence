@@ -3,9 +3,6 @@ import { CreateMessageDto } from './create-message.dto';
 import { IsNotEmpty } from 'class-validator';
 
 export class UpdateMessageDto extends PartialType(CreateMessageDto) {
-	@IsNotEmpty()
-	timestamp: number;
-
 	// @IsNotEmpty()
 	// sender_id: User;
 

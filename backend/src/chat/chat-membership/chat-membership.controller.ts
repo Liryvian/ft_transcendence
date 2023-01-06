@@ -11,7 +11,7 @@ import { ChatMembershipService } from './chat-membership.service';
 import { CreateChatMembershipDto } from './dto/create-chat-membership.dto';
 import { UpdateChatMembershipDto } from './dto/update-chat-membership.dto';
 
-@Controller('chat-membership')
+@Controller('chat-memberships')
 export class ChatMembershipController {
 	constructor(private readonly chatMembershipService: ChatMembershipService) {}
 

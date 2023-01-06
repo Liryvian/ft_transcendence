@@ -1,20 +1,86 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { MessageController } from './message.controller';
-// import { MessageService } from './message.service';
-//
-// describe('MessageController', () => {
-//   let controller: MessageController;
-//
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       controllers: [MessageController],
-//       providers: [MessageService],
-//     }).compile();
-//
-//     controller = module.get<MessageController>(MessageController);
-//   });
-//
-//   it('should be defined', () => {
-//     expect(controller).toBeDefined();
-//   });
-// });
+import { Test, TestingModule } from '@nestjs/testing';
+import { MessageController } from './message.controller';
+import { MessageService } from './message.service';
+import { ChatroomService } from '../chatroom/chatroom.service';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { Chatroom } from '../chatroom/entities/chatroom.entity';
+import { Message } from './entities/message.entity';
+import { ChatroomController } from '../chatroom/chatroom.controller';
+import { CreateChatroomDto } from '../chatroom/dto/create-chatroom.dto';
+import { CreateMessageDto } from './dto/create-message.dto';
+
+describe('MessageController', () => {
+	let messageController: MessageController;
+	let chatroomController: ChatroomController;
+	let messageService: MessageService;
+	let chatroomService: ChatroomService;
+	let testingModule: TestingModule;
+
+	const testChatrooms: CreateChatroomDto[] = [
+		{ name: 'A', visibility: 'Not', password: 'A' },
+		{ name: 'B', visibility: 'Yes', password: 'B' },
+	];
+
+	const testMessages: CreateMessageDto[] = [
+		{ chat_id: 1, content: 'hello' },
+		{ chat_id: 1, content: 'world!' },
+	];
+
+	beforeAll(async () => {
+		testingModule = await Test.createTestingModule({
+			imports: [
+				ConfigModule.forRoot({ isGlobal: true }),
+				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+				TypeOrmModule.forFeature([Message, Chatroom]),
+			],
+			controllers: [MessageController, ChatroomController],
+			providers: [MessageService, ChatroomService],
+		}).compile();
+
+		messageController = testingModule.get<MessageController>(MessageController);
+		chatroomController =
+			testingModule.get<ChatroomController>(ChatroomController);
+		messageService = testingModule.get<MessageService>(MessageService);
+		chatroomService = testingModule.get<ChatroomService>(ChatroomService);
+
+		// create one or two chatrooms that will exist till the "end"
+		//// create one or two users that will exist till the "end" (once ready)
+
+		for (const chatroom in testChatrooms) {
+			await chatroomController.create(testChatrooms[chatroom]);
+		}
+
+		for (const message in testMessages) {
+			await messageController.create(testMessages[message]);
+		}
+	});
+
+	it('should be defined', () => {
+		expect(messageController).toBeDefined();
+		expect(messageService).toBeDefined();
+	});
+
+	it('Check messages', async () => {
+		const allMessages: Message[] = await messageController.findAll();
+		expect(allMessages).toHaveLength(2);
+		console.log(allMessages);
+		console.table(allMessages);
+		for (let index = 0; index < allMessages.length; index++) {
+			expect(allMessages).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: expect.any(Number),
+						chat_id: expect.objectContaining({
+							id: testMessages[index].chat_id,
+						}),
+						created_at: expect.any(Date),
+						updated_at: expect.any(Date),
+						content: testMessages[index].content,
+					}),
+				]),
+			);
+		}
+	});
+});

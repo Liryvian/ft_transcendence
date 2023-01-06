@@ -11,7 +11,7 @@ import { MembershipStateService } from './membership-state.service';
 import { CreateMembershipStateDto } from './dto/create-membership-state.dto';
 import { UpdateMembershipStateDto } from './dto/update-membership-state.dto';
 
-@Controller('membership-state')
+@Controller('membership-states')
 export class MembershipStateController {
 	constructor(
 		private readonly membershipStateService: MembershipStateService,

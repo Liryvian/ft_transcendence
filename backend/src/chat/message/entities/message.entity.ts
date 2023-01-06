@@ -1,9 +1,10 @@
 import {
 	Column,
+	CreateDateColumn,
 	Entity,
-	JoinColumn,
-	OneToOne,
+	JoinColumn, ManyToOne,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import { Chatroom } from '../../chatroom/entities/chatroom.entity';
 
@@ -12,14 +13,17 @@ export class Message {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
-	timestamp: number;
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 
 	// @OneToOne(type => User, user => user.id) // can be added when user exists
 	// @JoinColumn({name: 'sender_id'})
 	// sender_id: User;
 
-	@OneToOne((type) => Chatroom, (chatRoom) => chatRoom.id)
+	@ManyToOne((type) => Chatroom, (chatRoom) => chatRoom.id)
 	@JoinColumn({ name: 'chat_id' })
 	chat_id: Chatroom;
 

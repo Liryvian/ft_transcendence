@@ -11,7 +11,7 @@ import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 
-@Controller('message')
+@Controller('messages')
 export class MessageController {
 	constructor(private readonly messageService: MessageService) {}
 
@@ -22,12 +22,17 @@ export class MessageController {
 
 	@Get()
 	findAll() {
-		return this.messageService.findAll();
+		return this.messageService.findAll({
+			relations: { chat_id: true },
+		});
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.messageService.findOne({ where: { id } });
+		return this.messageService.findOne({
+			where: { id },
+			relations: { chat_id: true },
+		});
 	}
 
 	@Patch(':id')
