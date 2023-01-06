@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('animals')
 export class AnimalEntity {
@@ -7,4 +7,7 @@ export class AnimalEntity {
 
 	@Column({ unique: true })
 	name: string;
+
+	@ManyToOne(() => AnimalEntity, (o) => o.id, { cascade: true })
+	parent: number;
 }

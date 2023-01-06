@@ -1,4 +1,4 @@
-
 export class UpdateAnimalDto {
-    name: string;
+	name: string;
+	parent?: number;
 }

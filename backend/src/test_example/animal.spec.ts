@@ -6,7 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
 import { NotFoundException } from '@nestjs/common';
-import { InsertResult, ObjectLiteral } from 'typeorm';
+import { ObjectLiteral } from 'typeorm';
+import { CreateAnimalDto } from './dto/create-animal.dto';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
@@ -62,15 +63,15 @@ describe('AnimalController', () => {
 		}
 	});
 
-	it('should get a specific animal (getOne)', async () => {
+	it('should get a specific animal (findOne)', async () => {
 		const animalToGet: number = 1;
-		const animal: AnimalEntity = await controller.getOne(animalToGet);
+		const animal: AnimalEntity = await controller.findOne(animalToGet);
 		expect(animal.id).toBe(animalToGet);
 	});
 
 	it('should throw a NotFoundError when animal doesnt exist', async () => {
 		const animalToGet: number = 10000;
-		await expect(controller.getOne(animalToGet)).rejects.toThrow(
+		await expect(controller.findOne(animalToGet)).rejects.toThrow(
 			NotFoundException,
 		);
 	});
@@ -82,7 +83,7 @@ describe('AnimalController', () => {
 		});
 
 		expect(insertResult[0].id).toBeGreaterThan(0);
-		const getById: AnimalEntity = await controller.getOne(insertResult[0].id);
+		const getById: AnimalEntity = await controller.findOne(insertResult[0].id);
 
 		expect(getById.name).toBe(newAnimal);
 		expect(typeof getById.id).toBe('number');
@@ -93,7 +94,7 @@ describe('AnimalController', () => {
 		const idOfAnimalToUpdate: number = 1;
 
 		await controller.update(idOfAnimalToUpdate, { name: updatedAnimalName });
-		expect((await controller.getOne(idOfAnimalToUpdate)).name).toBe(
+		expect((await controller.findOne(idOfAnimalToUpdate)).name).toBe(
 			updatedAnimalName,
 		);
 	});
@@ -102,9 +103,56 @@ describe('AnimalController', () => {
 		let repoOfAnimals: AnimalEntity[] = await controller.findAll();
 
 		for (let i = 0; i < repoOfAnimals.length; i++) {
-			await controller.remove(i + 1);
+			await controller.remove(repoOfAnimals[i].id);
 		}
 		let shouldBeEmptyArray: AnimalEntity[] = await controller.findAll();
 		expect(shouldBeEmptyArray).toHaveLength(0);
+	});
+
+	it('should show relationships with the findAll method', async () => {
+		const parent: ObjectLiteral = await controller.create({ name: 'Wildsbok' });
+		const child: ObjectLiteral = await controller.create({
+			name: 'Klipspringer',
+			parent: parent[0].id,
+		});
+
+		const allAnimalsWithRelations: AnimalEntity[] = await controller.findAll();
+		expect(allAnimalsWithRelations).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					parent: expect.objectContaining({
+						id: parent[0].id,
+					}),
+				}),
+			]),
+		);
+		controller.remove(child[0].id);
+		controller.remove(parent[0].id);
+	});
+
+	it('should create and delete with array of animals', async () => {
+		const arrayOfAnimals: CreateAnimalDto[] = [
+			{ name: 'Dolfyn' },
+			{ name: 'Erdvark' },
+			{ name: 'Luidier' },
+		];
+		let result: ObjectLiteral;
+		expect((result = await controller.create(arrayOfAnimals))).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ id: expect.any(Number) }),
+				expect.objectContaining({ id: expect.any(Number) }),
+				expect.objectContaining({ id: expect.any(Number) }),
+			]),
+		);
+		await expect(
+			controller.remove(result.map((o: ObjectLiteral) => o.id)),
+		).resolves.toEqual(
+			expect.objectContaining({
+				affected: arrayOfAnimals.length,
+			}),
+		);
+		await expect(controller.findOne(result[0].id)).rejects.toThrow('Not Found');
+		await expect(controller.findOne(result[1].id)).rejects.toThrow('Not Found');
+		await expect(controller.findOne(result[2].id)).rejects.toThrow('Not Found');
 	});
 });

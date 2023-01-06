@@ -20,7 +20,7 @@ export class AnimalController {
 
 	//  example of catching the typeorm error and returning a custom response
 	@Post()
-	async create(@Body() createAnimalDto: CreateAnimalDto) {
+	async create(@Body() createAnimalDto: CreateAnimalDto | CreateAnimalDto[]) {
 		try {
 			const insertedAnimal: InsertResult = await this.animalService.create(
 				createAnimalDto,
@@ -33,11 +33,11 @@ export class AnimalController {
 
 	@Get()
 	async findAll() {
-		return this.animalService.findAll();
+		return this.animalService.findAll({ relations: { parent: true } });
 	}
 
 	@Get(':id')
-	async getOne(@Param('id') id: number) {
+	async findOne(@Param('id') id: number) {
 		return this.animalService.findOne({ where: { id } });
 	}
 
@@ -50,7 +50,7 @@ export class AnimalController {
 	}
 
 	@Delete(':id')
-	async remove(@Param('id') id: number): Promise<DeleteResult> {
+	async remove(@Param('id') id: number | number[]): Promise<DeleteResult> {
 		return this.animalService.remove(id);
 	}
 }
