@@ -9,8 +9,8 @@ import { TypeOrmConfigService } from './typeorm/typeorm.service';
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
-			TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-		AnimalModule
+		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+		AnimalModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
