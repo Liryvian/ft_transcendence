@@ -62,7 +62,7 @@ describe('MessageController', () => {
 		expect(messageService).toBeDefined();
 	});
 
-	it('Check messages', async () => {
+	it('Check if chat_id and other columns exists in messages', async () => {
 		const allMessages: Message[] = await messageController.findAll();
 		expect(allMessages).toHaveLength(2);
 		console.log(allMessages);
@@ -82,5 +82,11 @@ describe('MessageController', () => {
 				]),
 			);
 		}
+	});
+
+	it('Get a specific message', async () => {
+		const specificMessage = 1;
+		const message: Message = await messageController.findOne(specificMessage);
+		expect(message.id).toBe(specificMessage);
 	});
 });

@@ -67,12 +67,6 @@ describe('ChatroomController', () => {
 		const chatroom: Chatroom = await controller.findOne(specificChatroom);
 		expect(chatroom.id).toBe(specificChatroom);
 	});
-
-	// it('Get a specific chatroom', async () => {
-	// 	const specificChatroom = 2;
-	// 	const chatroom: Chatroom = await controller.findOne(specificChatroom);
-	// 	expect(chatroom.id).toBe(specificChatroom);
-	// });
 });
 
 // cosnt mockCR: createChatDTo = [{name: "hallo", visibility:  "Private", password: "1234"}, {data, data, data}, {}]
