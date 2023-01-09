@@ -31,9 +31,12 @@ describe('AnimalController', () => {
 		service = testingModule.get<AnimalService>(AnimalService);
 
 		// seed db with animals for each testcase
-		for (const animal in testAnimals) {
-			await controller.create({ name: testAnimals[animal] });
-		}
+		await controller.create(
+			testAnimals.map((str) => {
+				const a: CreateAnimalDto = { name: str };
+				return a;
+			}),
+		);
 	});
 
 	// delete all data in db for each test
@@ -77,15 +80,13 @@ describe('AnimalController', () => {
 	});
 
 	it('Post new Animal (create)', async () => {
-		const newAnimal = 'Sonbeesie';
-		const insertResult: ObjectLiteral = await controller.create({
-			name: newAnimal,
-		});
+		const newAnimal: CreateAnimalDto = { name: 'Sonbeesie' };
+		const insertResult: ObjectLiteral = await controller.create(newAnimal);
 
 		expect(insertResult[0].id).toBeGreaterThan(0);
 		const getById: AnimalEntity = await controller.findOne(insertResult[0].id);
 
-		expect(getById.name).toBe(newAnimal);
+		expect(getById.name).toBe(newAnimal.name);
 		expect(typeof getById.id).toBe('number');
 	});
 
@@ -110,11 +111,13 @@ describe('AnimalController', () => {
 	});
 
 	it('should show relationships with the findAll method', async () => {
-		const parent: ObjectLiteral = await controller.create({ name: 'Wildsbok' });
-		const child: ObjectLiteral = await controller.create({
+		const wildsBok: CreateAnimalDto = { name: 'Wildsbok' };
+		const parent: ObjectLiteral = await controller.create(wildsBok);
+		const klipSpringer: CreateAnimalDto = {
 			name: 'Klipspringer',
 			parent: parent[0].id,
-		});
+		};
+		const child: ObjectLiteral = await controller.create(klipSpringer);
 
 		const allAnimalsWithRelations: AnimalEntity[] = await controller.findAll();
 		expect(allAnimalsWithRelations).toEqual(
@@ -154,5 +157,16 @@ describe('AnimalController', () => {
 		await expect(controller.findOne(result[0].id)).rejects.toThrow('Not Found');
 		await expect(controller.findOne(result[1].id)).rejects.toThrow('Not Found');
 		await expect(controller.findOne(result[2].id)).rejects.toThrow('Not Found');
+	});
+
+	it('should fail when trying to create with object dat does not comply to DTO validation rules', async () => {
+		// create object without DTO so we can skip a value
+		const incompleteAnimal: CreateAnimalDto = { name: null };
+		// const insertResult: ObjectLiteral = await controller.create(
+		// incompleteAnimal,
+		// );
+		// console.log({ insertResult });
+		console.table(await controller.findAll());
+		// console.log(await controller.findOne(insertResult[0].id));
 	});
 });

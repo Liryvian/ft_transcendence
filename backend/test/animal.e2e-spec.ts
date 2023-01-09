@@ -27,7 +27,12 @@ describe('AnimalController (e2e)', () => {
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
-		app.useGlobalPipes(new ValidationPipe());
+		app.useGlobalPipes(
+			new ValidationPipe({
+				whitelist: true,
+				skipMissingProperties: true,
+			}),
+		);
 		await app.init();
 
 		animalController = moduleFixture.get<AnimalController>(AnimalController);
