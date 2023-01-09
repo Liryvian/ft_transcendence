@@ -10,6 +10,7 @@ import { MembershipStateModule } from './chat/membership-state/membership-state.
 import { ChatroomModule } from './chat/chatroom/chatroom.module';
 import { MessageModule } from './chat/message/message.module';
 import { UserModule } from './user/user.module';
+import { RoleModule } from './chat/role/role.module';
 
 @Module({
 	imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
 		ChatroomModule,
 		MessageModule,
 		UserModule,
+		RoleModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
