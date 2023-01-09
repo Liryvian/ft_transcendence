@@ -2,6 +2,8 @@ import { Entity, OneToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { MembershipState } from '../../membership-state/entities/membership-state.entity';
 import { Chatroom } from '../../chatroom/entities/chatroom.entity';
 
+// TO DO! protect from added same user multiple times in the same chatroom!!!!
+
 @Entity('chat_memberships')
 export class ChatMembership {
 	@PrimaryGeneratedColumn()
@@ -13,7 +15,7 @@ export class ChatMembership {
 
 	@OneToOne((type) => Chatroom, (chatroom) => chatroom.id)
 	@JoinColumn({ name: 'chat_id' })
-	chat_id: Chatroom;
+	chat_id: Chatroom ;
 
 	@OneToOne((type) => MembershipState, (membershipState) => membershipState.id)
 	@JoinColumn({ name: 'membership_id' })
