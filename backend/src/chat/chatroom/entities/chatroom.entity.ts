@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {User} from "../../../user/entities/user.entity";
 
 @Entity('chatrooms')
 export class Chatroom {
@@ -7,6 +8,10 @@ export class Chatroom {
 
 	@Column()
 	name: string;
+
+	@ManyToMany((type) => User, (user) => user.id)
+	@JoinColumn({ name: 'user_id' })
+	user_id: string;
 
 	@Column()
 	visibility: string;
