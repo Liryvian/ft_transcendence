@@ -5,9 +5,15 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
-import { NotFoundException } from '@nestjs/common';
+import {
+	ArgumentMetadata,
+	NotFoundException,
+	ValidationPipe,
+} from '@nestjs/common';
 import { ObjectLiteral } from 'typeorm';
 import { CreateAnimalDto } from './dto/create-animal.dto';
+import { validate } from 'class-validator';
+import { globalValidationPipeOptions } from '../main.validationpipe';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
@@ -31,10 +37,9 @@ describe('AnimalController', () => {
 		service = testingModule.get<AnimalService>(AnimalService);
 
 		// seed db with animals for each testcase
-		await controller.create(
+		await controller.createBulk(
 			testAnimals.map((str) => {
-				const a: CreateAnimalDto = { name: str };
-				return a;
+				return { name: str };
 			}),
 		);
 	});
@@ -140,7 +145,7 @@ describe('AnimalController', () => {
 			{ name: 'Luidier' },
 		];
 		let result: ObjectLiteral;
-		expect((result = await controller.create(arrayOfAnimals))).toEqual(
+		expect((result = await controller.createBulk(arrayOfAnimals))).toEqual(
 			expect.arrayContaining([
 				expect.objectContaining({ id: expect.any(Number) }),
 				expect.objectContaining({ id: expect.any(Number) }),
@@ -159,14 +164,27 @@ describe('AnimalController', () => {
 		await expect(controller.findOne(result[2].id)).rejects.toThrow('Not Found');
 	});
 
-	it('should fail when trying to create with object dat does not comply to DTO validation rules', async () => {
-		// create object without DTO so we can skip a value
-		const incompleteAnimal: CreateAnimalDto = { name: null };
-		// const insertResult: ObjectLiteral = await controller.create(
-		// incompleteAnimal,
-		// );
-		// console.log({ insertResult });
-		console.table(await controller.findAll());
-		// console.log(await controller.findOne(insertResult[0].id));
+	describe('CreateAnimalDto', () => {
+		it('should strip invalid values', async () => {
+			const validator = new ValidationPipe(globalValidationPipeOptions());
+			const testObject = {
+				name: '',
+				foo: 'br',
+			};
+			const meta: ArgumentMetadata = {
+				type: 'body',
+				metatype: CreateAnimalDto,
+				data: 'name',
+			};
+			console.log(validator.transform(testObject, meta));
+			console.log(await validator.transform(testObject, meta));
+		});
 	});
+
+	// it('should fail when trying to create with object dat does not comply to DTO validation rules', async () => {
+	// 	// create object without DTO so we can skip a value
+	// 	const incompleteAnimal: CreateAnimalDto = { name: null };
+	// 	console.log(await controller.create(incompleteAnimal));
+	// 	await expect(controller.create(incompleteAnimal)).rejects.toThrow('');
+	// });
 });

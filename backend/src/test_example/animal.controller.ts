@@ -8,6 +8,7 @@ import {
 	Delete,
 	HttpException,
 	HttpStatus,
+	ParseArrayPipe,
 } from '@nestjs/common';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
@@ -20,12 +21,36 @@ export class AnimalController {
 
 	//  example of catching the typeorm error and returning a custom response
 	@Post()
-	async create(@Body() createAnimalDto: CreateAnimalDto | CreateAnimalDto[]) {
+	async create(@Body() createAnimalDto: CreateAnimalDto) {
 		try {
 			const insertedAnimal: InsertResult = await this.animalService.create(
 				createAnimalDto,
 			);
 			return insertedAnimal.identifiers;
+		} catch (e) {
+			throw new HttpException('Animal Already Exists', HttpStatus.CONFLICT);
+		}
+	}
+
+	@Post('bulk')
+	async createBulk(
+		@Body(
+			new ParseArrayPipe({
+				items: CreateAnimalDto,
+				whitelist: true,
+				forbidNonWhitelisted: true,
+			}),
+		)
+		createAnimalDtos: CreateAnimalDto[],
+	) {
+		if (createAnimalDtos.length === 0) {
+			return [];
+		}
+		try {
+			const insertedAnimals: InsertResult = await this.animalService.create(
+				createAnimalDtos,
+			);
+			return insertedAnimals.identifiers;
 		} catch (e) {
 			throw new HttpException('Animal Already Exists', HttpStatus.CONFLICT);
 		}

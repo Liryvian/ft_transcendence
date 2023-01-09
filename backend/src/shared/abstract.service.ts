@@ -10,14 +10,15 @@ import {
 
 @Injectable()
 export abstract class AbstractService<T> {
-	protected constructor(protected readonly repository: Repository<T>) {}
+	protected constructor(protected readonly repository: Repository<T, CreateDto>) {}
 
 	async findAll(condition?: FindManyOptions): Promise<T[]> {
 		return this.repository.find(condition);
 	}
 
 	async create(data): Promise<InsertResult> {
-		return this.repository.insert(data);
+		const dto: CreateDto = data;
+		return this.repository.insert(dto);
 	}
 
 	async findOne(condition: FindOneOptions): Promise<T> {

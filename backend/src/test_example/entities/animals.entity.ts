@@ -7,7 +7,7 @@ export class AnimalEntity {
 	id: number;
 
 	@Column({ unique: true })
-	// @IsNotEmpty()
+	@IsNotEmpty()
 	name: string;
 
 	@ManyToOne(() => AnimalEntity, (o) => o.id, { cascade: true })
