@@ -6,10 +6,10 @@ import {Chatroom} from "../../chat/chatroom/entities/chatroom.entity";
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
-
-    @ManyToMany((type) => Chatroom, (chatroom) => chatroom.id)
-    @JoinColumn({ name: 'chatroom_id' })
-    chatroom_id: number;
+    //
+    // @ManyToMany((type) => Chatroom, (chatroom) => chatroom.id)
+    // @JoinColumn({ name: 'chatroom_id' })
+    // chatroom_id: number;
 
     @Column()
 	name: string;

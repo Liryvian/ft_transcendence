@@ -9,9 +9,9 @@ export class Chatroom {
 	@Column()
 	name: string;
 
-	@ManyToMany((type) => User, (user) => user.id)
-	@JoinColumn({ name: 'user_id' })
-	user_id: string;
+	// @ManyToMany((type) => User, (user) => user.id)
+	// @JoinColumn({ name: 'user_id' })
+	// user_id: string;
 
 	@Column()
 	visibility: string;
