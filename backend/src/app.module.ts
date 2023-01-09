@@ -9,6 +9,7 @@ import { ChatMembershipModule } from './chat/chat-membership/chat-membership.mod
 import { MembershipStateModule } from './chat/membership-state/membership-state.module';
 import { ChatroomModule } from './chat/chatroom/chatroom.module';
 import { MessageModule } from './chat/message/message.module';
+import { UserModule } from './user/user.module';
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { MessageModule } from './chat/message/message.module';
 		MembershipStateModule,
 		ChatroomModule,
 		MessageModule,
+		UserModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
