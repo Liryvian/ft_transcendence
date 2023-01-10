@@ -1,5 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('animals')
 export class AnimalEntity {

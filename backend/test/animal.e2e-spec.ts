@@ -1,10 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-	Controller,
-	HttpStatus,
-	INestApplication,
-	ValidationPipe,
-} from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { CreateAnimalDto } from '../src/test_example/dto/create-animal.dto';
 import { AnimalController } from '../src/test_example/animal.controller';

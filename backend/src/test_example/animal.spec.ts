@@ -7,7 +7,6 @@ import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
 import {
 	ArgumentMetadata,
-	BadRequestException,
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
