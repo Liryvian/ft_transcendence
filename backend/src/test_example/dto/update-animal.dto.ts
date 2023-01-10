@@ -1,4 +1,6 @@
+import { IsNotEmpty } from 'class-validator';
 
 export class UpdateAnimalDto {
-    name: string;
+	@IsNotEmpty()
+	name: string;
 }

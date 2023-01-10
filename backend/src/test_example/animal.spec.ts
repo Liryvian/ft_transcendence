@@ -5,8 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
-import { NotFoundException } from '@nestjs/common';
-import { InsertResult, ObjectLiteral } from 'typeorm';
+import {
+	ArgumentMetadata,
+	NotFoundException,
+	ValidationPipe,
+} from '@nestjs/common';
+import { ObjectLiteral } from 'typeorm';
+import { CreateAnimalDto } from './dto/create-animal.dto';
+import { globalValidationPipeOptions } from '../main.validationpipe';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
@@ -30,16 +36,19 @@ describe('AnimalController', () => {
 		service = testingModule.get<AnimalService>(AnimalService);
 
 		// seed db with animals for each testcase
-		for (const animal in testAnimals) {
-			await controller.create({ name: testAnimals[animal] });
-		}
+		await controller.createBulk(
+			testAnimals.map((str) => {
+				return <CreateAnimalDto>{ name: str };
+			}),
+		);
 	});
 
 	// delete all data in db for each test
 	afterAll(async () => {
 		const repoOfAnimals: AnimalEntity[] = await controller.findAll();
-		for (let i = 0; i < repoOfAnimals.length; i++) {
-			await controller.remove(i + 1);
+		if (repoOfAnimals.length > 0) {
+			const array = repoOfAnimals.map((a) => a.id);
+			await service.remove(array);
 		}
 	});
 
@@ -62,29 +71,27 @@ describe('AnimalController', () => {
 		}
 	});
 
-	it('should get a specific animal (getOne)', async () => {
+	it('should get a specific animal (findOne)', async () => {
 		const animalToGet: number = 1;
-		const animal: AnimalEntity = await controller.getOne(animalToGet);
+		const animal: AnimalEntity = await controller.findOne(animalToGet);
 		expect(animal.id).toBe(animalToGet);
 	});
 
 	it('should throw a NotFoundError when animal doesnt exist', async () => {
 		const animalToGet: number = 10000;
-		await expect(controller.getOne(animalToGet)).rejects.toThrow(
+		await expect(controller.findOne(animalToGet)).rejects.toThrow(
 			NotFoundException,
 		);
 	});
 
 	it('Post new Animal (create)', async () => {
-		const newAnimal = 'Sonbeesie';
-		const insertResult: ObjectLiteral = await controller.create({
-			name: newAnimal,
-		});
+		const newAnimal: CreateAnimalDto = { name: 'Sonbeesie' };
+		const insertResult: ObjectLiteral = await controller.create(newAnimal);
 
 		expect(insertResult[0].id).toBeGreaterThan(0);
-		const getById: AnimalEntity = await controller.getOne(insertResult[0].id);
+		const getById: AnimalEntity = await controller.findOne(insertResult[0].id);
 
-		expect(getById.name).toBe(newAnimal);
+		expect(getById.name).toBe(newAnimal.name);
 		expect(typeof getById.id).toBe('number');
 	});
 
@@ -93,8 +100,14 @@ describe('AnimalController', () => {
 		const idOfAnimalToUpdate: number = 1;
 
 		await controller.update(idOfAnimalToUpdate, { name: updatedAnimalName });
-		expect((await controller.getOne(idOfAnimalToUpdate)).name).toBe(
+		expect((await controller.findOne(idOfAnimalToUpdate)).name).toBe(
 			updatedAnimalName,
+		);
+	});
+
+	it('Should throw a not found exception if you update a non-existent item', async () => {
+		await expect(controller.update(2342, { name: 'fso' })).rejects.toThrow(
+			NotFoundException,
 		);
 	});
 
@@ -102,9 +115,60 @@ describe('AnimalController', () => {
 		let repoOfAnimals: AnimalEntity[] = await controller.findAll();
 
 		for (let i = 0; i < repoOfAnimals.length; i++) {
-			await controller.remove(i + 1);
+			await controller.remove(repoOfAnimals[i].id);
 		}
 		let shouldBeEmptyArray: AnimalEntity[] = await controller.findAll();
 		expect(shouldBeEmptyArray).toHaveLength(0);
+	});
+
+	describe('CreateAnimalDto', () => {
+		it('should strip invalid values', async () => {
+			// setup the validation pipe to only strip values
+			const validator = new ValidationPipe({
+				whitelist: true,
+				transform: true,
+			});
+			const testObject = {
+				name: 'name',
+				foo: 'br',
+			};
+			const meta: ArgumentMetadata = {
+				type: 'body',
+				metatype: CreateAnimalDto,
+				data: 'name',
+			};
+			const strippedObject = await validator.transform(testObject, meta);
+
+			expect(strippedObject).toEqual(
+				expect.objectContaining({
+					name: 'name',
+				}),
+			);
+			expect(strippedObject).toEqual(
+				expect.not.objectContaining({ foo: expect.any(String) }),
+			);
+		});
+
+		it('should throw an error on missing required property', async () => {
+			const validator = new ValidationPipe(globalValidationPipeOptions());
+			const testObject = {};
+			const meta: ArgumentMetadata = {
+				type: 'body',
+				metatype: CreateAnimalDto,
+			};
+			try {
+				const result = await validator.transform(testObject, meta);
+			} catch (e) {
+				expect(e.response).toEqual(
+					expect.objectContaining({
+						statusCode: 400,
+						message: expect.arrayContaining([
+							expect.stringContaining('name should not be empty'),
+						]),
+						error: 'Bad Request',
+					}),
+				);
+			}
+		});
 	});
 });
