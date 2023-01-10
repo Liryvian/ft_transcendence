@@ -5,6 +5,7 @@ import { AnimalModule } from './test_example/animal.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
+import { GameModule } from './pong/game/game.module';
 
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -18,6 +19,7 @@ import { SharedModule } from './shared/shared.module';
 		AuthModule,
 		SharedModule,
 		AnimalModule,
+		GameModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
