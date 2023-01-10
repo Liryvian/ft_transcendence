@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { MatchmakingRequestService } from './matchmaking-request.service';
 import { CreateMatchmakingRequestDto } from './dto/create-matchmaking-request.dto';
-import { UpdateMatchmakingRequestDto } from './dto/update-matchmaking-request.dto';
 
 @Controller('matchmaking-requests')
 export class MatchmakingRequestController {
