@@ -26,20 +26,20 @@ export class ChatuserRoleController {
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: string) {
-		return this.chatuserRoleService.findOne(+id);
+	findOne(@Param('id') id: number) {
+		return this.chatuserRoleService.findOne({ where: { id } });
 	}
 
 	@Patch(':id')
 	update(
-		@Param('id') id: string,
+		@Param('id') id: number,
 		@Body() updateChatuserRoleDto: UpdateChatuserRoleDto,
 	) {
 		return this.chatuserRoleService.update(+id, updateChatuserRoleDto);
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: string) {
+	remove(@Param('id') id: number) {
 		return this.chatuserRoleService.remove(+id);
 	}
 }

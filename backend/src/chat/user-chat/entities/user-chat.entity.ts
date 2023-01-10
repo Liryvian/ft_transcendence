@@ -22,15 +22,15 @@ export class UserChat {
 	chatroom_id: number;
 
 	@ManyToOne(() => User, (user) => user.id, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'NO ACTION',
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
 	users: User[];
 
 	@ManyToOne(() => Chatroom, (chatroom) => chatroom.id, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'NO ACTION',
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'chatroom_id', referencedColumnName: 'id' }])
 	courses: Chatroom[];
