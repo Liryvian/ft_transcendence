@@ -32,6 +32,10 @@ export class AnimalController {
 		}
 	}
 
+	/*
+		Example implementation of posting an array of entities
+		including validation of those entities
+	*/
 	@Post('bulk')
 	async createBulk(
 		@Body(
@@ -58,7 +62,7 @@ export class AnimalController {
 
 	@Get()
 	async findAll() {
-		return this.animalService.findAll({ relations: { parent: true } });
+		return this.animalService.findAll();
 	}
 
 	@Get(':id')
@@ -75,7 +79,25 @@ export class AnimalController {
 	}
 
 	@Delete(':id')
-	async remove(@Param('id') id: number | number[]): Promise<DeleteResult> {
+	async remove(@Param('id') id: number): Promise<DeleteResult> {
 		return this.animalService.remove(id);
+	}
+
+	/*
+		example implementation of removing with an array of ids
+	*/
+	@Delete('bulk/:ids')
+	async removeBulk(
+		@Param(
+			new ParseArrayPipe({
+				items: Number,
+			}),
+		)
+		ids: number[],
+	): Promise<DeleteResult> {
+		if (ids.length === 0) {
+			return new DeleteResult();
+		}
+		return this.animalService.remove(ids);
 	}
 }
