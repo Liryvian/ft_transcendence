@@ -7,7 +7,7 @@ import {
 	ValidatorConstraintInterface,
 } from 'class-validator';
 
-export const DoesNotMatch = <T>(
+export const DoesMatch = <T>(
 	type: ClassConstructor<T>,
 	property: (o: T) => any,
 	validationOptions?: ValidationOptions,
@@ -23,7 +23,7 @@ export const DoesNotMatch = <T>(
 	};
 };
 
-@ValidatorConstraint({ name: 'DoesNotMatch' })
+@ValidatorConstraint({ name: 'DoesMatch' })
 export class MatchConstraint implements ValidatorConstraintInterface {
 	validate(value: any, args: ValidationArguments) {
 		const [fn] = args.constraints;
