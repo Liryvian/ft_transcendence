@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Check, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('game-invites')
 export class GameInvite {
@@ -10,6 +10,7 @@ export class GameInvite {
 	source_id: number;
 
 	// Will either be linked with user, or a view table created
+	@Check(`"target_id" <> "source_id"`)
 	@Column()
 	target_id: number;
 }
