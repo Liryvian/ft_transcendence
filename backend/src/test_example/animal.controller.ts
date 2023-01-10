@@ -9,6 +9,7 @@ import {
 	HttpException,
 	HttpStatus,
 	ParseArrayPipe,
+	Query,
 } from '@nestjs/common';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
@@ -78,26 +79,26 @@ export class AnimalController {
 		return this.animalService.update(id, updateAnimalDto);
 	}
 
-	@Delete(':id')
-	async remove(@Param('id') id: number): Promise<DeleteResult> {
-		return this.animalService.remove(id);
-	}
-
 	/*
 		example implementation of removing with an array of ids
 	*/
-	@Delete('bulk/:ids')
+	@Delete('bulk')
 	async removeBulk(
-		@Param(
+		@Body(
 			new ParseArrayPipe({
 				items: Number,
 			}),
 		)
 		ids: number[],
 	): Promise<DeleteResult> {
-		if (ids.length === 0) {
+		if (ids === null || (ids.hasOwnProperty('length') && ids.length === 0)) {
 			return new DeleteResult();
 		}
 		return this.animalService.remove(ids);
+	}
+
+	@Delete(':id')
+	async remove(@Param('id') id: number): Promise<DeleteResult> {
+		return this.animalService.remove(id);
 	}
 }
