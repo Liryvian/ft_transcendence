@@ -30,14 +30,6 @@ export class GameInvitesController {
 		return this.gameInvitesService.findOne({ where: { id } });
 	}
 
-	@Patch(':id')
-	update(
-		@Param('id') id: number,
-		@Body() updateGameInviteDto: UpdateGameInviteDto,
-	) {
-		return this.gameInvitesService.update(id, updateGameInviteDto);
-	}
-
 	@Delete(':id')
 	remove(@Param('id') id: number) {
 		return this.gameInvitesService.remove(id);
