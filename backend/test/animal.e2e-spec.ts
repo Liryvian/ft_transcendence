@@ -196,7 +196,7 @@ describe('AnimalController (e2e)', () => {
 				{ name: '__d1' },
 				{ name: '__d2' },
 			]);
-			console.log(ids);
+			const ids = toDelete.map((obj) => obj.id);
 			return request(app.getHttpServer())
 				.delete('/test/bulk')
 				.set('Accept', 'application/json')
