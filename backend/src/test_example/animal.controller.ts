@@ -8,12 +8,12 @@ import {
 	Delete,
 	HttpException,
 	HttpStatus,
+	ParseArrayPipe,
 } from '@nestjs/common';
-import { DeleteResult, UpdateResult } from 'typeorm';
+import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
-import { AnimalEntity } from './entities/animals.entity';
 
 @Controller('test')
 export class AnimalController {
@@ -23,10 +23,38 @@ export class AnimalController {
 	@Post()
 	async create(@Body() createAnimalDto: CreateAnimalDto) {
 		try {
-			const createdAnimal: AnimalEntity = await this.animalService.create(
+			const insertedAnimal: InsertResult = await this.animalService.create(
 				createAnimalDto,
 			);
-			return createdAnimal;
+			return insertedAnimal.identifiers;
+		} catch (e) {
+			throw new HttpException('Animal Already Exists', HttpStatus.CONFLICT);
+		}
+	}
+
+	/*
+		Example implementation of posting an array of entities
+		including validation of those entities
+	*/
+	@Post('bulk')
+	async createBulk(
+		@Body(
+			new ParseArrayPipe({
+				items: CreateAnimalDto,
+				whitelist: true,
+				forbidNonWhitelisted: true,
+			}),
+		)
+		createAnimalDtos: CreateAnimalDto[],
+	) {
+		if (createAnimalDtos.length === 0) {
+			return [];
+		}
+		try {
+			const insertedAnimals: InsertResult = await this.animalService.create(
+				createAnimalDtos,
+			);
+			return insertedAnimals.identifiers;
 		} catch (e) {
 			throw new HttpException('Animal Already Exists', HttpStatus.CONFLICT);
 		}
@@ -38,7 +66,7 @@ export class AnimalController {
 	}
 
 	@Get(':id')
-	async getOne(@Param('id') id: number) {
+	async findOne(@Param('id') id: number) {
 		return this.animalService.findOne({ where: { id } });
 	}
 
@@ -48,6 +76,24 @@ export class AnimalController {
 		@Body() updateAnimalDto: UpdateAnimalDto,
 	): Promise<UpdateResult> {
 		return this.animalService.update(id, updateAnimalDto);
+	}
+
+	/*
+		example implementation of removing with an array of ids
+	*/
+	@Delete('bulk')
+	async removeBulk(
+		@Body(
+			new ParseArrayPipe({
+				items: Number,
+			}),
+		)
+		ids: number[],
+	): Promise<DeleteResult> {
+		if (ids === null || (ids.hasOwnProperty('length') && ids.length === 0)) {
+			return new DeleteResult();
+		}
+		return this.animalService.remove(ids);
 	}
 
 	@Delete(':id')
