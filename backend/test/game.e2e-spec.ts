@@ -9,7 +9,7 @@ import { GameModule } from '../src/pong/game/game.module';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
 
-describe('GameController (e2e)', () => {
+describe('Game (e2e)', () => {
 	let app: INestApplication;
 	let gameController: GameController;
 

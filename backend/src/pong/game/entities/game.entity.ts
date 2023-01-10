@@ -19,7 +19,7 @@ export class Game {
 	@Column({ default: 0 })
 	score_player_two: number;
 
-	// for now empty customization
+	// for now empty customization on initialization
 	@Column({ default: null })
 	customization: string;
 

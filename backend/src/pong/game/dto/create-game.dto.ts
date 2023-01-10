@@ -1,7 +1,8 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { DoesNotMatch } from '../../../shared/does-not-match.decorator';
 
 export class CreateGameDto {
+	@IsOptional()
 	customization?: string;
 
 	@IsNotEmpty()

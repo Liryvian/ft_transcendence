@@ -1,5 +1,11 @@
 import { ClassConstructor } from 'class-transformer';
-import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
+import {
+	registerDecorator,
+	ValidationArguments,
+	ValidationOptions,
+	ValidatorConstraint,
+	ValidatorConstraintInterface,
+} from 'class-validator';
 
 export const DoesNotMatch = <T>(
 	type: ClassConstructor<T>,
@@ -21,7 +27,7 @@ export const DoesNotMatch = <T>(
 export class MatchConstraint implements ValidatorConstraintInterface {
 	validate(value: any, args: ValidationArguments) {
 		const [fn] = args.constraints;
-        // this returns the actual validation
+		// this returns the actual validation
 		return fn(args.object) !== value;
 	}
 

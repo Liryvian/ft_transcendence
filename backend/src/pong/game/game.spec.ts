@@ -1,14 +1,15 @@
+import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ObjectLiteral } from 'typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { CreateGameDto } from './dto/create-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';
 
-describe('GameService', () => {
+describe('Game unit tests', () => {
 	let service: GameService;
 	let controller: GameController;
 
@@ -30,5 +31,62 @@ describe('GameService', () => {
 	it('should be defined', () => {
 		expect(service).toBeDefined();
 		expect(controller).toBeDefined();
+	});
+
+	describe('CreateGameDto', () => {
+		const validator = new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true,
+		});
+
+		let testObject = {
+			player_one: 1,
+			player_two: 1,
+		};
+
+		const meta: ArgumentMetadata = {
+			type: 'body',
+			metatype: CreateGameDto,
+		};
+
+		it('should throw an error when player 1 & 2 have the same id', async () => {
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+
+		it('should throw error when player_one is empty', async () => {
+			testObject.player_one = null;
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+
+		it('should throw error when player_two is empty', async () => {
+			testObject.player_one = 1;
+			testObject.player_two = null;
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+	});
+
+	describe('updateGameDto', () => {
+		it('should not throw an error when update object is empty', async () => {
+			const validator = new ValidationPipe({
+				whitelist: true,
+				forbidNonWhitelisted: true,
+				transform: true,
+			});
+			const testObject = {};
+
+			const meta: ArgumentMetadata = {
+				type: 'body',
+				metatype: UpdateGameDto,
+			};
+
+			expect(await validator.transform(testObject, meta)).toBeTruthy();
+		});
 	});
 });
