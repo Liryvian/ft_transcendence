@@ -30,15 +30,13 @@ export class UserController {
 
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
-		if (registerUserDto.password !== registerUserDto.password_confirm) {
-			throw new BadRequestException('Passwords do not match');
-		}
 		const hashed = await bcrypt.hash(registerUserDto.password, 11);
 		const createUserDto: CreateUserDto = {
 			name: registerUserDto.name,
 			password: hashed,
 			is_intra: false,
 		};
+
 		try {
 			const newUser: InsertResult = await this.userService.create(
 				createUserDto,

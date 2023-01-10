@@ -12,7 +12,11 @@ import { AuthGuard } from '../auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
+import {
+	ArgumentMetadata,
+	NotFoundException,
+	ValidationPipe,
+} from '@nestjs/common';
 import { globalValidationPipeOptions } from '../main.validationpipe';
 
 describe('User', () => {
@@ -256,61 +260,14 @@ describe('User', () => {
 
 		it('should fail update non existing', async () => {
 			await expect(controller.update(9999, { name: 'kees' })).rejects.toThrow(
-				'Not Found',
+				NotFoundException,
 			);
 		});
 
-		it('should fail if you try to update to an empty username', async () => {
-			const u: InsertResult = await controller.create({
-				name: 'tryEmpty',
-				password: 'p',
-				password_confirm: 'p',
-			});
-			const updDto: UpdateUserDto = {
-				name: '',
-			};
-			const updateRes = await controller.update(u.identifiers[0].id, updDto);
-			// await expect(
-			// 	controller.update(u.identifiers[0].identity, updDto),
-			// ).rejects.toThrow();
-
-			console.log(updateRes);
-			const allUsers = await controller.findAll();
-			console.table(allUsers);
-
-			service.remove(u.identifiers[0].id);
-		});
-
-		// it('should fail if you try to update to an empty password', async () => {
-		// 	const u: InsertResult = await controller.create({
-		// 		name: 'tryEmptyPassword',
-		// 		password: 'p',
-		// 		password_confirm: 'p',
-		// 	});
-		// 	const updDto: UpdateUserDto = {
-		// 		password: '',
-		// 	};
-		// 	await expect(
-		// 		controller.update(u.identifiers[0].identity, updDto),
-		// 	).rejects.toThrow();
-		// 	service.remove(u.identifiers[0].id);
-		// });
-
-		// it('should fail if you try to update to an existing username', async () => {
-		// 	await expect(
-		// 		controller.update(seedUsers[1].userId, { name: seedUsers[0].name }),
-		// 	).rejects.toThrow('Please pick a different username');
-		// });
-
-		it('should fail on not matching passwords', async () => {
-			const invalidPasswordUser: RegisterUserDto = {
-				name: 'name',
-				password: 'p1',
-				password_confirm: 'p2',
-			};
-			await expect(controller.create(invalidPasswordUser)).rejects.toThrow(
-				'Passwords do not match',
-			);
+		it('should fail if you try to update to an existing username', async () => {
+			await expect(
+				controller.update(seedUsers[1].userId, { name: seedUsers[0].name }),
+			).rejects.toThrow('Please pick a different username');
 		});
 
 		it('should not create user with duplicate username', async () => {

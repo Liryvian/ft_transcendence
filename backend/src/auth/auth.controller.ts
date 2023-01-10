@@ -1,5 +1,4 @@
 import {
-	NotFoundException,
 	BadRequestException,
 	Body,
 	Controller,
@@ -8,6 +7,8 @@ import {
 	UseGuards,
 	UseInterceptors,
 	ClassSerializerInterceptor,
+	Get,
+	Req,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -41,9 +42,7 @@ export class AuthController {
 			if (!user || !(await bcrypt.compare(password, user.password))) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
-			// signAsync can throw, but only in a few very specific cases where invalid options are send
-			// since we are only sending a plain object and no options we can "safely" ignore to add try/catch
-			const jwt = await this.jwtService.signAsync({ id: user.id });
+			const jwt = this.jwtService.sign({ id: user.id });
 			response.cookie('jwt', jwt, { httpOnly: true });
 			return user;
 		} catch (e) {
@@ -60,8 +59,6 @@ export class AuthController {
 		};
 	}
 
-	/*
-										// MOVE THIS  <--------------
 	@UseGuards(AuthGuard)
 	@Get('user')
 	async user(@Req() request: Request) {
@@ -72,5 +69,4 @@ export class AuthController {
 			},
 		});
 	}
-	*/
 }
