@@ -8,6 +8,7 @@ import {
 	Delete,
 	HttpException,
 	HttpStatus,
+	ParseArrayPipe,
 } from '@nestjs/common';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
@@ -31,13 +32,41 @@ export class AnimalController {
 		}
 	}
 
+	/*
+		Example implementation of posting an array of entities
+		including validation of those entities
+	*/
+	@Post('bulk')
+	async createBulk(
+		@Body(
+			new ParseArrayPipe({
+				items: CreateAnimalDto,
+				whitelist: true,
+				forbidNonWhitelisted: true,
+			}),
+		)
+		createAnimalDtos: CreateAnimalDto[],
+	) {
+		if (createAnimalDtos.length === 0) {
+			return [];
+		}
+		try {
+			const insertedAnimals: InsertResult = await this.animalService.create(
+				createAnimalDtos,
+			);
+			return insertedAnimals.identifiers;
+		} catch (e) {
+			throw new HttpException('Animal Already Exists', HttpStatus.CONFLICT);
+		}
+	}
+
 	@Get()
 	async findAll() {
 		return this.animalService.findAll();
 	}
 
 	@Get(':id')
-	async getOne(@Param('id') id: number) {
+	async findOne(@Param('id') id: number) {
 		return this.animalService.findOne({ where: { id } });
 	}
 
@@ -47,6 +76,24 @@ export class AnimalController {
 		@Body() updateAnimalDto: UpdateAnimalDto,
 	): Promise<UpdateResult> {
 		return this.animalService.update(id, updateAnimalDto);
+	}
+
+	/*
+		example implementation of removing with an array of ids
+	*/
+	@Delete('bulk')
+	async removeBulk(
+		@Body(
+			new ParseArrayPipe({
+				items: Number,
+			}),
+		)
+		ids: number[],
+	): Promise<DeleteResult> {
+		if (ids === null || (ids.hasOwnProperty('length') && ids.length === 0)) {
+			return new DeleteResult();
+		}
+		return this.animalService.remove(ids);
 	}
 
 	@Delete(':id')
