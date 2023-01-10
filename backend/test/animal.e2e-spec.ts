@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { CreateAnimalDto } from './../src/test_example/dto/create-animal.dto';
+import { CreateAnimalDto } from '../src/test_example/dto/create-animal.dto';
 import { AnimalController } from '../src/test_example/animal.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
 import { UpdateAnimalDto } from '../src/test_example/dto/update-animal.dto';
 import { AnimalEntity } from '../src/test_example/entities/animals.entity';
+import { globalValidationPipeOptions } from '../src/main.validationpipe';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
@@ -27,7 +28,7 @@ describe('AnimalController (e2e)', () => {
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
-		app.useGlobalPipes(new ValidationPipe());
+		app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions()));
 		await app.init();
 
 		animalController = moduleFixture.get<AnimalController>(AnimalController);
@@ -118,7 +119,7 @@ describe('AnimalController (e2e)', () => {
 		});
 	});
 
-	describe('/test/:id  (delete)', () => {
+	describe('/test/:id  (DELETE)', () => {
 		it('should delete an animal', () => {
 			const id: number = 1;
 			return request(app.getHttpServer())
@@ -134,7 +135,7 @@ describe('AnimalController (e2e)', () => {
 		});
 	});
 
-	describe('/test/:id (patch)', () => {
+	describe('/test/:id (PATCH)', () => {
 		it('update animal with id 2', () => {
 			const ValidId: number = 2;
 			const updateData: UpdateAnimalDto = { name: 'Nagapie' };
@@ -157,6 +158,45 @@ describe('AnimalController (e2e)', () => {
 				.set('Accept', 'application/json')
 				.send(updateData)
 				.expect(HttpStatus.NOT_FOUND);
+		});
+	});
+
+	describe('/test/bulk (POST)', () => {
+		it('should create multiple entries', () => {
+			const data = [{ name: '__n1' }, { name: '__n2' }];
+			return request(app.getHttpServer())
+				.post('/test/bulk')
+				.set('Accept', 'application/json')
+				.send(data)
+				.expect(HttpStatus.CREATED)
+				.expect((response: request.Response) => {
+					const result = response.body;
+					expect(result.length).toBe(2);
+				});
+		});
+
+		it('should fail on invalid DTO for multiple entries', () => {
+			const invalidData = [{ name: '__n1' }, { name: '__n2', foo: 'bar' }];
+			return request(app.getHttpServer())
+				.post('/test/bulk')
+				.set('Accept', 'application/json')
+				.send(invalidData)
+				.expect(HttpStatus.BAD_REQUEST);
+		});
+	});
+
+	describe('/test/bulk/:ids (DELETE)', () => {
+		it('should delete multiple exsisting entries', async () => {
+			const toDelete = await animalController.createBulk([
+				{ name: '__d1' },
+				{ name: '__d2' },
+			]);
+			const ids = toDelete.map((obj) => obj.id);
+			return request(app.getHttpServer())
+				.delete('/test/bulk')
+				.set('Accept', 'application/json')
+				.send(ids)
+				.expect(HttpStatus.OK);
 		});
 	});
 });

@@ -6,6 +6,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
@@ -38,11 +39,7 @@ describe('Game unit tests', () => {
 	});
 
 	describe('CreateGameDto', () => {
-		const validator = new ValidationPipe({
-			whitelist: true,
-			forbidNonWhitelisted: true,
-			transform: true,
-		});
+		const validator = new ValidationPipe(globalValidationPipeOptions());
 
 		let testObject = {
 			player_one: 1,
@@ -78,11 +75,7 @@ describe('Game unit tests', () => {
 
 	describe('updateGameDto', () => {
 		it('should not throw an error when update object is empty', async () => {
-			const validator = new ValidationPipe({
-				whitelist: true,
-				forbidNonWhitelisted: true,
-				transform: true,
-			});
+			const validator = new ValidationPipe(globalValidationPipeOptions());
 			const testObject = {};
 
 			const meta: ArgumentMetadata = {
