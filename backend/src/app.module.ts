@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { GameModule } from './pong/game/game.module';
+import { GameInvitesModule } from './pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from './pong/matchmaking-request/matchmaking-request.module';
 
 @Module({
 	imports: [
@@ -13,6 +15,8 @@ import { GameModule } from './pong/game/game.module';
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AnimalModule,
 		GameModule,
+		GameInvitesModule,
+		MatchmakingRequestModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
