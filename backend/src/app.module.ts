@@ -10,6 +10,7 @@ import { MessageModule } from './chat/message/message.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './chat/role/role.module';
 import { UserChatModule } from './chat/user-chat/user-chat.module';
+import { ChatuserRoleModule } from './chat/chatuser-role/chatuser-role.module';
 
 @Module({
 	imports: [
@@ -21,7 +22,7 @@ import { UserChatModule } from './chat/user-chat/user-chat.module';
 		MessageModule,
 		UserModule,
 		RoleModule,
-		UserChatModule,
+		ChatuserRoleModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

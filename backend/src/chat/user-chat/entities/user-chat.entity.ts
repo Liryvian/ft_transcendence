@@ -1,9 +1,20 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+	Entity,
+	JoinColumn,
+	ManyToOne,
+	PrimaryColumn,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '../../../user/entities/user.entity';
 import { Chatroom } from '../../chatroom/entities/chatroom.entity';
 
+//onDelete and onUpdate should be looked at
+
 @Entity('user_chat')
 export class UserChat {
+	@PrimaryGeneratedColumn()
+	id: number;
+
 	@PrimaryColumn({ name: 'user_id' })
 	user_id: number;
 
@@ -15,7 +26,7 @@ export class UserChat {
 		onUpdate: 'NO ACTION',
 	})
 	@JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
-	students: User[];
+	users: User[];
 
 	@ManyToOne(() => Chatroom, (chatroom) => chatroom.id, {
 		onDelete: 'NO ACTION',

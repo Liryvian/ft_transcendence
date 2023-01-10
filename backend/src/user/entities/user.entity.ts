@@ -16,9 +16,12 @@ export class User {
 	@Column()
 	name: string;
 
-	@ManyToMany((type) => Chatroom, (chatroom) => chatroom.id)
+	@ManyToMany((type) => Chatroom, {
+		onDelete: 'NO ACTION',
+		onUpdate: 'NO ACTION',
+	})
 	@JoinTable({
-		name: 'user_chat',
+		name: 'user-chat',
 		joinColumn: {
 			name: 'user_id',
 			referencedColumnName: 'id',
