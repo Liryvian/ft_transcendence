@@ -11,7 +11,6 @@ import { UserModule } from './users/user/user.module';
 import { RoleModule } from './chat/role/role.module';
 import { ChatuserRoleModule } from './chat/chatuser-role/chatuser-role.module';
 import { GameModule } from './pong/game/game.module';
-import { ChatUserModule } from './chat/chat-user/chat-user.module';
 
 @Module({
 	imports: [
@@ -24,7 +23,6 @@ import { ChatUserModule } from './chat/chat-user/chat-user.module';
 		RoleModule,
 		ChatuserRoleModule,
 		GameModule,
-		ChatUserModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

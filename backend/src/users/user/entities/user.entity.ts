@@ -21,7 +21,7 @@ export class User {
 		onUpdate: 'CASCADE',
 	})
 	@JoinTable({
-		name: 'chatrooms_users',
+		name: 'user_chatrooms',
 		joinColumn: {
 			name: 'user_id',
 			referencedColumnName: 'id',
