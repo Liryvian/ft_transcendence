@@ -9,9 +9,11 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
-import { InsertResult, UpdateResult } from 'typeorm';
+import { InsertResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
+import { globalValidationPipeOptions } from '../main.validationpipe';
 
 describe('User', () => {
 	let controller: UserController;
@@ -54,25 +56,168 @@ describe('User', () => {
 		}
 	});
 
-	describe('UserService', () => {
-		it('throws on create with duplicate usernames', async () => {
-			await expect(
-				service.create({
-					name: seedUsers[0].name,
-					password: seedUsers[0].password + 'a',
-					is_intra: false,
-				}),
-			).rejects.toThrow('UNIQUE constraint failed');
+	describe('DTO', () => {
+		const validator = new ValidationPipe(globalValidationPipeOptions());
+		const transformValidator = new ValidationPipe({
+			transform: true,
+			whitelist: true,
+		});
+		describe('registerUserDto', () => {
+			const registerUserMeta: ArgumentMetadata = {
+				type: 'body',
+				metatype: RegisterUserDto,
+			};
+
+			it('should require a username', async () => {
+				const data: RegisterUserDto = {
+					name: '',
+					password: 'a',
+					password_confirm: 'a',
+				};
+				try {
+					await validator.transform(data, registerUserMeta);
+				} catch (e) {
+					expect(e.response).toEqual(
+						expect.objectContaining({
+							statusCode: 400,
+							message: expect.arrayContaining([
+								expect.stringContaining('name should not be empty'),
+							]),
+						}),
+					);
+				}
+			});
+
+			it('should fail on non matching password and password_confirm', async () => {
+				const data: RegisterUserDto = {
+					name: 'valid_username',
+					password: 'p1',
+					password_confirm: 'p2',
+				};
+				try {
+					await validator.transform(data, registerUserMeta);
+				} catch (e) {
+					expect(e.response).toEqual(
+						expect.objectContaining({
+							statusCode: 400,
+							message: expect.arrayContaining([
+								expect.stringContaining('password and password_confirm'),
+							]),
+						}),
+					);
+				}
+			});
 		});
 
-		it('throws on update with duplicate usernames', async () => {
-			await expect(
-				service.update(seedUsers[0].userId, { name: seedUsers[1].name }),
-			).rejects.toThrow('UNIQUE constraint failed');
+		describe('createUserDto', () => {
+			const createUserMeta: ArgumentMetadata = {
+				type: 'body',
+				metatype: CreateUserDto,
+			};
+
+			it('should set a default value for is_intra', async () => {
+				const data: CreateUserDto = {
+					name: 'name',
+					password: 'hashed',
+				};
+				await expect(
+					transformValidator.transform(data, createUserMeta),
+				).resolves.toEqual(
+					expect.objectContaining({
+						is_intra: false,
+					}),
+				);
+			});
+		});
+
+		describe('updateUserDto', () => {
+			const updateUserMeta: ArgumentMetadata = {
+				type: 'body',
+				metatype: UpdateUserDto,
+			};
+
+			it('should require both a password confirm and the current password when setting a password', async () => {
+				const data: UpdateUserDto = {
+					new_password: 'new_pass',
+					new_password_confirm: 'new_pass',
+					password: 'old_pass',
+				};
+				await expect(
+					transformValidator.transform(data, updateUserMeta),
+				).resolves.toEqual(
+					expect.objectContaining({
+						new_password: data.new_password,
+						new_password_confirm: data.new_password_confirm,
+						password: data.password,
+					}),
+				);
+			});
+
+			it('should throw an error if no current password when updating password', async () => {
+				const data: UpdateUserDto = {
+					new_password: 'new',
+					new_password_confirm: 'new',
+				};
+
+				try {
+					await validator.transform(data, updateUserMeta);
+				} catch (e) {
+					expect(e.response).toEqual(
+						expect.objectContaining({
+							statusCode: 400,
+							message: expect.arrayContaining([
+								expect.stringContaining('password should not be empty'),
+							]),
+						}),
+					);
+				}
+			});
+
+			it('allow only updating username', async () => {
+				const data: UpdateUserDto = {
+					name: 'new_username',
+				};
+
+				await expect(
+					validator.transform(data, updateUserMeta),
+				).resolves.toEqual(
+					expect.objectContaining({
+						name: data.name,
+					}),
+				);
+			});
+		});
+	});
+
+	describe('UserService', () => {
+		it('should be defined', () => {
+			expect(service).toBeDefined();
+		});
+
+		describe('Database constraint for unique usernames', () => {
+			it('throws on create with duplicate usernames', async () => {
+				await expect(
+					service.create({
+						name: seedUsers[0].name,
+						password: seedUsers[0].password + 'a',
+						is_intra: false,
+					}),
+				).rejects.toThrow('UNIQUE constraint failed');
+			});
+
+			it('throws on update with duplicate usernames', async () => {
+				await expect(
+					service.update(seedUsers[0].userId, { name: seedUsers[1].name }),
+				).rejects.toThrow('UNIQUE constraint failed');
+			});
 		});
 	});
 
 	describe('UserController', () => {
+		it('should be defined', () => {
+			expect(controller).toBeDefined();
+		});
+
 		it('should get all users', async () => {
 			await expect(controller.findAll()).resolves.toEqual(
 				expect.arrayContaining([
