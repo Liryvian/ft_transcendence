@@ -9,6 +9,7 @@ import { ChatroomModule } from './chat/chatroom/chatroom.module';
 import { MessageModule } from './chat/message/message.module';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './chat/role/role.module';
+import { UserChatModule } from './chat/user-chat/user-chat.module';
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { RoleModule } from './chat/role/role.module';
 		MessageModule,
 		UserModule,
 		RoleModule,
+		UserChatModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
