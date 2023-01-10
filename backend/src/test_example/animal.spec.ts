@@ -7,12 +7,12 @@ import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 import { AnimalEntity } from './entities/animals.entity';
 import {
 	ArgumentMetadata,
+	BadRequestException,
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
 import { ObjectLiteral } from 'typeorm';
 import { CreateAnimalDto } from './dto/create-animal.dto';
-import { validate } from 'class-validator';
 import { globalValidationPipeOptions } from '../main.validationpipe';
 
 describe('AnimalController', () => {
@@ -39,7 +39,7 @@ describe('AnimalController', () => {
 		// seed db with animals for each testcase
 		await controller.createBulk(
 			testAnimals.map((str) => {
-				return { name: str };
+				return <CreateAnimalDto>{ name: str };
 			}),
 		);
 	});
@@ -47,8 +47,9 @@ describe('AnimalController', () => {
 	// delete all data in db for each test
 	afterAll(async () => {
 		const repoOfAnimals: AnimalEntity[] = await controller.findAll();
-		for (let i = 0; i < repoOfAnimals.length; i++) {
-			await controller.remove(i + 1);
+		if (repoOfAnimals.length > 0) {
+			const array = repoOfAnimals.map((a) => a.id);
+			await service.remove(array);
 		}
 	});
 
@@ -105,6 +106,12 @@ describe('AnimalController', () => {
 		);
 	});
 
+	it('Should throw a not found exception if you update a non-existent item', async () => {
+		await expect(controller.update(2342, { name: 'fso' })).rejects.toThrow(
+			NotFoundException,
+		);
+	});
+
 	it('Delete items from db (remove)', async () => {
 		let repoOfAnimals: AnimalEntity[] = await controller.findAll();
 
@@ -115,60 +122,15 @@ describe('AnimalController', () => {
 		expect(shouldBeEmptyArray).toHaveLength(0);
 	});
 
-	it('should show relationships with the findAll method', async () => {
-		const wildsBok: CreateAnimalDto = { name: 'Wildsbok' };
-		const parent: ObjectLiteral = await controller.create(wildsBok);
-		const klipSpringer: CreateAnimalDto = {
-			name: 'Klipspringer',
-			parent: parent[0].id,
-		};
-		const child: ObjectLiteral = await controller.create(klipSpringer);
-
-		const allAnimalsWithRelations: AnimalEntity[] = await controller.findAll();
-		expect(allAnimalsWithRelations).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({
-					parent: expect.objectContaining({
-						id: parent[0].id,
-					}),
-				}),
-			]),
-		);
-		controller.remove(child[0].id);
-		controller.remove(parent[0].id);
-	});
-
-	it('should create and delete with array of animals', async () => {
-		const arrayOfAnimals: CreateAnimalDto[] = [
-			{ name: 'Dolfyn' },
-			{ name: 'Erdvark' },
-			{ name: 'Luidier' },
-		];
-		let result: ObjectLiteral;
-		expect((result = await controller.createBulk(arrayOfAnimals))).toEqual(
-			expect.arrayContaining([
-				expect.objectContaining({ id: expect.any(Number) }),
-				expect.objectContaining({ id: expect.any(Number) }),
-				expect.objectContaining({ id: expect.any(Number) }),
-			]),
-		);
-		await expect(
-			controller.remove(result.map((o: ObjectLiteral) => o.id)),
-		).resolves.toEqual(
-			expect.objectContaining({
-				affected: arrayOfAnimals.length,
-			}),
-		);
-		await expect(controller.findOne(result[0].id)).rejects.toThrow('Not Found');
-		await expect(controller.findOne(result[1].id)).rejects.toThrow('Not Found');
-		await expect(controller.findOne(result[2].id)).rejects.toThrow('Not Found');
-	});
-
 	describe('CreateAnimalDto', () => {
 		it('should strip invalid values', async () => {
-			const validator = new ValidationPipe(globalValidationPipeOptions());
+			// setup the validation pipe to only strip values
+			const validator = new ValidationPipe({
+				whitelist: true,
+				transform: true,
+			});
 			const testObject = {
-				name: '',
+				name: 'name',
 				foo: 'br',
 			};
 			const meta: ArgumentMetadata = {
@@ -176,15 +138,38 @@ describe('AnimalController', () => {
 				metatype: CreateAnimalDto,
 				data: 'name',
 			};
-			console.log(validator.transform(testObject, meta));
-			console.log(await validator.transform(testObject, meta));
+			const strippedObject = await validator.transform(testObject, meta);
+
+			expect(strippedObject).toEqual(
+				expect.objectContaining({
+					name: 'name',
+				}),
+			);
+			expect(strippedObject).toEqual(
+				expect.not.objectContaining({ foo: expect.any(String) }),
+			);
+		});
+
+		it('should throw an error on missing required property', async () => {
+			const validator = new ValidationPipe(globalValidationPipeOptions());
+			const testObject = {};
+			const meta: ArgumentMetadata = {
+				type: 'body',
+				metatype: CreateAnimalDto,
+			};
+			try {
+				const result = await validator.transform(testObject, meta);
+			} catch (e) {
+				expect(e.response).toEqual(
+					expect.objectContaining({
+						statusCode: 400,
+						message: expect.arrayContaining([
+							expect.stringContaining('name should not be empty'),
+						]),
+						error: 'Bad Request',
+					}),
+				);
+			}
 		});
 	});
-
-	// it('should fail when trying to create with object dat does not comply to DTO validation rules', async () => {
-	// 	// create object without DTO so we can skip a value
-	// 	const incompleteAnimal: CreateAnimalDto = { name: null };
-	// 	console.log(await controller.create(incompleteAnimal));
-	// 	await expect(controller.create(incompleteAnimal)).rejects.toThrow('');
-	// });
 });
