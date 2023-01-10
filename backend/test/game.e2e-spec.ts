@@ -8,6 +8,7 @@ import { GameController } from '../src/pong/game/game.controller';
 import { GameModule } from '../src/pong/game/game.module';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
+import { globalValidationPipeOptions } from '../../backend/src/main.validationpipe';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
@@ -25,7 +26,7 @@ describe('Game (e2e)', () => {
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
-		app.useGlobalPipes(new ValidationPipe());
+		app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions()));
 		await app.init();
 
 		gameController = moduleFixture.get<GameController>(GameController);
