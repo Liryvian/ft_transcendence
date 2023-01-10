@@ -7,6 +7,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { GameModule } from './pong/game/game.module';
 import { GameInvitesModule } from './pong/game_invite/game-invite.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
 	imports: [
@@ -15,6 +18,11 @@ import { GameInvitesModule } from './pong/game_invite/game-invite.module';
 		AnimalModule,
 		GameModule,
 		GameInvitesModule,
+		UserModule,
+		AuthModule,
+		SharedModule,
+		AnimalModule,
+		GameModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
