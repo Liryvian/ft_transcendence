@@ -6,7 +6,7 @@ import {
 	ManyToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Chatroom } from '../../chat/chatroom/entities/chatroom.entity';
+import { Chatroom } from '../../../chat/chatroom/entities/chatroom.entity';
 
 @Entity('users')
 export class User {
@@ -21,7 +21,7 @@ export class User {
 		onUpdate: 'CASCADE',
 	})
 	@JoinTable({
-		name: 'user-chat',
+		name: 'chatrooms_users',
 		joinColumn: {
 			name: 'user_id',
 			referencedColumnName: 'id',
@@ -31,5 +31,5 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
-	chatroom?: Chatroom[];
+	chatroom: Chatroom[];
 }

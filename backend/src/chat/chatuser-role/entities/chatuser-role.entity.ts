@@ -1,8 +1,6 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { User } from '../../../user/entities/user.entity';
-import { Chatroom } from '../../chatroom/entities/chatroom.entity';
-import { UserChat } from '../../user-chat/entities/user-chat.entity';
 import { Role } from '../../role/entities/role.entity';
+import { ChatUser } from '../../chat-user/entities/chat-user.entity';
 
 @Entity()
 export class ChatuserRole {
@@ -12,12 +10,12 @@ export class ChatuserRole {
 	@PrimaryColumn({ name: 'role_id' })
 	chatroom_id: number;
 
-	@ManyToOne(() => UserChat, (userchat) => userchat.id, {
+	@ManyToOne(() => ChatUser, (chatUser) => chatUser.id, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'chatuser_id', referencedColumnName: 'id' }])
-	users: UserChat[];
+	users: ChatUser[];
 
 	@ManyToOne(() => Role, (role) => role.id, {
 		onDelete: 'CASCADE',

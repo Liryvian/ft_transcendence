@@ -1,17 +1,17 @@
 // import { Test, TestingModule } from '@nestjs/testing';
-// import { UserChatController } from './user-chat.controller';
-// import { UserChatService } from './user-chat.service';
+// import { ChatUserController } from './chat-user.controller';
+// import { UserChatService } from './chat-user.service';
 //
-// describe('UserChatController', () => {
-//   let controller: UserChatController;
+// describe('ChatUserController', () => {
+//   let controller: ChatUserController;
 //
 //   beforeEach(async () => {
 //     const module: TestingModule = await Test.createTestingModule({
-//       controllers: [UserChatController],
+//       controllers: [ChatUserController],
 //       providers: [UserChatService],
 //     }).compile();
 //
-//     controller = module.get<UserChatController>(UserChatController);
+//     controller = module.get<ChatUserController>(ChatUserController);
 //   });
 //
 //   it('should be defined', () => {

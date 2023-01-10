@@ -5,13 +5,11 @@ import {
 	PrimaryColumn,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../../../user/entities/user.entity';
+import { User } from '../../../users/user/entities/user.entity';
 import { Chatroom } from '../../chatroom/entities/chatroom.entity';
 
-//onDelete and onUpdate should be looked at
-
-@Entity('user_chat')
-export class UserChat {
+@Entity('chat-user')
+export class ChatUser {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -22,18 +20,18 @@ export class UserChat {
 	chatroom_id: number;
 
 	@ManyToOne(() => User, (user) => user.id, {
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE',
+		// onDelete: 'CASCADE',
+		// onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
 	users: User[];
 
 	@ManyToOne(() => Chatroom, (chatroom) => chatroom.id, {
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE',
+		// onDelete: 'CASCADE',
+		// onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'chatroom_id', referencedColumnName: 'id' }])
-	courses: Chatroom[];
+	chatroom: Chatroom[];
 }
 
 // @Entity('student_course')
