@@ -17,6 +17,7 @@ import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { UserController } from '../user/user.controller';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -29,17 +30,19 @@ export class AuthController {
 
 	@Post('login')
 	async login(
-		@Body('name') name: string,
-		@Body('password') password: string,
+		@Body() loginUserDto: LoginUserDto,
 		@Res({ passthrough: true }) response: Response,
 	) {
 		try {
 			const user = await this.userService.findOne({
 				where: {
-					name: name,
+					name: loginUserDto.name,
 				},
 			});
-			if (!user || !(await bcrypt.compare(password, user.password))) {
+			if (
+				!user ||
+				!(await bcrypt.compare(loginUserDto.password, user.password))
+			) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
 			const jwt = this.jwtService.sign({ id: user.id });
