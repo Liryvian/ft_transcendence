@@ -1,26 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserChatDto } from './dto/create-user-chat.dto';
-import { UpdateUserChatDto } from './dto/update-user-chat.dto';
+import { AbstractService } from '../../shared/abstract.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { UserChat } from './entities/user-chat.entity';
 
 @Injectable()
-export class UserChatService {
-  create(createUserChatDto: CreateUserChatDto) {
-    return 'This action adds a new userChat';
-  }
-
-  findAll() {
-    return `This action returns all userChat`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} userChat`;
-  }
-
-  update(id: number, updateUserChatDto: UpdateUserChatDto) {
-    return `This action updates a #${id} userChat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userChat`;
-  }
+export class UserChatService extends AbstractService<UserChat> {
+	constructor(
+		@InjectRepository(UserChat)
+		private readonly userChatRepository: Repository<UserChat>,
+	) {
+		super(userChatRepository);
+	}
 }

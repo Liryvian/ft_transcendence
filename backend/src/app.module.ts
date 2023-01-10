@@ -17,6 +17,7 @@ import { UserChatModule } from './chat/user-chat/user-chat.module';
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AnimalModule,
 		ChatroomModule,
+		UserChatModule,
 		MessageModule,
 		UserModule,
 		RoleModule,
