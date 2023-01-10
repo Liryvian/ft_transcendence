@@ -9,7 +9,6 @@ import {
 	HttpException,
 	HttpStatus,
 	ParseArrayPipe,
-	Query,
 } from '@nestjs/common';
 import { DeleteResult, InsertResult, UpdateResult } from 'typeorm';
 import { AnimalService } from './animal.service';
