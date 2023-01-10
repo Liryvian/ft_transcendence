@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { CreateAnimalDto } from './../src/test_example/dto/create-animal.dto';
+import { CreateAnimalDto } from '../src/test_example/dto/create-animal.dto';
 import { AnimalController } from '../src/test_example/animal.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
-import { UpdateAnimalDto } from 'src/test_example/dto/update-animal.dto';
-import { AnimalEntity } from 'src/test_example/entities/animals.entity';
+import { UpdateAnimalDto } from '../src/test_example/dto/update-animal.dto';
+import { AnimalEntity } from '../src/test_example/entities/animals.entity';
+import { globalValidationPipeOptions } from '../src/main.validationpipe';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
@@ -27,12 +28,7 @@ describe('AnimalController (e2e)', () => {
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
-		app.useGlobalPipes(
-			new ValidationPipe({
-				whitelist: true,
-				skipMissingProperties: true,
-			}),
-		);
+		app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions()));
 		await app.init();
 
 		animalController = moduleFixture.get<AnimalController>(AnimalController);
