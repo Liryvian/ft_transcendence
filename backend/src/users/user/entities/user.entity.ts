@@ -1,14 +1,13 @@
 import {
 	Column,
 	Entity,
-	JoinColumn,
 	JoinTable,
 	ManyToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
 
-@Entity('users')
+@Entity('user')
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -16,12 +15,17 @@ export class User {
 	@Column()
 	name: string;
 
-	@ManyToMany((type) => Chat, {
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE',
-	})
+	// @ManyToMany((type) => Chat, {
+	// 	onDelete: 'CASCADE',
+	// 	onUpdate: 'CASCADE',
+	// })
+	@ManyToMany(
+		() => Chat,
+		(chat) => chat.users, //optional
+		{ onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
+	)
 	@JoinTable({
-		name: 'user_chats',
+		name: 'user_chat',
 		joinColumn: {
 			name: 'user_id',
 			referencedColumnName: 'id',
@@ -31,5 +35,5 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
-	chatroom: Chat[];
+	chats: Chat[];
 }
