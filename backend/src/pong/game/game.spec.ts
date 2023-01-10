@@ -1,4 +1,8 @@
-import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
+import {
+	ArgumentMetadata,
+	BadRequestException,
+	ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -52,14 +56,14 @@ describe('Game unit tests', () => {
 
 		it('should throw an error when player 1 & 2 have the same id', async () => {
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 
 		it('should throw error when player_one is empty', async () => {
 			testObject.player_one = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 
@@ -67,7 +71,7 @@ describe('Game unit tests', () => {
 			testObject.player_one = 1;
 			testObject.player_two = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 	});

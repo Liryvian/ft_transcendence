@@ -1,4 +1,8 @@
-import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
+import {
+	ArgumentMetadata,
+	BadRequestException,
+	ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -51,14 +55,14 @@ describe('GameInvite unit tests', () => {
 
 		it('should throw an error when source and target have the same id', async () => {
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 
 		it('should throw error when source_id is empty', async () => {
 			testObject.source_id = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 
@@ -68,7 +72,7 @@ describe('GameInvite unit tests', () => {
 				target_id: 1,
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 
@@ -76,17 +80,17 @@ describe('GameInvite unit tests', () => {
 			testObject.source_id = 1;
 			testObject.target_id = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 
 		it('should throw error when target_id is NaN', async () => {
 			let NaNtestObject = {
 				source_id: 1,
-				target_id: "1",
+				target_id: '1',
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
-				'Bad Request',
+				BadRequestException,
 			);
 		});
 	});
