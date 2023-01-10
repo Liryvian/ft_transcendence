@@ -6,7 +6,6 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { IsNotEmpty, MinLength } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -17,12 +16,9 @@ export class User {
 	is_intra: boolean;
 
 	@Column({ unique: true, nullable: false })
-	@IsNotEmpty()
-	@MinLength(1)
 	name: string;
 
 	@Column({ nullable: false })
-	@IsNotEmpty()
 	@Exclude()
 	password: string;
 

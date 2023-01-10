@@ -16,12 +16,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-	InsertResult,
-	InstanceChecker,
-	QueryFailedError,
-	UpdateResult,
-} from 'typeorm';
+import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { AuthService } from '../auth/auth.service';
