@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { GameInvitesService } from './game-invite.service';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
-import { UpdateGameInviteDto } from './dto/update-game-invite.dto';
 
 @Controller('game-invites')
 export class GameInvitesController {
