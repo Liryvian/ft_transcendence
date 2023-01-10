@@ -1,7 +1,9 @@
+import { ArgumentMetadata, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 import { GameInvite } from './entities/game-invite.entity';
 import { GameInvitesController } from './game-invite.controller';
 import { GameInvitesService } from './game-invite.service';
@@ -28,5 +30,64 @@ describe('GameInvite unit tests', () => {
 	it('should be defined, service and controller', () => {
 		expect(service).toBeDefined();
 		expect(controller).toBeDefined();
+	});
+
+	describe('CreateGameInviteDto', () => {
+		const validator = new ValidationPipe({
+			whitelist: true,
+			forbidNonWhitelisted: true,
+			transform: true,
+		});
+
+		let testObject = {
+			source_id: 1,
+			target_id: 1,
+		};
+
+		const meta: ArgumentMetadata = {
+			type: 'body',
+			metatype: CreateGameInviteDto,
+		};
+
+		it('should throw an error when source and target have the same id', async () => {
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+
+		it('should throw error when source_id is empty', async () => {
+			testObject.source_id = null;
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+
+		it('should throw error when source_id is NaN', async () => {
+			let NaNtestObject = {
+				source_id: '1',
+				target_id: 1,
+			};
+			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+
+		it('should throw error when target_id is empty', async () => {
+			testObject.source_id = 1;
+			testObject.target_id = null;
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
+
+		it('should throw error when target_id is NaN', async () => {
+			let NaNtestObject = {
+				source_id: 1,
+				target_id: "1",
+			};
+			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
+				'Bad Request',
+			);
+		});
 	});
 });
