@@ -1,24 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { CreateChatroomDto } from '../src/chat/chatroom/dto/create-chatroom.dto';
-import { ChatroomController } from '../src/chat/chatroom/chatroom.controller';
+import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
+import { ChatController } from '../src/chats/chat/chat.controller';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
-import { ChatroomModule } from '../src/chat/chatroom/chatroom.module';
+import { ChatModule } from '../src/chats/chat/chat.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
-import { Chatroom } from '../src/chat/chatroom/entities/chatroom.entity';
+import { Chatroom } from '../src/chats/chat/entities/chat.entity';
 
-describe('chatroom e2e', () => {
+describe('chat e2e', () => {
 	let app: INestApplication;
-	let chatroomController: ChatroomController;
-	const testChatrooms: CreateChatroomDto[] = [
+	let chatroomController: ChatController;
+	const testChatrooms: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
 
-	const MockChatroom: CreateChatroomDto = {
+	const MockChatroom: CreateChatDto = {
 		name: 'C',
 		visibility: 'Indeed',
 		password: 'C',
@@ -29,7 +29,7 @@ describe('chatroom e2e', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				ChatroomModule,
+				ChatModule,
 			],
 		}).compile();
 
@@ -38,7 +38,7 @@ describe('chatroom e2e', () => {
 		await app.init();
 
 		chatroomController =
-			moduleFixture.get<ChatroomController>(ChatroomController);
+			moduleFixture.get<ChatController>(ChatController);
 
 		// seed db with animals for each testcase
 		for (const chatroom in testChatrooms) {

@@ -1,28 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { CreateMessageDto } from '../src/chat/message/dto/create-message.dto';
-import { MessageController } from '../src/chat/message/message.controller';
+import { CreateMessageDto } from '../src/chats/message/dto/create-message.dto';
+import { MessageController } from '../src/chats/message/message.controller';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { AnimalModule } from '../src/test_example/animal.module';
-import { MessageModule } from '../src/chat/message/message.module';
+import { MessageModule } from '../src/chats/message/message.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
-import { Message } from '../src/chat/message/entities/message.entity';
-import { CreateChatroomDto } from '../src/chat/chatroom/dto/create-chatroom.dto';
-import { ChatroomController } from '../src/chat/chatroom/chatroom.controller';
-import { MessageService } from '../src/chat/message/message.service';
-import { ChatroomService } from '../src/chat/chatroom/chatroom.service';
-import { Chatroom } from '../src/chat/chatroom/entities/chatroom.entity';
+import { Message } from '../src/chats/message/entities/message.entity';
+import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
+import { ChatController } from '../src/chats/chat/chat.controller';
+import { MessageService } from '../src/chats/message/message.service';
+import { ChatService } from '../src/chats/chat/chat.service';
+import { Chatroom } from '../src/chats/chat/entities/chat.entity';
 
 describe('message e2e', () => {
-	let chatroomController: ChatroomController;
+	let chatroomController: ChatController;
 	let messageService: MessageService;
-	let chatroomService: ChatroomService;
+	let chatroomService: ChatService;
 	let testingModule: TestingModule;
 	let app: INestApplication;
 	let messageController: MessageController;
-	const testChatrooms: CreateChatroomDto[] = [
+	const testChatrooms: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
@@ -39,8 +39,8 @@ describe('message e2e', () => {
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([Message, Chatroom]),
 			],
-			controllers: [MessageController, ChatroomController],
-			providers: [MessageService, ChatroomService],
+			controllers: [MessageController, ChatController],
+			providers: [MessageService, ChatService],
 		}).compile();
 
 		app = testingModule.createNestApplication();
@@ -49,9 +49,9 @@ describe('message e2e', () => {
 
 		messageController = testingModule.get<MessageController>(MessageController);
 		chatroomController =
-			testingModule.get<ChatroomController>(ChatroomController);
+			testingModule.get<ChatController>(ChatController);
 		messageService = testingModule.get<MessageService>(MessageService);
-		chatroomService = testingModule.get<ChatroomService>(ChatroomService);
+		chatroomService = testingModule.get<ChatService>(ChatService);
 
 		// seed db with animals for each testcase
 		for (const chatroom in testChatrooms) {

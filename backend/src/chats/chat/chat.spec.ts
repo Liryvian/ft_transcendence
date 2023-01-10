@@ -1,0 +1,73 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ChatController } from './chat.controller';
+import { ChatService } from './chat.service';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+
+import { AnimalEntity } from '../../test_example/entities/animals.entity';
+import { getConfigParseResult } from 'ts-loader/dist/config';
+import { CreateChatDto } from './dto/create-chat.dto';
+import { Chat } from './entities/chat.entity';
+
+describe('ChatController', () => {
+	let controller: ChatController;
+	let service: ChatService;
+	let testingModule: TestingModule;
+
+	const testChats: CreateChatDto[] = [
+		{ name: 'A', visibility: 'Not', password: 'A' },
+		{ name: 'B', visibility: 'Yes', password: 'B' },
+	];
+
+	beforeAll(async () => {
+		testingModule = await Test.createTestingModule({
+			imports: [
+				ConfigModule.forRoot({ isGlobal: true }),
+				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+				TypeOrmModule.forFeature([Chat]),
+			],
+			controllers: [ChatController],
+			providers: [ChatService],
+		}).compile();
+
+		controller = testingModule.get<ChatController>(ChatController);
+		service = testingModule.get<ChatService>(ChatService);
+
+		for (const chat in testChats) {
+			await controller.create(testChats[chat]);
+		}
+	});
+
+	afterAll(async () => {
+		const repoOfChats: Chat[] = await controller.findAll();
+		for (let i = 0; i < repoOfChats.length; i++) {
+			await controller.remove(i + 1);
+		}
+	});
+
+	it('Get all Chats', async () => {
+		const allChats: Chat[] = await controller.findAll();
+		expect(allChats).toHaveLength(2);
+		for (let index = 0; index < allChats.length; index++) {
+			expect(allChats).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: expect.any(Number),
+						name: testChats[index].name,
+						visibility: testChats[index].visibility,
+						password: testChats[index].password,
+					}),
+				]),
+			);
+		}
+	});
+
+	it('Get a specific chats', async () => {
+		const specificChat = 2;
+		const chat: Chat = await controller.findOne(specificChat);
+		expect(chat.id).toBe(specificChat);
+	});
+});
+
+// cosnt mockCR: createChatDTo = [{name: "hallo", visibility:  "Private", password: "1234"}, {data, data, data}, {}]

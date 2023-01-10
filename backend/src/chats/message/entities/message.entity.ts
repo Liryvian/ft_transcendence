@@ -6,7 +6,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { Chatroom } from '../../chatroom/entities/chatroom.entity';
+import { Chat } from '../../chat/entities/chat.entity';
 
 @Entity('messages')
 export class Message {
@@ -23,9 +23,9 @@ export class Message {
 	// @JoinColumn({name: 'sender_id'})
 	// sender_id: User;
 
-	@ManyToOne((type) => Chatroom, (chatRoom) => chatRoom.id)
+	@ManyToOne((type) => Chat, (chat) => chat.id)
 	@JoinColumn({ name: 'chat_id' })
-	chat_id: Chatroom;
+	chat_id: Chat;
 
 	@Column()
 	content: string;

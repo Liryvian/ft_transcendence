@@ -6,8 +6,8 @@ import {
 } from 'typeorm';
 import { User } from '../../../users/user/entities/user.entity';
 
-@Entity('chatrooms')
-export class Chatroom {
+@Entity('chat')
+export class Chat {
 	@PrimaryGeneratedColumn()
 	id: number;
 

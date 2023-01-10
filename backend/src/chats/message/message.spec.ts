@@ -1,24 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MessageController } from './message.controller';
 import { MessageService } from './message.service';
-import { ChatroomService } from '../chatroom/chatroom.service';
+import { ChatService } from '../chat/chat.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
-import { Chatroom } from '../chatroom/entities/chatroom.entity';
+import { Chatroom } from '../chat/entities/chat.entity';
 import { Message } from './entities/message.entity';
-import { ChatroomController } from '../chatroom/chatroom.controller';
-import { CreateChatroomDto } from '../chatroom/dto/create-chatroom.dto';
+import { ChatController } from '../chat/chat.controller';
+import { CreateChatDto } from '../chat/dto/create-chat.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 
 describe('MessageController', () => {
 	let messageController: MessageController;
-	let chatroomController: ChatroomController;
+	let chatroomController: ChatController;
 	let messageService: MessageService;
-	let chatroomService: ChatroomService;
+	let chatroomService: ChatService;
 	let testingModule: TestingModule;
 
-	const testChatrooms: CreateChatroomDto[] = [
+	const testChatrooms: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
@@ -35,15 +35,15 @@ describe('MessageController', () => {
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([Message, Chatroom]),
 			],
-			controllers: [MessageController, ChatroomController],
-			providers: [MessageService, ChatroomService],
+			controllers: [MessageController, ChatController],
+			providers: [MessageService, ChatService],
 		}).compile();
 
 		messageController = testingModule.get<MessageController>(MessageController);
 		chatroomController =
-			testingModule.get<ChatroomController>(ChatroomController);
+			testingModule.get<ChatController>(ChatController);
 		messageService = testingModule.get<MessageService>(MessageService);
-		chatroomService = testingModule.get<ChatroomService>(ChatroomService);
+		chatroomService = testingModule.get<ChatService>(ChatService);
 
 		// create one or two users that will exist till the "end" (once ready)
 
