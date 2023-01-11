@@ -1,22 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-	Body,
-	HttpStatus,
-	INestApplication,
-	ValidationPipe,
-} from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
 import { UserController } from '../src/user/user.controller';
-import { AuthController } from '../src/auth/auth.controller';
 import { UserModule } from '../src/user/user.module';
 import { SharedModule } from '../src/shared/shared.module';
 import { AuthModule } from '../src/auth/auth.module';
 import { UserService } from '../src/user/user.service';
-import { AuthService } from '../src/auth/auth.service';
 import { User } from '../src/user/entities/user.entity';
 import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -26,8 +19,6 @@ describe('Auth (e2e)', () => {
 	let app: INestApplication;
 	let userController: UserController;
 	let userService: UserService;
-	let authController: AuthController;
-	let authService: AuthService;
 	let jwtService: JwtService;
 
 	let users = [
@@ -66,8 +57,6 @@ describe('Auth (e2e)', () => {
 
 		userController = moduleFixture.get<UserController>(UserController);
 		userService = moduleFixture.get<UserService>(UserService);
-		authController = moduleFixture.get<AuthController>(AuthController);
-		authService = moduleFixture.get<AuthService>(AuthService);
 		jwtService = moduleFixture.get<JwtService>(JwtService);
 
 		await userController
