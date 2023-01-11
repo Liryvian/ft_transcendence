@@ -1,5 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import {
+	Body,
+	HttpStatus,
+	INestApplication,
+	ValidationPipe,
+} from '@nestjs/common';
 import * as request from 'supertest';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,6 +20,7 @@ import { AuthService } from '../src/auth/auth.service';
 import { User } from '../src/user/entities/user.entity';
 import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import * as cookieParser from 'cookie-parser';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
@@ -55,6 +61,7 @@ describe('AnimalController (e2e)', () => {
 
 		app = moduleFixture.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions()));
+		app.use(cookieParser());
 		await app.init();
 
 		userController = moduleFixture.get<UserController>(UserController);
@@ -99,14 +106,57 @@ describe('AnimalController (e2e)', () => {
 	});
 
 	describe('/logout (POST', () => {
+		it('should now allow logout with unauthenticated user', async () => {
+			return request(app.getHttpServer())
+				.post('/logout')
+				.send()
+				.expect(HttpStatus.FORBIDDEN);
+		});
+
 		it('should clear the cookie of a logged in user', async () => {
-			return (
-				request(app.getHttpServer())
-					.post('/logout')
-					// .cookies("jwt=testing")
-					.send()
-					.expect(HttpStatus.OK)
-			);
+			const agent = request.agent(app.getHttpServer());
+
+			await agent
+				.post('/login')
+				.send({ name: users[0].name, password: users[0].password })
+				.then((r) => {
+					return agent.post('/logout').expect((s) => {
+						expect(s.statusCode).toBe(HttpStatus.OK);
+						expect(s.headers['set-cookie']).toEqual(
+							expect.arrayContaining([expect.stringContaining('jwt=;')]),
+						);
+					});
+				});
+		});
+	});
+
+	describe('/me (GET)', () => {
+		it('should return the authenticated user', async () => {
+			const agent = request.agent(app.getHttpServer());
+
+			await agent
+				.post('/login')
+				.send({ name: users[0].name, password: users[0].password })
+				.then((r) => {
+					return agent
+						.get('/me')
+						.expect(HttpStatus.OK)
+						.expect((resp) => {
+							expect(resp.body).toEqual(
+								expect.objectContaining({
+									id: users[0]['id'],
+									name: users[0].name,
+									is_intra: false,
+								}),
+							);
+						});
+				});
+		});
+
+		it('should fail with unauthenticated user', async () => {
+			return request(app.getHttpServer())
+				.get('/me')
+				.expect(HttpStatus.FORBIDDEN);
 		});
 	});
 });
