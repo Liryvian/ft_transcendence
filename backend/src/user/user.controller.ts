@@ -57,7 +57,9 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(): Promise<User[]> {
-		return this.userService.findAll();
+		return this.userService.findAll({
+			relations: { matchmaking_request: true },
+		});
 	}
 
 	@UseGuards(AuthGuard)

@@ -23,12 +23,17 @@ export class MatchmakingRequestController {
 
 	@Get()
 	findAll() {
-		return this.matchmakingRequestService.findAll();
+		return this.matchmakingRequestService.findAll({
+			relations: { user: true },
+		});
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.matchmakingRequestService.findOne({ where: { id } });
+		return this.matchmakingRequestService.findOne({
+			where: { id },
+			relations: { user: true },
+		});
 	}
 
 	@Delete(':id')

@@ -2,11 +2,13 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsNotEmpty, MinLength } from 'class-validator';
+import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
 
 @Entity('users')
 export class User {
@@ -31,4 +33,10 @@ export class User {
 
 	@UpdateDateColumn()
 	updated_at: Date;
+
+	@OneToOne(
+		() => MatchmakingRequest,
+		(matchRequest: MatchmakingRequest) => matchRequest.user,
+	)
+	matchmaking_request: MatchmakingRequest;
 }
