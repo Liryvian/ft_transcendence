@@ -10,8 +10,8 @@ import { Chat } from '../../chat/entities/chat.entity';
 
 @Entity('user_chat')
 export class UserChat {
-	@PrimaryGeneratedColumn()
-	id: number;
+	// @PrimaryGeneratedColumn()
+	// id: number;
 
 	@PrimaryColumn({ name: 'user_id' })
 	userId: number;
