@@ -76,7 +76,7 @@ export class UserController {
 			if (e instanceof NotFoundException) {
 				throw e;
 			}
-			console.log(e);
+			console.log('An unknown error occurred, please check!', { e });
 			throw new BadRequestException(
 				'Something went wrong on updating the user',
 			);
