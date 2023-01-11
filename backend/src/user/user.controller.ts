@@ -16,15 +16,9 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-	InsertResult,
-	InstanceChecker,
-	QueryFailedError,
-	UpdateResult,
-} from 'typeorm';
+import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { AuthService } from '../auth/auth.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -35,15 +29,13 @@ export class UserController {
 
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
-		if (registerUserDto.password !== registerUserDto.password_confirm) {
-			throw new BadRequestException('Passwords do not match');
-		}
 		const hashed = await bcrypt.hash(registerUserDto.password, 11);
 		const createUserDto: CreateUserDto = {
 			name: registerUserDto.name,
 			password: hashed,
 			is_intra: false,
 		};
+
 		try {
 			const newUser: InsertResult = await this.userService.create(
 				createUserDto,

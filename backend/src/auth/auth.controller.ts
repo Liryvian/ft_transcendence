@@ -1,5 +1,4 @@
 import {
-	NotFoundException,
 	BadRequestException,
 	Body,
 	Controller,
@@ -8,6 +7,10 @@ import {
 	UseGuards,
 	UseInterceptors,
 	ClassSerializerInterceptor,
+	Get,
+	Req,
+	HttpCode,
+	HttpStatus,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -15,7 +18,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { UserController } from '../user/user.controller';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -28,21 +31,21 @@ export class AuthController {
 
 	@Post('login')
 	async login(
-		@Body('name') name: string,
-		@Body('password') password: string,
+		@Body() loginUserDto: LoginUserDto,
 		@Res({ passthrough: true }) response: Response,
 	) {
 		try {
 			const user = await this.userService.findOne({
 				where: {
-					name: name,
+					name: loginUserDto.name,
 				},
 			});
-			if (!user || !(await bcrypt.compare(password, user.password))) {
+			if (
+				!user ||
+				!(await bcrypt.compare(loginUserDto.password, user.password))
+			) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
-			// signAsync can throw, but only in a few very specific cases where invalid options are send
-			// since we are only sending a plain object and no options we can "safely" ignore to add try/catch
 			const jwt = await this.jwtService.signAsync({ id: user.id });
 			response.cookie('jwt', jwt, { httpOnly: true });
 			return user;
@@ -53,6 +56,7 @@ export class AuthController {
 
 	@UseGuards(AuthGuard)
 	@Post('logout')
+	@HttpCode(HttpStatus.OK)
 	async logout(@Res({ passthrough: true }) response: Response) {
 		response.clearCookie('jwt');
 		return {
@@ -60,8 +64,6 @@ export class AuthController {
 		};
 	}
 
-	/*
-										// MOVE THIS  <--------------
 	@UseGuards(AuthGuard)
 	@Get('user')
 	async user(@Req() request: Request) {
@@ -72,5 +74,4 @@ export class AuthController {
 			},
 		});
 	}
-	*/
 }

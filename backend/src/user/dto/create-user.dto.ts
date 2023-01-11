@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
 	@IsNotEmpty()
@@ -7,6 +7,7 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	password: string;
 
+	@IsOptional()
 	@IsBoolean()
 	is_intra?: boolean = false;
 }

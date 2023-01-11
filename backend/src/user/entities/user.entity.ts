@@ -7,7 +7,6 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { IsNotEmpty, MinLength } from 'class-validator';
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
 
 @Entity('users')
@@ -19,12 +18,9 @@ export class User {
 	is_intra: boolean;
 
 	@Column({ unique: true, nullable: false })
-	@IsNotEmpty()
-	@MinLength(1)
 	name: string;
 
 	@Column({ nullable: false })
-	@IsNotEmpty()
 	@Exclude()
 	password: string;
 
