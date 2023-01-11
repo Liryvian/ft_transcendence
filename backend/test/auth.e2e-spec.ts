@@ -22,7 +22,7 @@ import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as cookieParser from 'cookie-parser';
 
-describe('AnimalController (e2e)', () => {
+describe('Auth (e2e)', () => {
 	let app: INestApplication;
 	let userController: UserController;
 	let userService: UserService;
