@@ -19,7 +19,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { AuthService } from '../auth/auth.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')

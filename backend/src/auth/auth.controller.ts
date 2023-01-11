@@ -9,6 +9,8 @@ import {
 	ClassSerializerInterceptor,
 	Get,
 	Req,
+	HttpCode,
+	HttpStatus,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -16,7 +18,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { UserController } from '../user/user.controller';
 import { LoginUserDto } from './dto/login-user.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -45,7 +46,7 @@ export class AuthController {
 			) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
-			const jwt = this.jwtService.sign({ id: user.id });
+			const jwt = await this.jwtService.signAsync({ id: user.id });
 			response.cookie('jwt', jwt, { httpOnly: true });
 			return user;
 		} catch (e) {
@@ -55,6 +56,7 @@ export class AuthController {
 
 	@UseGuards(AuthGuard)
 	@Post('logout')
+	@HttpCode(HttpStatus.OK)
 	async logout(@Res({ passthrough: true }) response: Response) {
 		response.clearCookie('jwt');
 		return {
