@@ -18,6 +18,7 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { globalValidationPipeOptions } from '../main.validationpipe';
+import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
 
 describe('User', () => {
 	let controller: UserController;
@@ -36,7 +37,7 @@ describe('User', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User]),
+				TypeOrmModule.forFeature([User, MatchmakingRequest]),
 				AuthModule,
 			],
 			controllers: [UserController],

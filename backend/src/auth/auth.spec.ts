@@ -10,6 +10,7 @@ import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { UserController } from '../user/user.controller';
 import { InsertResult } from 'typeorm';
+import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
 
 describe('Auth', () => {
 	let authController: AuthController;
@@ -40,7 +41,7 @@ describe('Auth', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User]),
+				TypeOrmModule.forFeature([User, MatchmakingRequest]),
 			],
 			controllers: [AuthController, UserController],
 			providers: [AuthService, UserService, JwtService],

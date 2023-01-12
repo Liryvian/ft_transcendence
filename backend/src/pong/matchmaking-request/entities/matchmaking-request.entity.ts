@@ -20,6 +20,8 @@ export class MatchmakingRequest {
 	updated_at: Date;
 
 	@OneToOne(() => User, (user: User) => user.matchmaking_request)
-	@JoinColumn()
+	@JoinColumn({
+		name: 'invite_users',
+	})
 	user: User;
 }
