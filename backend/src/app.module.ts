@@ -6,6 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { GameModule } from './pong/game/game.module';
+import { GameInvitesModule } from './pong/game_invite/game-invite.module';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { SharedModule } from './shared/shared.module';
+import { MatchmakingRequestModule } from './pong/matchmaking-request/matchmaking-request.module';
 
 @Module({
 	imports: [
@@ -13,6 +18,13 @@ import { GameModule } from './pong/game/game.module';
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AnimalModule,
 		GameModule,
+		GameInvitesModule,
+		UserModule,
+		AuthModule,
+		SharedModule,
+		AnimalModule,
+		GameModule,
+		MatchmakingRequestModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
