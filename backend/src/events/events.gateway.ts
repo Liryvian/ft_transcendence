@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { from, map, Observable } from 'rxjs';
 import { Server } from 'socket.io';
+import { ObjectLiteral } from 'typeorm';
 
 @WebSocketGateway({
 	cors: {
@@ -18,11 +19,12 @@ export class EventsGateway {
 	server: Server;
 
 	@SubscribeMessage('events')
-	findAll(@MessageBody() data: any): Observable<WsResponse<number>> {
-		console.log('events');
-		return from([1, 2, 3]).pipe(
-			map((item) => ({ event: 'events', data: item })),
-		);
+	findAll(@MessageBody() data: any): Observable<WsResponse<ObjectLiteral>> {
+		console.log('events', data);
+		return from([
+			{ count: data.count ? data.count : 1 },
+			{ count_plus_one: data.count ? data.count + 1 : 2 },
+		]).pipe(map((item) => ({ event: 'events', data: item })));
 	}
 
 	@SubscribeMessage('identity')
