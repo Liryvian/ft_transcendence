@@ -12,7 +12,7 @@ import {
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async findAll(condition?: FindManyOptions): Promise<T[]> {
+	async findAll(condition?: FindManyOptions<T>): Promise<T[]> {
 		return this.repository.find(condition);
 	}
 
@@ -25,7 +25,7 @@ export abstract class AbstractService<T> {
 		return this.repository.insert(data);
 	}
 
-	async findOne(condition: FindOneOptions): Promise<T> {
+	async findOne(condition: FindOneOptions<T>): Promise<T> {
 		try {
 			const foundRepoItem = await this.repository.findOneOrFail(condition);
 			return foundRepoItem;
