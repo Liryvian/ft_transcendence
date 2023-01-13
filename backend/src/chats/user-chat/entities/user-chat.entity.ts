@@ -8,11 +8,10 @@ import {
 import { User } from '../../../users/user/entities/user.entity';
 import { Chat } from '../../chat/entities/chat.entity';
 
-@Entity('user_chat')
+@Entity('user_chats')
 export class UserChat {
-	// doubtfull wheter we need the primary key? since the chat ID is already in here?
-	// @PrimaryGeneratedColumn()
-	// id: number;
+	@PrimaryGeneratedColumn()
+	id: number;
 
 	@PrimaryColumn({ name: 'user_id' })
 	userId: number;
