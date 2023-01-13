@@ -1,6 +1,7 @@
 import {
 	Column,
-	Entity, JoinTable,
+	Entity,
+	JoinTable,
 	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
@@ -14,9 +15,6 @@ export class Role {
 
 	@Column()
 	name: string;
-
-
-
 
 	// @ManyToMany(() => UserChat)
 	// @JoinTable()
