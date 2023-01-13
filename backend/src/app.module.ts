@@ -11,7 +11,6 @@ import { UserModule } from './users/user/user.module';
 import { RoleModule } from './chats/role/role.module';
 import { GameModule } from './pong/game/game.module';
 import { UserChatModule } from './chats/user-chat/user-chat.module';
-import { UserchatRoleModule } from './chats/userchat-role/userchat-role.module';
 
 @Module({
 	imports: [

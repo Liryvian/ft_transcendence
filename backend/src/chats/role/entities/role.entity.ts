@@ -1,23 +1,30 @@
 import {
 	Column,
-	Entity,
+	Entity, JoinTable,
 	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserchatRole } from '../../userchat-role/entities/userchat-role.entity';
+import { UserChat } from '../../user-chat/entities/user-chat.entity';
 
 @Entity('roles')
 export class Role {
 	@PrimaryGeneratedColumn()
-	id: number;
+	public id: number;
 
 	@Column()
 	name: string;
 
-	// @ManyToOne(() => UserchatRole, (userchatrole) => userchatrole.id, {
-	// 	onDelete: 'CASCADE',
-	// 	onUpdate: 'CASCADE',
+
+
+
+	// @ManyToMany(() => UserChat)
+	// @JoinTable()
+	// public userchats: UserChat[];
+
+	// @ManyToMany(() => UserChat, (userchat) => userchat.roles, {
+	// 	onDelete: 'NO ACTION',
+	// 	onUpdate: 'NO ACTION',
 	// })
-	// users: UserchatRole[];
+	// public userchats: UserChat[];
 }

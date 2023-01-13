@@ -15,17 +15,13 @@ export class User {
 	@Column()
 	name: string;
 
-	// @ManyToMany((type) => Chat, {
-	// 	onDelete: 'CASCADE',
-	// 	onUpdate: 'CASCADE',
-	// })
 	@ManyToMany(
 		() => Chat,
 		(chat) => chat.users, //optional
 		{ onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
 	)
 	@JoinTable({
-		name: 'user_chat',
+		name: 'users_chats',
 		joinColumn: {
 			name: 'user_id',
 			referencedColumnName: 'id',
@@ -35,5 +31,5 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
-	chats: Chat[];
+	public chats: Chat[];
 }
