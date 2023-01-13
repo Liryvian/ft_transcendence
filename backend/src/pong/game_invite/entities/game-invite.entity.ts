@@ -1,6 +1,6 @@
 import { Check, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('game-invites')
+@Entity('game_invites')
 export class GameInvite {
 	@PrimaryGeneratedColumn()
 	id: number;
