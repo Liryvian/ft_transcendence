@@ -29,7 +29,7 @@ export class EventsGateway {
 
 	@SubscribeMessage('identity')
 	async identity(@MessageBody() data: number): Promise<number> {
-		console.log('identity');
+		console.log('changed');
 		return data;
 	}
 }
