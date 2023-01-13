@@ -6,7 +6,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('matchmaking-requests')
+@Entity('matchmaking_requests')
 export class MatchmakingRequest {
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -18,7 +18,7 @@ export class MatchmakingRequest {
 	updated_at: Date;
 
 	// to be joined later on
-    // One or Many ??? TBD
+	// One or Many ??? TBD
 	// @ManyToOne(() => User,  user => user.id)
 	// @JoinColumn({})
 	// player_one: User;
