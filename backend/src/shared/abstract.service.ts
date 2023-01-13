@@ -20,9 +20,18 @@ export abstract class AbstractService<T> {
 		the insert method allows you to insert either:
 		- a single entity
 		- an array of entitites
+
+		DOES NOT HANDLE RELATIONSHIPS, USE SAVE METHOD INSTEAD!
 	*/
 	async create(data): Promise<InsertResult> {
 		return this.repository.insert(data);
+	}
+
+	/*
+		Use this if you want to create entities WITH relationships
+	*/
+	async save(data): Promise<T[]> {
+		return this.repository.save(data);
 	}
 
 	async findOne(condition: FindOneOptions<T>): Promise<T> {

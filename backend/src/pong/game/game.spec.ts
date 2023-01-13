@@ -45,11 +45,6 @@ describe('Game unit tests', () => {
 	});
 
 	describe('relationship between players and game', () => {
-		it('should', async () => {
-			await service.create({});
-			userService.getGames(1);
-		});
-
 		it('should create a game connected to two players', async () => {
 			const test_users: CreateUserDto[] = [
 				{ name: 'u1', password: 'p1' },
@@ -58,39 +53,40 @@ describe('Game unit tests', () => {
 				{ name: 'u4', password: 'p4' },
 			];
 			let ids: number[];
-			await userService.create(test_users).then((res: InsertResult) => {
-				ids = res.identifiers.map((obj) => obj.id);
-				return res;
-			});
+			console.log(
+				JSON.stringify(
+					await userService.create(test_users).then((res: InsertResult) => {
+						ids = res.identifiers.map((obj) => obj.id);
+						return res;
+					}),
+					null,
+					2,
+				),
+			);
 			const allUsers = await userService.findAll();
 			console.table(allUsers);
 
-			try {
-				console.log(
-					await service.create({ player_one: ids[0], player_two: ids[1] }),
-					await service.create({ playerOneId: ids[0], playerTwoId: ids[1] }),
-				);
-			} catch (e) {
-				console.log(e);
-			}
+			const createdGame: Game[] = await service.save([
+				{},
+				{ users: [{ id: ids[1] }, { id: ids[2] }] },
+			]);
+			const gameIds = createdGame.map((obj) => obj.id);
+			console.log(createdGame);
 
-			// const createdGame: InsertResult = await service.create({
-			// 	id: 2,
-			// 	users: [{ id: ids[1] }, { id: ids[2] }],
-			// });
-			// const gameIds = createdGame.identifiers.map((obj) => obj.id);
 			// try {
 			// 	console.log(await service.addUser(gameIds[0], ids[0]));
 			// } catch (e) {
 			// 	console.log(e);
 			// }
-			// console.log(
-			// 	JSON.stringify(
-			// 		await service.findAll({ relations: ['users'] }),
-			// 		null,
-			// 		2,
-			// 	),
-			// );
+
+			console.log(
+				JSON.stringify(
+					await service.findAll({ relations: ['users'] }),
+					null,
+					2,
+				),
+			);
+
 			/*
 			// for many-to-one / one-to-many
 			try {
