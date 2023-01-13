@@ -9,9 +9,9 @@ import { ChatModule } from './chats/chat/chat.module';
 import { MessageModule } from './chats/message/message.module';
 import { UserModule } from './users/user/user.module';
 import { RoleModule } from './chats/role/role.module';
-import { ChatuserRoleModule } from './chats/chatuser-role/chatuser-role.module';
 import { GameModule } from './pong/game/game.module';
 import { UserChatModule } from './chats/user-chat/user-chat.module';
+import {UserchatRoleModule} from "./chats/userchat-role/userchat-role.module";
 
 @Module({
 	imports: [
@@ -22,9 +22,9 @@ import { UserChatModule } from './chats/user-chat/user-chat.module';
 		MessageModule,
 		UserModule,
 		RoleModule,
-		ChatuserRoleModule,
 		GameModule,
 		UserChatModule,
+		UserchatRoleModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
