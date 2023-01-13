@@ -6,6 +6,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { globalValidationPipeOptions } from '../../../src/main.validationpipe';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 import { GameInvite } from './entities/game-invite.entity';
@@ -37,11 +38,7 @@ describe('GameInvite unit tests', () => {
 	});
 
 	describe('CreateGameInviteDto', () => {
-		const validator = new ValidationPipe({
-			whitelist: true,
-			forbidNonWhitelisted: true,
-			transform: true,
-		});
+		const validator = new ValidationPipe(globalValidationPipeOptions());
 
 		let testObject = {
 			source_id: 1,
