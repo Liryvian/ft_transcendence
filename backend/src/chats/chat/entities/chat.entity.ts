@@ -13,13 +13,13 @@ export class Chat {
 	// 	onDelete: 'CASCADE',
 	// 	onUpdate: 'CASCADE',
 	// })
-	// user: User[];
+	// user_id: User[];
 
 	@ManyToMany(() => User, (user) => user.chats, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'NO ACTION',
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
 	})
-	users?: User[];
+	users: User[];
 
 	@Column()
 	visibility: string;

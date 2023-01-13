@@ -10,6 +10,7 @@ import { Chat } from '../../chat/entities/chat.entity';
 
 @Entity('user_chat')
 export class UserChat {
+	// doubtfull wheter we need the primary key? since the chat ID is already in here?
 	// @PrimaryGeneratedColumn()
 	// id: number;
 
@@ -20,15 +21,15 @@ export class UserChat {
 	chatId: number;
 
 	@ManyToOne(() => User, (user) => user.chats, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'NO ACTION',
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
 	users: User[];
 
 	@ManyToOne(() => Chat, (chat) => chat.users, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'NO ACTION',
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
 	})
 	@JoinColumn([{ name: 'chat_id', referencedColumnName: 'id' }])
 	chats: Chat[];
