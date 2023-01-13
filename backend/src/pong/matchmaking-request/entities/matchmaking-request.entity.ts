@@ -8,7 +8,7 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('matchmaking-requests')
+@Entity('matchmaking_requests')
 export class MatchmakingRequest {
 	@PrimaryGeneratedColumn()
 	id: number;

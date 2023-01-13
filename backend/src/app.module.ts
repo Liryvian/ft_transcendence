@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { MatchmakingRequestModule } from './pong/matchmaking-request/matchmaking-request.module';
 import { EventsModule } from './events/events.module';
+import { PongModule } from './pong/pong.module';
 
 @Module({
 	imports: [
@@ -27,6 +28,7 @@ import { EventsModule } from './events/events.module';
 		GameModule,
 		MatchmakingRequestModule,
 		EventsModule,
+		PongModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

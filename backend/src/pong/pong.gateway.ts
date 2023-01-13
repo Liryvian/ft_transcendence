@@ -6,28 +6,74 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { GameService } from './game/game.service';
 import { Socket } from 'socket.io';
+
+class Position {
+	x: number;
+	y: number;
+}
+
+let position: Position = {
+	x: 400,
+	y: 235,
+};
 
 @WebSocketGateway({
 	namespace: '/pong',
 	cors: {
-		origin: '*',
+		origin: '*:*',
+		// allowedHeaders: [
+		// 	'Access-Control-Allow-Origin',
+		// 	'Content-Type',
+		// 	'Authorization',
+		// ],
 	},
 })
 export class PongGateway implements OnGatewayConnection {
-	@WebSocketServer() wss: Server;
+	@WebSocketServer()
 	server: Server;
-	constructor(private readonly gameService: GameService) {}
 
 	async handleConnection(socket: Socket) {
-		socket.handshake.headers.cookie;
 		console.log('\n!Pong should be connected!\n');
+		this.server.emit('position', position);
 	}
 
-	@SubscribeMessage('send_message')
-	listenForMessages(@MessageBody() data: string) {
-		this.gameService.findAll();
-		this.server.sockets.emit('receive_message: ', data);
+	@SubscribeMessage('position')
+	sendPosition(@MessageBody() data: any) {
+		console.log('Emitting position', data);
+		this.server.emit('position', position);
+	}
+
+	/*
+		37 - Left arrow key
+		39 - Right arrow key
+		38 - Up arrow key
+		40 - Down arrow key
+	*/
+	@SubscribeMessage('move')
+	move(@MessageBody() direction: number) {
+		console.log('Direcetion: ' + direction);
+		switch (direction) {
+			case 37:
+				position.x -= 10;
+				if (position.x < 0) position.x = 800;
+				this.sendPosition(position);
+				break;
+			case 39:
+				position.x += 10;
+				if (position.x > 800) position.x = 0;
+				this.sendPosition(position);
+				break;
+			case 38:
+				position.y -= 10;
+				if (position.y < 0) position.y = 480;
+				this.sendPosition(position);
+				break;
+			case 40:
+				position.y += 10;
+				if (position.y > 480) position.y = 0;
+				this.sendPosition(position);
+				break;
+		}
 	}
 }
