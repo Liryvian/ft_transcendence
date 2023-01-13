@@ -8,24 +8,24 @@ import { Game } from './entities/game.entity';
 export class GameService extends AbstractService<Game> {
 	constructor(
 		@InjectRepository(Game)
-		private readonly gameRepo: Repository<Game>,
+		protected readonly repository: Repository<Game>,
 	) {
-		super(gameRepo);
+		super(repository);
 	}
 
-	async create(data): Promise<InsertResult> {
-		console.log(data);
-		const ins: InsertResult = await this.repository.insert(data);
-		await this.gameRepo.save({ ...data, id: ins.identifiers[0].id });
-		return ins;
-	}
+	// async create(data): Promise<InsertResult> {
+	// 	console.log(data);
+	// 	const ins: InsertResult = await this.repository.insert(data);
+	// 	await this.repository.save({ ...data, id: ins.identifiers[0].id });
+	// 	return ins;
+	// }
 
-	async addUser(self: number, userId: number) {
-		return this.gameRepo.save([
-			{
-				id: self,
-				users: [{ id: userId }],
-			},
-		]);
-	}
+	// async addUser(self: number, userId: number) {
+	// 	return this.repository.save([
+	// 		{
+	// 			id: self,
+	// 			users: [{ id: userId }],
+	// 		},
+	// 	]);
+	// }
 }
