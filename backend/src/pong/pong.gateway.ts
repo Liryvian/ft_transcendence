@@ -22,11 +22,6 @@ let position: Position = {
 	namespace: '/pong',
 	cors: {
 		origin: '*:*',
-		// allowedHeaders: [
-		// 	'Access-Control-Allow-Origin',
-		// 	'Content-Type',
-		// 	'Authorization',
-		// ],
 	},
 })
 export class PongGateway implements OnGatewayConnection {
@@ -35,41 +30,43 @@ export class PongGateway implements OnGatewayConnection {
 
 	async handleConnection(socket: Socket) {
 		console.log('\n!Pong should be connected!\n');
-		this.server.emit('position', position);
+		this.sendPosition({
+			x: 400,
+			y: 235,
+		});
 	}
 
 	@SubscribeMessage('position')
 	sendPosition(@MessageBody() data: any) {
-		console.log('Emitting position', data);
 		this.server.emit('position', position);
 	}
 
 	/*
-		37 - Left arrow key
-		39 - Right arrow key
-		38 - Up arrow key
-		40 - Down arrow key
+	37 - Left arrow key
+	39 - Right arrow key
+	38 - Up arrow key
+	40 - Down arrow key
 	*/
 	@SubscribeMessage('move')
-	move(@MessageBody() direction: number) {
+	move(@MessageBody() direction: string) {
 		console.log('Direcetion: ' + direction);
 		switch (direction) {
-			case 37:
+			case 'ArrowLeft':
 				position.x -= 10;
 				if (position.x < 0) position.x = 800;
 				this.sendPosition(position);
 				break;
-			case 39:
+			case 'ArrowRight':
 				position.x += 10;
 				if (position.x > 800) position.x = 0;
 				this.sendPosition(position);
 				break;
-			case 38:
+			case 'ArrowUp':
 				position.y -= 10;
 				if (position.y < 0) position.y = 480;
 				this.sendPosition(position);
 				break;
-			case 40:
+			case 'ArrowDown':
 				position.y += 10;
 				if (position.y > 480) position.y = 0;
 				this.sendPosition(position);
