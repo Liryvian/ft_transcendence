@@ -11,7 +11,7 @@ import { UserChatService } from './user-chat.service';
 import { CreateUserChatDto } from './dto/create-user-chat.dto';
 import { UpdateUserChatDto } from './dto/update-user-chat.dto';
 
-@Controller('user-chat')
+@Controller('user_chats')
 export class UserChatController {
 	constructor(private readonly userChatService: UserChatService) {}
 
