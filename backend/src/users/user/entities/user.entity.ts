@@ -31,6 +31,5 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
-
 	public chats: Chat[];
 }

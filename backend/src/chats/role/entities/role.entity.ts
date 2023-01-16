@@ -7,7 +7,6 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserChat } from '../../user-chat/entities/user-chat.entity';
-import { Chat } from '../../chat/entities/chat.entity';
 
 @Entity('roles')
 export class Role {

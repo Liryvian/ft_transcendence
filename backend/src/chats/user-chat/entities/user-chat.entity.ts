@@ -1,5 +1,6 @@
 import {
 	Entity,
+	Index,
 	JoinColumn,
 	JoinTable,
 	ManyToMany,
@@ -12,10 +13,8 @@ import { Chat } from '../../chat/entities/chat.entity';
 import { Role } from '../../role/entities/role.entity';
 
 @Entity('user_chats')
+// @Index(['user_id', 'chat_id'], { unique: true })
 export class UserChat {
-	// @PrimaryGeneratedColumn()
-	// id: number;
-
 	@PrimaryColumn({ name: 'user_id' })
 	userId: number;
 
@@ -35,4 +34,7 @@ export class UserChat {
 	})
 	@JoinColumn([{ name: 'chat_id', referencedColumnName: 'id' }])
 	chats: Chat[];
+
+	@ManyToMany(() => Role)
+	Roles: Role[];
 }
