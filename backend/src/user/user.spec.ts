@@ -19,16 +19,33 @@ import {
 } from '@nestjs/common';
 import { globalValidationPipeOptions } from '../main.validationpipe';
 import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { GameService } from '../pong/game/game.service';
+import { GameModule } from '../pong/game/game.module';
+import { Game } from '../pong/game/entities/game.entity';
 
 describe('User', () => {
 	let controller: UserController;
 	let service: UserService;
 	let testingModule: TestingModule;
+	let gameService: GameService;
 
 	let seedUsers = [
-		{ name: 'DefaultUsr', password: 'Password for default user', userId: -1 },
-		{ name: 'secondUser', password: 'Second users password', userId: -1 },
+		{
+			name: 'DefaultUsr',
+			password: 'Password for default user',
+			userId: -1,
+			games: [],
+		},
+		{
+			name: 'secondUser',
+			password: 'Second users password',
+			userId: -1,
+			games: [],
+		},
+		{ name: 'third', password: 'Third users password', userId: -1, games: [] },
+		{ name: '4th', password: 'fourth users password', userId: -1, games: [] },
 	];
+	let gameIds: number[] = [];
 
 	beforeAll(async () => {
 		const mock_guard = { CanActivate: jest.fn(() => true) };
@@ -37,8 +54,9 @@ describe('User', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User, MatchmakingRequest]),
+				TypeOrmModule.forFeature([User, MatchmakingRequest, Game]),
 				AuthModule,
+				GameModule,
 			],
 			controllers: [UserController],
 			providers: [UserService, JwtService],
@@ -49,16 +67,50 @@ describe('User', () => {
 
 		controller = testingModule.get<UserController>(UserController);
 		service = testingModule.get<UserService>(UserService);
+		gameService = testingModule.get<GameService>(GameService);
 
-		for (let index = 0; index < seedUsers.length; index++) {
-			const data: CreateUserDto = {
-				name: seedUsers[index].name,
-				password: seedUsers[index].password,
+		// create users
+		const userDtos: CreateUserDto[] = seedUsers.map((obj) => {
+			return <CreateUserDto>{
+				name: obj.name,
+				password: obj.password,
 				is_intra: false,
 			};
-			const newUserResult: InsertResult = await service.create(data);
-			seedUsers[index].userId = newUserResult.identifiers[0].id;
-		}
+		});
+		await service.create(userDtos).then((res: InsertResult) => {
+			res.identifiers.forEach((el, i) => {
+				seedUsers[i].userId = el.id;
+			});
+			return res;
+		});
+
+		await gameService
+			.save([
+				{ player_one: seedUsers[0].userId, player_two: seedUsers[1].userId },
+				{ player_one: seedUsers[2].userId, player_two: seedUsers[0].userId },
+				{ player_one: seedUsers[1].userId, player_two: seedUsers[2].userId },
+				{ player_one: seedUsers[2].userId, player_two: seedUsers[3].userId },
+			])
+			.then((games: unknown) => {
+				const g: Game[] = games as Game[];
+				g.forEach((el) => {
+					gameIds.push(el.id);
+				});
+			});
+		// the result of the `save` method does not return _with_ relations...
+		const allGames: Game[] = await gameService.findAll({
+			relations: ['player_one', 'player_two'],
+		});
+		allGames.forEach((game) => {
+			seedUsers.forEach((usr) => {
+				if (
+					usr.userId === game.player_one.id ||
+					usr.userId === game.player_two.id
+				) {
+					usr.games.push(game.id);
+				}
+			});
+		});
 	});
 
 	describe('DTO', () => {
@@ -197,6 +249,54 @@ describe('User', () => {
 	describe('UserService', () => {
 		it('should be defined', () => {
 			expect(service).toBeDefined();
+		});
+
+		describe('Relationship to games', () => {
+			it('should return a single game attached to a userId', async () => {
+				const usersGames: Game[] = await service.getGames(seedUsers[3].userId);
+				expect(usersGames.length).toBe(1);
+				expect(usersGames[0].id).toBe(4);
+			});
+
+			it('should return an array of games attached to a userId', async () => {
+				const usersGames: Game[] = await service.getGames(seedUsers[2].userId);
+				expect(usersGames.length).toBe(3);
+				expect(usersGames).toEqual(
+					expect.arrayContaining([
+						expect.objectContaining({
+							id: 2,
+						}),
+						expect.objectContaining({
+							id: 3,
+						}),
+						expect.objectContaining({
+							id: 4,
+						}),
+					]),
+				);
+			});
+
+			it('should return the user object with the relation to games', async () => {
+				const userWithGames = await service.findOneWithGames({
+					where: { id: seedUsers[2].userId },
+				});
+				const usersGameIds = userWithGames.games.map((game) => game.id);
+				expect(usersGameIds).toEqual(seedUsers[2].games);
+			});
+
+			test('should return array of users with relation to games', async () => {
+				const usersWithGames = await service.findAllWithGames();
+				const map_output_to_values_to_test = usersWithGames.map((u) => ({
+					id: u.id,
+					games: u.games.map((g) => g.id),
+				}));
+				const map_users_to_test_values = seedUsers.map((u) => ({
+					id: u.userId,
+					games: u.games,
+				}));
+
+				expect(map_output_to_values_to_test).toEqual(map_users_to_test_values);
+			});
 		});
 
 		describe('Database constraint for unique usernames', () => {

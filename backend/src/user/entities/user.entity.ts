@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { Game } from '../../pong/game/entities/game.entity';
+import { IsOptional } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -20,8 +22,8 @@ export class User {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@Column({ nullable: false })
 	@Exclude()
+	@Column({ nullable: false })
 	password: string;
 
 	@CreateDateColumn()
@@ -35,4 +37,6 @@ export class User {
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
 	)
 	matchmaking_request: MatchmakingRequest;
+	@IsOptional()
+	games: Game[];
 }
