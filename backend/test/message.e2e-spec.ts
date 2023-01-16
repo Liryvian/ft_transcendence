@@ -13,31 +13,48 @@ import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
 import { ChatController } from '../src/chats/chat/chat.controller';
 import { MessageService } from '../src/chats/message/message.service';
 import { ChatService } from '../src/chats/chat/chat.service';
-import { Chatroom } from '../src/chats/chat/entities/chat.entity';
+import { Chat } from '../src/chats/chat/entities/chat.entity';
+import { ChatModule } from '../src/chats/chat/chat.module';
+import { UserModule } from '../src/users/user/user.module';
+import { RoleModule } from '../src/chats/role/role.module';
+import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
+import { GameModule } from '../src/pong/game/game.module';
+import { UserChat } from '../src/chats/user-chat/entities/user-chat.entity';
+import { Role } from '../src/chats/role/entities/role.entity';
+import { User } from '../src/users/user/entities/user.entity';
+import { Game } from '../src/pong/game/entities/game.entity';
+import { UserController } from '../src/users/user/user.controller';
 
 describe('message e2e', () => {
-	let chatroomController: ChatController;
+	let chatController: ChatController;
+	let userController: UserController;
 	let messageService: MessageService;
-	let chatroomService: ChatService;
+	let chatService: ChatService;
 	let testingModule: TestingModule;
 	let app: INestApplication;
 	let messageController: MessageController;
-	const testChatrooms: CreateChatDto[] = [
+
+	const testChats: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
+	const chatIds = [];
 
-	const testMessages: CreateMessageDto[] = [
-		{ chat_id: 1, content: 'hello' },
-		{ chat_id: 1, content: 'world!' },
-	];
+	const testUsers = [{ name: 'u1' }, { name: 'u2' }];
+	let userIds = [];
+
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Message, Chatroom]),
+				TypeOrmModule.forFeature([UserChat, Role, User, Chat, Game, Message]),
+				UserChatModule,
+				UserModule,
+				ChatModule,
+				RoleModule,
+				GameModule,
 			],
 			controllers: [MessageController, ChatController],
 			providers: [MessageService, ChatService],
@@ -48,19 +65,31 @@ describe('message e2e', () => {
 		await app.init();
 
 		messageController = testingModule.get<MessageController>(MessageController);
-		chatroomController =
-			testingModule.get<ChatController>(ChatController);
+		chatController = testingModule.get<ChatController>(ChatController);
+		userController = testingModule.get<UserController>(UserController);
 		messageService = testingModule.get<MessageService>(MessageService);
-		chatroomService = testingModule.get<ChatService>(ChatService);
-
+		chatService = testingModule.get<ChatService>(ChatService);
 		// seed db with animals for each testcase
-		for (const chatroom in testChatrooms) {
-			await chatroomController.create(testChatrooms[chatroom]);
+		for (const chat in testChats) {
+			await chatController
+				.create(testChats[chat])
+				.then((chat) => chatIds.push(chat.identifiers[0].id));
 		}
+		for (const user in testUsers) {
+			await userController
+				.create(testUsers[user])
+				.then((user) => userIds.push(user.identifiers[0].id));
+		}
+
+		const testMessages: CreateMessageDto[] = [
+			{ sender_id: userIds[0], chat_id: chatIds[0], content: 'hello' },
+			{ sender_id: userIds[1], chat_id: chatIds[1], content: 'world!' },
+		];
 
 		for (const message in testMessages) {
 			await messageController.create(testMessages[message]);
 		}
+		// console.log(await messageController.findAll());
 	});
 
 	afterAll(async () => {
