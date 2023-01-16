@@ -49,7 +49,7 @@ export class PongGateway implements OnGatewayConnection {
 	*/
 	@SubscribeMessage('move')
 	move(@MessageBody() direction: string) {
-		console.log('Direcetion: ' + direction);
+		console.log('Direction: ' + direction);
 		switch (direction) {
 			case 'ArrowLeft':
 				position.x -= 10;

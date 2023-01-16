@@ -14,7 +14,6 @@
 
 <script lang="ts">
 import { io, Socket } from 'socket.io-client';
-import { ref } from 'vue';
 
 //  Creating intefaces for data object, because typescript
 interface Position {
@@ -57,6 +56,7 @@ export default {
 		//  adds listener to page so key presses will move game objects by default
 		window.addEventListener('keyup', this.move);
 	},
+
 	mounted() {
 		this.context = (this.$refs.game as any).getContext('2d');
 
