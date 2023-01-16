@@ -11,6 +11,8 @@ import * as request from 'supertest';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
 import { UserModule } from '../src/user/user.module';
 import { User } from '../src/user/entities/user.entity';
+import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
+import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
@@ -23,9 +25,10 @@ describe('Game (e2e)', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Game, User]),
+				TypeOrmModule.forFeature([Game, User, MatchmakingRequest]),
 				GameModule,
 				UserModule,
+				MatchmakingRequestModule,
 			],
 		}).compile();
 

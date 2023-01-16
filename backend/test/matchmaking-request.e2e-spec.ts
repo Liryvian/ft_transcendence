@@ -8,6 +8,8 @@ import { CreateMatchmakingRequestDto } from '../src/pong/matchmaking-request/dto
 import { MatchmakingRequestController } from '../src/pong/matchmaking-request/matchmaking-request.controller';
 import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
 import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { UserModule } from '../src/user/user.module';
+import { GameModule } from '../src/pong/game/game.module';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -23,6 +25,8 @@ describe('GameInvite (e2e)', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				MatchmakingRequestModule,
+				UserModule,
+				GameModule,
 			],
 		}).compile();
 

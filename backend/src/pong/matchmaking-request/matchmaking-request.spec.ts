@@ -10,6 +10,9 @@ import { UserController } from '../../user/user.controller';
 import { UserService } from '../../user/user.service';
 import { RegisterUserDto } from '../../user/dto/register-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { SharedModule } from '../../shared/shared.module';
+import { Game } from '../game/entities/game.entity';
+import { GameModule } from '../game/game.module';
 
 describe('MatchmakingRequestService', () => {
 	let mmrService: MatchmakingRequestService;
@@ -40,8 +43,9 @@ describe('MatchmakingRequestService', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([MatchmakingRequest, User]),
-				// SharedModule, // import for the JwtService
+				TypeOrmModule.forFeature([MatchmakingRequest, User, Game]),
+				SharedModule, // import for the JwtService
+				GameModule,
 			],
 			providers: [MatchmakingRequestService, UserService, JwtService],
 			controllers: [MatchmakingRequestController, UserController],
