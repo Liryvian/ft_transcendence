@@ -32,7 +32,7 @@ describe('GameInvite (e2e)', () => {
 			GameInvitesController,
 		);
 
-		await invitesController.create(mockInvite);
+		await invitesController.save(mockInvite);
 	});
 
 	afterAll(async () => {

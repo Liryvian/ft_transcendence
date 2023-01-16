@@ -38,7 +38,7 @@ describe('Game (e2e)', () => {
 
 		gameController = moduleFixture.get<GameController>(GameController);
 
-		await gameController.create(mockGame);
+		await gameController.save(mockGame);
 	});
 
 	afterAll(async () => {

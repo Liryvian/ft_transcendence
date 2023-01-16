@@ -22,12 +22,17 @@ export class GameController {
 
 	@Get()
 	findAll() {
-		return this.gameService.findAll();
+		return this.gameService.findAll({
+			relations: { player_one: true, player_two: true },
+		});
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.gameService.findOne({ where: { id } });
+		return this.gameService.findOne({
+			where: { id },
+			relations: { player_one: true, player_two: true },
+		});
 	}
 
 	@Patch(':id')

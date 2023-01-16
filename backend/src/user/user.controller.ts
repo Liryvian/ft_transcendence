@@ -57,9 +57,16 @@ export class UserController {
 	async findOne(@Param('id') id: number): Promise<User> {
 		return this.userService.findOne({
 			where: {
-				id: +id,
+				id: id,
 			},
 		});
+	}
+
+	@UseGuards(AuthGuard)
+	// localhost:8080/api/users/id/games
+	@Get(':id/games')
+	async findOneWithGame(@Param('id') id: number): Promise<User> {
+		return this.userService.findOneWithGames({ where: { id } });
 	}
 
 	@UseGuards(AuthGuard)

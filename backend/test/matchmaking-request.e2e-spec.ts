@@ -38,7 +38,7 @@ describe('GameInvite (e2e)', () => {
 			MatchmakingRequestController,
 		);
 
-		await matchmakingController.create(mockInvite);
+		await matchmakingController.save(mockInvite);
 	});
 
 	afterAll(async () => {
