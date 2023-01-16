@@ -91,38 +91,25 @@ describe('User', () => {
 				{ player_one: seedUsers[2].userId, player_two: seedUsers[3].userId },
 			])
 			.then((games: unknown) => {
-				const g: Game[] = games as Game[]; // lol
+				const g: Game[] = games as Game[];
 				g.forEach((el) => {
 					gameIds.push(el.id);
-					seedUsers.forEach((usr) => {
-						console.log(el.player_one);
-						console.log(el.player_two);
-						// if (
-						// 	usr.userId === el.player_one ||
-						// 	usr.userId === el.player_two
-						// ) {
-						// 	console.log(`found ${usr.userId} in game ${el.id}`);
-						// 	usr.games.push(el.id);
-						// }
-					});
-					// console.log(
-					// 	seedUsers.find(
-					// 		(u) =>
-					// 			u.userId === Number(el.player_one) ||
-					// 			u.userId === Number(el.player_two),
-					// 	),
-					// ); // not yet working
-					// seedUsers
-					// 	.find((u) => u.userId === el.player_one.id)
-					// 	?.games.push(el.id);
-					// seedUsers
-					// 	.find((u) => u.userId === el.player_two.id)
-					// 	?.games.push(el.id);
 				});
-				return games;
 			});
-		console.log(seedUsers);
-		console.log(gameIds);
+		// the result of the `save` method does not return _with_ relations...
+		const allGames: Game[] = await gameService.findAll({
+			relations: ['player_one', 'player_two'],
+		});
+		allGames.forEach((game) => {
+			seedUsers.forEach((usr) => {
+				if (
+					usr.userId === game.player_one.id ||
+					usr.userId === game.player_two.id
+				) {
+					usr.games.push(game.id);
+				}
+			});
+		});
 	});
 
 	describe('DTO', () => {
@@ -264,12 +251,45 @@ describe('User', () => {
 		});
 
 		describe('Relationship to games', () => {
-			it('should return the games attached to a userId', async () => {
+			it('should return a single game attached to a userId', async () => {
 				const usersGames: Game[] = await service.getGames(seedUsers[3].userId);
 				expect(usersGames.length).toBe(1);
-				// expect(usersGames[0].id).;
+				expect(usersGames[0].id).toBe(4);
 			});
-			it('should return the user object with the relation to games', async () => {});
+
+			it('should return an array of games attached to a userId', async () => {
+				const usersGames: Game[] = await service.getGames(seedUsers[2].userId);
+				expect(usersGames.length).toBe(3);
+				expect(usersGames).toEqual(
+					expect.arrayContaining([
+						expect.objectContaining({
+							id: 2,
+						}),
+						expect.objectContaining({
+							id: 3,
+						}),
+						expect.objectContaining({
+							id: 4,
+						}),
+					]),
+				);
+			});
+
+			it('should return the user object with the relation to games', async () => {
+				const userWithGames = await service.findOneWithGames({
+					where: { id: seedUsers[2].userId },
+				});
+				const usersGameIds = userWithGames.games.map((game) => game.id);
+				expect(usersGameIds).toEqual(seedUsers[2].games);
+			});
+
+			test('should return array of users with relation to games', async () => {
+				const usersWithGames = await service.findAllWithGames();
+				console.log(
+					'should have users with games: ',
+					JSON.stringify(usersWithGames, null, 2),
+				);
+			});
 		});
 
 		describe('Database constraint for unique usernames', () => {

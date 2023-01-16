@@ -6,6 +6,8 @@ import {
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Game } from '../../pong/game/entities/game.entity';
+import { IsOptional } from 'class-validator';
 
 @Entity('users')
 export class User {
@@ -27,4 +29,7 @@ export class User {
 
 	@UpdateDateColumn()
 	updated_at: Date;
+
+	@IsOptional()
+	games: Game[];
 }
