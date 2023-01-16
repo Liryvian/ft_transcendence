@@ -95,10 +95,15 @@ describe('User', () => {
 				g.forEach((el) => {
 					gameIds.push(el.id);
 					seedUsers.forEach((usr) => {
-						if (usr.userId === el.player_one || usr.userId === el.player_two) {
-							console.log(`found ${usr.userId} in game ${el.id}`);
-							usr.games.push(el.id);
-						}
+						console.log(el.player_one);
+						console.log(el.player_two);
+						// if (
+						// 	usr.userId === el.player_one ||
+						// 	usr.userId === el.player_two
+						// ) {
+						// 	console.log(`found ${usr.userId} in game ${el.id}`);
+						// 	usr.games.push(el.id);
+						// }
 					});
 					// console.log(
 					// 	seedUsers.find(

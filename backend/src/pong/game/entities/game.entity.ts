@@ -37,12 +37,12 @@ export class Game {
 		nullable: false,
 		createForeignKeyConstraints: false,
 	})
-	player_one: Number;
+	player_one: User;
 
 	@ManyToOne(() => User, (user) => user.id, {
 		nullable: false,
 		createForeignKeyConstraints: false,
 	})
 	@Check(`"playerTwoId" <> "playerOneId"`)
-	player_two: Number;
+	player_two: User;
 }
