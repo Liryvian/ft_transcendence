@@ -1,12 +1,9 @@
 import {
 	Entity,
-	Index,
 	JoinColumn,
-	JoinTable,
 	ManyToMany,
 	ManyToOne,
 	PrimaryColumn,
-	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../../users/user/entities/user.entity';
 import { Chat } from '../../chat/entities/chat.entity';

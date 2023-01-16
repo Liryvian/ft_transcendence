@@ -4,9 +4,6 @@ import { ChatService } from './chat.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
-
-import { AnimalEntity } from '../../test_example/entities/animals.entity';
-import { getConfigParseResult } from 'ts-loader/dist/config';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { Chat } from './entities/chat.entity';
 
@@ -63,7 +60,7 @@ describe('ChatController', () => {
 		}
 	});
 
-	it('Get a specific chats', async () => {
+	it('Get a specific chat', async () => {
 		const specificChat = 2;
 		const chat: Chat = await controller.findOne(specificChat);
 		expect(chat.id).toBe(specificChat);
