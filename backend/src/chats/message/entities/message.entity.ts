@@ -22,7 +22,7 @@ export class Message {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@OneToOne((type) => User, (user) => user.id) // can be added when user exists
+	@OneToOne((type) => User, (user) => user.id)
 	@JoinColumn({ name: 'sender_id' })
 	sender_id: User;
 
@@ -30,6 +30,6 @@ export class Message {
 	@JoinColumn({ name: 'chat_id' })
 	chat_id: Chat;
 
-	@Column()
+	@Column({ nullable: false })
 	content: string;
 }

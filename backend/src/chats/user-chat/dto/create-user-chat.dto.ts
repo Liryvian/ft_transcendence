@@ -3,8 +3,8 @@ import { IsNotEmpty } from 'class-validator';
 export class CreateUserChatDto {
 	//UserId needs to be protected for doubles
 	@IsNotEmpty()
-	userId: number;
+	user_id: number;
 
 	@IsNotEmpty()
-	chatId: number;
+	chat_id: number;
 }

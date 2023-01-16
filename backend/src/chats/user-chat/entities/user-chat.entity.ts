@@ -13,13 +13,14 @@ import { Chat } from '../../chat/entities/chat.entity';
 import { Role } from '../../role/entities/role.entity';
 
 @Entity('user_chats')
+// !! note: need to find a way around the typeOrm error that @Index() creates, does any of you have a suggestion?
 // @Index(['user_id', 'chat_id'], { unique: true })
 export class UserChat {
 	@PrimaryColumn({ name: 'user_id' })
-	userId: number;
+	user_id: number;
 
 	@PrimaryColumn({ name: 'chat_id' })
-	chatId: number;
+	chat_id: number;
 
 	@ManyToOne(() => User, (user) => user.chats, {
 		onDelete: 'CASCADE',
@@ -36,5 +37,5 @@ export class UserChat {
 	chats: Chat[];
 
 	@ManyToMany(() => Role)
-	Roles: Role[];
+	roles: Role[];
 }

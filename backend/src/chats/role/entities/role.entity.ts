@@ -1,6 +1,6 @@
 import {
 	Column,
-	Entity,
+	Entity, JoinColumn,
 	JoinTable,
 	ManyToMany,
 	ManyToOne,
@@ -11,9 +11,9 @@ import { UserChat } from '../../user-chat/entities/user-chat.entity';
 @Entity('roles')
 export class Role {
 	@PrimaryGeneratedColumn()
-	public id: number;
+	id: number;
 
-	@Column()
+	@Column({ nullable: false })
 	name: string;
 
 	@ManyToMany(() => UserChat)

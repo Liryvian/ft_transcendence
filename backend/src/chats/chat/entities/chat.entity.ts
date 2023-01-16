@@ -1,19 +1,14 @@
 import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../../../users/user/entities/user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity('chats')
 export class Chat {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
+	@Column({ unique: true, nullable: false })
 	name: string;
-
-	// @ManyToMany(() => User, (user) => user.id, {
-	// 	onDelete: 'CASCADE',
-	// 	onUpdate: 'CASCADE',
-	// })
-	// user_id: User[];
 
 	@ManyToMany(() => User, (user) => user.chats, {
 		onDelete: 'CASCADE',
@@ -21,9 +16,10 @@ export class Chat {
 	})
 	users: User[];
 
-	@Column()
+	@Column({ default: 'public' })
 	visibility: string;
 
-	@Column()
+	@Column({ nullable: false })
+	@Exclude()
 	password: string;
 }

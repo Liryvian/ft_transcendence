@@ -3,7 +3,7 @@ import { CreateRoleDto } from './create-role.dto';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateRoleDto extends PartialType(CreateRoleDto) {
-	@IsNotEmpty()
+	// !! since there is only one 'variable' shall I use the decorator @IsNotEmpty() or is that weird?
 	@IsOptional()
 	name?: string;
 }
