@@ -5,7 +5,7 @@ import { ChatService } from '../chat/chat.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
-import { Chatroom } from '../chat/entities/chat.entity';
+import { Chat } from '../chat/entities/chat.entity';
 import { Message } from './entities/message.entity';
 import { ChatController } from '../chat/chat.controller';
 import { CreateChatDto } from '../chat/dto/create-chat.dto';
@@ -13,19 +13,19 @@ import { CreateMessageDto } from './dto/create-message.dto';
 
 describe('MessageController', () => {
 	let messageController: MessageController;
-	let chatroomController: ChatController;
+	let chatController: ChatController;
 	let messageService: MessageService;
-	let chatroomService: ChatService;
+	let chatService: ChatService;
 	let testingModule: TestingModule;
 
-	const testChatrooms: CreateChatDto[] = [
+	const testChats: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
 
 	const testMessages: CreateMessageDto[] = [
-		{ chat_id: 1, content: 'hello' },
-		{ chat_id: 1, content: 'world!' },
+		{ sender_id: 'a', chat_id: 1, content: 'hello' },
+		{ sender_id: 'g', chat_id: 1, content: 'world!' },
 	];
 
 	beforeAll(async () => {
@@ -33,22 +33,21 @@ describe('MessageController', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Message, Chatroom]),
+				TypeOrmModule.forFeature([Message, Chat]),
 			],
 			controllers: [MessageController, ChatController],
 			providers: [MessageService, ChatService],
 		}).compile();
 
 		messageController = testingModule.get<MessageController>(MessageController);
-		chatroomController =
-			testingModule.get<ChatController>(ChatController);
+		chatController = testingModule.get<ChatController>(ChatController);
 		messageService = testingModule.get<MessageService>(MessageService);
-		chatroomService = testingModule.get<ChatService>(ChatService);
+		chatService = testingModule.get<ChatService>(ChatService);
 
 		// create one or two users that will exist till the "end" (once ready)
 
-		for (const chatroom in testChatrooms) {
-			await chatroomController.create(testChatrooms[chatroom]);
+		for (const chat in testChats) {
+			await chatController.create(testChats[chat]);
 		}
 
 		for (const message in testMessages) {

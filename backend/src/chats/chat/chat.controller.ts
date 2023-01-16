@@ -31,10 +31,7 @@ export class ChatController {
 	}
 
 	@Patch(':id')
-	update(
-		@Param('id') id: number,
-		@Body() updateChatDto: UpdateChatDto,
-	) {
+	update(@Param('id') id: number, @Body() updateChatDto: UpdateChatDto) {
 		return this.chatService.update(+id, updateChatDto);
 	}
 

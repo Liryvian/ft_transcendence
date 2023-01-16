@@ -21,7 +21,7 @@ export class User {
 		{ onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
 	)
 	@JoinTable({
-		name: 'users_chats',
+		name: 'user_chats',
 		joinColumn: {
 			name: 'user_id',
 			referencedColumnName: 'id',
@@ -31,5 +31,6 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
+
 	public chats: Chat[];
 }

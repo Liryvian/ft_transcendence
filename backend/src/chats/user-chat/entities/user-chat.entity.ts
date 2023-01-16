@@ -11,10 +11,10 @@ import { User } from '../../../users/user/entities/user.entity';
 import { Chat } from '../../chat/entities/chat.entity';
 import { Role } from '../../role/entities/role.entity';
 
-@Entity('users_chats')
+@Entity('user_chats')
 export class UserChat {
-	@PrimaryGeneratedColumn()
-	public id: number;
+	// @PrimaryGeneratedColumn()
+	// id: number;
 
 	@PrimaryColumn({ name: 'user_id' })
 	userId: number;
@@ -35,26 +35,4 @@ export class UserChat {
 	})
 	@JoinColumn([{ name: 'chat_id', referencedColumnName: 'id' }])
 	chats: Chat[];
-
-	// @ManyToMany(() => Role, (role: Role) => role.userchats)
-	// @JoinTable()
-	// public roles: Role[];
-
-	// @ManyToMany(
-	// 	() => Role,
-	// 	(role) => role.userchats, //optional
-	// 	{ onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
-	// )
-	// @JoinTable({
-	// 	name: 'userchat_roles',
-	// 	joinColumn: {
-	// 		name: 'userchat_id',
-	// 		// referencedColumnName: 'id',
-	// 	},
-	// 	inverseJoinColumn: {
-	// 		name: 'role_id',
-	// 		// referencedColumnName: 'id',
-	// 	},
-	// })
-	// public roles: Role[];
 }
