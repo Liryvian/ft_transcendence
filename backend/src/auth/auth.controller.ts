@@ -58,10 +58,17 @@ export class AuthController {
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
 	async logout(@Res({ passthrough: true }) response: Response) {
-		response.clearCookie('jwt');
-		return {
-			message: 'Success',
-		};
+		try {
+			response.clearCookie('jwt');
+			return {
+				message: 'Success',
+			};
+		} catch (e) {
+			console.error('logout failed', e);
+			return {
+				message: 'Failed to logout',
+			};
+		}
 	}
 
 	@UseGuards(AuthGuard)
