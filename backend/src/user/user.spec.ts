@@ -294,7 +294,6 @@ describe('User', () => {
 					games: u.games,
 				}));
 
-				console.log(map_output_to_values_to_test, map_users_to_test_values);
 				expect(map_output_to_values_to_test).toEqual(map_users_to_test_values);
 			});
 		});
