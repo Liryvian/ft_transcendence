@@ -8,9 +8,7 @@ import { MatchmakingRequestController } from './matchmaking-request.controller';
 import { MatchmakingRequestService } from './matchmaking-request.service';
 import { UserController } from '../../user/user.controller';
 import { UserService } from '../../user/user.service';
-import { SharedModule } from '../../shared/shared.module';
 import { RegisterUserDto } from '../../user/dto/register-user.dto';
-import { CreateMatchmakingRequestDto } from './dto/create-matchmaking-request.dto';
 import { JwtService } from '@nestjs/jwt';
 
 describe('MatchmakingRequestService', () => {
@@ -111,7 +109,7 @@ describe('MatchmakingRequestService', () => {
 			await expect(
 				mmrService.create({ user: nonExistantUserId }),
 			).rejects.toThrow(
-				'UNIQUE constraint failed: matchmaking-requests.userId',
+				'UNIQUE constraint failed: matchmaking-requests.invite_users',
 			);
 		});
 	});
