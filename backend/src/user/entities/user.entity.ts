@@ -18,8 +18,8 @@ export class User {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@Column({ nullable: false })
 	@Exclude()
+	@Column({ nullable: false })
 	password: string;
 
 	@CreateDateColumn()

@@ -33,10 +33,16 @@ export class Game {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => User)
-	player_one: User;
+	@ManyToOne(() => User, (user) => user.id, {
+		nullable: false,
+		createForeignKeyConstraints: false,
+	})
+	player_one: Number;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, (user) => user.id, {
+		nullable: false,
+		createForeignKeyConstraints: false,
+	})
 	@Check(`"playerTwoId" <> "playerOneId"`)
-	player_two: User;
+	player_two: Number;
 }

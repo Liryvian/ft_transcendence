@@ -23,6 +23,14 @@ describe('Game unit tests', () => {
 	let controller: GameController;
 	let userService: UserService;
 
+	const relationTestUsers: CreateUserDto[] = [
+		{ name: 'u1', password: 'p1' },
+		{ name: 'u2', password: 'p2' },
+		{ name: 'u3', password: 'p3' },
+		{ name: 'u4', password: 'p4' },
+	];
+	let relationTestUsersIds: number[];
+
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [
@@ -37,107 +45,16 @@ describe('Game unit tests', () => {
 		service = module.get<GameService>(GameService);
 		controller = module.get<GameController>(GameController);
 		userService = module.get<UserService>(UserService);
+
+		await userService.create(relationTestUsers).then((res: InsertResult) => {
+			relationTestUsersIds = res.identifiers.map((obj) => obj.id);
+			return res;
+		});
 	});
 
 	it('should be defined', () => {
 		expect(service).toBeDefined();
 		expect(controller).toBeDefined();
-	});
-
-	describe('relationship between players and game', () => {
-		it('should create a game connected to two players', async () => {
-			const test_users: CreateUserDto[] = [
-				{ name: 'u1', password: 'p1' },
-				{ name: 'u2', password: 'p2' },
-				{ name: 'u3', password: 'p3' },
-				{ name: 'u4', password: 'p4' },
-			];
-			let ids: number[];
-			console.log(
-				JSON.stringify(
-					await userService.create(test_users).then((res: InsertResult) => {
-						ids = res.identifiers.map((obj) => obj.id);
-						return res;
-					}),
-					null,
-					2,
-				),
-			);
-			const allUsers = await userService.findAll();
-			console.table(allUsers);
-
-			const createdGame: Game[] = await service.save([
-				{},
-				{ users: [{ id: ids[1] }, { id: ids[2] }] },
-			]);
-			const gameIds = createdGame.map((obj) => obj.id);
-			console.log(createdGame);
-
-			// try {
-			// 	console.log(await service.addUser(gameIds[0], ids[0]));
-			// } catch (e) {
-			// 	console.log(e);
-			// }
-
-			console.log(
-				JSON.stringify(
-					await service.findAll({ relations: ['users'] }),
-					null,
-					2,
-				),
-			);
-
-			/*
-			// for many-to-one / one-to-many
-			try {
-				console.log(
-					await service.update(createdGame.identifiers[0].id, {
-						users: [{ id: 1 }, { id: 2 }],
-					}),
-				);
-			} catch (e) {
-				console.log(e);
-			}
-
-			try {
-				console.log(
-					await userService.update(ids[0], {
-						game: createdGame.identifiers[0].id,
-					}),
-					await userService.update(ids[1], {
-						game: createdGame.identifiers[0].id,
-					}),
-				);
-			} catch (e) {
-				console.log(e);
-			}
-
-			const game = await service.findAll({ relations: ['users'] });
-			console.log(JSON.stringify(game, null, 2));
-			console.log(await userService.findAll({ relations: ['game'] }));
-*/
-			// let createdGameInsert: InsertResult;
-			// try {
-			// 	createdGameInsert = await service.create({
-			// 		// playerOneId: allUsers[0].id,
-			// 		playerOneId: { id: allUsers[0].id },
-			// 		// playerOneId: allUsers[0],
-			// 		is_active: false,
-			// 		// playerTwo: allUsers[1],
-			// 	});
-			// 	console.log(createdGameInsert?.identifiers);
-			// 	const createdGame: Game = await service.findOne({
-			// 		where: { id: createdGameInsert.identifiers[0].id },
-			// 		relations: {
-			// 			player_one: true,
-			// 			// player_two: true,
-			// 		},
-			// 	});
-			// 	console.log(createdGame);
-			// } catch (e) {
-			// 	console.log('err:', e);
-			// }
-		});
 	});
 
 	describe('CreateGameDto', () => {
@@ -186,6 +103,44 @@ describe('Game unit tests', () => {
 			};
 
 			expect(await validator.transform(testObject, meta)).toBeTruthy();
+		});
+	});
+
+	describe('Relationship between players and game', () => {
+		it('should create a relationship between two users and a game', async () => {
+			const result: Game = await service.save({
+				player_one: relationTestUsersIds[0],
+				player_two: relationTestUsersIds[1],
+			});
+			expect(result).toEqual(
+				expect.objectContaining({
+					id: expect.any(Number),
+					score_player_one: 0,
+					score_player_two: 0,
+					customization: expect.any(Object),
+					is_active: true,
+					created_at: expect.any(Date),
+					updated_at: expect.any(Date),
+					player_one: relationTestUsersIds[0],
+					player_two: relationTestUsersIds[1],
+				}),
+			);
+			await service.remove(result.id);
+		});
+
+		it('should not allow same user for p1 and p2', async () => {
+			await expect(
+				service.save({
+					player_one: relationTestUsersIds[0],
+					player_two: relationTestUsersIds[0],
+				}),
+			).rejects.toThrow('CHECK constraint failed');
+		});
+
+		it('should not allow empty users', async () => {
+			await expect(service.create({})).rejects.toThrow(
+				'NOT NULL constraint failed: games.playerOneId',
+			);
 		});
 	});
 });

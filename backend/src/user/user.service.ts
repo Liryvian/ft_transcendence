@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AbstractService } from '../shared/abstract.service';
-import { Game } from 'src/pong/game/entities/game.entity';
-import { AppModule } from '../app.module';
+import { Game } from '../pong/game/entities/game.entity';
 import { GameService } from '../pong/game/game.service';
-import { GameModule } from '../pong/game/game.module';
 
 @Injectable()
 export class UserService extends AbstractService<User> {

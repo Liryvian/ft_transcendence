@@ -30,7 +30,9 @@ export abstract class AbstractService<T> {
 	/*
 		Use this if you want to create entities WITH relationships
 	*/
-	async save(data): Promise<T[]> {
+	async save(data): Promise<T>;
+	async save(data): Promise<T[]>;
+	async save(data): Promise<T | T[]> {
 		return this.repository.save(data);
 	}
 
