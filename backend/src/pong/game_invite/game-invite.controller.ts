@@ -15,8 +15,8 @@ export class GameInvitesController {
 	constructor(private readonly gameInvitesService: GameInvitesService) {}
 
 	@Post()
-	create(@Body() createGameInviteDto: CreateGameInviteDto) {
-		return this.gameInvitesService.create(createGameInviteDto);
+	save(@Body() createGameInviteDto: CreateGameInviteDto) {
+		return this.gameInvitesService.save(createGameInviteDto);
 	}
 
 	@Get()

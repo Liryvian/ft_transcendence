@@ -27,14 +27,14 @@ describe('MatchmakingRequestService', () => {
 	];
 
 	async function seed() {
-		await userService.create(mockUsers);
+		await userService.save(mockUsers);
 
 		seededUsers = await userService.findAll({
 			relations: { matchmaking_request: true },
 		});
 
 		for (let i = 0; i < seededUsers.length; i++) {
-			await mmrService.create({ user: seededUsers[i].id });
+			await mmrService.save({ user: seededUsers[i].id });
 		}
 	}
 
@@ -104,14 +104,14 @@ describe('MatchmakingRequestService', () => {
 		it('should throw when trying to join with user that does not exist', async () => {
 			const nonExistantUserId: number = 9999;
 			await expect(
-				mmrService.create({ user: nonExistantUserId }),
+				mmrService.save({ user: nonExistantUserId }),
 			).rejects.toThrow('FOREIGN KEY constraint failed');
 		});
 
 		it('should throw when trying to join with user that already has a gameRequest', async () => {
 			const nonExistantUserId: number = 1;
 			await expect(
-				mmrService.create({ user: nonExistantUserId }),
+				mmrService.save({ user: nonExistantUserId }),
 			).rejects.toThrow(
 				'UNIQUE constraint failed: matchmaking-requests.invite_users',
 			);

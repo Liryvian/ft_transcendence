@@ -139,7 +139,7 @@ describe('Game unit tests', () => {
 		});
 
 		it('should not allow empty users', async () => {
-			await expect(service.create({})).rejects.toThrow(
+			await expect(service.save({})).rejects.toThrow(
 				'NOT NULL constraint failed: games.playerOneId',
 			);
 		});
