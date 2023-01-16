@@ -48,7 +48,7 @@ export class UserController {
 	@Get()
 	async findAll(): Promise<User[]> {
 		return this.userService.findAll({
-			relations: { matchmaking_request: true },
+			relations: { matchmaking_request: true, invite: true },
 		});
 	}
 

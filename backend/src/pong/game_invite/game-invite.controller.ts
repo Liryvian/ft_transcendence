@@ -16,12 +16,12 @@ export class GameInvitesController {
 
 	@Post()
 	save(@Body() createGameInviteDto: CreateGameInviteDto) {
-		return this.gameInvitesService.save(createGameInviteDto);
+		return this.gameInvitesService.createAndSave(createGameInviteDto);
 	}
 
 	@Get()
 	findAll() {
-		return this.gameInvitesService.findAll();
+		return this.gameInvitesService.findAll({ relations: { players: true } });
 	}
 
 	@Get(':id')

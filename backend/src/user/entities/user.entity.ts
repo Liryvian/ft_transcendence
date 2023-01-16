@@ -2,6 +2,9 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToMany,
+	ManyToOne,
+	OneToMany,
 	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
@@ -10,6 +13,7 @@ import { Exclude } from 'class-transformer';
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Game } from '../../pong/game/entities/game.entity';
 import { IsOptional } from 'class-validator';
+import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
 
 @Entity('users')
 export class User {
@@ -37,6 +41,10 @@ export class User {
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
 	)
 	matchmaking_request: MatchmakingRequest;
+
 	@IsOptional()
 	games: Game[];
+
+	@ManyToOne(() => GameInvite, (invite) => invite.players)
+	invite: GameInvite;
 }
