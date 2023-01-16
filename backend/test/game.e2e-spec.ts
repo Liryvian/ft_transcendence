@@ -8,7 +8,9 @@ import { GameController } from '../src/pong/game/game.controller';
 import { GameModule } from '../src/pong/game/game.module';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
-import { globalValidationPipeOptions } from '../../backend/src/main.validationpipe';
+import { globalValidationPipeOptions } from '../src/main.validationpipe';
+import { UserModule } from '../src/user/user.module';
+import { User } from '../src/user/entities/user.entity';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
@@ -21,7 +23,9 @@ describe('Game (e2e)', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+				TypeOrmModule.forFeature([Game, User]),
 				GameModule,
+				UserModule,
 			],
 		}).compile();
 
