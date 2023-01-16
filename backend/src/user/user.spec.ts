@@ -285,10 +285,17 @@ describe('User', () => {
 
 			test('should return array of users with relation to games', async () => {
 				const usersWithGames = await service.findAllWithGames();
-				console.log(
-					'should have users with games: ',
-					JSON.stringify(usersWithGames, null, 2),
-				);
+				const map_output_to_values_to_test = usersWithGames.map((u) => ({
+					id: u.id,
+					games: u.games.map((g) => g.id),
+				}));
+				const map_users_to_test_values = seedUsers.map((u) => ({
+					id: u.userId,
+					games: u.games,
+				}));
+
+				console.log(map_output_to_values_to_test, map_users_to_test_values);
+				expect(map_output_to_values_to_test).toEqual(map_users_to_test_values);
 			});
 		});
 
