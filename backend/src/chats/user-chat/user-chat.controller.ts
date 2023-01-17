@@ -25,10 +25,10 @@ export class UserChatController {
 		return this.userChatService.findAll();
 	}
 
-	// @Get(':id')
-	// findOne(@Param('id') id: number) {
-	// 	return this.userChatService.findOne({ where: { id } });
-	// }
+	@Get(':id')
+	findOne(@Param('id') id: number) {
+		return this.userChatService.findOne({ where: { id } });
+	}
 
 	@Patch(':id')
 	update(
