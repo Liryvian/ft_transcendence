@@ -8,8 +8,8 @@ import { UserChat } from './entities/user-chat.entity';
 export class UserChatService extends AbstractService<UserChat> {
 	constructor(
 		@InjectRepository(UserChat)
-		private readonly userChatRepository: Repository<UserChat>,
+		protected readonly repository: Repository<UserChat>,
 	) {
-		super(userChatRepository);
+		super(repository);
 	}
 }

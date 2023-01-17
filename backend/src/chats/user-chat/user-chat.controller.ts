@@ -22,12 +22,14 @@ export class UserChatController {
 
 	@Get()
 	findAll() {
-		return this.userChatService.findAll();
+		return this.userChatService.findAll({
+			relations: { chat_id: true, user_id: true },
+		});
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.userChatService.findOne({ where: { id } });
+		return this.userChatService.findOne({ where: { id }, relations: { chat_id: true, user_id: true } });
 	}
 
 	@Patch(':id')

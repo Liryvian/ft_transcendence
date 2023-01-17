@@ -8,8 +8,8 @@ import { AbstractService } from '../../shared/abstract.service';
 export class ChatService extends AbstractService<Chat> {
 	constructor(
 		@InjectRepository(Chat)
-		private readonly chatRepository: Repository<Chat>,
+		protected readonly repository: Repository<Chat>,
 	) {
-		super(chatRepository);
+		super(repository);
 	}
 }

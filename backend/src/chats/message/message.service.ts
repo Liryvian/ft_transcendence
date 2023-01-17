@@ -8,8 +8,8 @@ import { Message } from './entities/message.entity';
 export class MessageService extends AbstractService<Message> {
 	constructor(
 		@InjectRepository(Message)
-		private readonly messageRepository: Repository<Message>,
+		protected readonly repository: Repository<Message>,
 	) {
-		super(messageRepository);
+		super(repository);
 	}
 }

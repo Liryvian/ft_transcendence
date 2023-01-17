@@ -10,8 +10,8 @@ import { Repository } from 'typeorm';
 export class RoleService extends AbstractService<Role> {
 	constructor(
 		@InjectRepository(Role)
-		private readonly roleRepository: Repository<Role>,
+		protected readonly repository: Repository<Role>,
 	) {
-		super(roleRepository);
+		super(repository);
 	}
 }
