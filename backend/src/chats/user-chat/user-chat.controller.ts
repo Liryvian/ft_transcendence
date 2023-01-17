@@ -37,11 +37,11 @@ export class UserChatController {
 		@Param('id') id: number,
 		@Body() updateUserChatDto: UpdateUserChatDto,
 	) {
-		return this.userChatService.update(+id, updateUserChatDto);
+		return this.userChatService.update(id, updateUserChatDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: number) {
-		return this.userChatService.remove(+id);
+		return this.userChatService.remove(id);
 	}
 }

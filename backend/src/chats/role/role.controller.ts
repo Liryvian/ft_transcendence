@@ -32,11 +32,11 @@ export class RoleController {
 
 	@Patch(':id')
 	update(@Param('id') id: number, @Body() updateRoleDto: UpdateRoleDto) {
-		return this.roleService.update(+id, updateRoleDto);
+		return this.roleService.update(id, updateRoleDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: number) {
-		return this.roleService.remove(+id);
+		return this.roleService.remove(id);
 	}
 }

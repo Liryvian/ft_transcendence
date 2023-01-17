@@ -37,11 +37,11 @@ export class MessageController {
 
 	@Patch(':id')
 	update(@Param('id') id: number, @Body() updateMessageDto: UpdateMessageDto) {
-		return this.messageService.update(+id, updateMessageDto);
+		return this.messageService.update(id, updateMessageDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: number) {
-		return this.messageService.remove(+id);
+		return this.messageService.remove(id);
 	}
 }
