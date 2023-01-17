@@ -26,6 +26,8 @@ import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
 import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
 import { InsertResult } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
+import any = jasmine.any;
+import {User} from "../../users/user/entities/user.entity";
 
 describe('UserChatController', () => {
 	let userChatController: UserChatController;
@@ -125,6 +127,8 @@ describe('UserChatController', () => {
 					expect.objectContaining({
 						user_id: testUserChats[index].user_id,
 						chat_id: testUserChats[index].chat_id,
+						chats: expect.any(Chat),
+						users: expect.any(User),
 					}),
 				]),
 			);

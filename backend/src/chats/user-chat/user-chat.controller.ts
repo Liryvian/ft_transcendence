@@ -22,7 +22,9 @@ export class UserChatController {
 
 	@Get()
 	findAll() {
-		return this.userChatService.findAll();
+		return this.userChatService.findAll({
+			relations: { chats: true, users: true },
+		});
 	}
 
 	@Get(':id')
