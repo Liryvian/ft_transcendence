@@ -8,8 +8,16 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
 import { Chat } from '../src/chats/chat/entities/chat.entity';
-import {UserModule} from "../src/users/user/user.module";
-import {UserChatModule} from "../src/chats/user-chat/user-chat.module";
+import { UserModule } from '../src/users/user/user.module';
+import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
+import { AuthModule } from '../src/auth/auth.module';
+import { SharedModule } from '../src/shared/shared.module';
+import { AnimalModule } from '../src/test_example/animal.module';
+import { MessageModule } from '../src/chats/message/message.module';
+import { RoleModule } from '../src/chats/role/role.module';
+import { GameModule } from '../src/pong/game/game.module';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
 describe('chat e2e', () => {
 	let app: INestApplication;
@@ -30,9 +38,18 @@ describe('chat e2e', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				ChatModule,
 				UserModule,
+				AuthModule,
+				SharedModule,
+				AnimalModule,
+				ChatModule,
+				MessageModule,
+				UserModule,
+				RoleModule,
+				GameModule,
 				UserChatModule,
+				GameInvitesModule,
+				MatchmakingRequestModule,
 			],
 		}).compile();
 
@@ -40,8 +57,7 @@ describe('chat e2e', () => {
 		app.useGlobalPipes(new ValidationPipe());
 		await app.init();
 
-		chatController =
-			moduleFixture.get<ChatController>(ChatController);
+		chatController = moduleFixture.get<ChatController>(ChatController);
 
 		// seed db with animals for each testcase
 		for (const chat in testChats) {
@@ -60,9 +76,7 @@ describe('chat e2e', () => {
 
 	describe('/chats (GET)', () => {
 		it('should return OK', () => {
-			return request(app.getHttpServer())
-				.get('/chats')
-				.expect(HttpStatus.OK);
+			return request(app.getHttpServer()).get('/chats').expect(HttpStatus.OK);
 		});
 	});
 });

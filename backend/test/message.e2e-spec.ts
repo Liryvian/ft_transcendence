@@ -24,6 +24,10 @@ import { Role } from '../src/chats/role/entities/role.entity';
 import { User } from '../src/users/user/entities/user.entity';
 import { Game } from '../src/pong/game/entities/game.entity';
 import { UserController } from '../src/users/user/user.controller';
+import { AuthModule } from '../src/auth/auth.module';
+import { SharedModule } from '../src/shared/shared.module';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
 describe('message e2e', () => {
 	let chatController: ChatController;
@@ -40,9 +44,25 @@ describe('message e2e', () => {
 	];
 	const chatIds = [];
 
-	const testUsers = [{ name: 'u1' }, { name: 'u2' }];
-	let userIds = [];
+	const testUsers = [
+		{
+			name: 'u1',
+			password: 'p1',
+			password_confirm: 'p1',
+		},
+		{
+			name: 'u2',
+			password: 'p2',
+			password_confirm: 'p2',
+		},
+		{
+			name: 'u3',
+			password: 'p3',
+			password_confirm: 'p3',
+		},
+	];
 
+	let userIds = [];
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
@@ -50,11 +70,18 @@ describe('message e2e', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([UserChat, Role, User, Chat, Game, Message]),
-				UserChatModule,
 				UserModule,
+				AuthModule,
+				SharedModule,
+				AnimalModule,
 				ChatModule,
+				MessageModule,
+				UserModule,
 				RoleModule,
 				GameModule,
+				UserChatModule,
+				GameInvitesModule,
+				MatchmakingRequestModule,
 			],
 			controllers: [MessageController, ChatController],
 			providers: [MessageService, ChatService],
