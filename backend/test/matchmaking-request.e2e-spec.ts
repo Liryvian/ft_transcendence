@@ -10,22 +10,33 @@ import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/mat
 import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 import { UserModule } from '../src/user/user.module';
 import { GameModule } from '../src/pong/game/game.module';
+import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
+import { UserService } from '../src/user/user.service';
+import { CreateUserDto } from '../src/user/dto/create-user.dto';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { User } from '../src/user/entities/user.entity';
+import { Game } from '../src/pong/game/entities/game.entity';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
 	let matchmakingController: MatchmakingRequestController;
+	let userService: UserService;
 
 	const mockInvite: CreateMatchmakingRequestDto = {
-		user_id: 1,
+		user_id: 2,
 	};
+
+	const mockUsers: CreateUserDto[] = [{name: "Renoster", password: "R"}, {name: 'Flamink', password: "F"}];
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+				TypeOrmModule.forFeature([User, GameInvite, MatchmakingRequest, Game]),
 				MatchmakingRequestModule,
 				UserModule,
+				GameInvitesModule,
 				GameModule,
 			],
 		}).compile();
@@ -34,10 +45,12 @@ describe('GameInvite (e2e)', () => {
 		app.useGlobalPipes(new ValidationPipe());
 		await app.init();
 
+		userService = moduleFixture.get<UserService>(UserService);
 		matchmakingController = moduleFixture.get<MatchmakingRequestController>(
 			MatchmakingRequestController,
 		);
-
+		
+		await userService.save(mockUsers);
 		await matchmakingController.save(mockInvite);
 	});
 

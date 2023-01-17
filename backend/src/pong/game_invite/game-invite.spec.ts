@@ -6,12 +6,15 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../../user/entities/user.entity';
 import { globalValidationPipeOptions } from '../../../src/main.validationpipe';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 import { GameInvite } from './entities/game-invite.entity';
 import { GameInvitesController } from './game-invite.controller';
 import { GameInvitesService } from './game-invite.service';
+import { Game } from '../game/entities/game.entity';
+import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
 
 describe('GameInvite unit tests', () => {
 	let service: GameInvitesService;
@@ -22,7 +25,7 @@ describe('GameInvite unit tests', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([GameInvite]),
+				TypeOrmModule.forFeature([GameInvite, User, Game, MatchmakingRequest]),
 			],
 			providers: [GameInvitesService],
 			controllers: [GameInvitesController],

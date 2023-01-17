@@ -26,7 +26,7 @@ export class GameInvitesController {
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.gameInvitesService.findOne({ where: { id } });
+		return this.gameInvitesService.findOne({ where: { id }, relations: { players: true } });
 	}
 
 	@Delete(':id')

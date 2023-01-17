@@ -13,6 +13,7 @@ import { JwtService } from '@nestjs/jwt';
 import { SharedModule } from '../../shared/shared.module';
 import { Game } from '../game/entities/game.entity';
 import { GameModule } from '../game/game.module';
+import { GameInvite } from '../game_invite/entities/game-invite.entity';
 
 describe('MatchmakingRequestService', () => {
 	let mmrService: MatchmakingRequestService;
@@ -43,7 +44,7 @@ describe('MatchmakingRequestService', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([MatchmakingRequest, User, Game]),
+				TypeOrmModule.forFeature([MatchmakingRequest, User, Game, GameInvite]),
 				SharedModule, // import for the JwtService
 				GameModule,
 			],
@@ -113,7 +114,7 @@ describe('MatchmakingRequestService', () => {
 			await expect(
 				mmrService.save({ user: nonExistantUserId }),
 			).rejects.toThrow(
-				'UNIQUE constraint failed: matchmaking-requests.invite_users',
+				'UNIQUE constraint failed: matchmaking_requests.invite_users',
 			);
 		});
 	});

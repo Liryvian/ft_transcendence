@@ -14,6 +14,7 @@ import { User } from '../src/user/entities/user.entity';
 import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as cookieParser from 'cookie-parser';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
 import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
 describe('Auth (e2e)', () => {
@@ -49,6 +50,7 @@ describe('Auth (e2e)', () => {
 				UserModule,
 				AuthModule,
 				MatchmakingRequestModule,
+				GameInvitesModule
 			],
 		}).compile();
 

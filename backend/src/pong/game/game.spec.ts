@@ -16,8 +16,9 @@ import { CreateUserDto } from '../../user/dto/create-user.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';
-import { DataSource, InsertResult } from 'typeorm';
+import { InsertResult } from 'typeorm';
 import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
+import { GameInvite } from '../game_invite/entities/game-invite.entity';
 
 describe('Game unit tests', () => {
 	let service: GameService;
@@ -37,7 +38,7 @@ describe('Game unit tests', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Game, User, MatchmakingRequest]),
+				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
 			],
 			controllers: [GameController],
 			providers: [GameService, UserService],

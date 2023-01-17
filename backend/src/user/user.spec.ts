@@ -22,6 +22,7 @@ import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchma
 import { GameService } from '../pong/game/game.service';
 import { GameModule } from '../pong/game/game.module';
 import { Game } from '../pong/game/entities/game.entity';
+import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
 
 describe('User', () => {
 	let controller: UserController;
@@ -54,7 +55,7 @@ describe('User', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User, MatchmakingRequest, Game]),
+				TypeOrmModule.forFeature([User, MatchmakingRequest, Game, GameInvite]),
 				AuthModule,
 				GameModule,
 			],

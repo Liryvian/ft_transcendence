@@ -36,6 +36,7 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
+	@IsOptional()
 	@OneToOne(
 		() => MatchmakingRequest,
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
@@ -45,6 +46,7 @@ export class User {
 	@IsOptional()
 	games: Game[];
 
+	@IsOptional()
 	@ManyToOne(() => GameInvite, (invite) => invite.players)
 	invite: GameInvite;
 }
