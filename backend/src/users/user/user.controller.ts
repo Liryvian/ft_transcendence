@@ -1,42 +1,85 @@
 import {
+	BadRequestException,
+	Body,
+	ClassSerializerInterceptor,
 	Controller,
 	Get,
-	Post,
-	Body,
-	Patch,
+	NotFoundException,
 	Param,
-	Delete,
+	Patch,
+	Post,
+	UseGuards,
+	UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
+import { AuthGuard } from '../../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 
-@Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('users')
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+	constructor(private userService: UserService) {}
 
 	@Post()
-	create(@Body() createUserDto: CreateUserDto) {
-		return this.userService.create(createUserDto);
+	async create(@Body() registerUserDto: RegisterUserDto) {
+		const hashed = await bcrypt.hash(registerUserDto.password, 11);
+		const createUserDto: CreateUserDto = {
+			name: registerUserDto.name,
+			password: hashed,
+			is_intra: false,
+		};
+
+		try {
+			const newUser: InsertResult = await this.userService.create(
+				createUserDto,
+			);
+			return newUser;
+		} catch (e) {
+			throw new BadRequestException('Please pick a different username');
+		}
 	}
 
+	@UseGuards(AuthGuard)
 	@Get()
-	findAll() {
+	async findAll(): Promise<User[]> {
 		return this.userService.findAll();
 	}
 
+	@UseGuards(AuthGuard)
 	@Get(':id')
-	findOne(@Param('id') id: number) {
-		return this.userService.findOne({ where: { id } });
+	async findOne(@Param('id') id: number): Promise<User> {
+		return this.userService.findOne({
+			where: {
+				id: +id,
+			},
+		});
 	}
 
+	@UseGuards(AuthGuard)
 	@Patch(':id')
-	update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-		return this.userService.update(+id, updateUserDto);
-	}
-
-	@Delete(':id')
-	remove(@Param('id') id: number) {
-		return this.userService.remove(+id);
+	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+		try {
+			const updateResult: UpdateResult = await this.userService.update(
+				id,
+				updateUserDto,
+			);
+			return updateResult;
+		} catch (e) {
+			if (e instanceof QueryFailedError) {
+				throw new BadRequestException('Please pick a different username');
+			}
+			if (e instanceof NotFoundException) {
+				throw e;
+			}
+			console.log('An unknown error occurred, please check!', { e });
+			throw new BadRequestException(
+				'Something went wrong on updating the user',
+			);
+		}
 	}
 }

@@ -1,19 +1,33 @@
 import {
 	Column,
-	Entity,
-	JoinTable,
-	ManyToMany,
+	CreateDateColumn,
+	Entity, JoinTable, ManyToMany,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
-import { Chat } from '../../../chats/chat/entities/chat.entity';
+import { Exclude } from 'class-transformer';
+import {Chat} from "../../../chats/chat/entities/chat.entity";
 
 @Entity('users')
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column()
+	@Column({ default: true })
+	is_intra: boolean;
+
+	@Column({ unique: true, nullable: false })
 	name: string;
+
+	@Column({ nullable: false })
+	@Exclude()
+	password: string;
+
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 
 	@ManyToMany(
 		() => Chat,

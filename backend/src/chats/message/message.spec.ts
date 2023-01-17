@@ -10,6 +10,17 @@ import { Message } from './entities/message.entity';
 import { ChatController } from '../chat/chat.controller';
 import { CreateChatDto } from '../chat/dto/create-chat.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { UserModule } from '../../users/user/user.module';
+import { AuthModule } from '../../auth/auth.module';
+import { SharedModule } from '../../shared/shared.module';
+import { AnimalModule } from '../../test_example/animal.module';
+import { ChatModule } from '../chat/chat.module';
+import { MessageModule } from './message.module';
+import { RoleModule } from '../role/role.module';
+import { GameModule } from '../../pong/game/game.module';
+import { UserChatModule } from '../user-chat/user-chat.module';
+import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
 
 describe('MessageController', () => {
 	let messageController: MessageController;
@@ -24,8 +35,8 @@ describe('MessageController', () => {
 	];
 
 	const testMessages: CreateMessageDto[] = [
-		{ sender_id: 'a', chat_id: 1, content: 'hello' },
-		{ sender_id: 'g', chat_id: 1, content: 'world!' },
+		{ sender_id: 1, chat_id: 1, content: 'hello' },
+		{ sender_id: 2, chat_id: 1, content: 'world!' },
 	];
 
 	beforeAll(async () => {
@@ -34,6 +45,18 @@ describe('MessageController', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([Message, Chat]),
+				UserModule,
+				AuthModule,
+				SharedModule,
+				AnimalModule,
+				ChatModule,
+				MessageModule,
+				UserModule,
+				RoleModule,
+				GameModule,
+				UserChatModule,
+				GameInvitesModule,
+				MatchmakingRequestModule,
 			],
 			controllers: [MessageController, ChatController],
 			providers: [MessageService, ChatService],

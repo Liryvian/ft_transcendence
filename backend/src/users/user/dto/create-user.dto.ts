@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
-	@IsNotEmpty() //ofcourse this is different in the real pong world
-	name?: string;
+	@IsNotEmpty()
+	name: string;
+
+	@IsNotEmpty()
+	password: string;
+
+	@IsOptional()
+	@IsBoolean()
+	is_intra?: boolean = false;
 }
