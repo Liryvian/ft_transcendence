@@ -131,17 +131,5 @@ describe('UserChatController', () => {
 		}
 	});
 
-	// not sure why this baby doesnt work, anyone?
-	// try {
-	// 	it('Get a specific userChat_id', async () => {
-	// 		const specificUserChatId = 1;
-	// 		const userChat: UserChat = await userChatController.findOne(
-	// 			specificUserChatId);
-	// 		expect(userChat.user_id).toBe(specificUserChatId);
-	// 	});
-	// } catch (e) {
-	// 	throw new NotFoundException();
-	// }
-
 	//check if chat_id en user_id update
 });
