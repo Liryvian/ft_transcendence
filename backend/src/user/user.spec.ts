@@ -292,6 +292,10 @@ describe('User', () => {
 			expect(user.avatar).toBeDefined();
 			expect(user.avatar).toBe('/url/test.jpg');
 		});
-		it.todo('should be allowed in the update DTO');
+
+		describe('controller methods', () => {
+			it.todo('should save the avatar to the user');
+			it.todo('should update the users avatar');
+		});
 	});
 });
