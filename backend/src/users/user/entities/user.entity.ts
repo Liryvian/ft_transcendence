@@ -33,7 +33,7 @@ export class User {
 
 	@ManyToMany(
 		() => Chat,
-		(chat) => chat.users, //optional
+		(chat) => chat.users,
 		{ onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
 	)
 	@JoinTable({
