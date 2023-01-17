@@ -1,4 +1,5 @@
 import {
+	Check,
 	Column,
 	CreateDateColumn,
 	Entity,
@@ -53,9 +54,18 @@ export class User {
 	@OneToMany(() => Game, (game: Game) => game.player_two)
 	games_as_player_two: Game[];
 	
+	@IsOptional()
 	@Expose()
 	get games(): Game[] {
-		return [...this.games_as_player_one , ...this.games_as_player_two]
+		let arr: Game[] = [];
+
+		if (this.hasOwnProperty('games_as_player_one')) {
+   			arr.push(...this.games_as_player_one);
+		}
+		if (this.hasOwnProperty('games_as_player_one')) {
+   			arr.push(...this.games_as_player_one);
+}
+		return arr;
 	}
 
 	@IsOptional()
