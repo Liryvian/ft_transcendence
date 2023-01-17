@@ -10,10 +10,15 @@ import { GameModule } from '../src/pong/game/game.module';
 import { User } from '../src/user/entities/user.entity';
 import { UserService } from '../src/user/user.service';
 import { AuthGuard } from '../src/auth/auth.guard';
+import { InsertResult } from 'typeorm';
+import { SharedModule } from '../src/shared/shared.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
 	let userService: UserService;
+
+	const userIds = [];
 
 	beforeAll(async () => {
 		const mock_guard = { CanActivate: jest.fn(() => true) };
@@ -24,6 +29,8 @@ describe('AnimalController (e2e)', () => {
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				UserModule,
 				GameModule,
+				SharedModule,
+				MulterModule,
 			],
 		})
 			.overrideGuard(AuthGuard)
@@ -36,10 +43,16 @@ describe('AnimalController (e2e)', () => {
 
 		userService = moduleFixture.get<UserService>(UserService);
 
-		await userService.create([
-			{ name: 'n1', password: 'p1' },
-			{ name: 'n2', password: 'p2' },
-		]);
+		await userService
+			.create([
+				{ name: 'n1', password: 'p1' },
+				{ name: 'n2', password: 'p2' },
+			])
+			.then((users: InsertResult) => {
+				users.identifiers.forEach((identifier) => {
+					userIds.push(identifier.id);
+				});
+			});
 	});
 
 	afterAll(async () => {
@@ -53,11 +66,41 @@ describe('AnimalController (e2e)', () => {
 
 	describe('/users/:id/avatar', () => {
 		describe('POST', () => {
-			it.todo('should save a new image as the current user');
-			it.todo('should override a existing new image for the current user');
+			it('should save a new image as the current user', async () => {
+				const response = await request(app.getHttpServer())
+					.post(`/users/${userIds[0]}/avatar`)
+					.attach('avatar', './test/test-avatar.png');
+
+				expect(response.status).toBe(HttpStatus.CREATED);
+				expect(response.body.avatar).toEqual(
+					expect.stringContaining('test-avatar_a1.png'),
+				);
+				return response;
+			});
+
+			it('should not allow another extention than jpg/png/jpeg', async () => {
+				const response = await request(app.getHttpServer())
+					.post(`/users/${userIds[1]}/avatar`)
+					.attach('avatar', './test/dotenv-config.ts')
+					.expect(HttpStatus.BAD_REQUEST);
+			});
 		});
 		describe('DELETE', () => {
-			it.todo('should remove the users avatar');
+			it('should remove the users avatar', async () => {
+				await request(app.getHttpServer())
+					.post(`/users/${userIds[1]}/avatar`)
+					.attach('avatar', './test/test-avatar.png');
+
+				const response = await request(app.getHttpServer()).delete(
+					`/users/${userIds[1]}/avatar`,
+				);
+				expect(response.status).toBe(HttpStatus.OK);
+
+				const user: User = await userService.findOne({
+					where: { id: userIds[1] },
+				});
+				expect(user.avatar).toBe(null);
+			});
 		});
 	});
 
