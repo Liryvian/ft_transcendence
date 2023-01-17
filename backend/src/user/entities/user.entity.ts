@@ -9,7 +9,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Game } from '../../pong/game/entities/game.entity';
 import { IsOptional } from 'class-validator';
@@ -43,10 +43,23 @@ export class User {
 	)
 	matchmaking_request: MatchmakingRequest;
 
+	@Exclude()
 	@IsOptional()
-	games: Game[];
+	@OneToMany(() => Game, (game: Game) => game.player_one)
+	games_as_player_one: Game[];
+	
+	@Exclude()
+	@IsOptional()
+	@OneToMany(() => Game, (game: Game) => game.player_two)
+	games_as_player_two: Game[];
+	
+	@Expose()
+	get games(): Game[] {
+		return [...this.games_as_player_one , ...this.games_as_player_two]
+	}
 
 	@IsOptional()
 	@ManyToOne(() => GameInvite, (invite) => invite.players)
 	invite: GameInvite;
+
 }
