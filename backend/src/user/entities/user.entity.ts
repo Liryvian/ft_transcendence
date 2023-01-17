@@ -57,15 +57,8 @@ export class User {
 	@IsOptional()
 	@Expose()
 	get games(): Game[] {
-		let arr: Game[] = [];
-
-		if (this.hasOwnProperty('games_as_player_one')) {
-   			arr.push(...this.games_as_player_one);
-		}
-		if (this.hasOwnProperty('games_as_player_one')) {
-   			arr.push(...this.games_as_player_one);
-}
-		return arr;
+		//  if games_asPlayerone/two are null set them = []
+		return [...(this.games_as_player_one ?? []), ...(this.games_as_player_two ?? [])];
 	}
 
 	@IsOptional()
