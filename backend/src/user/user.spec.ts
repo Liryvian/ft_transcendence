@@ -7,7 +7,6 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
-import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '../auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -17,7 +16,9 @@ import {
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { globalValidationPipeOptions } from '../main.validationpipe';
+import { SharedModule } from '../shared/shared.module';
 
 describe('User', () => {
 	let controller: UserController;
@@ -38,9 +39,10 @@ describe('User', () => {
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([User]),
 				AuthModule,
+				SharedModule,
 			],
 			controllers: [UserController],
-			providers: [UserService, JwtService],
+			providers: [UserService],
 		})
 			.overrideGuard(AuthGuard)
 			.useValue(mock_guard)
@@ -281,5 +283,15 @@ describe('User', () => {
 				'Please pick a different username',
 			);
 		});
+	});
+
+	describe('user can have an avatar', () => {
+		it('should be an possible parameter in the user entity', () => {
+			const repo: Repository<User> = service.getRepo();
+			const user = repo.create({ avatar: '/url/test.jpg' });
+			expect(user.avatar).toBeDefined();
+			expect(user.avatar).toBe('/url/test.jpg');
+		});
+		it.todo('should be allowed in the update DTO');
 	});
 });

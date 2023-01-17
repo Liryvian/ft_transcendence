@@ -56,4 +56,8 @@ export abstract class AbstractService<T> {
 		}
 		return this.repository.delete(id);
 	}
+
+	getRepo(): Repository<T> {
+		return this.repository;
+	}
 }
