@@ -19,6 +19,7 @@ import {
 import { Repository } from 'typeorm';
 import { globalValidationPipeOptions } from '../main.validationpipe';
 import { SharedModule } from '../shared/shared.module';
+import fs from 'fs';
 
 describe('User', () => {
 	let controller: UserController;
@@ -302,9 +303,13 @@ describe('User', () => {
 			// });
 
 			it('should save the avatar to a targetted user', async () => {
-				const url = '/url/test.jpg';
+				const fileData = fs.readFileSync('./simple_avatar.png');
+
+				const file = new File([fileData.buffer], 'simple_avatar.png');
+				console.log(file);
+
 				await expect(
-					controller.setAvatar(seedUsers[1].userId, url),
+					controller.setAvatar(seedUsers[1].userId, file),
 				).resolves.toEqual<UpdateResult>(
 					expect.objectContaining({
 						affected: 1,
@@ -318,6 +323,9 @@ describe('User', () => {
 			});
 
 			it.todo('should update the users avatar');
+			it.todo('should allow jpg files');
+			it.todo('should allow png files');
+			it.todo('should not allow other than jpg/png files');
 		});
 	});
 });
