@@ -3,6 +3,7 @@ import {
 	Body,
 	ClassSerializerInterceptor,
 	Controller,
+	Delete,
 	FileTypeValidator,
 	Get,
 	MaxFileSizeValidator,
@@ -23,7 +24,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import fs from 'fs';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -90,19 +90,38 @@ export class UserController {
 	}
 
 	@Post(':id/avatar')
-	@UseInterceptors(FileInterceptor('file'))
+	@UseInterceptors(FileInterceptor('avatar'))
 	async setAvatar(
 		@Param('id') id: number,
 		@UploadedFile(
 			new ParseFilePipe({
 				validators: [
-					new MaxFileSizeValidator({ maxSize: 100000 }),
-					new FileTypeValidator({ fileType: /jpg|png/i }),
+					new MaxFileSizeValidator({ maxSize: 500000 }),
+					new FileTypeValidator({ fileType: /jpg|png|octet-stream/i }),
 				],
 			}),
 		)
-		file: Express.Multer.File,
+		avatar: Express.Multer.File,
 	) {
-		console.log(file);
+		return this.userService
+			.findOne({ where: { id: id } })
+			.then(async (user: User) => {
+				user.avatar = avatar.filename;
+				const upd = await this.userService.update(user.id, user);
+				return user;
+			});
+	}
+
+	@Delete(':id/avatar')
+	async removeAvatar(@Param('id') id: number) {
+		return this.userService
+			.findOne({ where: { id: id } })
+			.then(async (user: User) => {
+				const upd = await this.userService.update(user.id, {
+					...user,
+					avatar: null,
+				});
+				return upd;
+			});
 	}
 }

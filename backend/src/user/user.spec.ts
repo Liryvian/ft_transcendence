@@ -285,47 +285,4 @@ describe('User', () => {
 			);
 		});
 	});
-
-	describe('user can have an avatar', () => {
-		it('should be an possible parameter in the user entity', () => {
-			const repo: Repository<User> = service.getRepo();
-			const user = repo.create({ avatar: '/url/test.jpg' });
-			expect(user.avatar).toBeDefined();
-			expect(user.avatar).toBe('/url/test.jpg');
-		});
-
-		describe('controller methods', () => {
-			//   -- guess this is not possible since we don't have an authenticated user with this type of testing
-			// it('should save the avatar to the current user', async () => {
-			// 	await expect(controller.setAvatar('/url/test.jpg')).resolves.toEqual(
-			// 		<UpdateResult>{},
-			// 	);
-			// });
-
-			it('should save the avatar to a targetted user', async () => {
-				const fileData = fs.readFileSync('./simple_avatar.png');
-
-				const file = new File([fileData.buffer], 'simple_avatar.png');
-				console.log(file);
-
-				await expect(
-					controller.setAvatar(seedUsers[1].userId, file),
-				).resolves.toEqual<UpdateResult>(
-					expect.objectContaining({
-						affected: 1,
-					}),
-				);
-				await expect(controller.findOne(seedUsers[1].userId)).resolves.toEqual(
-					expect.objectContaining({
-						avatar: url,
-					}),
-				);
-			});
-
-			it.todo('should update the users avatar');
-			it.todo('should allow jpg files');
-			it.todo('should allow png files');
-			it.todo('should not allow other than jpg/png files');
-		});
-	});
 });

@@ -51,7 +51,7 @@ describe('AnimalController (e2e)', () => {
 		app.close();
 	});
 
-	describe('/me/avatar', () => {
+	describe('/users/:id/avatar', () => {
 		describe('POST', () => {
 			it.todo('should save a new image as the current user');
 			it.todo('should override a existing new image for the current user');
