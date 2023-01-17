@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '../auth/auth.guard';
-import { InsertResult } from 'typeorm';
+import { InsertResult, UpdateResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import {
@@ -294,7 +294,29 @@ describe('User', () => {
 		});
 
 		describe('controller methods', () => {
-			it.todo('should save the avatar to the user');
+			//   -- guess this is not possible since we don't have an authenticated user with this type of testing
+			// it('should save the avatar to the current user', async () => {
+			// 	await expect(controller.setAvatar('/url/test.jpg')).resolves.toEqual(
+			// 		<UpdateResult>{},
+			// 	);
+			// });
+
+			it('should save the avatar to a targetted user', async () => {
+				const url = '/url/test.jpg';
+				await expect(
+					controller.setAvatar(seedUsers[1].userId, url),
+				).resolves.toEqual<UpdateResult>(
+					expect.objectContaining({
+						affected: 1,
+					}),
+				);
+				await expect(controller.findOne(seedUsers[1].userId)).resolves.toEqual(
+					expect.objectContaining({
+						avatar: url,
+					}),
+				);
+			});
+
 			it.todo('should update the users avatar');
 		});
 	});
