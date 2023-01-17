@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-// import { UpdateMessageDto } from './dto/update-message.dto';
 
 @Controller('messages')
 export class MessageController {

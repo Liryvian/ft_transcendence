@@ -1,12 +1,14 @@
 import {
 	Column,
 	CreateDateColumn,
-	Entity, JoinTable, ManyToMany,
+	Entity,
+	JoinTable,
+	ManyToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import {Chat} from "../../../chats/chat/entities/chat.entity";
+import { Chat } from '../../../chats/chat/entities/chat.entity';
 
 @Entity('users')
 export class User {
@@ -45,5 +47,5 @@ export class User {
 			referencedColumnName: 'id',
 		},
 	})
-	public chats: Chat[];
+	chats: Chat[];
 }
