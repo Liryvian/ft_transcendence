@@ -23,6 +23,6 @@ export class Chat {
 	@Exclude()
 	password: string;
 
-	@Column({ nullable: false })
-	old_password: string;
+	// @Column({ nullable: false })
+	// old_password: string;
 }

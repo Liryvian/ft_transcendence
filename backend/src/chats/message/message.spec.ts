@@ -128,6 +128,9 @@ describe('MessageController', () => {
 						chat_id: expect.objectContaining({
 							id: testMessages[index].chat_id,
 						}),
+						sender_id: expect.objectContaining({
+							id: testMessages[index].sender_id,
+						}),
 						created_at: expect.any(Date),
 						updated_at: expect.any(Date),
 						content: testMessages[index].content,

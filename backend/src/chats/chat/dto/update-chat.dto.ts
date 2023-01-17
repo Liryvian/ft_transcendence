@@ -9,9 +9,9 @@ export class UpdateChatDto extends PartialType(CreateChatDto) {
 	@IsOptional()
 	visibility?: string;
 
-	@ValidateIf((o) => o.hasOwnProperty('password')) // only continues validation if the object also contains a `password` field
-	@IsNotEmpty()
-	old_password?: string;
+	// @ValidateIf((o) => o.hasOwnProperty('password')) // only continues validation if the object also contains a `password` field
+	// @IsNotEmpty()
+	// old_password?: string;
 
 	@IsOptional()
 	password?: string;

@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
+// import { UpdateMessageDto } from './dto/update-message.dto';
 
 @Controller('messages')
 export class MessageController {
@@ -23,7 +23,7 @@ export class MessageController {
 	@Get()
 	findAll() {
 		return this.messageService.findAll({
-			relations: { chat_id: true, user_id: true  },
+			relations: { chat_id: true, sender_id: true },
 		});
 	}
 
@@ -31,17 +31,12 @@ export class MessageController {
 	findOne(@Param('id') id: number) {
 		return this.messageService.findOne({
 			where: { id },
-			relations: { chat_id: true, user_id: true },
+			relations: { chat_id: true, sender_id: true },
 		});
-	}
-
-	@Patch(':id')
-	update(@Param('id') id: number, @Body() updateMessageDto: UpdateMessageDto) {
-		return this.messageService.update(id, updateMessageDto);
 	}
 
 	@Delete(':id')
 	remove(@Param('id') id: number) {
-		return this.messageService.remove(id);
+		return this.messageService.remove(+id);
 	}
 }
