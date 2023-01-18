@@ -23,9 +23,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UserController {
-	constructor(
-		private userService: UserService, // private authService: AuthService,
-	) {}
+	constructor(private userService: UserService) {}
 
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
@@ -80,7 +78,7 @@ export class UserController {
 			if (e instanceof NotFoundException) {
 				throw e;
 			}
-			console.log(e);
+			console.log('An unknown error occurred, please check!', { e });
 			throw new BadRequestException(
 				'Something went wrong on updating the user',
 			);

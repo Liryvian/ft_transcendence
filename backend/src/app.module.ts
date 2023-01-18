@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,12 +19,12 @@ import { PongModule } from './pong/pong.module';
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-		AnimalModule,
-		GameModule,
-		GameInvitesModule,
 		UserModule,
 		AuthModule,
 		SharedModule,
+		AnimalModule,
+		GameModule,
+		GameInvitesModule,
 		AnimalModule,
 		GameModule,
 		MatchmakingRequestModule,
