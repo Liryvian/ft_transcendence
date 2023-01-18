@@ -25,24 +25,11 @@ const multer = require('multer');
 		 *
 		 * (cb() == CallBack), the function to call
 		 *
-		 *
 		 * Destination is a function used to determine the destination to save the file
 		 * Filename is a function that you can use to transform the filename
 		 */
 		MulterModule.registerAsync({
 			useFactory: () => ({
-				fileFilter: function (req, file, cb) {
-					if (file.fieldname === 'avatar') {
-						if (
-							['image/png', 'image/jpg', 'image/jpeg'].indexOf(
-								file.mimetype.toLowerCase(),
-							) == -1
-						) {
-							cb(null, false);
-						}
-					}
-					cb(null, true);
-				},
 				storage: multer.diskStorage({
 					destination: function (req, file, cb) {
 						if (file.fieldname === 'avatar') {
