@@ -12,20 +12,4 @@ export class GameService extends AbstractService<Game> {
 	) {
 		super(repository);
 	}
-
-	// async create(data): Promise<InsertResult> {
-	// 	console.log(data);
-	// 	const ins: InsertResult = await this.repository.insert(data);
-	// 	await this.repository.save({ ...data, id: ins.identifiers[0].id });
-	// 	return ins;
-	// }
-
-	// async addUser(self: number, userId: number) {
-	// 	return this.repository.save([
-	// 		{
-	// 			id: self,
-	// 			users: [{ id: userId }],
-	// 		},
-	// 	]);
-	// }
 }

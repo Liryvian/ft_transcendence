@@ -1,5 +1,4 @@
 import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsNotEmpty, IsNumber } from 'class-validator';
-import ArrayDistinct from './array.validator';
 
 export class CreateGameInviteDto {
 
