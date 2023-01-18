@@ -8,8 +8,8 @@ import { MatchmakingRequest } from './entities/matchmaking-request.entity';
 export class MatchmakingRequestService extends AbstractService<MatchmakingRequest> {
 	constructor(
 		@InjectRepository(MatchmakingRequest)
-		private readonly matchmakingRequestRepo: Repository<MatchmakingRequest>,
+		protected readonly repository: Repository<MatchmakingRequest>,
 	) {
-		super(matchmakingRequestRepo);
+		super(repository);
 	}
 }

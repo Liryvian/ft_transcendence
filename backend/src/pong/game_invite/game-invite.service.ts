@@ -9,16 +9,16 @@ import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 export class GameInvitesService extends AbstractService<GameInvite> {
 	constructor(
 		@InjectRepository(GameInvite)
-		private readonly inviteRepo: Repository<GameInvite>,
+		protected readonly repository: Repository<GameInvite>,
 	) {
-		super(inviteRepo);
+		super(repository);
 	}
 
 	async createAndSave(data: CreateGameInviteDto): Promise<GameInvite> {
-		const newInvite = this.inviteRepo.create({
+		const newInvite = this.repository.create({
 			players: data.players.map((player) => ({ id: player })),
 		});
 
-		return this.inviteRepo.save(newInvite);
+		return this.repository.save(newInvite);
 	}
 }
