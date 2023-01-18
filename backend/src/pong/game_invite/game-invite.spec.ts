@@ -44,14 +44,24 @@ describe('GameInvite unit tests', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
 		let testObject = {
-			source_id: 1,
-			target_id: 1,
+			players: [1, 1]
 		};
 
 		const meta: ArgumentMetadata = {
 			type: 'body',
 			metatype: CreateGameInviteDto,
 		};
+
+		it('should work when initting with an array', async () => {
+			let ObjectToTransform = {
+				players: [1, 2]
+			};
+			let expectedObj: CreateGameInviteDto = {
+				players: [1, 2]
+			};
+			validator.transform(ObjectToTransform, meta)
+			expect(ObjectToTransform).toEqual(expectedObj);
+		})
 
 		it('should throw an error when source and target have the same id', async () => {
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
@@ -60,7 +70,7 @@ describe('GameInvite unit tests', () => {
 		});
 
 		it('should throw error when source_id is empty', async () => {
-			testObject.source_id = null;
+			testObject.players[0] = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);
@@ -68,8 +78,7 @@ describe('GameInvite unit tests', () => {
 
 		it('should throw error when source_id is NaN', async () => {
 			let NaNtestObject = {
-				source_id: '1',
-				target_id: 1,
+				players: ['1', 1]
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
 				BadRequestException,
@@ -77,8 +86,8 @@ describe('GameInvite unit tests', () => {
 		});
 
 		it('should throw error when target_id is empty', async () => {
-			testObject.source_id = 1;
-			testObject.target_id = null;
+			testObject.players[0] = 1;
+			testObject.players[1] = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);
@@ -86,8 +95,7 @@ describe('GameInvite unit tests', () => {
 
 		it('should throw error when target_id is NaN', async () => {
 			let NaNtestObject = {
-				source_id: 1,
-				target_id: '1',
+				players: [1, '1']
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
 				BadRequestException,
