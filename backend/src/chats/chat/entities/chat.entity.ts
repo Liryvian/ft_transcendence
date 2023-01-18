@@ -25,12 +25,9 @@ export class Chat {
 	@Column({ default: 'public' })
 	visibility: string;
 
-	@Column({ nullable: false })
+	@Column()
 	@Exclude()
 	password: string;
-
-	// @Column({ nullable: false })
-	// old_password: string;
 
 	// @OneToMany(() => Message, (message) => message.chat_id)
 	// messages: Message[];

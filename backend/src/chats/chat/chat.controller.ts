@@ -32,6 +32,10 @@ export class ChatController {
 
 	@Patch(':id')
 	update(@Param('id') id: number, @Body() updateChatDto: UpdateChatDto) {
+		// get chatroom by id
+		// validate old_password == password in database
+		// if passwords do not match, throw error
+		// password = new_password
 		return this.chatService.update(id, updateChatDto);
 	}
 
