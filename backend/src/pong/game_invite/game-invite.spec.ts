@@ -6,12 +6,15 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../../user/entities/user.entity';
 import { globalValidationPipeOptions } from '../../../src/main.validationpipe';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 import { GameInvite } from './entities/game-invite.entity';
 import { GameInvitesController } from './game-invite.controller';
 import { GameInvitesService } from './game-invite.service';
+import { Game } from '../game/entities/game.entity';
+import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
 
 describe('GameInvite unit tests', () => {
 	let service: GameInvitesService;
@@ -22,7 +25,7 @@ describe('GameInvite unit tests', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([GameInvite]),
+				TypeOrmModule.forFeature([GameInvite, User, Game, MatchmakingRequest]),
 			],
 			providers: [GameInvitesService],
 			controllers: [GameInvitesController],
@@ -41,14 +44,24 @@ describe('GameInvite unit tests', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
 		let testObject = {
-			source_id: 1,
-			target_id: 1,
+			players: [1, 1]
 		};
 
 		const meta: ArgumentMetadata = {
 			type: 'body',
 			metatype: CreateGameInviteDto,
 		};
+
+		it('should work when initting with an array', async () => {
+			let ObjectToTransform = {
+				players: [1, 2]
+			};
+			let expectedObj: CreateGameInviteDto = {
+				players: [1, 2]
+			};
+			validator.transform(ObjectToTransform, meta)
+			expect(ObjectToTransform).toEqual(expectedObj);
+		})
 
 		it('should throw an error when source and target have the same id', async () => {
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
@@ -57,7 +70,7 @@ describe('GameInvite unit tests', () => {
 		});
 
 		it('should throw error when source_id is empty', async () => {
-			testObject.source_id = null;
+			testObject.players[0] = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);
@@ -65,8 +78,7 @@ describe('GameInvite unit tests', () => {
 
 		it('should throw error when source_id is NaN', async () => {
 			let NaNtestObject = {
-				source_id: '1',
-				target_id: 1,
+				players: ['1', 1]
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
 				BadRequestException,
@@ -74,8 +86,8 @@ describe('GameInvite unit tests', () => {
 		});
 
 		it('should throw error when target_id is empty', async () => {
-			testObject.source_id = 1;
-			testObject.target_id = null;
+			testObject.players[0] = 1;
+			testObject.players[1] = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);
@@ -83,8 +95,7 @@ describe('GameInvite unit tests', () => {
 
 		it('should throw error when target_id is NaN', async () => {
 			let NaNtestObject = {
-				source_id: 1,
-				target_id: '1',
+				players: [1, '1']
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
 				BadRequestException,

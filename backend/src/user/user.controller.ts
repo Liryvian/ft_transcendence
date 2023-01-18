@@ -47,7 +47,10 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(): Promise<User[]> {
-		return this.userService.findAll();
+		return this.userService.findAll({
+			relations: { matchmaking_request: true, invite: true,
+				games_as_player_one: true, games_as_player_two: true },
+		});
 	}
 
 	@UseGuards(AuthGuard)
@@ -55,10 +58,21 @@ export class UserController {
 	async findOne(@Param('id') id: number): Promise<User> {
 		return this.userService.findOne({
 			where: {
-				id: +id,
+				id: id,
 			},
+			relations: {
+				matchmaking_request: true, invite: true,
+				games_as_player_one: true, games_as_player_two: true
+			}
 		});
 	}
+
+	// @UseGuards(AuthGuard)
+	// // localhost:8080/api/users/id/games
+	// @Get(':id/games')
+	// async findOneWithGame(@Param('id') id: number): Promise<Game[]> {
+	// 	return this.userService.getGames(id);
+	// }
 
 	@UseGuards(AuthGuard)
 	@Patch(':id')

@@ -1,9 +1,10 @@
+import { User } from '../../../user/entities/user.entity';
 import {
 	Check,
 	Column,
 	CreateDateColumn,
 	Entity,
-	JoinColumn,
+	ManyToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -32,17 +33,16 @@ export class Game {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	// to be joined later on
-	// @ManyToOne(() => User,  user => user.id)
-	// @JoinColumn({})
-	// player_one: User;
-	@Column()
-	player_one: number;
+	@ManyToOne(() => User, (user) => user.id, {
+		nullable: false,
+		createForeignKeyConstraints: false,
+	})
+	player_one: User;
 
-	// @ManyToOne(() => User, user => user.id)
-	// @JoinColumn({})
-	// player_two: User;
-	@Check(`"player_two" <> "player_one"`)
-	@Column()
-	player_two: number;
+	@ManyToOne(() => User, (user) => user.id, {
+		nullable: false,
+		createForeignKeyConstraints: false,
+	})
+	@Check(`"playerTwoId" <> "playerOneId"`)
+	player_two: User;
 }

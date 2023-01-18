@@ -16,18 +16,23 @@ export class GameController {
 	constructor(private readonly gameService: GameService) {}
 
 	@Post()
-	create(@Body() createGameDto: CreateGameDto) {
-		return this.gameService.create(createGameDto);
+	save(@Body() createGameDto: CreateGameDto) {
+		return this.gameService.save(createGameDto);
 	}
 
 	@Get()
 	findAll() {
-		return this.gameService.findAll();
+		return this.gameService.findAll({
+			relations: { player_one: true, player_two: true },
+		});
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.gameService.findOne({ where: { id } });
+		return this.gameService.findOne({
+			where: { id },
+			relations: { player_one: true, player_two: true },
+		});
 	}
 
 	@Patch(':id')
