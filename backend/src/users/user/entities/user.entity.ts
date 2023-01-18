@@ -31,11 +31,10 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToMany(
-		() => Chat,
-		(chat) => chat.users,
-		{ onDelete: 'NO ACTION', onUpdate: 'NO ACTION' },
-	)
+	@ManyToMany(() => Chat, (chat) => chat.users, {
+		onDelete: 'NO ACTION',
+		onUpdate: 'CASCADE',
+	})
 	@JoinTable({
 		name: 'user_chats',
 		joinColumn: {

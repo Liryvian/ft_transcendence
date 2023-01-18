@@ -1,5 +1,5 @@
 import {
-	Entity,
+	Entity, Index,
 	JoinColumn,
 	ManyToMany,
 	ManyToOne,
@@ -10,8 +10,7 @@ import { Chat } from '../../chat/entities/chat.entity';
 import { Role } from '../../role/entities/role.entity';
 
 @Entity('user_chats')
-// !! note: need to find a way around the typeOrm error that @Index() creates, does any of you have a suggestion?
-// @Index(['user_id', 'chat_id'], { unique: true })
+@Index(['user_id', 'chat_id'], { unique: true })
 export class UserChat {
 	@PrimaryColumn({ name: 'user_id' })
 	user_id: number;

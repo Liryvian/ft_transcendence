@@ -27,7 +27,7 @@ import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchma
 import { InsertResult } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import any = jasmine.any;
-import {User} from "../../users/user/entities/user.entity";
+import { User } from '../../users/user/entities/user.entity';
 
 describe('UserChatController', () => {
 	let userChatController: UserChatController;
@@ -135,5 +135,17 @@ describe('UserChatController', () => {
 		}
 	});
 
-	//check if chat_id en user_id update
+	it('Check duplicate user, error expected', async () => {
+		await expect(userChatController.create(testUserChats[0])).rejects.toThrow(
+			'user can only be in a chat once',
+		);
+	});
+
+	// await expect(
+	// 	service.create({
+	// 		name: seedUsers[0].name,
+	// 		password: seedUsers[0].password + 'a',
+	// 		is_intra: false,
+	// 	}),
+	// ).rejects.toThrow('UNIQUE constraint failed');
 });

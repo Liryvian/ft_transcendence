@@ -105,18 +105,18 @@ describe('MessageController', () => {
 	afterAll(async () => {
 		const repoOfMessages: Message[] = await messageController.findAll();
 		for (let i = 0; i < repoOfMessages.length; i++) {
-			await messageController.remove(i + 1);
+			await messageController.remove(repoOfMessages[i].id);
 		}
 
 		const repoOfChats: Chat[] = await chatController.findAll();
 		for (let i = 0; i < repoOfChats.length; i++) {
-			await chatController.remove(i + 1);
+			await chatController.remove(repoOfChats[i].id);
 		}
 
-		// const repoOfUsers: User[] = await userController.findAll();
-		// for (let i = 0; i < repoOfUsers.length; i++) {
-		// 	await userController.remove(i + 1);
-		// }
+		const repoOfUsers: User[] = await userController.findAll();
+		for (let i = 0; i < repoOfUsers.length; i++) {
+			await userService.remove(repoOfUsers[i].id);
+		}
 	});
 
 	it('should be defined', () => {
@@ -127,8 +127,6 @@ describe('MessageController', () => {
 	it('Check if chat_id and other columns exists in messages', async () => {
 		const allMessages: Message[] = await messageController.findAll();
 		expect(allMessages).toHaveLength(2);
-		console.log(allMessages);
-		console.table(allMessages);
 		for (let index = 0; index < allMessages.length; index++) {
 			expect(allMessages).toEqual(
 				expect.arrayContaining([

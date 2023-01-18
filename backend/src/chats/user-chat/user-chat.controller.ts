@@ -1,23 +1,27 @@
 import {
-	Controller,
-	Get,
-	Post,
+	BadRequestException,
 	Body,
-	Patch,
-	Param,
+	Controller,
 	Delete,
+	Get,
+	Param,
+	Patch,
+	Post,
 } from '@nestjs/common';
 import { UserChatService } from './user-chat.service';
 import { CreateUserChatDto } from './dto/create-user-chat.dto';
-import { UpdateUserChatDto } from './dto/update-user-chat.dto';
 
 @Controller('user_chats')
 export class UserChatController {
 	constructor(private readonly userChatService: UserChatService) {}
 
 	@Post()
-	create(@Body() createUserChatDto: CreateUserChatDto) {
-		return this.userChatService.create(createUserChatDto);
+	async create(@Body() createUserChatDto: CreateUserChatDto) {
+		try {
+			return await this.userChatService.create(createUserChatDto);
+		} catch {
+			throw new BadRequestException('user can only be in a chat once');
+		}
 	}
 
 	@Get()
@@ -32,14 +36,6 @@ export class UserChatController {
 		return this.userChatService.findOne({
 			where: { id },
 		});
-	}
-
-	@Patch(':id')
-	update(
-		@Param('id') id: number,
-		@Body() updateUserChatDto: UpdateUserChatDto,
-	) {
-		return this.userChatService.update(id, updateUserChatDto);
 	}
 
 	@Delete(':id')
