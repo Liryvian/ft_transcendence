@@ -22,7 +22,7 @@ export class RoleController {
 
 	@Get()
 	findAll() {
-		return this.roleService.findAll();
+		return this.roleService.findAll({ relations: { userChats: true } });
 	}
 
 	@Get(':id')

@@ -1,17 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
-
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
 import { RoleController } from '../src/chats/role/role.controller';
 import { CreateRoleDto } from '../src/chats/role/dto/create-role.dto';
 import { RoleModule } from '../src/chats/role/role.module';
-import { MessageController } from '../src/chats/message/message.controller';
-import { ChatController } from '../src/chats/chat/chat.controller';
-import { MessageService } from '../src/chats/message/message.service';
-import { ChatService } from '../src/chats/chat/chat.service';
 import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
 import { UserModule } from '../src/users/user/user.module';
 import { ChatModule } from '../src/chats/chat/chat.module';
@@ -25,22 +20,16 @@ import { Chat } from '../src/chats/chat/entities/chat.entity';
 import { Game } from '../src/pong/game/entities/game.entity';
 import { Message } from '../src/chats/message/entities/message.entity';
 import { GameModule } from '../src/pong/game/game.module';
-import {AuthModule} from "../src/auth/auth.module";
-import {SharedModule} from "../src/shared/shared.module";
-import {AnimalModule} from "../src/test_example/animal.module";
-import {GameInvitesModule} from "../src/pong/game_invite/game-invite.module";
-import {MatchmakingRequestModule} from "../src/pong/matchmaking-request/matchmaking-request.module";
+import { AuthModule } from '../src/auth/auth.module';
+import { SharedModule } from '../src/shared/shared.module';
+import { AnimalModule } from '../src/test_example/animal.module';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
 describe('role e2e', () => {
 	let app: INestApplication;
 	let roleController: RoleController;
 	const testRoles: CreateRoleDto[] = [{ name: 'master' }, { name: 'philly' }];
-
-	// const MockRole: CreateRoleDto = {
-	// 	name: 'C',
-	// 	visibility: 'Indeed',
-	// 	password: 'C',
-	// };
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({

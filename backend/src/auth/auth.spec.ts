@@ -11,17 +11,17 @@ import { InsertResult } from 'typeorm';
 import { UserController } from '../users/user/user.controller';
 import { UserService } from '../users/user/user.service';
 import { User } from '../users/user/entities/user.entity';
-import {UserModule} from "../users/user/user.module";
-import {ChatModule} from "../chats/chat/chat.module";
-import {AuthModule} from "./auth.module";
-import {SharedModule} from "../shared/shared.module";
-import {AnimalModule} from "../test_example/animal.module";
-import {MessageModule} from "../chats/message/message.module";
-import {RoleModule} from "../chats/role/role.module";
-import {GameModule} from "../pong/game/game.module";
-import {UserChatModule} from "../chats/user-chat/user-chat.module";
-import {GameInvitesModule} from "../pong/game_invite/game-invite.module";
-import {MatchmakingRequestModule} from "../pong/matchmaking-request/matchmaking-request.module";
+import { UserModule } from '../users/user/user.module';
+import { ChatModule } from '../chats/chat/chat.module';
+import { AuthModule } from './auth.module';
+import { SharedModule } from '../shared/shared.module';
+import { AnimalModule } from '../test_example/animal.module';
+import { MessageModule } from '../chats/message/message.module';
+import { RoleModule } from '../chats/role/role.module';
+import { GameModule } from '../pong/game/game.module';
+import { UserChatModule } from '../chats/user-chat/user-chat.module';
+import { GameInvitesModule } from '../pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../pong/matchmaking-request/matchmaking-request.module';
 
 describe('Auth', () => {
 	let authController: AuthController;

@@ -25,6 +25,7 @@ import { CreateUserDto } from '../../users/user/dto/create-user.dto';
 import { InsertResult } from 'typeorm';
 import { UserController } from '../../users/user/user.controller';
 import { UserService } from '../../users/user/user.service';
+import { User } from '../../users/user/entities/user.entity';
 
 describe('MessageController', () => {
 	let messageController: MessageController;
@@ -82,8 +83,6 @@ describe('MessageController', () => {
 		userController = testingModule.get<UserController>(UserController);
 		userService = testingModule.get<UserService>(UserService);
 
-		// create one or two users that will exist till the "end" (once ready)
-
 		for (const chat in testChats) {
 			await chatController.create(testChats[chat]);
 		}
@@ -108,6 +107,16 @@ describe('MessageController', () => {
 		for (let i = 0; i < repoOfMessages.length; i++) {
 			await messageController.remove(i + 1);
 		}
+
+		const repoOfChats: Chat[] = await chatController.findAll();
+		for (let i = 0; i < repoOfChats.length; i++) {
+			await chatController.remove(i + 1);
+		}
+
+		// const repoOfUsers: User[] = await userController.findAll();
+		// for (let i = 0; i < repoOfUsers.length; i++) {
+		// 	await userController.remove(i + 1);
+		// }
 	});
 
 	it('should be defined', () => {

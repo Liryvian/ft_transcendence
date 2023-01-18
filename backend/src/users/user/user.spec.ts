@@ -18,16 +18,16 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { globalValidationPipeOptions } from '../../main.validationpipe';
-import {UserModule} from "./user.module";
-import {SharedModule} from "../../shared/shared.module";
-import {AnimalModule} from "../../test_example/animal.module";
-import {ChatModule} from "../../chats/chat/chat.module";
-import {MessageModule} from "../../chats/message/message.module";
-import {RoleModule} from "../../chats/role/role.module";
-import {GameModule} from "../../pong/game/game.module";
-import {UserChatModule} from "../../chats/user-chat/user-chat.module";
-import {GameInvitesModule} from "../../pong/game_invite/game-invite.module";
-import {MatchmakingRequestModule} from "../../pong/matchmaking-request/matchmaking-request.module";
+import { UserModule } from './user.module';
+import { SharedModule } from '../../shared/shared.module';
+import { AnimalModule } from '../../test_example/animal.module';
+import { ChatModule } from '../../chats/chat/chat.module';
+import { MessageModule } from '../../chats/message/message.module';
+import { RoleModule } from '../../chats/role/role.module';
+import { GameModule } from '../../pong/game/game.module';
+import { UserChatModule } from '../../chats/user-chat/user-chat.module';
+import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
 
 describe('User', () => {
 	let controller: UserController;
