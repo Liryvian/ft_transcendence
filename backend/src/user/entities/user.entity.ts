@@ -2,18 +2,12 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-<<<<<<< HEAD
 	OneToOne,
-=======
->>>>>>> b96c07a64aa6a6e725c126de24ab2ecc33e91659
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
-<<<<<<< HEAD
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
-=======
->>>>>>> b96c07a64aa6a6e725c126de24ab2ecc33e91659
 
 @Entity('users')
 export class User {

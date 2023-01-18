@@ -111,7 +111,7 @@ describe('MatchmakingRequestService', () => {
 			await expect(
 				mmrService.create({ user: nonExistantUserId }),
 			).rejects.toThrow(
-				'UNIQUE constraint failed: matchmaking-requests.userId',
+				'UNIQUE constraint failed: matchmaking_requests.invite_users',
 			);
 		});
 	});
