@@ -1,4 +1,4 @@
-import { Match } from '../../shared/match.decorator';
+import { Match } from '../../../shared/match.decorator';
 import { IsNotEmpty } from 'class-validator';
 
 export class RegisterUserDto {

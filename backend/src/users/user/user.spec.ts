@@ -1,14 +1,14 @@
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../typeorm/typeorm.service';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../../auth/auth.module';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '../../auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -17,7 +17,17 @@ import {
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { globalValidationPipeOptions } from '../main.validationpipe';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
+import { UserModule } from './user.module';
+import { SharedModule } from '../../shared/shared.module';
+import { AnimalModule } from '../../test_example/animal.module';
+import { ChatModule } from '../../chats/chat/chat.module';
+import { MessageModule } from '../../chats/message/message.module';
+import { RoleModule } from '../../chats/role/role.module';
+import { GameModule } from '../../pong/game/game.module';
+import { UserChatModule } from '../../chats/user-chat/user-chat.module';
+import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
 
 describe('User', () => {
 	let controller: UserController;
@@ -37,7 +47,18 @@ describe('User', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([User]),
+				UserModule,
 				AuthModule,
+				SharedModule,
+				AnimalModule,
+				ChatModule,
+				MessageModule,
+				UserModule,
+				RoleModule,
+				GameModule,
+				UserChatModule,
+				GameInvitesModule,
+				MatchmakingRequestModule,
 			],
 			controllers: [UserController],
 			providers: [UserService, JwtService],

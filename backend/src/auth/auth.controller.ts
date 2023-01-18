@@ -12,7 +12,7 @@ import {
 	HttpCode,
 	HttpStatus,
 } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { UserService } from '../users/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Response, Request } from 'express';

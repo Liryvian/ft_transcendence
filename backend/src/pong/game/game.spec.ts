@@ -13,6 +13,17 @@ import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';
+import { UserModule } from '../../users/user/user.module';
+import { AuthModule } from '../../auth/auth.module';
+import { SharedModule } from '../../shared/shared.module';
+import { AnimalModule } from '../../test_example/animal.module';
+import { ChatModule } from '../../chats/chat/chat.module';
+import { MessageModule } from '../../chats/message/message.module';
+import { RoleModule } from '../../chats/role/role.module';
+import { GameModule } from './game.module';
+import { UserChatModule } from '../../chats/user-chat/user-chat.module';
+import { GameInvitesModule } from '../game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../matchmaking-request/matchmaking-request.module';
 
 describe('Game unit tests', () => {
 	let service: GameService;
@@ -24,6 +35,18 @@ describe('Game unit tests', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([Game]),
+				UserModule,
+				AuthModule,
+				SharedModule,
+				AnimalModule,
+				ChatModule,
+				MessageModule,
+				UserModule,
+				RoleModule,
+				GameModule,
+				UserChatModule,
+				GameInvitesModule,
+				MatchmakingRequestModule,
 			],
 			controllers: [GameController],
 			providers: [GameService],
