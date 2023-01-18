@@ -16,6 +16,7 @@ import { CreateUserDto } from '../src/users/user/dto/create-user.dto';
 import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
 import { User } from '../src/users/user/entities/user.entity';
 import { Game } from '../src/pong/game/entities/game.entity';
+import { Chat } from '../src/chats/chat/entities/chat.entity';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -36,7 +37,13 @@ describe('GameInvite (e2e)', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User, GameInvite, MatchmakingRequest, Game]),
+				TypeOrmModule.forFeature([
+					User,
+					GameInvite,
+					MatchmakingRequest,
+					Game,
+					Chat,
+				]),
 				MatchmakingRequestModule,
 				UserModule,
 				GameInvitesModule,

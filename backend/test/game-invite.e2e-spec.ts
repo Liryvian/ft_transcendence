@@ -12,6 +12,7 @@ import { UserModule } from '../src/users/user/user.module';
 import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
 import { User } from '../src/users/user/entities/user.entity';
 import { Game } from '../src/pong/game/entities/game.entity';
+import { Chat } from '../src/chats/chat/entities/chat.entity';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -24,7 +25,13 @@ describe('GameInvite (e2e)', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
+				TypeOrmModule.forFeature([
+					Game,
+					User,
+					MatchmakingRequest,
+					GameInvite,
+					Chat,
+				]),
 				GameInvitesModule,
 				UserModule,
 			],
