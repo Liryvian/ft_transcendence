@@ -25,8 +25,6 @@ import { PongModule } from './pong/pong.module';
 		AnimalModule,
 		GameModule,
 		GameInvitesModule,
-		AnimalModule,
-		GameModule,
 		MatchmakingRequestModule,
 		EventsModule,
 		PongModule,

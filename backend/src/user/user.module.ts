@@ -5,12 +5,16 @@ import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { AuthModule } from '../auth/auth.module';
 import { SharedModule } from '../shared/shared.module';
+import { GameModule } from '../pong/game/game.module';
+import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([User]),
 		forwardRef(() => AuthModule),
 		SharedModule,
+		GameModule,
+		GameInvite
 	],
 	controllers: [UserController],
 	providers: [UserService],

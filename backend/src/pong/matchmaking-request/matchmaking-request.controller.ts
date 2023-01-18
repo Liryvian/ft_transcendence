@@ -17,8 +17,8 @@ export class MatchmakingRequestController {
 	) {}
 
 	@Post()
-	create(@Body() createMatchmakingRequestDto: CreateMatchmakingRequestDto) {
-		return this.matchmakingRequestService.create(createMatchmakingRequestDto);
+	save(@Body() createMatchmakingRequestDto: CreateMatchmakingRequestDto) {
+		return this.matchmakingRequestService.save(createMatchmakingRequestDto);
 	}
 
 	@Get()

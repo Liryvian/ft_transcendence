@@ -8,10 +8,12 @@ import { MatchmakingRequestController } from './matchmaking-request.controller';
 import { MatchmakingRequestService } from './matchmaking-request.service';
 import { UserController } from '../../user/user.controller';
 import { UserService } from '../../user/user.service';
-import { SharedModule } from '../../shared/shared.module';
 import { RegisterUserDto } from '../../user/dto/register-user.dto';
-import { CreateMatchmakingRequestDto } from './dto/create-matchmaking-request.dto';
 import { JwtService } from '@nestjs/jwt';
+import { SharedModule } from '../../shared/shared.module';
+import { Game } from '../game/entities/game.entity';
+import { GameModule } from '../game/game.module';
+import { GameInvite } from '../game_invite/entities/game-invite.entity';
 
 describe('MatchmakingRequestService', () => {
 	let mmrService: MatchmakingRequestService;
@@ -26,14 +28,14 @@ describe('MatchmakingRequestService', () => {
 	];
 
 	async function seed() {
-		await userService.create(mockUsers);
+		await userService.save(mockUsers);
 
 		seededUsers = await userService.findAll({
 			relations: { matchmaking_request: true },
 		});
 
 		for (let i = 0; i < seededUsers.length; i++) {
-			await mmrService.create({ user: seededUsers[i].id });
+			await mmrService.save({ user: seededUsers[i].id });
 		}
 	}
 
@@ -42,8 +44,9 @@ describe('MatchmakingRequestService', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([MatchmakingRequest, User]),
-				// SharedModule, // import for the JwtService
+				TypeOrmModule.forFeature([MatchmakingRequest, User, Game, GameInvite]),
+				SharedModule, // import for the JwtService
+				GameModule,
 			],
 			providers: [MatchmakingRequestService, UserService, JwtService],
 			controllers: [MatchmakingRequestController, UserController],
@@ -102,14 +105,14 @@ describe('MatchmakingRequestService', () => {
 		it('should throw when trying to join with user that does not exist', async () => {
 			const nonExistantUserId: number = 9999;
 			await expect(
-				mmrService.create({ user: nonExistantUserId }),
+				mmrService.save({ user: nonExistantUserId }),
 			).rejects.toThrow('FOREIGN KEY constraint failed');
 		});
 
 		it('should throw when trying to join with user that already has a gameRequest', async () => {
 			const nonExistantUserId: number = 1;
 			await expect(
-				mmrService.create({ user: nonExistantUserId }),
+				mmrService.save({ user: nonExistantUserId }),
 			).rejects.toThrow(
 				'UNIQUE constraint failed: matchmaking_requests.invite_users',
 			);

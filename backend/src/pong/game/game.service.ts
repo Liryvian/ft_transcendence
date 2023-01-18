@@ -9,9 +9,9 @@ import { Socket } from 'socket.io';
 export class GameService extends AbstractService<Game> {
 	constructor(
 		@InjectRepository(Game)
-		private readonly Repository: Repository<Game>,
+		protected readonly repository: Repository<Game>,
 	) {
-		super(Repository);
+		super(repository);
 	}
 
 	handShakeWithSocket(socket: Socket) {
