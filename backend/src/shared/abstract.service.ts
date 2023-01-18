@@ -56,12 +56,4 @@ export abstract class AbstractService<T> {
 		}
 		return this.repository.delete(id);
 	}
-
-	/*
-		Should probably be removed, but is very usefull for testing
-		gives you direct access to the repo
-	*/
-	getRepo(): Repository<T> {
-		return this.repository;
-	}
 }
