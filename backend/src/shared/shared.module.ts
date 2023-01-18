@@ -14,25 +14,49 @@ const multer = require('multer');
 			}),
 			inject: [ConfigService],
 		}),
+		/**
+		 * Multer is a nodejs middleware for handling multipart/form-data
+		 * it's primarily used for file uploads
+		 *
+		 * https://expressjs.com/en/resources/middleware/multer.html
+		 *
+		 * Here the MulterModule is registered with a disk storage device
+		 * This gives us options to specify where to store uploaded files and what to do with the filename
+		 *
+		 * (cb() == CallBack), the function to call
+		 *
+		 *
+		 * Destination is a function used to determine the destination to save the file
+		 * Filename is a function that you can use to transform the filename
+		 */
 		MulterModule.registerAsync({
 			useFactory: () => ({
+				fileFilter: function (req, file, cb) {
+					if (file.fieldname === 'avatar') {
+						if (
+							['image/png', 'image/jpg', 'image/jpeg'].indexOf(
+								file.mimetype.toLowerCase(),
+							) == -1
+						) {
+							cb(null, false);
+						}
+					}
+					cb(null, true);
+				},
 				storage: multer.diskStorage({
 					destination: function (req, file, cb) {
-						cb(null, './public');
+						if (file.fieldname === 'avatar') {
+							cb(null, './public/avatars');
+						} else {
+							cb(null, './public');
+						}
 					},
 					filename: function (req, file, cb) {
-						const avatarRegex = new RegExp('^/users/[0-9]+/avatar[/]?$');
-						if (avatarRegex.test(req.originalUrl)) {
-							const parts = file.originalname.split('.');
-							const ext = parts.pop();
-							let filename: string;
-							if (parts.length > 1) {
-								filename = parts.join('.');
-							} else {
-								filename = parts.join('');
-							}
-							filename += '_a' + req.originalUrl.split('/')[2];
-							cb(null, '/avatars/' + filename + '.' + ext);
+						if (file.fieldname === 'avatar') {
+							const userId = req.originalUrl.split('/')[2];
+							const ext = file.originalname.split('.') ?? 'jpg';
+							const new_filename = `u${userId}_avatar.${ext.pop()}`;
+							cb(null, new_filename);
 							return;
 						}
 						cb(null, file.originalname);
