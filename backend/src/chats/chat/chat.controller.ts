@@ -6,10 +6,12 @@ import {
 	Patch,
 	Param,
 	Delete,
+	BadRequestException,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
+import { Chat } from './entities/chat.entity';
 
 @Controller('chats')
 export class ChatController {
@@ -17,6 +19,7 @@ export class ChatController {
 
 	@Post()
 	create(@Body() createChatDto: CreateChatDto) {
+		// use bcrypt to hash passwords!
 		return this.chatService.create(createChatDto);
 	}
 
@@ -31,11 +34,19 @@ export class ChatController {
 	}
 
 	@Patch(':id')
-	update(@Param('id') id: number, @Body() updateChatDto: UpdateChatDto) {
-		// get chatroom by id
-		// validate old_password == password in database
-		// if passwords do not match, throw error
-		// password = new_password
+	async update(@Param('id') id: number, @Body() updateChatDto: UpdateChatDto) {
+		if (updateChatDto.hasOwnProperty('password')) {
+			const current_Chat: Chat = await this.chatService.findOne({
+				where: { id },
+			});
+			// check userRole
+			// use bcrypt to hash passwords!
+			if (current_Chat.password !== updateChatDto.password) {
+				throw new BadRequestException('wrong password');
+			}
+			updateChatDto.password = updateChatDto.new_password;
+		}
+
 		return this.chatService.update(id, updateChatDto);
 	}
 

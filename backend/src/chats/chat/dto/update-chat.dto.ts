@@ -9,10 +9,12 @@ export class UpdateChatDto extends PartialType(CreateChatDto) {
 	@IsOptional()
 	visibility?: string;
 
+	@ValidateIf((o) => o.hasOwnProperty('password'))
 	@IsOptional()
+	@IsNotEmpty()
 	new_password?: string;
 
-	@ValidateIf((o) => o.hasOwnProperty('new_password'))
+	@IsOptional()
 	@IsNotEmpty()
 	password?: string;
 }
