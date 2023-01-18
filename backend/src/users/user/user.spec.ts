@@ -1,14 +1,14 @@
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../typeorm/typeorm.service';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { AuthModule } from '../auth/auth.module';
+import { AuthModule } from '../../auth/auth.module';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '../../auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -17,12 +17,20 @@ import {
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { globalValidationPipeOptions } from '../main.validationpipe';
-import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { GameService } from '../pong/game/game.service';
-import { GameModule } from '../pong/game/game.module';
-import { Game } from '../pong/game/entities/game.entity';
-import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
+import { ChatModule } from '../../chats/chat/chat.module';
+import { Game } from '../../pong/game/entities/game.entity';
+import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
+import { GameModule } from '../../pong/game/game.module';
+import { GameService } from '../../pong/game/game.service';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
+import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
+import { MessageModule } from '../../chats/message/message.module';
+import { RoleModule } from '../../chats/role/role.module';
+import { SharedModule } from '../../shared/shared.module';
+import { UserChatModule } from '../../chats/user-chat/user-chat.module';
+import { UserModule } from './user.module';
 
 describe('User', () => {
 	let controller: UserController;
@@ -57,7 +65,15 @@ describe('User', () => {
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([User, MatchmakingRequest, Game, GameInvite]),
 				AuthModule,
+				ChatModule,
+				GameInvitesModule,
 				GameModule,
+				MatchmakingRequestModule,
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 			controllers: [UserController],
 			providers: [UserService, JwtService],
@@ -254,13 +270,17 @@ describe('User', () => {
 
 		describe('Relationship to games', () => {
 			it('should return a single game attached to a userId', async () => {
-				const usersGames: Game[] = (await controller.findOne(seedUsers[3].userId)).games;
+				const usersGames: Game[] = (
+					await controller.findOne(seedUsers[3].userId)
+				).games;
 				expect(usersGames.length).toBe(1);
 				expect(usersGames[0].id).toBe(4);
 			});
 
 			it('should return an array of games attached to a userId', async () => {
-				const usersGames: Game[] = (await controller.findOne(seedUsers[2].userId)).games;
+				const usersGames: Game[] = (
+					await controller.findOne(seedUsers[2].userId)
+				).games;
 				expect(usersGames.length).toBe(3);
 				expect(usersGames).toEqual(
 					expect.arrayContaining([
@@ -278,10 +298,11 @@ describe('User', () => {
 			});
 
 			it('should return the user object with the relation to games', async () => {
-				const userWithGames = (await controller.findOne(seedUsers[2].userId)).games;
+				const userWithGames = (await controller.findOne(seedUsers[2].userId))
+					.games;
 				const usersGameIds = userWithGames.map((game) => game.id);
 
-				usersGameIds.sort()
+				usersGameIds.sort();
 
 				expect(usersGameIds).toEqual(seedUsers[2].games);
 			});

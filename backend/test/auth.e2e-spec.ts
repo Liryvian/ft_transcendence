@@ -5,15 +5,20 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
-import { UserController } from '../src/user/user.controller';
-import { UserModule } from '../src/user/user.module';
+import { UserController } from '../src/users/user/user.controller';
+import { UserModule } from '../src/users/user/user.module';
 import { SharedModule } from '../src/shared/shared.module';
 import { AuthModule } from '../src/auth/auth.module';
-import { UserService } from '../src/user/user.service';
-import { User } from '../src/user/entities/user.entity';
+import { UserService } from '../src/users/user/user.service';
+import { User } from '../src/users/user/entities/user.entity';
 import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as cookieParser from 'cookie-parser';
+import { ChatModule } from '../src/chats/chat/chat.module';
+import { MessageModule } from '../src/chats/message/message.module';
+import { RoleModule } from '../src/chats/role/role.module';
+import { GameModule } from '../src/pong/game/game.module';
+import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
 import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
 import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
@@ -46,11 +51,16 @@ describe('Auth (e2e)', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				SharedModule,
-				UserModule,
 				AuthModule,
+				ChatModule,
+				GameInvitesModule,
+				GameModule,
 				MatchmakingRequestModule,
-				GameInvitesModule
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 		}).compile();
 

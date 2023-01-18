@@ -8,12 +8,19 @@ import { GameController } from '../src/pong/game/game.controller';
 import { GameModule } from '../src/pong/game/game.module';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
-import { globalValidationPipeOptions } from '../src/main.validationpipe';
-import { UserModule } from '../src/user/user.module';
-import { User } from '../src/user/entities/user.entity';
+import { AuthModule } from '../src/auth/auth.module';
+import { ChatModule } from '../src/chats/chat/chat.module';
+import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { globalValidationPipeOptions } from '../../backend/src/main.validationpipe';
 import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
 import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
-import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
+import { MessageModule } from '../src/chats/message/message.module';
+import { RoleModule } from '../src/chats/role/role.module';
+import { SharedModule } from '../src/shared/shared.module';
+import { User } from '../src/users/user/entities/user.entity';
+import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
+import { UserModule } from '../src/users/user/user.module';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
@@ -27,10 +34,17 @@ describe('Game (e2e)', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
+				AuthModule,
+				ChatModule,
+				GameInvite,
+				GameInvitesModule,
 				GameModule,
-				UserModule,
 				MatchmakingRequestModule,
-				GameInvite
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 		}).compile();
 

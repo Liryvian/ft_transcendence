@@ -14,7 +14,7 @@ import {
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '../../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';

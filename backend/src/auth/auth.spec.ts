@@ -6,14 +6,24 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
-import { User } from '../user/entities/user.entity';
-import { UserService } from '../user/user.service';
-import { UserController } from '../user/user.controller';
+
 import { InsertResult } from 'typeorm';
-import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { GameModule } from '../pong/game/game.module';
-import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
+import { AuthModule } from './auth.module';
+import { ChatModule } from '../chats/chat/chat.module';
 import { Game } from '../pong/game/entities/game.entity';
+import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../pong/game_invite/game-invite.module';
+import { GameModule } from '../pong/game/game.module';
+import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { MatchmakingRequestModule } from '../pong/matchmaking-request/matchmaking-request.module';
+import { MessageModule } from '../chats/message/message.module';
+import { RoleModule } from '../chats/role/role.module';
+import { SharedModule } from '../shared/shared.module';
+import { User } from '../users/user/entities/user.entity';
+import { UserChatModule } from '../chats/user-chat/user-chat.module';
+import { UserController } from '../users/user/user.controller';
+import { UserModule } from '../users/user/user.module';
+import { UserService } from '../users/user/user.service';
 
 describe('Auth', () => {
 	let authController: AuthController;
@@ -45,7 +55,16 @@ describe('Auth', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([User, MatchmakingRequest, Game, GameInvite]),
+				AuthModule,
+				ChatModule,
+				GameInvitesModule,
 				GameModule,
+				MatchmakingRequestModule,
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 			controllers: [AuthController, UserController],
 			providers: [AuthService, UserService, JwtService],

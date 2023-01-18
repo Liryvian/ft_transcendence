@@ -1,9 +1,5 @@
-import { User } from '../../../user/entities/user.entity';
-import {
-	Entity,
-	OneToMany,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
+import { User } from '../../../users/user/entities/user.entity';
+import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('game_invites')
 export class GameInvite {

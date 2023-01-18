@@ -6,19 +6,29 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from '../../user/user.service';
-import { User } from '../../user/entities/user.entity';
-import { globalValidationPipeOptions } from '../../main.validationpipe';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { AuthModule } from '../../auth/auth.module';
+import { ChatModule } from '../../chats/chat/chat.module';
 import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
-import { CreateUserDto } from '../../user/dto/create-user.dto';
+import { CreateUserDto } from '../../users/user/dto/create-user.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
+import { GameInvite } from '../game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../game_invite/game-invite.module';
+import { GameModule } from './game.module';
 import { GameService } from './game.service';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
 import { InsertResult } from 'typeorm';
 import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
-import { GameInvite } from '../game_invite/entities/game-invite.entity';
+import { MatchmakingRequestModule } from '../matchmaking-request/matchmaking-request.module';
+import { MessageModule } from '../../chats/message/message.module';
+import { RoleModule } from '../../chats/role/role.module';
+import { SharedModule } from '../../shared/shared.module';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { UpdateGameDto } from './dto/update-game.dto';
+import { User } from '../../users/user/entities/user.entity';
+import { UserChatModule } from '../../chats/user-chat/user-chat.module';
+import { UserModule } from '../../users/user/user.module';
+import { UserService } from '../../users/user/user.service';
 
 describe('Game unit tests', () => {
 	let service: GameService;
@@ -39,6 +49,16 @@ describe('Game unit tests', () => {
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
+				AuthModule,
+				ChatModule,
+				GameInvitesModule,
+				GameModule,
+				MatchmakingRequestModule,
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 			controllers: [GameController],
 			providers: [GameService, UserService],

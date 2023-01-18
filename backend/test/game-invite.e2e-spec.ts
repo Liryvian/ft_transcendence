@@ -8,16 +8,16 @@ import { CreateGameInviteDto } from '../src/pong/game_invite/dto/create-game-inv
 import { GameInvitesController } from '../src/pong/game_invite/game-invite.controller';
 import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
 import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { UserModule } from '../src/user/user.module';
+import { UserModule } from '../src/users/user/user.module';
 import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
-import { User } from '../src/user/entities/user.entity';
+import { User } from '../src/users/user/entities/user.entity';
 import { Game } from '../src/pong/game/entities/game.entity';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
 	let invitesController: GameInvitesController;
 
-	const mockInvite: CreateGameInviteDto = {players: [1, 2]};
+	const mockInvite: CreateGameInviteDto = { players: [1, 2] };
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -27,7 +27,6 @@ describe('GameInvite (e2e)', () => {
 				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
 				GameInvitesModule,
 				UserModule,
-
 			],
 		}).compile();
 
