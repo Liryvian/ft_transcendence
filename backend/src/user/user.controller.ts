@@ -89,6 +89,7 @@ export class UserController {
 		}
 	}
 
+	@UseGuards(AuthGuard)
 	@Post(':id/avatar')
 	@UseInterceptors(FileInterceptor('avatar'))
 	async setAvatar(
@@ -112,6 +113,7 @@ export class UserController {
 			});
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete(':id/avatar')
 	async removeAvatar(@Param('id') id: number) {
 		return this.userService
