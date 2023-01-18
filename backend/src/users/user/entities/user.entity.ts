@@ -2,10 +2,13 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinTable,
+	ManyToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Chat } from '../../../chats/chat/entities/chat.entity';
 
 @Entity('users')
 export class User {
@@ -18,7 +21,7 @@ export class User {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@Column({ nullable: false })
+	@Column()
 	@Exclude()
 	password: string;
 
@@ -30,4 +33,21 @@ export class User {
 
 	@Column({ nullable: true })
 	avatar: string;
+
+	@ManyToMany(() => Chat, (chat) => chat.users, {
+		onDelete: 'NO ACTION',
+		onUpdate: 'CASCADE',
+	})
+	@JoinTable({
+		name: 'user_chats',
+		joinColumn: {
+			name: 'user_id',
+			referencedColumnName: 'id',
+		},
+		inverseJoinColumn: {
+			name: 'chat_id',
+			referencedColumnName: 'id',
+		},
+	})
+	chats: Chat[];
 }

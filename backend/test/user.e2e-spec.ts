@@ -5,16 +5,21 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
-import { UserModule } from '../src/user/user.module';
+import { UserModule } from '../src/users/user/user.module';
 import { GameModule } from '../src/pong/game/game.module';
-import { User } from '../src/user/entities/user.entity';
-import { UserService } from '../src/user/user.service';
+import { User } from '../src/users/user/entities/user.entity';
+import { UserService } from '../src/users/user/user.service';
 import { AuthGuard } from '../src/auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { SharedModule } from '../src/shared/shared.module';
-import { MulterModule } from '@nestjs/platform-express';
+import { ChatModule } from '../src/chats/chat/chat.module';
+import { MessageModule } from '../src/chats/message/message.module';
+import { RoleModule } from '../src/chats/role/role.module';
+import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 
-describe('AnimalController (e2e)', () => {
+describe('User (e2e)', () => {
 	let app: INestApplication;
 	let userService: UserService;
 
@@ -30,7 +35,12 @@ describe('AnimalController (e2e)', () => {
 				UserModule,
 				GameModule,
 				SharedModule,
-				MulterModule,
+				ChatModule,
+				MessageModule,
+				RoleModule,
+				UserChatModule,
+				GameInvitesModule,
+				MatchmakingRequestModule,
 			],
 		})
 			.overrideGuard(AuthGuard)
@@ -73,7 +83,7 @@ describe('AnimalController (e2e)', () => {
 
 				expect(response.status).toBe(HttpStatus.CREATED);
 				expect(response.body.avatar).toEqual(
-					expect.stringContaining('test-avatar_a1.png'),
+					expect.stringContaining('u1_avatar.png'),
 				);
 				return response;
 			});
