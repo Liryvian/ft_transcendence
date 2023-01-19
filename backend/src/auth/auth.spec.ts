@@ -2,97 +2,60 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../typeorm/typeorm.service';
 
-import { InsertResult } from 'typeorm';
 import { AuthModule } from './auth.module';
-import { ChatModule } from '../chats/chat/chat.module';
+import { Chat } from '../chats/chat/entities/chat.entity';
 import { Game } from '../pong/game/entities/game.entity';
 import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
-import { GameInvitesModule } from '../pong/game_invite/game-invite.module';
-import { GameModule } from '../pong/game/game.module';
 import { MatchmakingRequest } from '../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { MatchmakingRequestModule } from '../pong/matchmaking-request/matchmaking-request.module';
-import { MessageModule } from '../chats/message/message.module';
-import { RoleModule } from '../chats/role/role.module';
+import { Message } from '../chats/message/entities/message.entity';
+import { Role } from '../chats/role/entities/role.entity';
 import { SharedModule } from '../shared/shared.module';
 import { User } from '../users/user/entities/user.entity';
-import { UserChatModule } from '../chats/user-chat/user-chat.module';
-import { UserController } from '../users/user/user.controller';
+import { UserChat } from '../chats/user-chat/entities/user-chat.entity';
 import { UserModule } from '../users/user/user.module';
-import { UserService } from '../users/user/user.service';
 
 describe('Auth', () => {
 	let authController: AuthController;
-	let userController: UserController;
 	let authService: AuthService;
-	let userService: UserService;
-
-	let users = [
-		{
-			name: 'u1',
-			password: 'p1',
-			password_confirm: 'p1',
-		},
-		{
-			name: 'u2',
-			password: 'p2',
-			password_confirm: 'p2',
-		},
-		{
-			name: 'u3',
-			password: 'p3',
-			password_confirm: 'p3',
-		},
-	];
+	let authGuard: AuthGuard;
 
 	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User, MatchmakingRequest, Game, GameInvite]),
+				TypeOrmModule.forFeature([
+					User,
+					MatchmakingRequest,
+					Game,
+					GameInvite,
+					Chat,
+					Message,
+					Role,
+					UserChat,
+				]),
 				AuthModule,
-				ChatModule,
-				GameInvitesModule,
-				GameModule,
-				MatchmakingRequestModule,
-				MessageModule,
-				RoleModule,
 				SharedModule,
-				UserChatModule,
 				UserModule,
 			],
-			controllers: [AuthController, UserController],
-			providers: [AuthService, UserService, JwtService],
+			controllers: [AuthController],
+			providers: [AuthService],
 		}).compile();
 
 		authController = module.get<AuthController>(AuthController);
 		authService = module.get<AuthService>(AuthService);
-		userController = module.get<UserController>(UserController);
-		userService = module.get<UserService>(UserService);
-
-		await userController
-			.create(users[0])
-			.then((res: InsertResult) => (users[0]['id'] = res.identifiers[0].id));
-		await userController
-			.create(users[1])
-			.then((res: InsertResult) => (users[1]['id'] = res.identifiers[0].id));
-		await userController
-			.create(users[2])
-			.then((res: InsertResult) => (users[2]['id'] = res.identifiers[0].id));
+		authGuard = module.get<AuthGuard>(AuthGuard);
 	});
 
-	afterAll(() => {
-		userService.remove(users.map((obj) => obj['id']));
-	});
+	afterAll(() => {});
 
 	describe('AuthGuard', () => {
 		it('should be defined', () => {
-			expect(new AuthGuard(new JwtService())).toBeDefined();
+			expect(authGuard).toBeDefined();
 		});
 	});
 
