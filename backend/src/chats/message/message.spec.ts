@@ -1,37 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MessageController } from './message.controller';
-import { MessageService } from './message.service';
-import { ChatService } from '../chat/chat.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { InsertResult } from 'typeorm';
+
+import { AuthModule } from '../../auth/auth.module';
 import { Chat } from '../chat/entities/chat.entity';
-import { Message } from './entities/message.entity';
 import { ChatController } from '../chat/chat.controller';
 import { CreateChatDto } from '../chat/dto/create-chat.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { UserModule } from '../../users/user/user.module';
-import { AuthModule } from '../../auth/auth.module';
-import { SharedModule } from '../../shared/shared.module';
-import { AnimalModule } from '../../test_example/animal.module';
-import { ChatModule } from '../chat/chat.module';
-import { MessageModule } from './message.module';
-import { RoleModule } from '../role/role.module';
-import { GameModule } from '../../pong/game/game.module';
-import { UserChatModule } from '../user-chat/user-chat.module';
-import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
 import { CreateUserDto } from '../../users/user/dto/create-user.dto';
-import { InsertResult } from 'typeorm';
+import { Game } from '../../pong/game/entities/game.entity';
+import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
+import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { Message } from './entities/message.entity';
+import { MessageController } from './message.controller';
+import { MessageService } from './message.service';
+import { Role } from '../role/entities/role.entity';
+import { SharedModule } from '../../shared/shared.module';
+import { User } from '../../users/user/entities/user.entity';
+import { UserChat } from '../user-chat/entities/user-chat.entity';
 import { UserController } from '../../users/user/user.controller';
 import { UserService } from '../../users/user/user.service';
-import { User } from '../../users/user/entities/user.entity';
+import { ChatModule } from '../chat/chat.module';
 
 describe('MessageController', () => {
 	let messageController: MessageController;
 	let chatController: ChatController;
 	let messageService: MessageService;
-	let chatService: ChatService;
 	let testingModule: TestingModule;
 	let userController: UserController;
 	let userService: UserService;
@@ -56,30 +52,28 @@ describe('MessageController', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Message, Chat]),
-				UserModule,
+				TypeOrmModule.forFeature([
+					User,
+					MatchmakingRequest,
+					Game,
+					GameInvite,
+					Chat,
+					Message,
+					Role,
+					UserChat,
+				]),
 				AuthModule,
 				SharedModule,
-				AnimalModule,
 				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
 			],
-			controllers: [MessageController, ChatController],
-			providers: [MessageService, ChatService],
+			controllers: [MessageController],
+			providers: [MessageService],
 		}).compile();
 
 		messageController = testingModule.get<MessageController>(MessageController);
-		chatController = testingModule.get<ChatController>(ChatController);
-
 		messageService = testingModule.get<MessageService>(MessageService);
-		chatService = testingModule.get<ChatService>(ChatService);
 
+		chatController = testingModule.get<ChatController>(ChatController);
 		userController = testingModule.get<UserController>(UserController);
 		userService = testingModule.get<UserService>(UserService);
 
