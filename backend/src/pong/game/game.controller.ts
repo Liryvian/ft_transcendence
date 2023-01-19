@@ -16,7 +16,7 @@ export class GameController {
 	constructor(private readonly gameService: GameService) {}
 
 	@Post()
-	save(@Body() createGameDto: CreateGameDto) {
+	create(@Body() createGameDto: CreateGameDto) {
 		return this.gameService.save(createGameDto);
 	}
 
