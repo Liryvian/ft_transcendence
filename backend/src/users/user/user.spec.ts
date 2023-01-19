@@ -2,35 +2,31 @@ import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { AuthModule } from '../../auth/auth.module';
-import { User } from './entities/user.entity';
-import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from '../../auth/auth.guard';
-import { InsertResult } from 'typeorm';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { RegisterUserDto } from './dto/register-user.dto';
 import {
 	ArgumentMetadata,
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { ChatModule } from '../../chats/chat/chat.module';
+import { InsertResult } from 'typeorm';
+
+import { AuthGuard } from '../../auth/auth.guard';
+import { AuthModule } from '../../auth/auth.module';
+import { Chat } from '../../chats/chat/entities/chat.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 import { Game } from '../../pong/game/entities/game.entity';
 import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
-import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
-import { GameModule } from '../../pong/game/game.module';
 import { GameService } from '../../pong/game/game.service';
 import { globalValidationPipeOptions } from '../../main.validationpipe';
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
-import { MessageModule } from '../../chats/message/message.module';
-import { RoleModule } from '../../chats/role/role.module';
+import { Message } from '../../chats/message/entities/message.entity';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { Role } from '../../chats/role/entities/role.entity';
 import { SharedModule } from '../../shared/shared.module';
-import { UserChatModule } from '../../chats/user-chat/user-chat.module';
-import { UserModule } from './user.module';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import { UserChat } from '../../chats/user-chat/entities/user-chat.entity';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
 
 describe('User', () => {
 	let controller: UserController;
@@ -63,20 +59,21 @@ describe('User', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([User, MatchmakingRequest, Game, GameInvite]),
+				TypeOrmModule.forFeature([
+					User,
+					MatchmakingRequest,
+					Game,
+					GameInvite,
+					Chat,
+					Message,
+					Role,
+					UserChat,
+				]),
 				AuthModule,
-				ChatModule,
-				GameInvitesModule,
-				GameModule,
-				MatchmakingRequestModule,
-				MessageModule,
-				RoleModule,
 				SharedModule,
-				UserChatModule,
-				UserModule,
 			],
 			controllers: [UserController],
-			providers: [UserService, JwtService],
+			providers: [UserService],
 		})
 			.overrideGuard(AuthGuard)
 			.useValue(mock_guard)
