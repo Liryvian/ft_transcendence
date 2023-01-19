@@ -6,28 +6,25 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
+import { InsertResult } from 'typeorm';
+
 import { AuthModule } from '../../auth/auth.module';
-import { ChatModule } from '../../chats/chat/chat.module';
+import { Chat } from '../../chats/chat/entities/chat.entity';
 import { CreateGameDto } from './dto/create-game.dto';
 import { CreateUserDto } from '../../users/user/dto/create-user.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
 import { GameInvite } from '../game_invite/entities/game-invite.entity';
-import { GameInvitesModule } from '../game_invite/game-invite.module';
-import { GameModule } from './game.module';
 import { GameService } from './game.service';
-import { globalValidationPipeOptions } from '../../main.validationpipe';
-import { InsertResult } from 'typeorm';
 import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
-import { MatchmakingRequestModule } from '../matchmaking-request/matchmaking-request.module';
-import { MessageModule } from '../../chats/message/message.module';
-import { RoleModule } from '../../chats/role/role.module';
+import { Message } from '../../chats/message/entities/message.entity';
+import { Role } from '../../chats/role/entities/role.entity';
 import { SharedModule } from '../../shared/shared.module';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { UpdateGameDto } from './dto/update-game.dto';
 import { User } from '../../users/user/entities/user.entity';
-import { UserChatModule } from '../../chats/user-chat/user-chat.module';
-import { UserModule } from '../../users/user/user.module';
+import { UserChat } from '../../chats/user-chat/entities/user-chat.entity';
 import { UserService } from '../../users/user/user.service';
 
 describe('Game unit tests', () => {
@@ -48,17 +45,18 @@ describe('Game unit tests', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
+				TypeOrmModule.forFeature([
+					User,
+					MatchmakingRequest,
+					Game,
+					GameInvite,
+					Chat,
+					Message,
+					Role,
+					UserChat,
+				]),
 				AuthModule,
-				ChatModule,
-				GameInvitesModule,
-				GameModule,
-				MatchmakingRequestModule,
-				MessageModule,
-				RoleModule,
 				SharedModule,
-				UserChatModule,
-				UserModule,
 			],
 			controllers: [GameController],
 			providers: [GameService, UserService],
@@ -157,6 +155,15 @@ describe('Game unit tests', () => {
 					player_two: relationTestUsersIds[0],
 				}),
 			).rejects.toThrow('CHECK constraint failed');
+		});
+
+		it('should not allow non existent user', async () => {
+			await expect(
+				service.save({
+					player_one: relationTestUsersIds[0],
+					player_two: 89745,
+				}),
+			).rejects.toThrow('FOREIGN KEY constraint failed');
 		});
 
 		it('should not allow empty users', async () => {
