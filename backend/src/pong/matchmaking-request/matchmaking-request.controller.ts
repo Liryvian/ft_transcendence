@@ -3,12 +3,13 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
 	Param,
 	Delete,
+	BadRequestException,
 } from '@nestjs/common';
 import { MatchmakingRequestService } from './matchmaking-request.service';
 import { CreateMatchmakingRequestDto } from './dto/create-matchmaking-request.dto';
+import { MatchmakingRequest } from './entities/matchmaking-request.entity';
 
 @Controller('matchmaking-requests')
 export class MatchmakingRequestController {
@@ -17,19 +18,27 @@ export class MatchmakingRequestController {
 	) {}
 
 	@Post()
-	save(@Body() createMatchmakingRequestDto: CreateMatchmakingRequestDto) {
-		return this.matchmakingRequestService.save(createMatchmakingRequestDto);
+	async save(@Body() createMatchmakingRequestDto: CreateMatchmakingRequestDto) {
+		try {
+			const newRequest: MatchmakingRequest =
+				await this.matchmakingRequestService.save(createMatchmakingRequestDto);
+			return newRequest;
+		} catch (e) {
+			throw new BadRequestException(
+				'User has to exist and should have no open game request',
+			);
+		}
 	}
 
 	@Get()
-	findAll() {
+	async findAll() {
 		return this.matchmakingRequestService.findAll({
 			relations: { user: true },
 		});
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: number) {
+	async findOne(@Param('id') id: number) {
 		return this.matchmakingRequestService.findOne({
 			where: { id },
 			relations: { user: true },
@@ -37,7 +46,7 @@ export class MatchmakingRequestController {
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: number) {
+	async remove(@Param('id') id: number) {
 		return this.matchmakingRequestService.remove(id);
 	}
 }
