@@ -52,7 +52,7 @@ describe('Game unit tests', () => {
 	describe('CreateGameDto', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
-		let testObject = {
+		const testObject = {
 			player_one: 1,
 			player_two: 1,
 		};
@@ -122,26 +122,26 @@ describe('Game unit tests', () => {
 
 		it('should not allow same user for p1 and p2', async () => {
 			await expect(
-				service.save({
+				controller.create({
 					player_one: relationTestUsersIds[0],
 					player_two: relationTestUsersIds[0],
 				}),
-			).rejects.toThrow('CHECK constraint failed');
+			).rejects.toThrow(BadRequestException);
 		});
 
 		it('should not allow non existent user', async () => {
 			await expect(
-				service.save({
+				controller.create({
 					player_one: relationTestUsersIds[0],
 					player_two: 89745,
 				}),
-			).rejects.toThrow('FOREIGN KEY constraint failed');
+			).rejects.toThrow(BadRequestException);
 		});
 
 		it('should not allow empty users', async () => {
-			await expect(service.save({})).rejects.toThrow(
-				'NOT NULL constraint failed: games.playerOneId',
-			);
+			await expect(
+				controller.create({ player_one: null, player_two: null }),
+			).rejects.toThrow(BadRequestException);
 		});
 	});
 });

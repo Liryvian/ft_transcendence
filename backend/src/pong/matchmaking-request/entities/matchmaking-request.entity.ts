@@ -21,7 +21,7 @@ export class MatchmakingRequest {
 
 	@OneToOne(() => User, (user: User) => user.matchmaking_request)
 	@JoinColumn({
-		name: 'invite_users',
+		name: 'user',
 	})
 	user: User;
 }

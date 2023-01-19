@@ -2,6 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
 	JoinTable,
 	ManyToMany,
 	ManyToOne,
@@ -55,10 +56,10 @@ export class User {
 	@OneToMany(() => Game, (game: Game) => game.player_two)
 	games_as_player_two: Game[];
 
-	@IsOptional()
 	@Expose()
+	@IsOptional()
 	get games(): Game[] {
-		//  if games_asPlayerone/two are null set them = []
+		//  if games_as_player_one/two are null set them = []
 		return [
 			...(this.games_as_player_one ?? []),
 			...(this.games_as_player_two ?? []),
@@ -67,6 +68,7 @@ export class User {
 
 	@IsOptional()
 	@ManyToOne(() => GameInvite, (invite) => invite.players)
+	@JoinColumn({ name: 'invite' })
 	invite: GameInvite;
 
 	@ManyToMany(() => Chat, (chat) => chat.users, {

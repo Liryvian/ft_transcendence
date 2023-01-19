@@ -48,8 +48,12 @@ export class UserController {
 	@Get()
 	async findAll(): Promise<User[]> {
 		return this.userService.findAll({
-			relations: { matchmaking_request: true, invite: true,
-				games_as_player_one: true, games_as_player_two: true },
+			relations: {
+				matchmaking_request: true,
+				invite: true,
+				games_as_player_one: true,
+				games_as_player_two: true,
+			},
 		});
 	}
 
@@ -61,9 +65,11 @@ export class UserController {
 				id: id,
 			},
 			relations: {
-				matchmaking_request: true, invite: true,
-				games_as_player_one: true, games_as_player_two: true
-			}
+				matchmaking_request: true,
+				invite: true,
+				games_as_player_one: true,
+				games_as_player_two: true,
+			},
 		});
 	}
 

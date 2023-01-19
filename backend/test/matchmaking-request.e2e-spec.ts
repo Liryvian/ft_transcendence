@@ -14,7 +14,7 @@ describe('GameInvite (e2e)', () => {
 	let userService: UserService;
 
 	const mockInvite: CreateMatchmakingRequestDto = {
-		user_id: 2,
+		user: 2,
 	};
 
 	const mockUsers: CreateUserDto[] = [

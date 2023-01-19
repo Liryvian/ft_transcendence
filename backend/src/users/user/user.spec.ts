@@ -1,7 +1,4 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import {
 	ArgumentMetadata,
 	NotFoundException,
@@ -9,22 +6,14 @@ import {
 } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
 import { globalValidationPipeOptions } from '../../main.validationpipe';
-import { SharedModule } from '../../shared/shared.module';
 
 import { AuthGuard } from '../../auth/auth.guard';
-import { AuthModule } from '../../auth/auth.module';
-import { Chat } from '../../chats/chat/entities/chat.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Game } from '../../pong/game/entities/game.entity';
-import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
 import { GameService } from '../../pong/game/game.service';
-import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { Message } from '../../chats/message/entities/message.entity';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { Role } from '../../chats/role/entities/role.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { UserChat } from '../../chats/user-chat/entities/user-chat.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { AllTestingModule } from '../../shared/test.module';
@@ -57,24 +46,7 @@ describe('User', () => {
 		const mock_guard = { CanActivate: jest.fn(() => true) };
 
 		testingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				AllTestingModule,
-				TypeOrmModule.forFeature([
-					User,
-					MatchmakingRequest,
-					Game,
-					GameInvite,
-					Chat,
-					Message,
-					Role,
-					UserChat,
-				]),
-				AuthModule,
-				SharedModule,
-			],
-			controllers: [UserController],
-			providers: [UserService],
+			imports: [AllTestingModule],
 		})
 			.overrideGuard(AuthGuard)
 			.useValue(mock_guard)

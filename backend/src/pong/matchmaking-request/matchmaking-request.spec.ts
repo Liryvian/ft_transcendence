@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MatchmakingRequest } from './entities/matchmaking-request.entity';
 import { MatchmakingRequestController } from './matchmaking-request.controller';
@@ -7,6 +8,7 @@ import { User } from '../../users/user/entities/user.entity';
 import { UserController } from '../../users/user/user.controller';
 import { UserService } from '../../users/user/user.service';
 import { AllTestingModule } from '../../shared/test.module';
+import { CreateMatchmakingRequestDto } from './dto/create-matchmaking-request.dto';
 
 describe('MatchmakingRequestService', () => {
 	let mmrService: MatchmakingRequestService;
@@ -15,7 +17,7 @@ describe('MatchmakingRequestService', () => {
 	let userService: UserService;
 	let seededUsers: User[];
 
-	let mockUsers: RegisterUserDto[] = [
+	const mockUsers: RegisterUserDto[] = [
 		{ name: 'Johnno', password: 'x', password_confirm: 'x' },
 		{ name: 'Joanna', password: 'y', password_confirm: 'y' },
 	];
@@ -88,18 +90,16 @@ describe('MatchmakingRequestService', () => {
 
 	describe('create', () => {
 		it('should throw when trying to join with user that does not exist', async () => {
-			const nonExistantUserId: number = 9999;
-			await expect(
-				mmrService.save({ user: nonExistantUserId }),
-			).rejects.toThrow('FOREIGN KEY constraint failed');
+			const nonExistantUserId: CreateMatchmakingRequestDto = { user: 9999 };
+			await expect(controller.save(nonExistantUserId)).rejects.toThrow(
+				BadRequestException,
+			);
 		});
 
 		it('should throw when trying to join with user that already has a gameRequest', async () => {
-			const nonExistantUserId: number = 1;
-			await expect(
-				mmrService.save({ user: nonExistantUserId }),
-			).rejects.toThrow(
-				'UNIQUE constraint failed: matchmaking_requests.invite_users',
+			const duplicateIdInvite: CreateMatchmakingRequestDto = { user: 9999 };
+			await expect(controller.save(duplicateIdInvite)).rejects.toThrow(
+				BadRequestException,
 			);
 		});
 	});

@@ -4,6 +4,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
@@ -36,11 +37,13 @@ export class Game {
 	@ManyToOne(() => User, (user) => user.id, {
 		nullable: false,
 	})
+	@JoinColumn({ name: 'player_one' })
 	player_one: User;
 
 	@ManyToOne(() => User, (user) => user.id, {
 		nullable: false,
 	})
-	@Check(`"playerTwoId" <> "playerOneId"`)
+	@Check(`"player_one" <> "player_two"`)
+	@JoinColumn({ name: 'player_two' })
 	player_two: User;
 }

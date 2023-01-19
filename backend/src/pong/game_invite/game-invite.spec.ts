@@ -9,18 +9,38 @@ import { CreateGameInviteDto } from './dto/create-game-invite.dto';
 import { GameInvitesController } from './game-invite.controller';
 import { GameInvitesService } from './game-invite.service';
 import { AllTestingModule } from '../../shared/test.module';
+import { User } from '../../users/user/entities/user.entity';
+import { UserService } from '../../users/user/user.service';
+import { CreateUserDto } from '../../users/user/dto/create-user.dto';
+import { GameInvite } from './entities/game-invite.entity';
 
 describe('GameInvite unit tests', () => {
 	let service: GameInvitesService;
 	let controller: GameInvitesController;
+	let userService: UserService;
+	let allUsers: User[];
 
-	beforeEach(async () => {
+	const mockUsers: CreateUserDto[] = [
+		{ name: 'Miskruier', password: 'P' },
+		{ name: 'Tor', password: 'T' },
+	];
+
+	const mockInvite: CreateGameInviteDto = { players: [] };
+
+	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
 		}).compile();
 
 		service = module.get<GameInvitesService>(GameInvitesService);
 		controller = module.get<GameInvitesController>(GameInvitesController);
+		userService = module.get<UserService>(UserService);
+
+		await userService.save(mockUsers);
+		allUsers = await userService.findAll();
+		allUsers.forEach((user: User) => {
+			mockInvite.players.push(user.id);
+		});
 	});
 
 	it('should be defined, service and controller', () => {
@@ -28,10 +48,20 @@ describe('GameInvite unit tests', () => {
 		expect(controller).toBeDefined();
 	});
 
+	describe('Creating relationship test', () => {
+		it('should create a relationship between invite and user', async () => {
+			const invite: GameInvite = await controller.create(mockInvite);
+			expect(invite.players.length).toBe(2);
+			expect(
+				invite.players.every((player) => player instanceof User),
+			).toBeTruthy();
+		});
+	});
+
 	describe('CreateGameInviteDto', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
-		let testObject = {
+		const testObject = {
 			players: [1, 1],
 		};
 
@@ -41,10 +71,10 @@ describe('GameInvite unit tests', () => {
 		};
 
 		it('should work when initting with an array', async () => {
-			let ObjectToTransform = {
+			const ObjectToTransform = {
 				players: [1, 2],
 			};
-			let expectedObj: CreateGameInviteDto = {
+			const expectedObj: CreateGameInviteDto = {
 				players: [1, 2],
 			};
 			validator.transform(ObjectToTransform, meta);
@@ -65,7 +95,7 @@ describe('GameInvite unit tests', () => {
 		});
 
 		it('should throw error when source_id is NaN', async () => {
-			let NaNtestObject = {
+			const NaNtestObject = {
 				players: ['1', 1],
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
@@ -82,7 +112,7 @@ describe('GameInvite unit tests', () => {
 		});
 
 		it('should throw error when target_id is NaN', async () => {
-			let NaNtestObject = {
+			const NaNtestObject = {
 				players: [1, '1'],
 			};
 			await expect(validator.transform(NaNtestObject, meta)).rejects.toThrow(
