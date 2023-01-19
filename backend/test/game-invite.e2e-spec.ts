@@ -1,18 +1,10 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
 import { CreateGameInviteDto } from '../src/pong/game_invite/dto/create-game-invite.dto';
 import { GameInvitesController } from '../src/pong/game_invite/game-invite.controller';
 import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { UserModule } from '../src/users/user/user.module';
-import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
-import { User } from '../src/users/user/entities/user.entity';
-import { Game } from '../src/pong/game/entities/game.entity';
-import { Chat } from '../src/chats/chat/entities/chat.entity';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -22,19 +14,7 @@ describe('GameInvite (e2e)', () => {
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([
-					Game,
-					User,
-					MatchmakingRequest,
-					GameInvite,
-					Chat,
-				]),
-				GameInvitesModule,
-				UserModule,
-			],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();

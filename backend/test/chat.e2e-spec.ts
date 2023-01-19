@@ -2,22 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
 import { ChatController } from '../src/chats/chat/chat.controller';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
-import { ChatModule } from '../src/chats/chat/chat.module';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import * as request from 'supertest';
 import { Chat } from '../src/chats/chat/entities/chat.entity';
-import { UserModule } from '../src/users/user/user.module';
-import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { AuthModule } from '../src/auth/auth.module';
-import { SharedModule } from '../src/shared/shared.module';
-import { AnimalModule } from '../src/test_example/animal.module';
-import { MessageModule } from '../src/chats/message/message.module';
-import { RoleModule } from '../src/chats/role/role.module';
-import { GameModule } from '../src/pong/game/game.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('chat e2e', () => {
 	let app: INestApplication;
@@ -35,22 +22,7 @@ describe('chat e2e', () => {
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				UserModule,
-				AuthModule,
-				SharedModule,
-				AnimalModule,
-				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
-			],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();

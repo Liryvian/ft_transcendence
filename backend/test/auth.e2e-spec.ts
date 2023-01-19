@@ -1,27 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { InsertResult } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
 
-import { AuthModule } from '../src/auth/auth.module';
-import { Chat } from '../src/chats/chat/entities/chat.entity';
-import { Game } from '../src/pong/game/entities/game.entity';
-import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
-import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
-import { Message } from '../src/chats/message/entities/message.entity';
-import { Role } from '../src/chats/role/entities/role.entity';
-import { SharedModule } from '../src/shared/shared.module';
 import { User } from '../src/users/user/entities/user.entity';
-import { UserChat } from '../src/chats/user-chat/entities/user-chat.entity';
 import { UserController } from '../src/users/user/user.controller';
-import { UserModule } from '../src/users/user/user.module';
 import { UserService } from '../src/users/user/user.service';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('Auth (e2e)', () => {
 	let app: INestApplication;
@@ -37,23 +25,7 @@ describe('Auth (e2e)', () => {
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([
-					User,
-					MatchmakingRequest,
-					Game,
-					GameInvite,
-					Chat,
-					Message,
-					Role,
-					UserChat,
-				]),
-				AuthModule,
-				SharedModule,
-				UserModule,
-			],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();

@@ -27,6 +27,7 @@ import { User } from './entities/user.entity';
 import { UserChat } from '../../chats/user-chat/entities/user-chat.entity';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import { AllTestingModule } from '../../shared/test.module';
 
 describe('User', () => {
 	let controller: UserController;
@@ -58,7 +59,7 @@ describe('User', () => {
 		testingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+				AllTestingModule,
 				TypeOrmModule.forFeature([
 					User,
 					MatchmakingRequest,

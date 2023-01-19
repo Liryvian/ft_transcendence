@@ -1,21 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
-import { SharedModule } from '../../shared/shared.module';
 
-import { AuthModule } from '../../auth/auth.module';
 import { Chat } from './entities/chat.entity';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { Game } from '../../pong/game/entities/game.entity';
-import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
-import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { Message } from '../message/entities/message.entity';
-import { Role } from '../role/entities/role.entity';
-import { User } from '../../users/user/entities/user.entity';
-import { UserChat } from '../user-chat/entities/user-chat.entity';
+import { AllTestingModule } from '../../shared/test.module';
 
 describe('ChatController', () => {
 	let controller: ChatController;
@@ -29,24 +18,7 @@ describe('ChatController', () => {
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([
-					User,
-					MatchmakingRequest,
-					Game,
-					GameInvite,
-					Chat,
-					Message,
-					Role,
-					UserChat,
-				]),
-				AuthModule,
-				SharedModule,
-			],
-			controllers: [ChatController],
-			providers: [ChatService],
+			imports: [AllTestingModule],
 		}).compile();
 
 		controller = testingModule.get<ChatController>(ChatController);

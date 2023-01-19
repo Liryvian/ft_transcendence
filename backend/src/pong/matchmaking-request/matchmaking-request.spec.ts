@@ -1,27 +1,12 @@
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '../../auth/auth.module';
-import { ChatModule } from '../../chats/chat/chat.module';
-import { Game } from '../game/entities/game.entity';
-import { GameInvite } from '../game_invite/entities/game-invite.entity';
-import { GameInvitesModule } from '../game_invite/game-invite.module';
-import { GameModule } from '../game/game.module';
-import { JwtService } from '@nestjs/jwt';
 import { MatchmakingRequest } from './entities/matchmaking-request.entity';
 import { MatchmakingRequestController } from './matchmaking-request.controller';
-import { MatchmakingRequestModule } from './matchmaking-request.module';
 import { MatchmakingRequestService } from './matchmaking-request.service';
-import { MessageModule } from '../../chats/message/message.module';
 import { RegisterUserDto } from '../../users/user/dto/register-user.dto';
-import { RoleModule } from '../../chats/role/role.module';
-import { SharedModule } from '../../shared/shared.module';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { User } from '../../users/user/entities/user.entity';
-import { UserChatModule } from '../../chats/user-chat/user-chat.module';
 import { UserController } from '../../users/user/user.controller';
-import { UserModule } from '../../users/user/user.module';
 import { UserService } from '../../users/user/user.service';
+import { AllTestingModule } from '../../shared/test.module';
 
 describe('MatchmakingRequestService', () => {
 	let mmrService: MatchmakingRequestService;
@@ -49,23 +34,7 @@ describe('MatchmakingRequestService', () => {
 
 	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([MatchmakingRequest, User, Game, GameInvite]),
-				AuthModule,
-				ChatModule,
-				GameInvitesModule,
-				GameModule,
-				MatchmakingRequestModule,
-				MessageModule,
-				RoleModule,
-				SharedModule, // import for the JwtService
-				UserChatModule,
-				UserModule,
-			],
-			providers: [MatchmakingRequestService, UserService, JwtService],
-			controllers: [MatchmakingRequestController, UserController],
+			imports: [AllTestingModule],
 		}).compile();
 
 		mmrService = module.get<MatchmakingRequestService>(

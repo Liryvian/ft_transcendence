@@ -1,28 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { InsertResult } from 'typeorm';
 
-import { AuthModule } from '../../auth/auth.module';
 import { Chat } from '../chat/entities/chat.entity';
 import { ChatController } from '../chat/chat.controller';
 import { CreateChatDto } from '../chat/dto/create-chat.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { CreateUserDto } from '../../users/user/dto/create-user.dto';
-import { Game } from '../../pong/game/entities/game.entity';
-import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
-import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Message } from './entities/message.entity';
 import { MessageController } from './message.controller';
 import { MessageService } from './message.service';
-import { Role } from '../role/entities/role.entity';
-import { SharedModule } from '../../shared/shared.module';
 import { User } from '../../users/user/entities/user.entity';
-import { UserChat } from '../user-chat/entities/user-chat.entity';
 import { UserController } from '../../users/user/user.controller';
 import { UserService } from '../../users/user/user.service';
-import { ChatModule } from '../chat/chat.module';
+import { AllTestingModule } from '../../shared/test.module';
 
 describe('MessageController', () => {
 	let messageController: MessageController;
@@ -49,25 +39,7 @@ describe('MessageController', () => {
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([
-					User,
-					MatchmakingRequest,
-					Game,
-					GameInvite,
-					Chat,
-					Message,
-					Role,
-					UserChat,
-				]),
-				AuthModule,
-				SharedModule,
-				ChatModule,
-			],
-			controllers: [MessageController],
-			providers: [MessageService],
+			imports: [AllTestingModule],
 		}).compile();
 
 		messageController = testingModule.get<MessageController>(MessageController);

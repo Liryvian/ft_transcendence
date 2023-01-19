@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AnimalController } from './animal.controller';
-import { AnimalService } from './animal.service';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../typeorm/typeorm.service';
-import { AnimalEntity } from './entities/animals.entity';
 import {
 	ArgumentMetadata,
 	NotFoundException,
 	ValidationPipe,
 } from '@nestjs/common';
 import { ObjectLiteral } from 'typeorm';
-import { CreateAnimalDto } from './dto/create-animal.dto';
 import { globalValidationPipeOptions } from '../main.validationpipe';
+
+import { AnimalController } from './animal.controller';
+import { AnimalService } from './animal.service';
+import { AnimalEntity } from './entities/animals.entity';
+import { CreateAnimalDto } from './dto/create-animal.dto';
+import { AllTestingModule } from '../shared/test.module';
+import { AnimalModule } from './animal.module';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
@@ -22,13 +22,7 @@ describe('AnimalController', () => {
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([AnimalEntity]),
-			],
-			controllers: [AnimalController],
-			providers: [AnimalService],
+			imports: [AllTestingModule, AnimalModule],
 		}).compile();
 
 		// get an instance of the service and or controller you want to test

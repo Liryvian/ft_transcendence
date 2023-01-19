@@ -8,5 +8,6 @@ import { GameInvite } from './entities/game-invite.entity';
 	imports: [TypeOrmModule.forFeature([GameInvite])],
 	controllers: [GameInvitesController],
 	providers: [GameInvitesService],
+	exports: [GameInvitesService],
 })
 export class GameInvitesModule {}

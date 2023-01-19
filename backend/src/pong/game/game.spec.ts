@@ -3,29 +3,18 @@ import {
 	BadRequestException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { globalValidationPipeOptions } from '../../main.validationpipe';
 import { InsertResult } from 'typeorm';
 
-import { AuthModule } from '../../auth/auth.module';
-import { Chat } from '../../chats/chat/entities/chat.entity';
 import { CreateGameDto } from './dto/create-game.dto';
 import { CreateUserDto } from '../../users/user/dto/create-user.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
-import { GameInvite } from '../game_invite/entities/game-invite.entity';
 import { GameService } from './game.service';
-import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
-import { Message } from '../../chats/message/entities/message.entity';
-import { Role } from '../../chats/role/entities/role.entity';
-import { SharedModule } from '../../shared/shared.module';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { User } from '../../users/user/entities/user.entity';
-import { UserChat } from '../../chats/user-chat/entities/user-chat.entity';
 import { UserService } from '../../users/user/user.service';
+import { AllTestingModule } from '../../shared/test.module';
 
 describe('Game unit tests', () => {
 	let service: GameService;
@@ -42,24 +31,7 @@ describe('Game unit tests', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([
-					User,
-					MatchmakingRequest,
-					Game,
-					GameInvite,
-					Chat,
-					Message,
-					Role,
-					UserChat,
-				]),
-				AuthModule,
-				SharedModule,
-			],
-			controllers: [GameController],
-			providers: [GameService, UserService],
+			imports: [AllTestingModule],
 		}).compile();
 
 		service = module.get<GameService>(GameService);

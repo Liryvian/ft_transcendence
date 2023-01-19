@@ -24,7 +24,7 @@ describe('TypeOrmConfigService', () => {
 	it('should be have required keys and values', () => {
 		const optionsContent = service.createTypeOrmOptions();
 		const desiredObject = {
-			type: 'better-sqlite3',
+			type: 'postgres',
 		};
 		expect(optionsContent).toMatchObject(desiredObject);
 	});

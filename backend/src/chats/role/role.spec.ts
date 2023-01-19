@@ -2,21 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RoleController } from './role.controller';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 import { Role } from './entities/role.entity';
-import { UserModule } from '../../users/user/user.module';
-import { AuthModule } from '../../auth/auth.module';
-import { SharedModule } from '../../shared/shared.module';
-import { AnimalModule } from '../../test_example/animal.module';
-import { ChatModule } from '../chat/chat.module';
-import { MessageModule } from '../message/message.module';
-import { RoleModule } from './role.module';
-import { GameModule } from '../../pong/game/game.module';
-import { UserChatModule } from '../user-chat/user-chat.module';
-import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
+import { AllTestingModule } from '../../shared/test.module';
 
 describe('RoleController', () => {
 	let controller: RoleController;
@@ -27,25 +14,7 @@ describe('RoleController', () => {
 
 	beforeAll(async () => {
 		testModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Role]),
-				UserModule,
-				AuthModule,
-				SharedModule,
-				AnimalModule,
-				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
-			],
-			controllers: [RoleController],
-			providers: [RoleService],
+			imports: [AllTestingModule],
 		}).compile();
 
 		controller = testModule.get<RoleController>(RoleController);

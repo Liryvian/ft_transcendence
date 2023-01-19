@@ -8,14 +8,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 	private readonly config: ConfigService;
 
 	public createTypeOrmOptions(): TypeOrmModuleOptions {
-		const testingConfig: TypeOrmModuleOptions = {
-			type: 'better-sqlite3',
-			database: ':memory:',
-			autoLoadEntities: true,
-			dropSchema: true,
-			synchronize: true,
-		};
-
 		const productionConfig: TypeOrmModuleOptions = {
 			type: 'postgres',
 			host: this.config.get<string>('POSTGRES_SERVER'),
@@ -30,10 +22,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 			logger: 'file',
 			synchronize: true, // never use TRUE in production!
 		};
-
-		if (this.config.get<string>('USE_TEST_DB') == '1') {
-			return testingConfig;
-		}
 
 		return productionConfig;
 	}
