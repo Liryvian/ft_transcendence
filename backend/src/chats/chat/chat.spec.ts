@@ -1,22 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChatController } from './chat.controller';
-import { ChatService } from './chat.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { Chat } from './entities/chat.entity';
-import { UserModule } from '../../users/user/user.module';
-import { AuthModule } from '../../auth/auth.module';
 import { SharedModule } from '../../shared/shared.module';
-import { AnimalModule } from '../../test_example/animal.module';
-import { ChatModule } from './chat.module';
-import { MessageModule } from '../message/message.module';
-import { RoleModule } from '../role/role.module';
-import { GameModule } from '../../pong/game/game.module';
-import { UserChatModule } from '../user-chat/user-chat.module';
-import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
+
+import { AuthModule } from '../../auth/auth.module';
+import { Chat } from './entities/chat.entity';
+import { ChatController } from './chat.controller';
+import { ChatService } from './chat.service';
+import { CreateChatDto } from './dto/create-chat.dto';
+import { Game } from '../../pong/game/entities/game.entity';
+import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
+import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { Message } from '../message/entities/message.entity';
+import { Role } from '../role/entities/role.entity';
+import { User } from '../../users/user/entities/user.entity';
+import { UserChat } from '../user-chat/entities/user-chat.entity';
 
 describe('ChatController', () => {
 	let controller: ChatController;
@@ -33,18 +32,18 @@ describe('ChatController', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Chat]),
+				TypeOrmModule.forFeature([
+					User,
+					MatchmakingRequest,
+					Game,
+					GameInvite,
+					Chat,
+					Message,
+					Role,
+					UserChat,
+				]),
 				AuthModule,
 				SharedModule,
-				AnimalModule,
-				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
 			],
 			controllers: [ChatController],
 			providers: [ChatService],
