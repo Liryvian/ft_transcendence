@@ -21,12 +21,20 @@ import { SharedModule } from '../src/shared/shared.module';
 import { User } from '../src/users/user/entities/user.entity';
 import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
 import { UserModule } from '../src/users/user/user.module';
+import { UserController } from '../src/users/user/user.controller';
+import { RegisterUserDto } from '../src/users/user/dto/register-user.dto';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
 	let gameController: GameController;
+	let userController: UserController;
 
-	const mockGame: CreateGameDto = { player_one: 1, player_two: 2 };
+	// Setting id's below
+	const mockGame: CreateGameDto = { player_one: 0, player_two: 0 };
+	const mockUsers: RegisterUserDto[] = [
+		{ name: 'Galjoen', password: 'G', password_confirm: 'G' },
+		{ name: 'Worshond', password: 'W', password_confirm: 'W' },
+	];
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -53,8 +61,15 @@ describe('Game (e2e)', () => {
 		await app.init();
 
 		gameController = moduleFixture.get<GameController>(GameController);
+		userController = moduleFixture.get<UserController>(UserController);
 
-		await gameController.save(mockGame);
+		for (let i = 0; i < mockUsers.length; i++) {
+			await userController.create(mockUsers[i]);
+		}
+		const allUsers: User[] = await userController.findAll();
+		mockGame.player_one = allUsers[0].id;
+		mockGame.player_two = allUsers[1].id;
+		await gameController.create(mockGame);
 	});
 
 	afterAll(async () => {
