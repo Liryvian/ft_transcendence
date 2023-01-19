@@ -8,6 +8,8 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
+import { SharedModule } from '../../shared/shared.module';
 
 import { AuthGuard } from '../../auth/auth.guard';
 import { AuthModule } from '../../auth/auth.module';
@@ -16,12 +18,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Game } from '../../pong/game/entities/game.entity';
 import { GameInvite } from '../../pong/game_invite/entities/game-invite.entity';
 import { GameService } from '../../pong/game/game.service';
-import { globalValidationPipeOptions } from '../../main.validationpipe';
 import { MatchmakingRequest } from '../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Message } from '../../chats/message/entities/message.entity';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { Role } from '../../chats/role/entities/role.entity';
-import { SharedModule } from '../../shared/shared.module';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserChat } from '../../chats/user-chat/entities/user-chat.entity';
