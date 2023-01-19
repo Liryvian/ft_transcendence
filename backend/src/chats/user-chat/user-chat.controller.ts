@@ -34,7 +34,17 @@ export class UserChatController {
 	@Get(':id')
 	findOne(@Param('id') id: number) {
 		return this.userChatService.findOne({
-			where: { id },
+			/**
+			 *
+			 * THIS NEEDS TO CHANGE
+			 *
+			 */
+			where: { user_id: id },
+			/**
+			 *
+			 * THIS NEEDS TO CHANGE
+			 *
+			 */
 		});
 	}
 

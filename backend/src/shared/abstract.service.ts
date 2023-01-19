@@ -12,7 +12,7 @@ import {
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
 
-	async findAll(condition?: FindManyOptions): Promise<T[]> {
+	async findAll(condition?: FindManyOptions<T>): Promise<T[]> {
 		return this.repository.find(condition);
 	}
 
@@ -20,12 +20,23 @@ export abstract class AbstractService<T> {
 		the insert method allows you to insert either:
 		- a single entity
 		- an array of entitites
+
+		DOES NOT HANDLE RELATIONSHIPS, USE SAVE METHOD INSTEAD!
 	*/
 	async create(data): Promise<InsertResult> {
 		return this.repository.insert(data);
 	}
 
-	async findOne(condition: FindOneOptions): Promise<T> {
+	/*
+		Use this if you want to create entities WITH relationships
+	*/
+	async save(data): Promise<T>;
+	async save(data): Promise<T[]>;
+	async save(data): Promise<T | T[]> {
+		return this.repository.save(data);
+	}
+
+	async findOne(condition: FindOneOptions<T>): Promise<T> {
 		try {
 			const foundRepoItem = await this.repository.findOneOrFail(condition);
 			return foundRepoItem;

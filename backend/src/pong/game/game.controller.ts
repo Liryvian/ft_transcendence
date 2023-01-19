@@ -6,28 +6,40 @@ import {
 	Patch,
 	Param,
 	Delete,
+	BadRequestException,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { Game } from './entities/game.entity';
 
 @Controller('games')
 export class GameController {
 	constructor(private readonly gameService: GameService) {}
 
 	@Post()
-	create(@Body() createGameDto: CreateGameDto) {
-		return this.gameService.create(createGameDto);
+	async create(@Body() createGameDto: CreateGameDto) {
+		try {
+			const newGame: Game = await this.gameService.save(createGameDto);
+			return newGame;
+		} catch (e) {
+			throw new BadRequestException();
+		}
 	}
 
 	@Get()
 	findAll() {
-		return this.gameService.findAll();
+		return this.gameService.findAll({
+			relations: { player_one: true, player_two: true },
+		});
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.gameService.findOne({ where: { id } });
+		return this.gameService.findOne({
+			where: { id },
+			relations: { player_one: true, player_two: true },
+		});
 	}
 
 	@Patch(':id')

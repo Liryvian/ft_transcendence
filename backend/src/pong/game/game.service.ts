@@ -8,8 +8,8 @@ import { Game } from './entities/game.entity';
 export class GameService extends AbstractService<Game> {
 	constructor(
 		@InjectRepository(Game)
-		private readonly gameRepo: Repository<Game>,
+		protected readonly repository: Repository<Game>,
 	) {
-		super(gameRepo);
+		super(repository);
 	}
 }

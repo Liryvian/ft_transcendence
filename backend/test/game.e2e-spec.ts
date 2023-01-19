@@ -8,41 +8,51 @@ import { GameController } from '../src/pong/game/game.controller';
 import { GameModule } from '../src/pong/game/game.module';
 import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
-import { globalValidationPipeOptions } from '../../backend/src/main.validationpipe';
-import { UserModule } from '../src/users/user/user.module';
 import { AuthModule } from '../src/auth/auth.module';
-import { SharedModule } from '../src/shared/shared.module';
-import { AnimalModule } from '../src/test_example/animal.module';
 import { ChatModule } from '../src/chats/chat/chat.module';
+import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
+import { globalValidationPipeOptions } from '../../backend/src/main.validationpipe';
+import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
+import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
 import { MessageModule } from '../src/chats/message/message.module';
 import { RoleModule } from '../src/chats/role/role.module';
+import { SharedModule } from '../src/shared/shared.module';
+import { User } from '../src/users/user/entities/user.entity';
 import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { UserModule } from '../src/users/user/user.module';
+import { UserController } from '../src/users/user/user.controller';
+import { RegisterUserDto } from '../src/users/user/dto/register-user.dto';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
 	let gameController: GameController;
+	let userController: UserController;
 
-	const mockGame: CreateGameDto = { player_one: 1, player_two: 2 };
+	// Setting id's below
+	const mockGame: CreateGameDto = { player_one: 0, player_two: 0 };
+	const mockUsers: RegisterUserDto[] = [
+		{ name: 'Galjoen', password: 'G', password_confirm: 'G' },
+		{ name: 'Worshond', password: 'W', password_confirm: 'W' },
+	];
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				UserModule,
+				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
 				AuthModule,
-				SharedModule,
-				AnimalModule,
 				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
+				GameInvite,
 				GameInvitesModule,
+				GameModule,
 				MatchmakingRequestModule,
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 		}).compile();
 
@@ -51,7 +61,14 @@ describe('Game (e2e)', () => {
 		await app.init();
 
 		gameController = moduleFixture.get<GameController>(GameController);
+		userController = moduleFixture.get<UserController>(UserController);
 
+		for (let i = 0; i < mockUsers.length; i++) {
+			await userController.create(mockUsers[i]);
+		}
+		const allUsers: User[] = await userController.findAll();
+		mockGame.player_one = allUsers[0].id;
+		mockGame.player_two = allUsers[1].id;
 		await gameController.create(mockGame);
 	});
 
