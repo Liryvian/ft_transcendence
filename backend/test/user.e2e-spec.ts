@@ -1,23 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
-import { UserModule } from '../src/users/user/user.module';
-import { GameModule } from '../src/pong/game/game.module';
 import { User } from '../src/users/user/entities/user.entity';
 import { UserService } from '../src/users/user/user.service';
 import { AuthGuard } from '../src/auth/auth.guard';
 import { InsertResult } from 'typeorm';
-import { SharedModule } from '../src/shared/shared.module';
-import { ChatModule } from '../src/chats/chat/chat.module';
-import { MessageModule } from '../src/chats/message/message.module';
-import { RoleModule } from '../src/chats/role/role.module';
-import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('User (e2e)', () => {
 	let app: INestApplication;
@@ -29,19 +18,7 @@ describe('User (e2e)', () => {
 		const mock_guard = { CanActivate: jest.fn(() => true) };
 
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				UserModule,
-				GameModule,
-				SharedModule,
-				ChatModule,
-				MessageModule,
-				RoleModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
-			],
+			imports: [AllTestingModule],
 		})
 			.overrideGuard(AuthGuard)
 			.useValue(mock_guard)
