@@ -39,6 +39,9 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
+	// @IsOptional()
+	// @
+
 	@IsOptional()
 	@OneToOne(
 		() => MatchmakingRequest,
