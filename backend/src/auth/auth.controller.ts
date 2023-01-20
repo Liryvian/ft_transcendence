@@ -11,7 +11,9 @@ import {
 	Req,
 	HttpCode,
 	HttpStatus,
+	Query,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -27,7 +29,31 @@ export class AuthController {
 		private userService: UserService,
 		private jwtService: JwtService,
 		private authService: AuthService,
+		private configService: ConfigService,
 	) {}
+
+	@Get('/auth/authenticate')
+	redirectToIntraApi(@Res() res) {
+		res.redirect(
+			`https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
+				'API_UID',
+			)}&redirect_uri=${this.configService.get(
+				'API_REDIR_URI',
+			)}&response_type=code`,
+		);
+	}
+
+	@Get('/auth/oauth42')
+	recieveTokenFromApi(@Query('code') code: string, @Res() res) {
+		console.log(code);
+		if (!code || code === '') {
+			console.log('throw');
+			throw new BadRequestException('Invalid Code');
+		}
+
+		res.redirect('/');
+		// console.log(res);
+	}
 
 	@Post('login')
 	async login(
