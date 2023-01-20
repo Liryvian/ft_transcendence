@@ -1,33 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
+import * as request from 'supertest';
 import { CreateMessageDto } from '../src/chats/message/dto/create-message.dto';
 import { MessageController } from '../src/chats/message/message.controller';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
-import { AnimalModule } from '../src/test_example/animal.module';
-import { MessageModule } from '../src/chats/message/message.module';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import * as request from 'supertest';
 import { Message } from '../src/chats/message/entities/message.entity';
 import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
 import { ChatController } from '../src/chats/chat/chat.controller';
 import { MessageService } from '../src/chats/message/message.service';
 import { ChatService } from '../src/chats/chat/chat.service';
-import { Chat } from '../src/chats/chat/entities/chat.entity';
-import { ChatModule } from '../src/chats/chat/chat.module';
-import { UserModule } from '../src/users/user/user.module';
-import { RoleModule } from '../src/chats/role/role.module';
-import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { GameModule } from '../src/pong/game/game.module';
-import { UserChat } from '../src/chats/user-chat/entities/user-chat.entity';
-import { Role } from '../src/chats/role/entities/role.entity';
-import { User } from '../src/users/user/entities/user.entity';
-import { Game } from '../src/pong/game/entities/game.entity';
 import { UserController } from '../src/users/user/user.controller';
-import { AuthModule } from '../src/auth/auth.module';
-import { SharedModule } from '../src/shared/shared.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('message e2e', () => {
 	let chatController: ChatController;
@@ -66,25 +48,7 @@ describe('message e2e', () => {
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([UserChat, Role, User, Chat, Game, Message]),
-				UserModule,
-				AuthModule,
-				SharedModule,
-				AnimalModule,
-				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
-			],
-			controllers: [MessageController, ChatController],
-			providers: [MessageService, ChatService],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = testingModule.createNestApplication();

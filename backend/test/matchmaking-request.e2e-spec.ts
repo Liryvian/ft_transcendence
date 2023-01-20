@@ -1,22 +1,12 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
 import * as request from 'supertest';
 import { CreateMatchmakingRequestDto } from '../src/pong/matchmaking-request/dto/create-matchmaking-request.dto';
 import { MatchmakingRequestController } from '../src/pong/matchmaking-request/matchmaking-request.controller';
 import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/matchmaking-request.entity';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
-import { UserModule } from '../src/users/user/user.module';
-import { GameModule } from '../src/pong/game/game.module';
-import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
 import { UserService } from '../src/users/user/user.service';
 import { CreateUserDto } from '../src/users/user/dto/create-user.dto';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { User } from '../src/users/user/entities/user.entity';
-import { Game } from '../src/pong/game/entities/game.entity';
-import { Chat } from '../src/chats/chat/entities/chat.entity';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -34,21 +24,7 @@ describe('GameInvite (e2e)', () => {
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([
-					User,
-					GameInvite,
-					MatchmakingRequest,
-					Game,
-					Chat,
-				]),
-				MatchmakingRequestModule,
-				UserModule,
-				GameInvitesModule,
-				GameModule,
-			],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
