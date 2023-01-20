@@ -1,39 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+
 import * as request from 'supertest';
 import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
 import { ChatController } from '../src/chats/chat/chat.controller';
-import { ChatService } from '../src/chats/chat/chat.service';
-import { Chat } from '../src/chats/chat/entities/chat.entity';
-import { ChatModule } from '../src/chats/chat/chat.module';
-import { UserModule } from '../src/users/user/user.module';
-import { RoleModule } from '../src/chats/role/role.module';
-import { GameModule } from '../src/pong/game/game.module';
 import { UserChat } from '../src/chats/user-chat/entities/user-chat.entity';
-import { Role } from '../src/chats/role/entities/role.entity';
-import { User } from '../src/users/user/entities/user.entity';
-import { Game } from '../src/pong/game/entities/game.entity';
 import { UserController } from '../src/users/user/user.controller';
 import { UserChatService } from '../src/chats/user-chat/user-chat.service';
 import { UserChatController } from '../src/chats/user-chat/user-chat.controller';
-import { CreateUserChatDto } from '../src/chats/user-chat/dto/create-user-chat.dto';
-import { MessageModule } from '../src/chats/message/message.module';
-import { Message } from '../src/chats/message/entities/message.entity';
-import { AuthModule } from '../src/auth/auth.module';
-import { SharedModule } from '../src/shared/shared.module';
-import { AnimalModule } from '../src/test_example/animal.module';
-import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('userChat e2e', () => {
 	let chatController: ChatController;
 	let userController: UserController;
 	let userChatService: UserChatService;
-	let chatService: ChatService;
 	let testingModule: TestingModule;
 	let app: INestApplication;
 	let userChatController: UserChatController;
@@ -66,25 +46,7 @@ describe('userChat e2e', () => {
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Message, Role, User, Chat, Game, UserChat]),
-				UserModule,
-				AuthModule,
-				SharedModule,
-				AnimalModule,
-				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
-			],
-			controllers: [UserChatController, ChatController],
-			providers: [UserChatService, ChatService],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = testingModule.createNestApplication();

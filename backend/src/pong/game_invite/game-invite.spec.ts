@@ -3,30 +3,16 @@ import {
 	BadRequestException,
 	ValidationPipe,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../../users/user/entities/user.entity';
-import { globalValidationPipeOptions } from '../../main.validationpipe';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { globalValidationPipeOptions } from '../../../src/main.validationpipe';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
-import { GameInvite } from './entities/game-invite.entity';
 import { GameInvitesController } from './game-invite.controller';
 import { GameInvitesService } from './game-invite.service';
-import { Game } from '../game/entities/game.entity';
-import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
-import { UserModule } from '../../users/user/user.module';
-import { AuthModule } from '../../auth/auth.module';
-import { SharedModule } from '../../shared/shared.module';
-import { ChatModule } from '../../chats/chat/chat.module';
-import { MessageModule } from '../../chats/message/message.module';
-import { RoleModule } from '../../chats/role/role.module';
-import { GameModule } from '../game/game.module';
-import { UserChatModule } from '../../chats/user-chat/user-chat.module';
-import { GameInvitesModule } from './game-invite.module';
-import { MatchmakingRequestModule } from '../matchmaking-request/matchmaking-request.module';
-import { CreateUserDto } from '../../users/user/dto/create-user.dto';
+import { AllTestingModule } from '../../shared/test.module';
+import { User } from '../../users/user/entities/user.entity';
 import { UserService } from '../../users/user/user.service';
+import { CreateUserDto } from '../../users/user/dto/create-user.dto';
+import { GameInvite } from './entities/game-invite.entity';
 
 describe('GameInvite unit tests', () => {
 	let service: GameInvitesService;
@@ -43,23 +29,7 @@ describe('GameInvite unit tests', () => {
 
 	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([GameInvite, User, Game, MatchmakingRequest]),
-				AuthModule,
-				ChatModule,
-				GameInvitesModule,
-				GameModule,
-				MatchmakingRequestModule,
-				MessageModule,
-				RoleModule,
-				SharedModule,
-				UserChatModule,
-				UserModule,
-			],
-			providers: [GameInvitesService],
-			controllers: [GameInvitesController],
+			imports: [AllTestingModule],
 		}).compile();
 
 		service = module.get<GameInvitesService>(GameInvitesService);
@@ -80,7 +50,7 @@ describe('GameInvite unit tests', () => {
 
 	describe('Creating relationship test', () => {
 		it('should create a relationship between invite and user', async () => {
-			const invite: GameInvite = await controller.save(mockInvite);
+			const invite: GameInvite = await controller.create(mockInvite);
 			expect(invite.players.length).toBe(2);
 			expect(
 				invite.players.every((player) => player instanceof User),

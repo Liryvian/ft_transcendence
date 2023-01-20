@@ -79,6 +79,13 @@ export class UserController {
 		});
 	}
 
+	// @UseGuards(AuthGuard)
+	// // localhost:8080/api/users/id/games
+	// @Get(':id/games')
+	// async findOneWithGame(@Param('id') id: number): Promise<Game[]> {
+	// 	return this.userService.getGames(id);
+	// }
+
 	@UseGuards(AuthGuard)
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {

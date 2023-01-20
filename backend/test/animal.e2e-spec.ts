@@ -3,23 +3,11 @@ import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { CreateAnimalDto } from '../src/test_example/dto/create-animal.dto';
 import { AnimalController } from '../src/test_example/animal.controller';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
-import { AnimalModule } from '../src/test_example/animal.module';
 import { UpdateAnimalDto } from '../src/test_example/dto/update-animal.dto';
 import { AnimalEntity } from '../src/test_example/entities/animals.entity';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
-import { UserModule } from '../src/users/user/user.module';
-import { AuthModule } from '../src/auth/auth.module';
-import { SharedModule } from '../src/shared/shared.module';
-import { ChatModule } from '../src/chats/chat/chat.module';
-import { MessageModule } from '../src/chats/message/message.module';
-import { RoleModule } from '../src/chats/role/role.module';
-import { GameModule } from '../src/pong/game/game.module';
-import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { AllTestingModule } from '../src/shared/test.module';
+import { AnimalModule } from '../src/test_example/animal.module';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
@@ -30,22 +18,7 @@ describe('AnimalController (e2e)', () => {
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				UserModule,
-				AuthModule,
-				SharedModule,
-				AnimalModule,
-				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
-				GameInvitesModule,
-				MatchmakingRequestModule,
-			],
+			imports: [AllTestingModule, AnimalModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
