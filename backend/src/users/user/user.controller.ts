@@ -53,6 +53,7 @@ export class UserController {
 				invite: true,
 				games_as_player_one: true,
 				games_as_player_two: true,
+				connections: true,
 			},
 		});
 	}
@@ -69,6 +70,7 @@ export class UserController {
 				invite: true,
 				games_as_player_one: true,
 				games_as_player_two: true,
+				connections: true,
 			},
 		});
 	}
