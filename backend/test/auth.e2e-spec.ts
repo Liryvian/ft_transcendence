@@ -14,7 +14,6 @@ import { User } from '../src/users/user/entities/user.entity';
 import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as cookieParser from 'cookie-parser';
-import { AnimalModule } from '../src/test_example/animal.module';
 import { ChatModule } from '../src/chats/chat/chat.module';
 import { MessageModule } from '../src/chats/message/message.module';
 import { RoleModule } from '../src/chats/role/role.module';
@@ -52,18 +51,16 @@ describe('Auth (e2e)', () => {
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				UserModule,
 				AuthModule,
-				SharedModule,
-				AnimalModule,
 				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
 				GameInvitesModule,
+				GameModule,
 				MatchmakingRequestModule,
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 		}).compile();
 

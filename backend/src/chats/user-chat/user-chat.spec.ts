@@ -21,7 +21,6 @@ import { ChatModule } from '../chat/chat.module';
 import { MessageModule } from '../message/message.module';
 import { RoleModule } from '../role/role.module';
 import { GameModule } from '../../pong/game/game.module';
-import { UserChatModule } from './user-chat.module';
 import { GameInvitesModule } from '../../pong/game_invite/game-invite.module';
 import { MatchmakingRequestModule } from '../../pong/matchmaking-request/matchmaking-request.module';
 import { InsertResult } from 'typeorm';
@@ -66,7 +65,6 @@ describe('UserChatController', () => {
 				UserModule,
 				RoleModule,
 				GameModule,
-				UserChatModule,
 				GameInvitesModule,
 				MatchmakingRequestModule,
 			],

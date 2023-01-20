@@ -2,12 +2,20 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
 	JoinTable,
 	ManyToMany,
+	ManyToOne,
+	OneToMany,
+	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
+import { MatchmakingRequest } from '../../../pong/matchmaking-request/entities/matchmaking-request.entity';
+import { Game } from '../../../pong/game/entities/game.entity';
+import { IsOptional } from 'class-validator';
+import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
 
 @Entity('users')
@@ -33,6 +41,38 @@ export class User {
 
 	@Column({ nullable: true })
 	avatar: string;
+
+	@IsOptional()
+	@OneToOne(
+		() => MatchmakingRequest,
+		(matchRequest: MatchmakingRequest) => matchRequest.user,
+	)
+	matchmaking_request: MatchmakingRequest;
+
+	@Exclude()
+	@IsOptional()
+	@OneToMany(() => Game, (game: Game) => game.player_one)
+	games_as_player_one: Game[];
+
+	@Exclude()
+	@IsOptional()
+	@OneToMany(() => Game, (game: Game) => game.player_two)
+	games_as_player_two: Game[];
+
+	@Expose()
+	@IsOptional()
+	get games(): Game[] {
+		//  if games_as_player_one/two are null set them = []
+		return [
+			...(this.games_as_player_one ?? []),
+			...(this.games_as_player_two ?? []),
+		];
+	}
+
+	@IsOptional()
+	@ManyToOne(() => GameInvite, (invite) => invite.players)
+	@JoinColumn({ name: 'invite' })
+	invite: GameInvite;
 
 	@ManyToMany(() => Chat, (chat) => chat.users, {
 		onDelete: 'NO ACTION',

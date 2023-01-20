@@ -6,54 +6,72 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { globalValidationPipeOptions } from '../../main.validationpipe';
-import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { AuthModule } from '../../auth/auth.module';
+import { ChatModule } from '../../chats/chat/chat.module';
 import { CreateGameDto } from './dto/create-game.dto';
-import { UpdateGameDto } from './dto/update-game.dto';
+import { CreateUserDto } from '../../users/user/dto/create-user.dto';
 import { Game } from './entities/game.entity';
 import { GameController } from './game.controller';
+import { GameInvite } from '../game_invite/entities/game-invite.entity';
+import { GameInvitesModule } from '../game_invite/game-invite.module';
+import { GameModule } from './game.module';
 import { GameService } from './game.service';
-import { UserModule } from '../../users/user/user.module';
-import { AuthModule } from '../../auth/auth.module';
-import { SharedModule } from '../../shared/shared.module';
-import { AnimalModule } from '../../test_example/animal.module';
-import { ChatModule } from '../../chats/chat/chat.module';
+import { globalValidationPipeOptions } from '../../main.validationpipe';
+import { InsertResult } from 'typeorm';
+import { MatchmakingRequest } from '../matchmaking-request/entities/matchmaking-request.entity';
+import { MatchmakingRequestModule } from '../matchmaking-request/matchmaking-request.module';
 import { MessageModule } from '../../chats/message/message.module';
 import { RoleModule } from '../../chats/role/role.module';
-import { GameModule } from './game.module';
+import { SharedModule } from '../../shared/shared.module';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
+import { UpdateGameDto } from './dto/update-game.dto';
+import { User } from '../../users/user/entities/user.entity';
 import { UserChatModule } from '../../chats/user-chat/user-chat.module';
-import { GameInvitesModule } from '../game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../matchmaking-request/matchmaking-request.module';
+import { UserModule } from '../../users/user/user.module';
+import { UserService } from '../../users/user/user.service';
 
 describe('Game unit tests', () => {
 	let service: GameService;
 	let controller: GameController;
+	let userService: UserService;
+
+	const relationTestUsers: CreateUserDto[] = [
+		{ name: 'u1', password: 'p1' },
+		{ name: 'u2', password: 'p2' },
+		{ name: 'u3', password: 'p3' },
+		{ name: 'u4', password: 'p4' },
+	];
+	let relationTestUsersIds: number[];
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [
 				ConfigModule.forRoot({ isGlobal: true }),
 				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				TypeOrmModule.forFeature([Game]),
-				UserModule,
+				TypeOrmModule.forFeature([Game, User, MatchmakingRequest, GameInvite]),
 				AuthModule,
-				SharedModule,
-				AnimalModule,
 				ChatModule,
-				MessageModule,
-				UserModule,
-				RoleModule,
-				GameModule,
-				UserChatModule,
 				GameInvitesModule,
+				GameModule,
 				MatchmakingRequestModule,
+				MessageModule,
+				RoleModule,
+				SharedModule,
+				UserChatModule,
+				UserModule,
 			],
 			controllers: [GameController],
-			providers: [GameService],
+			providers: [GameService, UserService],
 		}).compile();
 
 		service = module.get<GameService>(GameService);
 		controller = module.get<GameController>(GameController);
+		userService = module.get<UserService>(UserService);
+
+		await userService.create(relationTestUsers).then((res: InsertResult) => {
+			relationTestUsersIds = res.identifiers.map((obj) => obj.id);
+			return res;
+		});
 	});
 
 	it('should be defined', () => {
@@ -64,7 +82,7 @@ describe('Game unit tests', () => {
 	describe('CreateGameDto', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
-		let testObject = {
+		const testObject = {
 			player_one: 1,
 			player_two: 1,
 		};
@@ -107,6 +125,44 @@ describe('Game unit tests', () => {
 			};
 
 			expect(await validator.transform(testObject, meta)).toBeTruthy();
+		});
+	});
+
+	describe('Relationship between players and game', () => {
+		it('should create a relationship between two users and a game', async () => {
+			const result: Game = await service.save({
+				player_one: relationTestUsersIds[0],
+				player_two: relationTestUsersIds[1],
+			});
+			expect(result).toEqual(
+				expect.objectContaining({
+					id: expect.any(Number),
+					score_player_one: 0,
+					score_player_two: 0,
+					customization: expect.any(Object),
+					is_active: true,
+					created_at: expect.any(Date),
+					updated_at: expect.any(Date),
+					player_one: relationTestUsersIds[0],
+					player_two: relationTestUsersIds[1],
+				}),
+			);
+			await service.remove(result.id);
+		});
+
+		it('should not allow same user for p1 and p2', async () => {
+			await expect(
+				controller.create({
+					player_one: relationTestUsersIds[0],
+					player_two: relationTestUsersIds[0],
+				}),
+			).rejects.toThrow(BadRequestException);
+		});
+
+		it('should not allow empty users', async () => {
+			await expect(
+				controller.create({ player_one: null, player_two: null }),
+			).rejects.toThrow(BadRequestException);
 		});
 	});
 });

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AnimalModule } from './test_example/animal.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
@@ -20,10 +19,8 @@ import { SharedModule } from './shared/shared.module';
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-		UserModule,
 		AuthModule,
 		SharedModule,
-		AnimalModule,
 		ChatModule,
 		MessageModule,
 		UserModule,
