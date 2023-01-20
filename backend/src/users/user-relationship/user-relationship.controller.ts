@@ -1,6 +1,17 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Post,
+	Body,
+	Param,
+	Delete,
+	Patch,
+	BadRequestException,
+} from '@nestjs/common';
 import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
+import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
+import { UserRelationship } from './entities/user-relationship.entity';
 
 @Controller('user-relationships')
 export class UserRelationshipController {
@@ -10,9 +21,17 @@ export class UserRelationshipController {
 
 	@Post()
 	async create(@Body() createUserRelationshipDto: CreateUserRelationshipDto) {
-		return this.userRelationshipService.createAndSave(
-			createUserRelationshipDto,
-		);
+		try {
+			const newRelationship: UserRelationship =
+				await this.userRelationshipService.createAndSave(
+					createUserRelationshipDto,
+				);
+			return newRelationship;
+		} catch (e) {
+			throw new BadRequestException(
+				'All connection Ids must be unique numbers',
+			);
+		}
 	}
 
 	@Get()

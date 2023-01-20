@@ -2,9 +2,11 @@ import {
 	ArrayMaxSize,
 	ArrayMinSize,
 	ArrayUnique,
+	IsEnum,
 	IsNotEmpty,
 	IsNumber,
 } from 'class-validator';
+import { validRelationships } from '../entities/user-relationship.entity';
 
 export class CreateUserRelationshipDto {
 	@IsNumber({}, { each: true })
@@ -13,6 +15,7 @@ export class CreateUserRelationshipDto {
 	@ArrayUnique()
 	connection: number[];
 
+	@IsEnum(validRelationships)
 	@IsNotEmpty()
 	type: string;
 }
