@@ -17,18 +17,12 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 	async createAndSave(
 		data: CreateUserRelationshipDto,
 	): Promise<UserRelationship> {
-		console.log('PRINTING RAW DATA: ', data);
-		try {
-			const newInvite = this.repository.create({
-				connection: data.connection.map((connectionId) => ({
-					id: connectionId,
-				})),
-				type: data.type,
-			});
-			console.log(newInvite);
-			return await this.repository.save(newInvite);
-		} catch (e) {
-			console.log('\nPRINTING HERE!\n', e);
-		}
+		const newInvite = this.repository.create({
+			connection: data.connection.map((connectionId) => ({
+				id: connectionId,
+			})),
+			type: data.type,
+		});
+		return this.repository.save(newInvite);
 	}
 }
