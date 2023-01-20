@@ -79,8 +79,14 @@ describe('Auth (e2e)', () => {
 			});
 		});
 
-		describe('Has an endpoint to recieve the intermediary code from intra, /auth/oauth2 (GET)', () => {
-			it.todo('should ');
+		describe('Has an endpoint to recieve the intermediary code from intra, /auth/oauthr2 (GET)', () => {
+			it('should be able to recieve a code on the /ath/oauth42 GET endpoint', () => {
+				return request(app.getHttpServer())
+					.get('/auth/oauth42?code=code')
+					.expect(HttpStatus.FOUND);
+			});
+
+			it.todo('should have');
 		});
 	});
 
