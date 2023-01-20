@@ -8,5 +8,6 @@ import { MatchmakingRequest } from './entities/matchmaking-request.entity';
 	imports: [TypeOrmModule.forFeature([MatchmakingRequest])],
 	controllers: [MatchmakingRequestController],
 	providers: [MatchmakingRequestService],
+	exports: [MatchmakingRequestService],
 })
 export class MatchmakingRequestModule {}

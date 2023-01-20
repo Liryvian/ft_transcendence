@@ -1,26 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from '../src/typeorm/typeorm.service';
-import { globalValidationPipeOptions } from '../src/main.validationpipe';
-import { UserController } from '../src/users/user/user.controller';
-import { UserModule } from '../src/users/user/user.module';
-import { SharedModule } from '../src/shared/shared.module';
-import { AuthModule } from '../src/auth/auth.module';
-import { UserService } from '../src/users/user/user.service';
-import { User } from '../src/users/user/entities/user.entity';
-import { InsertResult } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { InsertResult } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
-import { ChatModule } from '../src/chats/chat/chat.module';
-import { MessageModule } from '../src/chats/message/message.module';
-import { RoleModule } from '../src/chats/role/role.module';
-import { GameModule } from '../src/pong/game/game.module';
-import { UserChatModule } from '../src/chats/user-chat/user-chat.module';
-import { GameInvitesModule } from '../src/pong/game_invite/game-invite.module';
-import { MatchmakingRequestModule } from '../src/pong/matchmaking-request/matchmaking-request.module';
+import { globalValidationPipeOptions } from '../src/main.validationpipe';
+
+import { User } from '../src/users/user/entities/user.entity';
+import { UserController } from '../src/users/user/user.controller';
+import { UserService } from '../src/users/user/user.service';
+import { AllTestingModule } from '../src/shared/test.module';
 
 describe('Auth (e2e)', () => {
 	let app: INestApplication;
@@ -29,39 +18,14 @@ describe('Auth (e2e)', () => {
 	let jwtService: JwtService;
 
 	let users = [
-		{
-			name: 'u1',
-			password: 'p1',
-			password_confirm: 'p1',
-		},
-		{
-			name: 'u2',
-			password: 'p2',
-			password_confirm: 'p2',
-		},
-		{
-			name: 'u3',
-			password: 'p3',
-			password_confirm: 'p3',
-		},
+		{ name: 'u1', password: 'p1', id: -1 },
+		{ name: 'u2', password: 'p2', id: -1 },
+		{ name: 'u3', password: 'p3', id: -1 },
 	];
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [
-				ConfigModule.forRoot({ isGlobal: true }),
-				TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-				AuthModule,
-				ChatModule,
-				GameInvitesModule,
-				GameModule,
-				MatchmakingRequestModule,
-				MessageModule,
-				RoleModule,
-				SharedModule,
-				UserChatModule,
-				UserModule,
-			],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
@@ -73,15 +37,20 @@ describe('Auth (e2e)', () => {
 		userService = moduleFixture.get<UserService>(UserService);
 		jwtService = moduleFixture.get<JwtService>(JwtService);
 
-		await userController
-			.create(users[0])
-			.then((res: InsertResult) => (users[0]['id'] = res.identifiers[0].id));
-		await userController
-			.create(users[1])
-			.then((res: InsertResult) => (users[1]['id'] = res.identifiers[0].id));
-		await userController
-			.create(users[2])
-			.then((res: InsertResult) => (users[2]['id'] = res.identifiers[0].id));
+		await Promise.all(
+			users.map(async (usr, i) => {
+				return await userController
+					.create({
+						name: usr.name,
+						password: usr.password,
+						password_confirm: usr.password,
+					})
+					.then((res: InsertResult) => {
+						users[i].id = res.identifiers[0].id;
+						return res;
+					});
+			}),
+		);
 	});
 
 	afterAll(async () => {
@@ -103,7 +72,7 @@ describe('Auth (e2e)', () => {
 						.split('=')[1]
 						.split(';')[0];
 					const data = jwtService.verify(cookie);
-					expect(data.id).toBe(users[0]['id']);
+					expect(data.id).toBe(users[0].id);
 				});
 		});
 	});
@@ -147,7 +116,7 @@ describe('Auth (e2e)', () => {
 						.expect((resp) => {
 							expect(resp.body).toEqual(
 								expect.objectContaining({
-									id: users[0]['id'],
+									id: users[0].id,
 									name: users[0].name,
 									is_intra: false,
 								}),

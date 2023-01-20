@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmConfigService } from './typeorm.service';
 
 describe('TypeOrmConfigService', () => {
@@ -21,10 +21,10 @@ describe('TypeOrmConfigService', () => {
 		expect(service.createTypeOrmOptions()).toBeDefined();
 	});
 
-	it('should be have required keys and values', async () => {
-		const optionsContent = await service.createTypeOrmOptions();
+	it('should be have required keys and values', () => {
+		const optionsContent = service.createTypeOrmOptions();
 		const desiredObject = {
-			type: 'better-sqlite3',
+			type: 'postgres',
 		};
 		expect(optionsContent).toMatchObject(desiredObject);
 	});

@@ -15,7 +15,7 @@ export class GameInvitesController {
 	constructor(private readonly gameInvitesService: GameInvitesService) {}
 
 	@Post()
-	save(@Body() createGameInviteDto: CreateGameInviteDto) {
+	create(@Body() createGameInviteDto: CreateGameInviteDto) {
 		return this.gameInvitesService.createAndSave(createGameInviteDto);
 	}
 
@@ -26,7 +26,10 @@ export class GameInvitesController {
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.gameInvitesService.findOne({ where: { id }, relations: { players: true } });
+		return this.gameInvitesService.findOne({
+			where: { id },
+			relations: { players: true },
+		});
 	}
 
 	@Delete(':id')
