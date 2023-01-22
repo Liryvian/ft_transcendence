@@ -18,17 +18,17 @@ export class AchievementsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.achievementsService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.achievementsService.findOne({where: {id}});
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAchievementDto: UpdateAchievementDto) {
-    return this.achievementsService.update(+id, updateAchievementDto);
+  update(@Param('id') id: number, @Body() updateAchievementDto: UpdateAchievementDto) {
+    return this.achievementsService.update(id, updateAchievementDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.achievementsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.achievementsService.remove(id);
   }
 }
