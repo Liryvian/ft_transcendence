@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { UserRelationshipModule } from './users/user-relationship/user-relationship.module';
 import { AchievementsModule } from './users/achievements/achievements.module';
+import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
 
 @Module({
 	imports: [
@@ -33,6 +34,7 @@ import { AchievementsModule } from './users/achievements/achievements.module';
 		MatchmakingRequestModule,
 		UserRelationshipModule,
 		AchievementsModule,
+		UserAchievementsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

@@ -54,6 +54,7 @@ export class UserController {
 				games_as_player_one: true,
 				games_as_player_two: true,
 				connections: true,
+				achievements: true,
 			},
 		});
 	}
@@ -86,6 +87,7 @@ export class UserController {
 			return updateResult;
 		} catch (e) {
 			if (e instanceof QueryFailedError) {
+				console.log(e);
 				throw new BadRequestException('Please pick a different username');
 			}
 			if (e instanceof NotFoundException) {

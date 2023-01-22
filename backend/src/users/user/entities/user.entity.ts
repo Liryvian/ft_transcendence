@@ -17,6 +17,7 @@ import { Game } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
+import { Achievement } from '../../achievements/entities/achievement.entity';
 
 @Entity('users')
 export class User {
@@ -86,4 +87,18 @@ export class User {
 		},
 	})
 	chats: Chat[];
+
+	@ManyToMany(() => Achievement)
+	@JoinTable({
+		name: 'user_achievements',
+		joinColumn: {
+			name: 'user_id',
+			referencedColumnName: 'id',
+		},
+		inverseJoinColumn: {
+			name: 'achievement_id',
+			referencedColumnName: 'id',
+		},
+	})
+	achievements: Achievement[];
 }
