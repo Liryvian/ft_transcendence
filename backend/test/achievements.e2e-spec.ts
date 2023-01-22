@@ -4,15 +4,14 @@ import * as request from 'supertest';
 import { AllTestingModule } from '../src/shared/test.module';
 import { AchievementsController } from '../src/users/achievements/achievements.controller';
 import { AchievementsService } from '../src/users/achievements/achievements.service';
+import { AchievementsModule } from '../src/users/achievements/achievements.module';
 
 describe('AppController (e2e)', () => {
 	let app: INestApplication;
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
-			imports: [AllTestingModule],
-			controllers: [AchievementsController],
-			providers: [AchievementsService],
+			imports: [AllTestingModule, AchievementsModule],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
