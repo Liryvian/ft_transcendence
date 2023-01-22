@@ -7,7 +7,7 @@ describe('AchievementsService', () => {
 	let service: AchievementsService;
 	let controller: AchievementsController;
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
 		}).compile();
@@ -16,7 +16,10 @@ describe('AchievementsService', () => {
 		controller = module.get<AchievementsController>(AchievementsController);
 	});
 
+	afterAll(async () => {});
+
 	it('should be defined', () => {
 		expect(service).toBeDefined();
+		expect(controller).toBeDefined();
 	});
 });
