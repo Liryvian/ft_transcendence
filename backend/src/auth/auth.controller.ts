@@ -12,6 +12,7 @@ import {
 	HttpCode,
 	HttpStatus,
 	Query,
+	NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user/user.service';
@@ -22,6 +23,7 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as crypto from 'crypto';
+import { existsSync } from 'fs';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -63,22 +65,50 @@ export class AuthController {
 			state: state,
 		});
 
+		// this could be without await, since it's resolved anyway
+		// but if we want to redirect based on result it might be better to wait..
 		await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
 			mode: 'cors',
 			body: data,
 		})
 			.then((response) => response.json())
-			.then((data) => {
+			.then(async (data) => {
 				// here we have an access token
 				// so we can query the API to get the user
 				// check our database if intra_id exists
 				// 		if exists == recurring user, redirect to dashboard
 				//      if not exists == new user, redirect to account setup page
-				console.log(data);
+				console.log({ data });
 
-				const intra_id = 0;
-				this.userService.findOne({ where: { intra_id } });
+				await fetch('https://api.intra.42.fr/v2/me', {
+					headers: {
+						Authorization: `Bearer ${data.access_token}`,
+					},
+				})
+					.then((response) => response.json())
+					.then(async (userdata) => {
+						let unwrap = ({ id, email, login }) => ({
+							id,
+							email,
+							login,
+						});
+						console.log(unwrap(userdata));
+
+						try {
+							await this.userService.findOne({
+								where: { intra_id: userdata.id },
+							});
+
+							// user exists, redirect to homepage
+							return res.redirect('/');
+						} catch (e) {
+							if (e instanceof NotFoundException) {
+								// this.userService.create();
+							}
+						}
+					});
+
 				console.log('redirect based on api');
 			});
 		console.log('redirect to homepage');
