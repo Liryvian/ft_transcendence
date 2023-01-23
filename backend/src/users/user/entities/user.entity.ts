@@ -44,6 +44,9 @@ export class User {
 	@JoinColumn({ name: 'connections' })
 	connections: UserRelationship[];
 
+	@Column({ nullable: true })
+	avatar: string;
+
 	@OneToOne(
 		() => MatchmakingRequest,
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
