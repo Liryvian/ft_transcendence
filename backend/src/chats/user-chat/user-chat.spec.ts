@@ -81,6 +81,7 @@ describe('UserChatController', () => {
 	it('Check chat_id and user_id exist', async () => {
 		const allUserChats: UserChat[] = await userChatController.findAll();
 		expect(allUserChats).toHaveLength(2);
+
 		for (let index = 0; index < allUserChats.length; index++) {
 			expect(allUserChats).toEqual(
 				expect.arrayContaining([
