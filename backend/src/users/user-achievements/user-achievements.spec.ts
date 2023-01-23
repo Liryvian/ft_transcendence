@@ -1,11 +1,38 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { assert } from 'console';
 import { AllTestingModule } from '../../shared/test.module';
+import { AchievementsService } from '../achievements/achievements.service';
+import { CreateAchievementDto } from '../achievements/dto/create-achievement.dto';
+import { Achievement } from '../achievements/entities/achievement.entity';
+import { RegisterUserDto } from '../user/dto/register-user.dto';
+import { User } from '../user/entities/user.entity';
+import { UserController } from '../user/user.controller';
+import { UserService } from '../user/user.service';
 import { UserAchievementsController } from './user-achievements.controller';
 import { UserAchievementsService } from './user-achievements.service';
 
 describe('UserAchievementsController', () => {
 	let controller: UserAchievementsController;
 	let service: UserAchievementsService;
+	let userService: UserService;
+	let userController: UserController;
+	let achievementService: AchievementsService;
+
+	let allUsers: User[];
+	let allAchievements: Achievement[];
+
+	const mockUsers: RegisterUserDto[] = [
+		{ name: 'Vaalboskat', password: 'V', password_confirm: 'V' },
+		{ name: 'Flamink', password: 'F', password_confirm: 'F' },
+		{ name: 'Renoster', password: 'R', password_confirm: 'R' },
+	];
+
+	const mockAchievements: CreateAchievementDto[] = [
+		{ name: 'Plep' },
+		{ name: 'BallsToTheWall' },
+		{ name: 'Baas' },
+		{ name: 'Gjas' },
+	];
 
 	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
@@ -16,12 +43,56 @@ describe('UserAchievementsController', () => {
 			UserAchievementsController,
 		);
 		service = module.get<UserAchievementsService>(UserAchievementsService);
+		userService = module.get<UserService>(UserService);
+		userController = module.get<UserController>(UserController);
+		achievementService = module.get<AchievementsService>(AchievementsService);
+
+		await userService.save(mockUsers);
+		await achievementService.save(mockAchievements);
+
+		allUsers = await userService.findAll({ relations: { achievements: true } });
+		allAchievements = await achievementService.findAll();
+
+		assert(allUsers.length === 3);
+		assert(allAchievements.length === 4);
 	});
 
-	afterAll(async () => {});
+	afterAll(async () => {
+		const arrayOfIdsToDelete: number[] = [];
+		for (let i = 0; i < allUsers.length; i++) {
+			arrayOfIdsToDelete.push(allUsers[i].id);
+		}
+		await userService.remove(arrayOfIdsToDelete);
+	});
 
 	it('should be defined', () => {
 		expect(controller).toBeDefined();
 		expect(service).toBeDefined();
+	});
+
+	describe('user-achievements', () => {
+		it('should create an array of achievements in user', async () => {
+			await controller.create({
+				user_id: allUsers[0].id,
+				achievement_id: allAchievements[0].id,
+			});
+
+			const achievementsOfUser: Achievement[] = (
+				await userService.findOne({
+					where: { id: allUsers[0].id },
+					relations: { achievements: true },
+				})
+			).achievements;
+
+			console.log(achievementsOfUser);
+			expect(achievementsOfUser).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: allAchievements[0].id,
+						name: allAchievements[0].name,
+					}),
+				]),
+			);
+		});
 	});
 });

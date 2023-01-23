@@ -88,7 +88,10 @@ export class User {
 	})
 	chats: Chat[];
 
-	@ManyToMany(() => Achievement)
+	@ManyToMany(() => Achievement, {
+		onDelete: 'NO ACTION',
+		onUpdate: 'CASCADE',
+	})
 	@JoinTable({
 		name: 'user_achievements',
 		joinColumn: {
