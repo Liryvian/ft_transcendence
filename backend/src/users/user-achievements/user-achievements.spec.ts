@@ -6,7 +6,6 @@ import { CreateAchievementDto } from '../achievements/dto/create-achievement.dto
 import { Achievement } from '../achievements/entities/achievement.entity';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/entities/user.entity';
-import { UserController } from '../user/user.controller';
 import { UserService } from '../user/user.service';
 import { UserAchievementsController } from './user-achievements.controller';
 import { UserAchievementsService } from './user-achievements.service';
@@ -15,7 +14,6 @@ describe('UserAchievementsController', () => {
 	let controller: UserAchievementsController;
 	let service: UserAchievementsService;
 	let userService: UserService;
-	let userController: UserController;
 	let achievementService: AchievementsService;
 
 	let allUsers: User[];
@@ -44,7 +42,6 @@ describe('UserAchievementsController', () => {
 		);
 		service = module.get<UserAchievementsService>(UserAchievementsService);
 		userService = module.get<UserService>(UserService);
-		userController = module.get<UserController>(UserController);
 		achievementService = module.get<AchievementsService>(AchievementsService);
 
 		await userService.save(mockUsers);
@@ -158,6 +155,7 @@ describe('UserAchievementsController', () => {
 					achievement_id: allAchievements[0],
 				}),
 			).rejects.toThrow('UNIQUE constraint failed: user_achievements.user_id');
+			//  service throws SQL error but controlelr catches it and throw BadRequestException
 		});
 	});
 });

@@ -6,6 +6,7 @@ import {
 	Patch,
 	Param,
 	Delete,
+	BadRequestException,
 } from '@nestjs/common';
 import { UserAchievementsService } from './user-achievements.service';
 import { CreateUserAchievementDto } from './dto/create-user-achievement.dto';
@@ -18,24 +19,33 @@ export class UserAchievementsController {
 	) {}
 
 	@Post()
-	create(@Body() createUserAchievementDto: CreateUserAchievementDto) {
-		return this.userAchievementsService.create(createUserAchievementDto);
+	async create(@Body() createUserAchievementDto: CreateUserAchievementDto) {
+		try {
+			const newUserAchievement = await this.userAchievementsService.create(
+				createUserAchievementDto,
+			);
+			return newUserAchievement;
+		} catch (e) {
+			throw new BadRequestException(
+				'User can have only one of each achievements',
+			);
+		}
 	}
 
 	@Get()
-	findAll() {
+	async findAll() {
 		return this.userAchievementsService.findAll({
 			relations: { users: true, achievements: true },
 		});
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: number) {
+	async findOne(@Param('id') id: number) {
 		return this.userAchievementsService.findOne({ where: { user_id: id } });
 	}
 
 	@Patch(':id')
-	update(
+	async update(
 		@Param('id') id: number,
 		@Body() updateUserAchievementDto: UpdateUserAchievementDto,
 	) {
@@ -43,7 +53,7 @@ export class UserAchievementsController {
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: number) {
+	async remove(@Param('id') id: number) {
 		return this.userAchievementsService.remove(id);
 	}
 }
