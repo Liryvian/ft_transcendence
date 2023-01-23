@@ -17,7 +17,7 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Response, Request } from 'express';
+import { Response, Request, response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -35,42 +35,54 @@ export class AuthController {
 
 	@Get('/auth/authenticate')
 	redirectToIntraApi(@Res() res) {
+		const client_id = this.configService.get('API_UID');
+		const redirect_uri = this.configService.get('API_REDIR_URI');
+
+		// const state = crypto.randomBytes(8).toString('hex');
+		// store state in cookie, and get it from the other endpoint to match incoming state?
+
+		const state = 'randomstring';
+
 		res.redirect(
-			`https://api.intra.42.fr/oauth/authorize?client_id=${this.configService.get(
-				'API_UID',
-			)}&redirect_uri=${this.configService.get(
-				'API_REDIR_URI',
-			)}&response_type=code`,
+			`https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&state=${state}`,
 		);
 	}
 
 	@Get('/auth/oauth42')
-	async recieveCodeFromApi(@Query('code') code: string) {
-		console.log('code from /auth/authenticate:[', code, ']');
-		// if (!code || code === '') {
-		// 	throw new BadRequestException('Invalid Code');
-		// }
-
-		const state = crypto.randomBytes(8).toString('hex');
-
+	async recieveCodeFromApi(
+		@Query('code') code: string,
+		@Query('state') state: string,
+		@Res() res: Response,
+	) {
 		const data = new URLSearchParams({
 			grant_type: 'authorization_code',
 			code: code,
 			client_id: this.configService.get('API_UID'),
 			client_secret: this.configService.get('API_SECRET'),
 			redirect_uri: this.configService.get('API_REDIR_URI'),
-			// state: state,
+			state: state,
 		});
-		console.log(data);
-		const tokenResponse = await fetch('https://api.intra.42.fr/oauth/token', {
+
+		await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
 			mode: 'cors',
 			body: data,
-		}).catch((err) => {
-			console.log('err', err);
-		});
-		console.log({ tokenResponse });
-		return { data, tokenResponse };
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				// here we have an access token
+				// so we can query the API to get the user
+				// check our database if intra_id exists
+				// 		if exists == recurring user, redirect to dashboard
+				//      if not exists == new user, redirect to account setup page
+				console.log(data);
+
+				const intra_id = 0;
+				this.userService.findOne({ where: { intra_id } });
+				console.log('redirect based on api');
+			});
+		console.log('redirect to homepage');
+		return res.redirect('/');
 		// exchange code for access token
 		// console.log('Formdata going to send', formData);
 		// try {
@@ -83,11 +95,6 @@ export class AuthController {
 		// }
 		// res.redirect('/');
 		// console.log(res);
-	}
-
-	@Post('/auth/oauth42')
-	async recieveToken(@Body() body) {
-		console.log('', { body });
 	}
 
 	/*

@@ -26,6 +26,18 @@ export class User {
 	@Column({ default: true })
 	is_intra: boolean;
 
+	@Column({ default: -1 })
+	intra_id: number;
+
+	@Column()
+	intra_token: string;
+
+	@Column()
+	intra_refresh: string;
+
+	@Column()
+	intra_expires: Date;
+
 	@Column({ unique: true, nullable: false })
 	name: string;
 
