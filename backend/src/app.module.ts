@@ -17,6 +17,7 @@ import { SharedModule } from './shared/shared.module';
 import { UserRelationshipModule } from './users/user-relationship/user-relationship.module';
 import { AchievementsModule } from './users/achievements/achievements.module';
 import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
+import { SeedersModule } from './seeders/seeders.module';
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import { UserAchievementsModule } from './users/user-achievements/user-achieveme
 		UserRelationshipModule,
 		AchievementsModule,
 		UserAchievementsModule,
+		SeedersModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

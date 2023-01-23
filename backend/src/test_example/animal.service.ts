@@ -8,12 +8,12 @@ import { AnimalEntity } from './entities/animals.entity';
 export class AnimalService extends AbstractService<AnimalEntity> {
 	constructor(
 		@InjectRepository(AnimalEntity)
-		private readonly animalRepo: Repository<AnimalEntity>,
+		protected readonly repository: Repository<AnimalEntity>,
 	) {
-		super(animalRepo);
+		super(repository);
 	}
 
-	pagination(): String {
+	pagination(): string {
 		return '15 animals';
 	}
 }
