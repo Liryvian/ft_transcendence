@@ -22,20 +22,10 @@ describe('Auth', () => {
 
 	afterAll(() => {});
 
-	describe('AuthGuard', () => {
+	describe('Auth-Guard/Controller/Service', () => {
 		it('should be defined', () => {
 			expect(authGuard).toBeDefined();
-		});
-	});
-
-	describe('AuthController', () => {
-		it('should be defined', () => {
 			expect(authController).toBeDefined();
-		});
-	});
-
-	describe('AuthService', () => {
-		it('should be defined', () => {
 			expect(authService).toBeDefined();
 		});
 	});
