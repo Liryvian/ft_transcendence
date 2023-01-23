@@ -23,7 +23,4 @@ export class UserAchievement {
 	})
 	@JoinColumn([{ name: 'achievement_id', referencedColumnName: 'id' }])
 	achievements: Achievement[];
-
-	// @ManyToMany(() => Achievement)
-	// achievements: Achievement[];
 }

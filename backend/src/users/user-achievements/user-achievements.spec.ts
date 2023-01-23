@@ -84,7 +84,6 @@ describe('UserAchievementsController', () => {
 				})
 			).achievements;
 
-			console.log(achievementsOfUser);
 			expect(achievementsOfUser).toEqual(
 				expect.arrayContaining([
 					expect.objectContaining({
@@ -93,6 +92,72 @@ describe('UserAchievementsController', () => {
 					}),
 				]),
 			);
+		});
+
+		it('should be possible for multiple users to have the same achievement', async () => {
+			await service.create([
+				{
+					user_id: allUsers[1].id,
+					achievement_id: allAchievements[1].id,
+				},
+				{
+					user_id: allUsers[2].id,
+					achievement_id: allAchievements[1].id,
+				},
+			]);
+
+			const sameAchievementUsers: User[] = await userService.findAll({
+				relations: { achievements: true },
+			});
+			//  check the two newly created realtionships (users[1 and 2])
+
+			expect(sameAchievementUsers[1].achievements).toEqual(
+				sameAchievementUsers[2].achievements,
+			);
+		});
+
+		it('should be possible to have many achievements', async () => {
+			await service.create([
+				{
+					user_id: allUsers[0].id,
+					achievement_id: allAchievements[1].id,
+				},
+				{
+					user_id: allUsers[0].id,
+					achievement_id: allAchievements[2].id,
+				},
+			]);
+			const userWithAllAchievements: Achievement[] = (
+				await userService.findOne({
+					where: { id: allUsers[0].id },
+					relations: { achievements: true },
+				})
+			).achievements;
+			expect(userWithAllAchievements).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						id: allAchievements[0].id,
+						name: allAchievements[0].name,
+					}),
+					expect.objectContaining({
+						id: allAchievements[1].id,
+						name: allAchievements[1].name,
+					}),
+					expect.objectContaining({
+						id: allAchievements[2].id,
+						name: allAchievements[2].name,
+					}),
+				]),
+			);
+		});
+
+		it('should only be possible to have one of each achievement', async () => {
+			await expect(
+				service.create({
+					user_id: allUsers[0].id,
+					achievement_id: allAchievements[0],
+				}),
+			).rejects.toThrow('UNIQUE constraint failed: user_achievements.user_id');
 		});
 	});
 });
