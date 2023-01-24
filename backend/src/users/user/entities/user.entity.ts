@@ -29,13 +29,13 @@ export class User {
 	@Column({ default: -1 })
 	intra_id: number;
 
-	@Column()
+	@Column({ nullable: true })
 	intra_token: string;
 
-	@Column()
+	@Column({ nullable: true })
 	intra_refresh: string;
 
-	@Column()
+	@Column({ nullable: true })
 	intra_expires: Date;
 
 	@Column({ unique: true, nullable: false })
@@ -44,12 +44,6 @@ export class User {
 	@Column({ nullable: true })
 	@Exclude()
 	password: string;
-
-	@CreateDateColumn()
-	created_at: Date;
-
-	@UpdateDateColumn()
-	updated_at: Date;
 
 	@Column({ nullable: true })
 	avatar: string;
@@ -102,4 +96,10 @@ export class User {
 		},
 	})
 	chats: Chat[];
+
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 }
