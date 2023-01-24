@@ -41,7 +41,7 @@ export class User {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	@Exclude()
 	password: string;
 

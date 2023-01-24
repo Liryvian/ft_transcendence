@@ -22,6 +22,7 @@ import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
+import { User } from '../users/user/entities/user.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -71,17 +72,17 @@ export class AuthController {
 			body: data,
 		})
 			.then((response) => response.json())
-			.then(async (data) => {
+			.then(async (tokendata) => {
 				// here we have an access token
 				// so we can query the API to get the user
 				// check our database if intra_id exists
 				// 		if exists == recurring user, redirect to dashboard
 				//      if not exists == new user, redirect to account setup page
-				console.log({ data });
+				console.log({ tokendata });
 
 				await fetch('https://api.intra.42.fr/v2/me', {
 					headers: {
-						Authorization: `Bearer ${data.access_token}`,
+						Authorization: `Bearer ${tokendata.access_token}`,
 					},
 				})
 					.then((response) => response.json())
@@ -99,21 +100,45 @@ export class AuthController {
 							await this.userService.findOne({
 								where: { intra_id: userdata.id },
 							});
-
+							console.log('user exists');
 							// user exists, redirect to homepage
 							return res.redirect('/');
 						} catch (e) {
+							console.log('user does not yet exist');
 							if (e instanceof NotFoundException) {
-								console.log('user does not yet exist');
-								// this.userService.create();
+								const newUser = new User();
+								newUser.intra_id = userdata.id;
+								newUser.is_intra = true;
+								newUser.name = userdata.login;
+								newUser.intra_token = tokendata.access_token;
+								newUser.intra_refresh = tokendata.refresh_token;
+								newUser.intra_expires = new Date(
+									tokendata.created_at + tokendata.expires_in,
+								);
+
+								/*
+								const newUser = this.userSerivce.create({
+									intra_id: userdata.id,
+									is_intra: true,
+									name: userdata.login,
+									intra_token: tokendata.access_token,
+									intra_refresh: tokendata.refresh_token,
+									intra_expires: new Date(tokendata.created_at + tokendata.expires_in)
+								})
+								*/
+								await this.userService.save(newUser);
+								console.log('new user created!');
+								return res.redirect('/?new_user');
+							} else {
+								return res.redirect('/?something_went_wrong=yes');
 							}
 						}
 					});
 
-				console.log('redirect based on api');
+				// console.log('redirect based on api');
 			});
-		console.log('redirect to homepage');
-		return res.redirect('/');
+		// console.log('redirect to homepage');
+		// return res.redirect('/');
 		// exchange code for access token
 		// console.log('Formdata going to send', formData);
 		// try {
