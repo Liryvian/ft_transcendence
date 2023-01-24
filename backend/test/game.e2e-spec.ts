@@ -34,7 +34,7 @@ describe('Game (e2e)', () => {
 		gameController = moduleFixture.get<GameController>(GameController);
 		userService = moduleFixture.get<UserService>(UserService);
 
-		await userService.create(mockUsers).then((res: InsertResult) => {
+		await userService.insert(mockUsers).then((res: InsertResult) => {
 			mockGame.player_one = res.identifiers[0].id;
 			mockGame.player_two = res.identifiers[1].id;
 			return res;

@@ -64,7 +64,7 @@ describe('User', () => {
 				is_intra: false,
 			};
 		});
-		await service.create(userDtos).then((res: InsertResult) => {
+		await service.insert(userDtos).then((res: InsertResult) => {
 			res.identifiers.forEach((el, i) => {
 				seedUsers[i].userId = el.id;
 			});
@@ -295,7 +295,7 @@ describe('User', () => {
 		describe('Database constraint for unique usernames', () => {
 			it('throws on create with duplicate usernames', async () => {
 				await expect(
-					service.create({
+					service.insert({
 						name: seedUsers[0].name,
 						password: seedUsers[0].password + 'a',
 						is_intra: false,
