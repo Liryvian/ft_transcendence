@@ -30,6 +30,9 @@ export class User {
 	intra_id: number;
 
 	@Column({ nullable: true })
+	intra_login: string;
+
+	@Column({ nullable: true })
 	intra_token: string;
 
 	@Column({ nullable: true })

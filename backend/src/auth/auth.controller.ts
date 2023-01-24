@@ -70,6 +70,7 @@ export class AuthController {
 				newUser.intra_id = userData.id;
 				newUser.is_intra = true;
 				newUser.name = userData.login;
+				newUser.intra_login = userData.login;
 				newUser.intra_token = tokendata.access_token;
 				newUser.intra_refresh = tokendata.refresh_token;
 				newUser.intra_expires = new Date(
@@ -82,6 +83,7 @@ export class AuthController {
 			intra_id: userdata.id,
 			is_intra: true,
 			name: userdata.login,
+			intra_login: userdata.login,
 			intra_token: tokendata.access_token,
 			intra_refresh: tokendata.refresh_token,
 			intra_expires: new Date(tokendata.created_at + tokendata.expires_in),
