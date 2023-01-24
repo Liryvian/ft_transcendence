@@ -26,7 +26,7 @@ export class User {
 	@Column({ default: true })
 	is_intra: boolean;
 
-	@Column({ default: -1 })
+	@Column({ nullable: true })
 	intra_id: number;
 
 	@Column({ nullable: true })

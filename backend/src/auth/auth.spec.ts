@@ -6,6 +6,8 @@ import { AuthGuard } from './auth.guard';
 import { AllTestingModule } from '../shared/test.module';
 import { IntraTokendata } from './dto/intra-tokendata.dto';
 import { UserService } from '../users/user/user.service';
+import { ILike } from 'typeorm';
+import { User } from 'src/users/user/entities/user.entity';
 
 describe('Auth', () => {
 	let authController: AuthController;
@@ -92,6 +94,41 @@ describe('Auth', () => {
 				expect(users).toHaveLength(1);
 				expect(users[0].name).toBe(fakeUserData.login);
 				await userService.remove(users[0].id);
+			});
+		});
+
+		describe('when other user with same name as new user intra_login exists', () => {
+			it('should add a suffix to the new users displayname', async () => {
+				await userService.create({
+					name: fakeUserData.login,
+					password: 'abc',
+					is_intra: false,
+				});
+
+				const redirect1 = await authController.processUserData(
+					fakeUserData,
+					fakeTokenData,
+				);
+				const redirect2 = await authController.processUserData(
+					{
+						...fakeUserData,
+						id: 2091,
+					},
+					fakeTokenData,
+				);
+				expect(redirect1).toContain('new_user');
+				expect(redirect2).toContain('new_user');
+				const usersMatchingUsername: User[] = await userService.findAll({
+					where: { name: ILike('fakeintrauser%') },
+				});
+				expect(usersMatchingUsername).toHaveLength(3);
+				expect(usersMatchingUsername.map((user: User) => user.name)).toEqual(
+					expect.arrayContaining([
+						fakeUserData.login,
+						expect.stringContaining(fakeUserData.login + '_' + fakeUserData.id),
+						expect.stringContaining(fakeUserData.login + '_' + 2091),
+					]),
+				);
 			});
 		});
 	});

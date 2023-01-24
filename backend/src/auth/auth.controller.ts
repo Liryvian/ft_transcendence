@@ -14,7 +14,6 @@ import {
 	Query,
 	ValidationPipe,
 	NotFoundException,
-	UsePipes,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user/user.service';
@@ -28,6 +27,7 @@ import { User } from '../users/user/entities/user.entity';
 import * as crypto from 'crypto';
 import { IntraTokendata } from './dto/intra-tokendata.dto';
 import { globalValidationPipeOptions } from '../main.validationpipe';
+import { QueryFailedError } from 'typeorm';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -44,8 +44,7 @@ export class AuthController {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');
 
-		const state = crypto.randomBytes(8).toString('hex');
-		res.cookie('state', state);
+		const state = crypto.pseudoRandomBytes(8).toString('hex');
 		// store state in cookie, and get it from the other endpoint to match incoming state?
 
 		res.redirect(
@@ -78,18 +77,46 @@ export class AuthController {
 						(tokendata.created_at < 3000000000 ? 1000 : 1),
 				);
 
-				/**!/
-		const newUser = this.userSerivce.create({
-			intra_id: userdata.id,
-			is_intra: true,
-			name: userdata.login,
-			intra_login: userdata.login,
-			intra_token: tokendata.access_token,
-			intra_refresh: tokendata.refresh_token,
-			intra_expires: new Date(tokendata.created_at + tokendata.expires_in),
-		});
-		/**/
-				await this.userService.save(newUser);
+				// const userWithSameName: User[] = await this.userService.findAll({
+				// 	where: { name: userData.login },
+				// });
+				// if (userWithSameName.length) {
+				// 	newUser.name += '_' + userData.id.toString();
+				// }
+
+				/*
+				// for after refactor
+				*!/
+				const newUserx = this.userService.create({
+					intra_id: userData.id,
+					is_intra: true,
+					name: userData.login,
+					intra_login: userData.login,
+					intra_token: tokendata.access_token,
+					intra_refresh: tokendata.refresh_token,
+					intra_expires:
+						(tokendata.created_at + tokendata.expires_in) *
+						(tokendata.created_at < 3000000000 ? 1000 : 1),
+				});
+				/**/
+				try {
+					await this.userService.save(newUser);
+				} catch (e) {
+					if (e instanceof QueryFailedError) {
+						newUser.name += '_' + userData.id.toString();
+						const findMatchOnId: User[] = await this.userService.findAll({
+							where: { name: newUser.name },
+						});
+						if (findMatchOnId.length) {
+							newUser.name += crypto.pseudoRandomBytes(10).toString('hex');
+						}
+						await this.userService.save(newUser);
+					} else {
+						throw new BadRequestException(
+							'something went wrong on creating the user',
+						);
+					}
+				}
 				return Promise.resolve('/?new_user');
 			}
 		}
