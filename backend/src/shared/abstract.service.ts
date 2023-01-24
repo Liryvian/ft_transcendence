@@ -67,4 +67,13 @@ export abstract class AbstractService<T> {
 		}
 		return this.repository.delete(id);
 	}
+
+	async trySeed(data: any): Promise<InsertResult> {
+		try {
+			const seedResult: InsertResult = await this.create(data);
+			return seedResult;
+		} catch (e) {
+			console.error('Already seeded');
+		}
+	}
 }

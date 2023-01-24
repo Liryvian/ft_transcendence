@@ -12,12 +12,11 @@ import { AnimalService } from './animal.service';
 import { AnimalEntity } from './entities/animals.entity';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { AllTestingModule } from '../shared/test.module';
-import { AnimalSeederService } from '../seeders/animal.seeders';
+import seedData from '../seeders/seed.data';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
 	let service: AnimalService;
-	let animalSeeder: AnimalSeederService;
 	let testingModule: TestingModule;
 
 	beforeAll(async () => {
@@ -28,11 +27,9 @@ describe('AnimalController', () => {
 		// get an instance of the service and or controller you want to test
 		controller = testingModule.get<AnimalController>(AnimalController);
 		service = testingModule.get<AnimalService>(AnimalService);
-		service = testingModule.get<AnimalService>(AnimalService);
-		animalSeeder = testingModule.get<AnimalSeederService>(AnimalSeederService);
 
 		// seed db with animals for all testcases
-		animalSeeder.trySeed();
+		await service.trySeed(seedData.animals());
 	});
 
 	// delete all data in db for each test
