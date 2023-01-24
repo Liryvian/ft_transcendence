@@ -3,6 +3,13 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
 import { globalValidationPipeOptions } from './main.validationpipe';
+import { AnimalSeederService } from './seeders/animal.seeders';
+
+async function seedDatabase(app: INestApplication) {
+	const animalSeeder = app.get<AnimalSeederService>(AnimalSeederService);
+	await animalSeeder.trySeed();
+}
+
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -12,6 +19,7 @@ async function bootstrap() {
 		origin: 'http://localhost:8080',
 		credentials: true,
 	});
+	seedDatabase(app);
 	await app.listen(3000);
 }
 bootstrap();

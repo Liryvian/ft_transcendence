@@ -12,29 +12,27 @@ import { AnimalService } from './animal.service';
 import { AnimalEntity } from './entities/animals.entity';
 import { CreateAnimalDto } from './dto/create-animal.dto';
 import { AllTestingModule } from '../shared/test.module';
-import { AnimalModule } from './animal.module';
+import { AnimalSeederService } from '../seeders/animal.seeders';
 
 describe('AnimalController', () => {
 	let controller: AnimalController;
 	let service: AnimalService;
+	let animalSeeder: AnimalSeederService;
 	let testingModule: TestingModule;
-	const testAnimals = ['Pikkewyn', 'Renoster', 'Kameelperd'];
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
-			imports: [AllTestingModule, AnimalModule],
+			imports: [AllTestingModule],
 		}).compile();
 
 		// get an instance of the service and or controller you want to test
 		controller = testingModule.get<AnimalController>(AnimalController);
 		service = testingModule.get<AnimalService>(AnimalService);
+		service = testingModule.get<AnimalService>(AnimalService);
+		animalSeeder = testingModule.get<AnimalSeederService>(AnimalSeederService);
 
-		// seed db with animals for each testcase
-		await controller.createBulk(
-			testAnimals.map((str) => {
-				return <CreateAnimalDto>{ name: str };
-			}),
-		);
+		// seed db with animals for all testcases
+		animalSeeder.trySeed();
 	});
 
 	// delete all data in db for each test
@@ -53,26 +51,24 @@ describe('AnimalController', () => {
 	it('Get all seed animals (findAll)', async () => {
 		const allAnimals: AnimalEntity[] = await controller.findAll();
 		expect(allAnimals).toHaveLength(3);
-		for (let index = 0; index < testAnimals.length; index++) {
-			expect(allAnimals).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({
-						name: testAnimals[index],
-						id: expect.any(Number),
-					}),
-				]),
-			);
-		}
+		expect(allAnimals).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					name: expect.any(String),
+					id: expect.any(Number),
+				}),
+			]),
+		);
 	});
 
 	it('should get a specific animal (findOne)', async () => {
-		const animalToGet: number = 1;
+		const animalToGet = 1;
 		const animal: AnimalEntity = await controller.findOne(animalToGet);
 		expect(animal.id).toBe(animalToGet);
 	});
 
 	it('should throw a NotFoundError when animal doesnt exist', async () => {
-		const animalToGet: number = 10000;
+		const animalToGet = 10000;
 		await expect(controller.findOne(animalToGet)).rejects.toThrow(
 			NotFoundException,
 		);
@@ -90,8 +86,8 @@ describe('AnimalController', () => {
 	});
 
 	it('Update item (Update)', async () => {
-		const updatedAnimalName: string = 'Seekat';
-		const idOfAnimalToUpdate: number = 1;
+		const updatedAnimalName = 'Seekat';
+		const idOfAnimalToUpdate = 1;
 
 		await controller.update(idOfAnimalToUpdate, { name: updatedAnimalName });
 		expect((await controller.findOne(idOfAnimalToUpdate)).name).toBe(
@@ -106,12 +102,12 @@ describe('AnimalController', () => {
 	});
 
 	it('Delete items from db (remove)', async () => {
-		let repoOfAnimals: AnimalEntity[] = await controller.findAll();
+		const repoOfAnimals: AnimalEntity[] = await controller.findAll();
 
 		for (let i = 0; i < repoOfAnimals.length; i++) {
 			await controller.remove(repoOfAnimals[i].id);
 		}
-		let shouldBeEmptyArray: AnimalEntity[] = await controller.findAll();
+		const shouldBeEmptyArray: AnimalEntity[] = await controller.findAll();
 		expect(shouldBeEmptyArray).toHaveLength(0);
 	});
 

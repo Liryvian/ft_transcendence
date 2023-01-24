@@ -14,6 +14,7 @@ import { MatchmakingRequestModule } from './pong/matchmaking-request/matchmaking
 import { UserModule } from './users/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
+import { SeedersModule } from './seeders/seeders.module';
 
 @Module({
 	imports: [
@@ -29,6 +30,7 @@ import { SharedModule } from './shared/shared.module';
 		UserChatModule,
 		GameInvitesModule,
 		MatchmakingRequestModule,
+		SeedersModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

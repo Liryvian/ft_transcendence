@@ -20,6 +20,7 @@ import { UserChatModule } from '../chats/user-chat/user-chat.module';
 import { GameModule } from '../pong/game/game.module';
 import { MessageModule } from '../chats/message/message.module';
 import { RoleModule } from '../chats/role/role.module';
+import { SeedersModule } from '../seeders/seeders.module';
 
 @Module({
 	imports: [
@@ -46,6 +47,7 @@ import { RoleModule } from '../chats/role/role.module';
 		RoleModule,
 		UserChatModule,
 		UserModule,
+		SeedersModule
 	],
 })
 export class AllTestingModule {}
