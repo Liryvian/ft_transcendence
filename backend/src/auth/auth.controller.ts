@@ -18,12 +18,10 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from '../users/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Response, Request, response } from 'express';
+import { Response, Request } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import * as crypto from 'crypto';
-import { existsSync } from 'fs';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -88,12 +86,14 @@ export class AuthController {
 				})
 					.then((response) => response.json())
 					.then(async (userdata) => {
+						// DEBUG
 						let unwrap = ({ id, email, login }) => ({
 							id,
 							email,
 							login,
 						});
 						console.log(unwrap(userdata));
+						// DEBUG
 
 						try {
 							await this.userService.findOne({
@@ -104,6 +104,7 @@ export class AuthController {
 							return res.redirect('/');
 						} catch (e) {
 							if (e instanceof NotFoundException) {
+								console.log('user does not yet exist');
 								// this.userService.create();
 							}
 						}
