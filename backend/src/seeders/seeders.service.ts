@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { AnimalService } from '../test_example/animal.service';
-import { CreateAnimalDto } from '../test_example/dto/create-animal.dto';
 import * as fs from 'fs';
 import seedData from './seed.data';
 
@@ -10,19 +9,24 @@ export class SeederService {
 
 	constructor(private readonly animalService: AnimalService) {}
 
+	private readonly shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
+
 	shouldSeed(): boolean {
-		const shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
-		if (fs.existsSync(shouldSeedFilePath)) {
+		if (fs.existsSync(this.shouldSeedFilePath)) {
 			return false;
-		} else {
-			fs.writeFileSync(shouldSeedFilePath, '');
-			return true;
 		}
+		return true;
+	}
+
+	finilizeSeeding() {
+		fs.writeFileSync(this.shouldSeedFilePath, '');
 	}
 
 	async seedDatabase() {
 		if (!this.shouldSeed()) return;
 
 		await this.animalService.trySeed(seedData.animals());
+
+		this.finilizeSeeding();
 	}
 }
