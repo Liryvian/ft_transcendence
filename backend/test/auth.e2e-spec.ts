@@ -79,15 +79,17 @@ describe('Auth (e2e)', () => {
 			});
 		});
 
-		describe('Has an endpoint to recieve the intermediary code from intra, /auth/oauthr2 (GET)', () => {
-			it('should be able to recieve a code on the /ath/oauth42 GET endpoint', () => {
-				return request(app.getHttpServer())
-					.get('/auth/oauth42?code=code')
-					.expect(HttpStatus.FOUND);
-			});
+		it.todo('should register a new user on first time intra auth');
+		// mock jest to return objects that are expected
+		// rewrite code to be more modular and testable........
 
-			it.todo('should have');
-		});
+		it.todo(
+			'should check for duplicate usernames on creating new user through api',
+		);
+
+		it.todo('should get the existing user on repeated intra login');
+		// create fake intra user
+		// try to get fake intra user back
 	});
 
 	describe('/login (POST)', () => {
