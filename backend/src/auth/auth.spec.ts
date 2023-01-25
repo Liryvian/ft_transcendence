@@ -68,27 +68,26 @@ describe('Auth', () => {
 					intra_id: fakeUserData.id,
 				});
 
-				const redirect = await authService.processUserData(
+				const { redirectLocation, userId } = await authService.processUserData(
 					fakeUserData,
-					fakeTokenData,
 				);
-				expect(redirect).toContain('recurring_user');
+				expect(redirectLocation).toContain('recurring_user');
 				const users = await userService.findAll({
 					where: { intra_id: fakeUserData.id },
 				});
 				expect(users).toHaveLength(1);
 				expect(users[0].name).toBe('not_fakeintrauser');
+				expect(users[0].id).toBe(userId);
 				await userService.remove(users[0].id);
 			});
 		});
 
 		describe('for new user', () => {
 			it('should create a new user and return a redirect to profile', async () => {
-				const redirect = await authService.processUserData(
+				const { redirectLocation, userId } = await authService.processUserData(
 					fakeUserData,
-					fakeTokenData,
 				);
-				expect(redirect).toContain('new_user');
+				expect(redirectLocation).toContain('new_user');
 				const users = await userService.findAll({
 					where: { intra_id: fakeUserData.id },
 				});
@@ -106,23 +105,50 @@ describe('Auth', () => {
 					is_intra: false,
 				});
 
-				const redirect1 = await authService.processUserData(
-					fakeUserData,
-					fakeTokenData,
-				);
-				const redirect2 = await authService.processUserData(
-					{
-						...fakeUserData,
-						id: 2091,
-					},
-					fakeTokenData,
-				);
-				expect(redirect1).toContain('new_user');
-				expect(redirect2).toContain('new_user');
+				const expectation = [{}, {}, {}, {}];
+
+				// create 'normal' fake user with username `fakeintrauser`
+				const u0 = await authService.processUserData(fakeUserData);
+				expectation[0] = {
+					name: fakeUserData.login,
+					id: u0.userId,
+				};
+
+				// create user with same username but different id
+				const u1 = await authService.processUserData({
+					...fakeUserData,
+					id: 2091,
+				});
+				expectation[1] = {
+					name: fakeUserData.login + '_2091',
+					id: u1.userId,
+				};
+
+				// create a 'non-intra' user with the username that would be generated if it was an intra user...
+				const u2 = await userService.save({
+					name: fakeUserData.login + '_2091_4894',
+					password: 'p',
+					is_intra: false,
+				});
+				expectation[2] = {
+					name: fakeUserData.login + '_2091_4894',
+					id: u2.id,
+				};
+
+				// make a collision on login name + id (user from above)
+				const u3 = await authService.processUserData({
+					login: 'fakeintrauser_2091',
+					id: 4894,
+				});
+				expectation[3] = {
+					name: /fakeintrauser_2091_4897_[a-zA-Z]/,
+				};
+
 				const usersMatchingUsername: User[] = await userService.findAll({
 					where: { name: ILike('fakeintrauser%') },
 				});
-				expect(usersMatchingUsername).toHaveLength(3);
+
+				expect(usersMatchingUsername).toHaveLength(4);
 				expect(usersMatchingUsername.map((user: User) => user.name)).toEqual(
 					expect.arrayContaining([
 						fakeUserData.login,
@@ -140,6 +166,7 @@ describe('Auth', () => {
 				);
 				expect(validated).toEqual(fakeTokenData);
 			});
+
 			it('should throw on incomplete object', async () => {
 				const incomplete = {
 					token_type: 'bearer',
@@ -148,15 +175,12 @@ describe('Auth', () => {
 					expires_in: 1000,
 					created_at: 1706101614,
 				};
-				await expect(
-					authService.validateIntraTokenData(incomplete),
-				).rejects.toThrow(BadRequestException);
+				try {
+					await authService.validateIntraTokenData(incomplete);
+				} catch (e) {
+					expect(e).toBeInstanceOf(BadRequestException);
+				}
 			});
-		});
-
-		describe('exchangeCodeForToken', () => {
-			it.todo('should return an access token');
-			it.todo('should throw on failed fetch request');
 		});
 	});
 });

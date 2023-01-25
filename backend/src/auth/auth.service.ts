@@ -38,17 +38,14 @@ export class AuthService {
 		}
 	}
 
-	async authenticatedThroughApi(data: IntraTokendataDto) {
+	async getAuthenticatedApiUser(data: IntraTokendataDto) {
 		return await fetch('https://api.intra.42.fr/v2/me', {
 			headers: {
 				Authorization: `Bearer ${data.access_token}`,
 			},
 		})
 			.then((response) => response.json())
-			.then(
-				(userData) => userData,
-				// this.authService.processUserData(userData, data),
-			);
+			.then((userData) => userData);
 	}
 
 	async exchangeCodeForToken(code: string, state: string) {
@@ -70,10 +67,9 @@ export class AuthService {
 			.then(async (data) => data);
 	}
 
-	async processUserData(
-		userData: any,
-		tokendata: IntraTokendataDto,
-	): Promise<ProcessedUserDto> {
+	async newUserFromIntra(userData: any) {}
+
+	async processUserData(userData: any): Promise<ProcessedUserDto> {
 		try {
 			const user = await this.userService.findOne({
 				where: { intra_id: userData.id },
@@ -91,55 +87,60 @@ export class AuthService {
 				newUser.is_intra = true;
 				newUser.name = userData.login;
 				newUser.intra_login = userData.login;
-				newUser.intra_token = tokendata.access_token;
-				newUser.intra_refresh = tokendata.refresh_token;
-				newUser.intra_expires = new Date(
-					(tokendata.created_at + tokendata.expires_in) *
-						(tokendata.created_at < 3000000000 ? 1000 : 1),
-				);
 
-				/*
-				// for after refactor
-				*!/
-				const newUserx = this.userService.create({
-					intra_id: userData.id,
-					is_intra: true,
-					name: userData.login,
-					intra_login: userData.login,
-					intra_token: tokendata.access_token,
-					intra_refresh: tokendata.refresh_token,
-					intra_expires:
-						(tokendata.created_at + tokendata.expires_in) *
-						(tokendata.created_at < 3000000000 ? 1000 : 1),
-				});
-				/**/
-				try {
-					const user = await this.userService.save(newUser);
-
-					return Promise.resolve({
-						redirectLocation: '/?type=new_user',
-						userId: user.id,
-					});
-				} catch (e) {
-					if (e instanceof QueryFailedError) {
-						newUser.name += '_' + userData.id.toString();
-						const findMatchOnId: User[] = await this.userService.findAll({
-							where: { name: newUser.name },
-						});
-						if (findMatchOnId.length) {
-							newUser.name += crypto.pseudoRandomBytes(10).toString('hex');
-						}
+				const nameSuffixOptions = [
+					'',
+					'_' + userData.id.toString(),
+					'_' + crypto.pseudoRandomBytes(4).toString('hex'),
+				];
+				for (let index = 0; index < nameSuffixOptions.length; index++) {
+					const element = nameSuffixOptions[index];
+					try {
+						newUser.name += element;
+						console.log(index, 'trying username: ', newUser.name);
 						const user = await this.userService.save(newUser);
+
 						return Promise.resolve({
 							redirectLocation: '/?type=new_user',
 							userId: user.id,
 						});
-					} else {
-						throw new BadRequestException(
-							'something went wrong on creating the user',
-						);
+					} catch (e) {
+						if (!(e instanceof QueryFailedError)) {
+							throw new BadRequestException(
+								'Something went wrong on trying to create the user',
+							);
+						}
 					}
 				}
+				throw new BadRequestException('User could not be created');
+
+				// try {
+				// 	const user = await this.userService.save(newUser);
+
+				// 	return Promise.resolve({
+				// 		redirectLocation: '/?type=new_user',
+				// 		userId: user.id,
+				// 	});
+				// } catch (e) {
+				// 	if (e instanceof QueryFailedError) {
+				// 		newUser.name += '_' + userData.id.toString();
+				// 		const findMatchOnId: User[] = await this.userService.findAll({
+				// 			where: { name: newUser.name },
+				// 		});
+				// 		if (findMatchOnId.length) {
+				// 			newUser.name += crypto.pseudoRandomBytes(10).toString('hex');
+				// 		}
+				// 		const user = await this.userService.save(newUser);
+				// 		return Promise.resolve({
+				// 			redirectLocation: '/?type=new_user',
+				// 			userId: user.id,
+				// 		});
+				// 	} else {
+				// 		throw new BadRequestException(
+				// 			'something went wrong on creating the user',
+				// 		);
+				// 	}
+				// }
 			}
 		}
 	}

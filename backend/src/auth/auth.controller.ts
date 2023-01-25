@@ -12,19 +12,16 @@ import {
 	HttpCode,
 	HttpStatus,
 	Query,
-	ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '../users/user/user.service';
-import * as bcrypt from 'bcrypt';
 import { Response, Request } from 'express';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { UserService } from '../users/user/user.service';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
-import * as crypto from 'crypto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
-import { globalValidationPipeOptions } from '../main.validationpipe';
-import { validate } from 'class-validator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -36,13 +33,13 @@ export class AuthController {
 	) {}
 
 	@Get('/auth/authenticate')
-	redirectToIntraApi(@Res() res: Response) {
+	redirectToIntraApi(@Res() response: Response) {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');
 		const state = crypto.pseudoRandomBytes(8).toString('hex');
-		res.cookie('state', state);
+		response.cookie('state', state);
 
-		res.redirect(
+		response.redirect(
 			`https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&state=${state}`,
 		);
 	}
@@ -51,31 +48,33 @@ export class AuthController {
 	async recieveCodeFromApi(
 		@Query('code') code: string,
 		@Query('state') state: string,
-		@Res() res: Response,
-		@Req() req: Request,
-	) {
-		const cookieState = req.cookies['state'] ?? false;
-		res.clearCookie('state');
+		@Res() response: Response,
+		@Req() request: Request,
+	): Promise<any> {
+		const cookieState = request.cookies['state'] ?? false;
+		response.clearCookie('state');
 		if (cookieState === false || cookieState !== state) {
-			console.error('api auth flow --- state does not match');
-			return res.redirect('/');
+			throw new BadRequestException('Bad state');
 		}
 
 		const rawTokenData = await this.authService.exchangeCodeForToken(
 			code,
 			state,
 		);
+
 		const validatedTokenData: IntraTokendataDto =
 			await this.authService.validateIntraTokenData(rawTokenData);
-		const userData = await this.authService.authenticatedThroughApi(
+
+		const userData = await this.authService.getAuthenticatedApiUser(
 			validatedTokenData,
 		);
+
 		const { redirectLocation, userId } = await this.authService.processUserData(
 			userData,
-			validatedTokenData,
 		);
-		this.authService.login(userId, res);
-		return res.redirect(redirectLocation);
+
+		await this.authService.login(userId, response);
+		return response.redirect(redirectLocation);
 	}
 
 	@Post('login')

@@ -32,15 +32,6 @@ export class User {
 	@Column({ nullable: true })
 	intra_login: string;
 
-	@Column({ nullable: true })
-	intra_token: string;
-
-	@Column({ nullable: true })
-	intra_refresh: string;
-
-	@Column({ nullable: true })
-	intra_expires: Date;
-
 	@Column({ unique: true, nullable: false })
 	name: string;
 
