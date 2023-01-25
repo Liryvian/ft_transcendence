@@ -1,6 +1,6 @@
-import { Equals, IsNotEmpty, IsNumber } from 'class-validator';
+import { Equals, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
-export class IntraTokendata {
+export class IntraTokendataDto {
 	@IsNotEmpty()
 	@Equals('bearer')
 	token_type: string;
@@ -8,11 +8,13 @@ export class IntraTokendata {
 	@IsNotEmpty()
 	access_token: string;
 
+	@IsOptional()
 	@IsNotEmpty()
-	refresh_token: string;
+	refresh_token?: string;
 
+	@IsOptional()
 	@IsNotEmpty()
-	scope: string;
+	scope?: string;
 
 	@IsNotEmpty()
 	@IsNumber()

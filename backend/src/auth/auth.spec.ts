@@ -4,10 +4,11 @@ import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 
 import { AllTestingModule } from '../shared/test.module';
-import { IntraTokendata } from './dto/intra-tokendata.dto';
+import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { UserService } from '../users/user/user.service';
 import { ILike } from 'typeorm';
-import { User } from 'src/users/user/entities/user.entity';
+import { User } from '../users/user/entities/user.entity';
+import { BadRequestException } from '@nestjs/common';
 
 describe('Auth', () => {
 	let authController: AuthController;
@@ -51,7 +52,7 @@ describe('Auth', () => {
 			id: 22346,
 			login: 'fakeintrauser',
 		};
-		const fakeTokenData: IntraTokendata = {
+		const fakeTokenData: IntraTokendataDto = {
 			token_type: 'bearer',
 			access_token: 'access_token',
 			refresh_token: 'refresh_token',
@@ -67,7 +68,7 @@ describe('Auth', () => {
 					intra_id: fakeUserData.id,
 				});
 
-				const redirect = await authController.processUserData(
+				const redirect = await authService.processUserData(
 					fakeUserData,
 					fakeTokenData,
 				);
@@ -83,7 +84,7 @@ describe('Auth', () => {
 
 		describe('for new user', () => {
 			it('should create a new user and return a redirect to profile', async () => {
-				const redirect = await authController.processUserData(
+				const redirect = await authService.processUserData(
 					fakeUserData,
 					fakeTokenData,
 				);
@@ -105,11 +106,11 @@ describe('Auth', () => {
 					is_intra: false,
 				});
 
-				const redirect1 = await authController.processUserData(
+				const redirect1 = await authService.processUserData(
 					fakeUserData,
 					fakeTokenData,
 				);
-				const redirect2 = await authController.processUserData(
+				const redirect2 = await authService.processUserData(
 					{
 						...fakeUserData,
 						id: 2091,
@@ -130,6 +131,32 @@ describe('Auth', () => {
 					]),
 				);
 			});
+		});
+
+		describe('validation of intra token response', () => {
+			it('should validate a complete object', async () => {
+				const validated = await authService.validateIntraTokenData(
+					fakeTokenData,
+				);
+				expect(validated).toEqual(fakeTokenData);
+			});
+			it('should throw on incomplete object', async () => {
+				const incomplete = {
+					token_type: 'bearer',
+					refresh_token: 'refresh_token',
+					scope: 'scope',
+					expires_in: 1000,
+					created_at: 1706101614,
+				};
+				await expect(
+					authService.validateIntraTokenData(incomplete),
+				).rejects.toThrow(BadRequestException);
+			});
+		});
+
+		describe('exchangeCodeForToken', () => {
+			it.todo('should return an access token');
+			it.todo('should throw on failed fetch request');
 		});
 	});
 });

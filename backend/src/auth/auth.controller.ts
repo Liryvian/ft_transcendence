@@ -22,8 +22,9 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as crypto from 'crypto';
-import { IntraTokendata } from './dto/intra-tokendata.dto';
+import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { globalValidationPipeOptions } from '../main.validationpipe';
+import { validate } from 'class-validator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -38,57 +39,12 @@ export class AuthController {
 	redirectToIntraApi(@Res() res: Response) {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');
-
 		const state = crypto.pseudoRandomBytes(8).toString('hex');
-		// store state in cookie, and get it from the other endpoint to match incoming state?
+		res.cookie('state', state);
 
 		res.redirect(
 			`https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&state=${state}`,
 		);
-	}
-
-	async authenticatedThroughApi(data: IntraTokendata) {
-		const validator = new ValidationPipe(globalValidationPipeOptions());
-		try {
-			const stripped = await validator.transform(data, {
-				type: 'body',
-				metatype: IntraTokendata,
-			});
-			return await fetch('https://api.intra.42.fr/v2/me', {
-				headers: {
-					Authorization: `Bearer ${stripped.access_token}`,
-				},
-			})
-				.then((response) => response.json())
-				.then(async (userData) =>
-					this.authService.processUserData(userData, stripped),
-				);
-		} catch (e) {
-			throw new BadRequestException(
-				'Bad data recieved from intra api in authentication flow',
-			);
-		}
-	}
-
-	async exchangeCodeForToken(code: string, state: string) {
-		const data = new URLSearchParams({
-			grant_type: 'authorization_code',
-			code: code,
-			client_id: this.configService.get('API_UID'),
-			client_secret: this.configService.get('API_SECRET'),
-			redirect_uri: this.configService.get('API_REDIR_URI'),
-			state: state,
-		});
-
-		return await fetch('https://api.intra.42.fr/oauth/token', {
-			method: 'POST',
-			mode: 'cors',
-			body: data,
-		})
-			.then((response) => response.json())
-			.then(async (data) => {
-				return this.authenticatedThroughApi(data);
-			});
 	}
 
 	@Get('/auth/oauth42')
@@ -104,7 +60,22 @@ export class AuthController {
 			console.error('api auth flow --- state does not match');
 			return res.redirect('/');
 		}
-		return res.redirect(await this.exchangeCodeForToken(code, state));
+
+		const rawTokenData = await this.authService.exchangeCodeForToken(
+			code,
+			state,
+		);
+		const validatedTokenData: IntraTokendataDto =
+			await this.authService.validateIntraTokenData(rawTokenData);
+		const userData = await this.authService.authenticatedThroughApi(
+			validatedTokenData,
+		);
+		const { redirectLocation, userId } = await this.authService.processUserData(
+			userData,
+			validatedTokenData,
+		);
+		this.authService.login(userId, res);
+		return res.redirect(redirectLocation);
 	}
 
 	@Post('login')
