@@ -3,11 +3,16 @@ import {
 	Body,
 	ClassSerializerInterceptor,
 	Controller,
+	Delete,
+	FileTypeValidator,
 	Get,
+	MaxFileSizeValidator,
 	NotFoundException,
 	Param,
+	ParseFilePipe,
 	Patch,
 	Post,
+	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
@@ -19,6 +24,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -100,5 +106,43 @@ export class UserController {
 				'Something went wrong on updating the user',
 			);
 		}
+	}
+
+	@UseGuards(AuthGuard)
+	@Post(':id/avatar')
+	@UseInterceptors(FileInterceptor('avatar'))
+	async setAvatar(
+		@Param('id') id: number,
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: 1000000 }),
+					new FileTypeValidator({ fileType: /jpg|png|octet-stream/i }),
+				],
+			}),
+		)
+		avatar: Express.Multer.File,
+	) {
+		return this.userService
+			.findOne({ where: { id: id } })
+			.then(async (user: User) => {
+				user.avatar = avatar.filename;
+				const upd = await this.userService.update(user.id, user);
+				return user;
+			});
+	}
+
+	@UseGuards(AuthGuard)
+	@Delete(':id/avatar')
+	async removeAvatar(@Param('id') id: number) {
+		return this.userService
+			.findOne({ where: { id: id } })
+			.then(async (user: User) => {
+				const upd = await this.userService.update(user.id, {
+					...user,
+					avatar: null,
+				});
+				return upd;
+			});
 	}
 }

@@ -39,6 +39,9 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
+	@Column({ nullable: true })
+	avatar: string;
+
 	@OneToOne(
 		() => MatchmakingRequest,
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
