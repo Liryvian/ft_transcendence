@@ -39,10 +39,6 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => UserRelationship, (r: UserRelationship) => r.connection)
-	@JoinColumn({ name: 'connections' })
-	connections: UserRelationship[];
-
 	@OneToOne(
 		() => MatchmakingRequest,
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
@@ -86,4 +82,23 @@ export class User {
 		},
 	})
 	chats: Chat[];
+
+	// @Exclude()
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
+	@JoinColumn({ name: 'relationshipSource' })
+	relationshipSource: UserRelationship[];
+
+	// @Exclude()
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target_id)
+	@JoinColumn({ name: 'relationshipTarget' })
+	relationshipTarget: UserRelationship[];
+
+	@Expose()
+	get relationships(): UserRelationship[] {
+		//  if games_as_player_one/two are null set them = []
+		return [
+			...(this.relationshipSource ?? []),
+			...(this.relationshipTarget ?? []),
+		];
+	}
 }

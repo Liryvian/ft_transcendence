@@ -12,6 +12,7 @@ export class AuthGuard implements CanActivate {
 		try {
 			const jwt = request.cookies['jwt'];
 			const validated = this.jwtService.verify(jwt);
+			console.log('Validated object: ', validated);
 			return validated;
 		} catch (e) {
 			return false;

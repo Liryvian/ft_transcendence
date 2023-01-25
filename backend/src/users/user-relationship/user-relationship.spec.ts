@@ -56,13 +56,44 @@ describe('GameInvite unit tests', () => {
 		expect(controller).toBeDefined();
 	});
 
-	describe('Creating relationship test', () => {
-		it('should create a relationship between invite and user', async () => {
+	// describe('Creating relationship test', () => {
+	// 	it('should create a relationship between invite and user', async () => {
+	// 		const invite: UserRelationship = await controller.create(mockConnection);
+	// 		console.log(invite);
+	// 		console.log(
+	// 			await userService.findAll({ relations: { connections: true } }),
+	// 			await controller.findAll(),
+	// 		);
+	// 		expect(invite.connection.length).toBe(2);
+	// 		expect(
+	// 			invite.connection.every((connectId) => connectId instanceof User),
+	// 		).toBeTruthy();
+	// 	});
+	// });
+
+	describe('Vincent relationship test', () => {
+		it('Vincent create a relationship between invite and user', async () => {
 			const invite: UserRelationship = await controller.create(mockConnection);
 			expect(invite.connection.length).toBe(2);
 			expect(
 				invite.connection.every((connectId) => connectId instanceof User),
 			).toBeTruthy();
+			console.log('After first:', await controller.findAll());
+			const invite2: UserRelationship = await controller.create({
+				connection: [2, 1],
+				type: validRelationships.FRIEND,
+			});
+			expect(invite2.connection.length).toBe(2);
+			expect(
+				invite2.connection.every((connectId) => connectId instanceof User),
+			).toBeTruthy();
+			console.log('After second', await controller.findAll());
+
+			const invite3: UserRelationship = await controller.create({
+				connection: [3, 2],
+				type: validRelationships.FRIEND,
+			});
+			console.log('After third', await controller.findAll());
 		});
 	});
 

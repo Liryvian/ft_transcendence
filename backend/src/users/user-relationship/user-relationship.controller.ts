@@ -12,6 +12,8 @@ import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
 import { UserRelationship } from './entities/user-relationship.entity';
+import { DataSource } from 'typeorm';
+import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 
 @Controller('user-relationships')
 export class UserRelationshipController {
@@ -21,11 +23,38 @@ export class UserRelationshipController {
 
 	@Post()
 	async create(@Body() createUserRelationshipDto: CreateUserRelationshipDto) {
+		const repo = await this.userRelationshipService.createAndSave(
+			createUserRelationshipDto,
+		);
+
+		console.log(repo.source_id, repo.target_id);
+		const rel = await this.userRelationshipService.findAll({
+			relations: {
+				source_id: true,
+				target_id: true,
+			},
+
+			where: {
+				source_id: { id: repo.source_id.id }, // OR
+				target_id: repo.target_id, // OR
+			},
+		});
+		// const rel1 = await this.userRelationshipService.findOne({
+		// 	where: {
+		// 		source_id: createUserRelationshipDto.target_id,
+		// 		target_id: createUserRelationshipDto.source_id,
+		// 	},
+		// 	relations: { source_id: true, target_id: true },
+		// });
+		if (rel) {
+			console.log('Rel: ', rel);
+			console.log('\nreturning here!!!\n');
+			return;
+		}
 		try {
-			const newRelationship: UserRelationship =
-				await this.userRelationshipService.createAndSave(
-					createUserRelationshipDto,
-				);
+			const newRelationship = await this.userRelationshipService.create(
+				createUserRelationshipDto,
+			);
 			return newRelationship;
 		} catch (e) {
 			throw new BadRequestException(
@@ -37,7 +66,7 @@ export class UserRelationshipController {
 	@Get()
 	async findAll() {
 		return this.userRelationshipService.findAll({
-			relations: { connection: true },
+			relations: { source_id: true, target_id: true },
 		});
 	}
 
@@ -45,7 +74,7 @@ export class UserRelationshipController {
 	async findOne(@Param('id') id: number) {
 		return this.userRelationshipService.findOne({
 			where: { id },
-			relations: { connection: true },
+			relations: { source_id: true, target_id: true },
 		});
 	}
 

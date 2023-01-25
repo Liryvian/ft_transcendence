@@ -1,8 +1,10 @@
 import {
 	Column,
 	Entity,
+	Index,
 	JoinColumn,
-	OneToMany,
+	ManyToOne,
+	PrimaryColumn,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
@@ -17,9 +19,16 @@ export class UserRelationship {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToMany(() => User, (user: User) => user.connections) //connection
-	@JoinColumn({ name: 'connection' })
-	connection: User[];
+	@ManyToOne(() => User, (user: User) => user.relationshipSource)
+	@JoinColumn({ name: 'source_id ' })
+	source_id: User;
+
+	@ManyToOne(() => User, (user: User) => user.relationshipTarget)
+	@JoinColumn({ name: 'target_id ' })
+	target_id: User;
+
+	// @Column()
+	// specifier_id: number;
 
 	@Column()
 	type: string;

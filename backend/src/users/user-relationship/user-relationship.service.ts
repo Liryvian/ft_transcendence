@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SaveOptions } from 'typeorm';
 import { AbstractService } from '../../shared/abstract.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UserRelationship } from './entities/user-relationship.entity';
@@ -17,12 +17,14 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 	async createAndSave(
 		data: CreateUserRelationshipDto,
 	): Promise<UserRelationship> {
-		const newInvite = this.repository.create({
-			connection: data.connection.map((connectionId) => ({
-				id: connectionId,
-			})),
+		console.log('Before create');
+		const newInvite: UserRelationship = this.repository.create({
+			source_id: data.source_id,
+			target_id: data.target_id,
 			type: data.type,
 		});
-		return this.repository.save(newInvite);
+		console.log('After create', newInvite);
+		return newInvite;
+		return this.repository.save(data);
 	}
 }
