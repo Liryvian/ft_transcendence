@@ -42,7 +42,7 @@ export class AuthController {
 		console.log({ state });
 		// const state = crypto.pseudoRandomBytes(8).toString('hex');
 
-		response.cookie('state', state);
+		// response.cookie('state', state);
 
 		response.redirect(
 			`https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&state=${state}`,
@@ -57,13 +57,7 @@ export class AuthController {
 		@Res() response: Response,
 		@Req() request: Request,
 	): Promise<any> {
-		console.log(response);
-
-		const cookieState = request.cookies['state'] ?? false;
-		response.clearCookie('state');
-		if (cookieState === false || cookieState !== state) {
-			throw new BadRequestException('Bad state');
-		}
+		// response.clearCookie('state');
 
 		const rawTokenData = await this.authService.exchangeCodeForToken(
 			code,
