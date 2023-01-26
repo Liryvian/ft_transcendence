@@ -26,10 +26,12 @@ describe('GameInvite unit tests', () => {
 	const mockUsers: CreateUserDto[] = [
 		{ name: 'Miskruier', password: 'P' },
 		{ name: 'Tor', password: 'T' },
+		{ name: 'Visarend', password: 'V' },
 	];
 
 	const mockConnection: CreateUserRelationshipDto = {
-		connection: [],
+		source_id: null,
+		target_id: null,
 		type: validRelationships.FRIEND,
 	};
 
@@ -46,9 +48,8 @@ describe('GameInvite unit tests', () => {
 
 		await userService.save(mockUsers);
 		allUsers = await userService.findAll();
-		allUsers.forEach((user: User) => {
-			mockConnection.connection.push(user.id);
-		});
+		mockConnection.source_id = allUsers[0].id;
+		mockConnection.target_id = allUsers[1].id;
 	});
 
 	it('should be defined, service and controller', () => {
@@ -56,44 +57,49 @@ describe('GameInvite unit tests', () => {
 		expect(controller).toBeDefined();
 	});
 
-	// describe('Creating relationship test', () => {
-	// 	it('should create a relationship between invite and user', async () => {
-	// 		const invite: UserRelationship = await controller.create(mockConnection);
-	// 		console.log(invite);
-	// 		console.log(
-	// 			await userService.findAll({ relations: { connections: true } }),
-	// 			await controller.findAll(),
-	// 		);
-	// 		expect(invite.connection.length).toBe(2);
-	// 		expect(
-	// 			invite.connection.every((connectId) => connectId instanceof User),
-	// 		).toBeTruthy();
-	// 	});
-	// });
+	describe('Single relationship test', () => {
+		it('should create a relationship between two users', async () => {
+			await service.save(mockConnection);
+			const relationShips: UserRelationship[] = await service.findAll();
 
-	describe('Vincent relationship test', () => {
-		it('Vincent create a relationship between invite and user', async () => {
-			const invite: UserRelationship = await controller.create(mockConnection);
-			expect(invite.connection.length).toBe(2);
-			expect(
-				invite.connection.every((connectId) => connectId instanceof User),
-			).toBeTruthy();
-			console.log('After first:', await controller.findAll());
-			const invite2: UserRelationship = await controller.create({
-				connection: [2, 1],
-				type: validRelationships.FRIEND,
-			});
-			expect(invite2.connection.length).toBe(2);
-			expect(
-				invite2.connection.every((connectId) => connectId instanceof User),
-			).toBeTruthy();
-			console.log('After second', await controller.findAll());
+			expect(relationShips[0].source_id).toEqual(allUsers[0]);
+			expect(relationShips[0].target_id).toEqual(allUsers[1]);
+			expect(relationShips[0].type).toEqual(validRelationships.FRIEND);
+		});
+	});
 
-			const invite3: UserRelationship = await controller.create({
-				connection: [3, 2],
-				type: validRelationships.FRIEND,
+	describe('multiple relationships test', () => {
+		it('should create a relationship between two users', async () => {
+			const arrayOfRelationship: CreateUserRelationshipDto[] = [
+				{
+					source_id: allUsers[0].id,
+					target_id: allUsers[2].id,
+					type: validRelationships.FRIEND,
+				},
+				{
+					source_id: allUsers[2].id,
+					target_id: allUsers[1].id,
+					type: validRelationships.FRIEND,
+				},
+			];
+			await service.save(arrayOfRelationship);
+			const relationShips: UserRelationship[] = await service.findAll();
+
+			expect(relationShips.length).toEqual(3);
+			expect(relationShips[1].source_id).toEqual(allUsers[0]);
+			expect(relationShips[1].target_id).toEqual(allUsers[2]);
+			expect(relationShips[0].type).toEqual(validRelationships.FRIEND);
+
+			expect(relationShips[2].source_id).toEqual(allUsers[2]);
+			expect(relationShips[2].target_id).toEqual(allUsers[1]);
+			expect(relationShips[0].type).toEqual(validRelationships.FRIEND);
+
+			const users: User[] = await userService.findAll({
+				relations: { relationshipSource: true, relationshipTarget: true },
 			});
-			console.log('After third', await controller.findAll());
+			users.forEach((user) => {
+				expect(user.relationships.length).toEqual(2);
+			});
 		});
 	});
 
