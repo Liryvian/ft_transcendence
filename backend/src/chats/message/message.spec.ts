@@ -59,7 +59,7 @@ describe('MessageController', () => {
 				password: seedUsers[index].password,
 				is_intra: false,
 			};
-			const newUserResult: InsertResult = await userService.create(data);
+			const newUserResult: InsertResult = await userService.insert(data);
 			seedUsers[index].userId = newUserResult.identifiers[0].id;
 		}
 
