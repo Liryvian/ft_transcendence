@@ -22,6 +22,7 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
+import { Api42Guard } from './api42.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -36,7 +37,11 @@ export class AuthController {
 	redirectToIntraApi(@Res() response: Response) {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');
-		const state = crypto.pseudoRandomBytes(8).toString('hex');
+
+		const state = bcrypt.hashSync(redirect_uri, 9);
+		console.log({ state });
+		// const state = crypto.pseudoRandomBytes(8).toString('hex');
+
 		response.cookie('state', state);
 
 		response.redirect(
@@ -44,6 +49,7 @@ export class AuthController {
 		);
 	}
 
+	@UseGuards(Api42Guard)
 	@Get('/auth/oauth42')
 	async recieveCodeFromApi(
 		@Query('code') code: string,
@@ -51,6 +57,8 @@ export class AuthController {
 		@Res() response: Response,
 		@Req() request: Request,
 	): Promise<any> {
+		console.log(response);
+
 		const cookieState = request.cookies['state'] ?? false;
 		response.clearCookie('state');
 		if (cookieState === false || cookieState !== state) {

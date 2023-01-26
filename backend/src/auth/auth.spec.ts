@@ -99,63 +99,74 @@ describe('Auth', () => {
 
 		describe('when other user with same name as new user intra_login exists', () => {
 			it('should add a suffix to the new users displayname', async () => {
-				await userService.create({
+				const u0 = await userService.create({
 					name: fakeUserData.login,
 					password: 'abc',
 					is_intra: false,
 				});
 
-				const expectation = [{}, {}, {}, {}];
+				const expectation = [
+					{
+						name: fakeUserData.login,
+						id: u0.identifiers[0].id,
+					},
+					{
+						name: fakeUserData.login + '_22346',
+						id: -1,
+					},
+					{
+						name: fakeUserData.login + '_2091',
+						id: -1,
+					},
+					{
+						name: fakeUserData.login + '_2091_4894',
+						id: -1,
+					},
+					{
+						name: expect.stringMatching(/^fakeintrauser_2091_4894_*/),
+						id: -1,
+					},
+				];
 
-				// create 'normal' fake user with username `fakeintrauser`
-				const u0 = await authService.processUserData(fakeUserData);
-				expectation[0] = {
-					name: fakeUserData.login,
-					id: u0.userId,
-				};
+				// create api user with normal user name collision
+				// name should be prefixed with intra id
+				const u1 = await authService.processUserData(fakeUserData);
+				expectation[1].id = u1.userId;
 
 				// create user with same username but different id
-				const u1 = await authService.processUserData({
+				const u2 = await authService.processUserData({
 					...fakeUserData,
 					id: 2091,
 				});
-				expectation[1] = {
-					name: fakeUserData.login + '_2091',
-					id: u1.userId,
-				};
+				expectation[2].id = u2.userId;
 
-				// create a 'non-intra' user with the username that would be generated if it was an intra user...
-				const u2 = await userService.save({
+				// create a 'non-intra' user with the username
+				// that would be generated if it was an intra user...
+				const u3 = await userService.save({
 					name: fakeUserData.login + '_2091_4894',
 					password: 'p',
 					is_intra: false,
 				});
-				expectation[2] = {
-					name: fakeUserData.login + '_2091_4894',
-					id: u2.id,
-				};
+				expectation[3].id = u3.id;
 
 				// make a collision on login name + id (user from above)
-				const u3 = await authService.processUserData({
+				// should generate random bytes after name
+				const u4 = await authService.processUserData({
 					login: 'fakeintrauser_2091',
 					id: 4894,
 				});
-				expectation[3] = {
-					name: /fakeintrauser_2091_4897_[a-zA-Z]/,
-				};
+				expectation[4].id = u4.userId;
 
 				const usersMatchingUsername: User[] = await userService.findAll({
 					where: { name: ILike('fakeintrauser%') },
 				});
 
-				expect(usersMatchingUsername).toHaveLength(4);
-				expect(usersMatchingUsername.map((user: User) => user.name)).toEqual(
-					expect.arrayContaining([
-						fakeUserData.login,
-						expect.stringContaining(fakeUserData.login + '_' + fakeUserData.id),
-						expect.stringContaining(fakeUserData.login + '_' + 2091),
-					]),
-				);
+				expect(usersMatchingUsername).toHaveLength(5);
+				const dataToVerify = usersMatchingUsername.map((user: User) => ({
+					name: user.name,
+					id: user.id,
+				}));
+				expect(dataToVerify).toEqual(expectation);
 			});
 		});
 
