@@ -12,7 +12,7 @@ export class Api42Guard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 
 		return bcrypt.compare(
-			this.configService.get('API_REDIR_URI'),
+			this.configService.get('API_STATE'),
 			request.query['state'],
 		);
 	}

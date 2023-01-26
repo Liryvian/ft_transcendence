@@ -37,7 +37,7 @@ export class AuthController {
 	redirectToIntraApi(@Res() response: Response) {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');
-		const state = bcrypt.hashSync(redirect_uri, 9);
+		const state = bcrypt.hashSync(this.configService.get('API_STATE'), 9);
 
 		response.redirect(
 			`https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&state=${state}`,
