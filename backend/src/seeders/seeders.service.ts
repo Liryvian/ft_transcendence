@@ -12,10 +12,7 @@ export class SeederService {
 	private readonly shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
 
 	shouldSeed(): boolean {
-		if (fs.existsSync(this.shouldSeedFilePath)) {
-			return false;
-		}
-		return true;
+		return !fs.existsSync(this.shouldSeedFilePath);
 	}
 
 	finilizeSeeding() {
@@ -23,10 +20,9 @@ export class SeederService {
 	}
 
 	async seedDatabase() {
-		if (!this.shouldSeed()) return;
-
-		await this.animalService.trySeed(seedData.animals());
-
-		this.finilizeSeeding();
+		if (this.shouldSeed()) {
+			await this.animalService.trySeed(seedData.animals());
+			this.finilizeSeeding();
+		}
 	}
 }
