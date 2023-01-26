@@ -16,7 +16,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Response, Request } from 'express';
 import * as bcrypt from 'bcrypt';
-import * as crypto from 'crypto';
 import { UserService } from '../users/user/user.service';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -56,12 +55,20 @@ export class AuthController {
 			state,
 		);
 
+		if (rawTokenData.hasOwnProperty('error')) {
+			throw new BadRequestException(rawTokenData.error_description);
+		}
+
 		const validatedTokenData: IntraTokendataDto =
 			await this.authService.validateIntraTokenData(rawTokenData);
 
 		const userData = await this.authService.getAuthenticatedApiUser(
 			validatedTokenData,
 		);
+
+		if (userData.hasOwnProperty('error')) {
+			throw new BadRequestException(userData.message);
+		}
 
 		const { redirectLocation, userId } = await this.authService.processUserData(
 			userData,

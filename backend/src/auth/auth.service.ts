@@ -55,7 +55,6 @@ export class AuthService {
 			client_id: this.configService.get('API_UID'),
 			client_secret: this.configService.get('API_SECRET'),
 			redirect_uri: this.configService.get('API_REDIR_URI'),
-			state: state,
 		});
 
 		return await fetch('https://api.intra.42.fr/oauth/token', {
