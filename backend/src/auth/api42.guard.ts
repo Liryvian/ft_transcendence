@@ -11,22 +11,9 @@ export class Api42Guard implements CanActivate {
 	): boolean | Promise<boolean> | Observable<boolean> {
 		const request = context.switchToHttp().getRequest();
 
-		console.log('query: ', request.query['state']);
-		// if (
-		// 	!request.hasOwnProperty('cookies') ||
-		// 	!request.cookies.hasOwnProperty('state')
-		// ) {
-		// 	return false;
-		// }
-		// const state = request.cookies['state'];
-		// const state = request.Query['state'];
-		const state = request.query['state'];
-		const state2 = bcrypt.hashSync(this.configService.get('API_REDIR_URI'), 9);
-		const result = bcrypt.compare(
-			state,
+		return bcrypt.compare(
 			this.configService.get('API_REDIR_URI'),
+			request.query['state'],
 		);
-		console.log(result, state, state2);
-		return result;
 	}
 }

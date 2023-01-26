@@ -37,12 +37,7 @@ export class AuthController {
 	redirectToIntraApi(@Res() response: Response) {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');
-
 		const state = bcrypt.hashSync(redirect_uri, 9);
-		console.log({ state });
-		// const state = crypto.pseudoRandomBytes(8).toString('hex');
-
-		// response.cookie('state', state);
 
 		response.redirect(
 			`https://api.intra.42.fr/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&state=${state}`,
@@ -55,10 +50,7 @@ export class AuthController {
 		@Query('code') code: string,
 		@Query('state') state: string,
 		@Res() response: Response,
-		@Req() request: Request,
 	): Promise<any> {
-		// response.clearCookie('state');
-
 		const rawTokenData = await this.authService.exchangeCodeForToken(
 			code,
 			state,

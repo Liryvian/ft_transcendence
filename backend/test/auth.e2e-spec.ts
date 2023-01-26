@@ -78,18 +78,6 @@ describe('Auth (e2e)', () => {
 				);
 			});
 		});
-
-		it.todo('should register a new user on first time intra auth');
-		// mock jest to return objects that are expected
-		// rewrite code to be more modular and testable........
-
-		it.todo(
-			'should check for duplicate usernames on creating new user through api',
-		);
-
-		it.todo('should get the existing user on repeated intra login');
-		// create fake intra user
-		// try to get fake intra user back
 	});
 
 	describe('/login (POST)', () => {

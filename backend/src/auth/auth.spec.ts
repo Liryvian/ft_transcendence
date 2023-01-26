@@ -105,40 +105,15 @@ describe('Auth', () => {
 					is_intra: false,
 				});
 
-				const expectation = [
-					{
-						name: fakeUserData.login,
-						id: u0.identifiers[0].id,
-					},
-					{
-						name: fakeUserData.login + '_22346',
-						id: -1,
-					},
-					{
-						name: fakeUserData.login + '_2091',
-						id: -1,
-					},
-					{
-						name: fakeUserData.login + '_2091_4894',
-						id: -1,
-					},
-					{
-						name: expect.stringMatching(/^fakeintrauser_2091_4894_*/),
-						id: -1,
-					},
-				];
-
 				// create api user with normal user name collision
 				// name should be prefixed with intra id
 				const u1 = await authService.processUserData(fakeUserData);
-				expectation[1].id = u1.userId;
 
 				// create user with same username but different id
 				const u2 = await authService.processUserData({
 					...fakeUserData,
 					id: 2091,
 				});
-				expectation[2].id = u2.userId;
 
 				// create a 'non-intra' user with the username
 				// that would be generated if it was an intra user...
@@ -147,7 +122,6 @@ describe('Auth', () => {
 					password: 'p',
 					is_intra: false,
 				});
-				expectation[3].id = u3.id;
 
 				// make a collision on login name + id (user from above)
 				// should generate random bytes after name
@@ -155,13 +129,38 @@ describe('Auth', () => {
 					login: 'fakeintrauser_2091',
 					id: 4894,
 				});
-				expectation[4].id = u4.userId;
+
+				// create an expected object
+				const expectation = [
+					{
+						name: fakeUserData.login,
+						id: u0.identifiers[0].id,
+					},
+					{
+						name: fakeUserData.login + '_22346',
+						id: u1.userId,
+					},
+					{
+						name: fakeUserData.login + '_2091',
+						id: u2.userId,
+					},
+					{
+						name: fakeUserData.login + '_2091_4894',
+						id: u3.id,
+					},
+					{
+						name: expect.stringMatching(
+							/^fakeintrauser_2091_4894_[a-fA-F0-9]{1,8}$/,
+						),
+						id: u4.userId,
+					},
+				];
 
 				const usersMatchingUsername: User[] = await userService.findAll({
 					where: { name: ILike('fakeintrauser%') },
 				});
-
 				expect(usersMatchingUsername).toHaveLength(5);
+
 				const dataToVerify = usersMatchingUsername.map((user: User) => ({
 					name: user.name,
 					id: user.id,

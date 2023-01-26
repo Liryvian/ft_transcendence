@@ -97,7 +97,6 @@ export class AuthService {
 					const element = nameSuffixOptions[index];
 					try {
 						newUser.name += element;
-						console.log(index, 'trying username: ', newUser.name);
 						const user = await this.userService.save(newUser);
 
 						return Promise.resolve({
@@ -113,34 +112,6 @@ export class AuthService {
 					}
 				}
 				throw new BadRequestException('User could not be created');
-
-				// try {
-				// 	const user = await this.userService.save(newUser);
-
-				// 	return Promise.resolve({
-				// 		redirectLocation: '/?type=new_user',
-				// 		userId: user.id,
-				// 	});
-				// } catch (e) {
-				// 	if (e instanceof QueryFailedError) {
-				// 		newUser.name += '_' + userData.id.toString();
-				// 		const findMatchOnId: User[] = await this.userService.findAll({
-				// 			where: { name: newUser.name },
-				// 		});
-				// 		if (findMatchOnId.length) {
-				// 			newUser.name += crypto.pseudoRandomBytes(10).toString('hex');
-				// 		}
-				// 		const user = await this.userService.save(newUser);
-				// 		return Promise.resolve({
-				// 			redirectLocation: '/?type=new_user',
-				// 			userId: user.id,
-				// 		});
-				// 	} else {
-				// 		throw new BadRequestException(
-				// 			'something went wrong on creating the user',
-				// 		);
-				// 	}
-				// }
 			}
 		}
 	}
