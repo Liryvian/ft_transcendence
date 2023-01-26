@@ -63,7 +63,6 @@ export class UserController {
 				relationshipSource: true,
 			},
 		});
-		(await users).forEach((user) => console.log(user.relationships));
 		return users;
 	}
 
