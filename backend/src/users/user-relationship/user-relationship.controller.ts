@@ -12,7 +12,7 @@ import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
 import { UserRelationship } from './entities/user-relationship.entity';
-import { DataSource } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 import { TypeOrmConfigService } from '../../typeorm/typeorm.service';
 
 @Controller('user-relationships')
@@ -27,16 +27,25 @@ export class UserRelationshipController {
 			createUserRelationshipDto,
 		);
 
-		console.log(repo.source_id, repo.target_id);
+		console.log('source id:', repo.source_id, 'target id:', repo.target_id);
 		const rel = await this.userRelationshipService.findAll({
 			relations: {
 				source_id: true,
 				target_id: true,
 			},
-
 			where: {
-				source_id: { id: repo.source_id.id }, // OR
-				target_id: repo.target_id, // OR
+				source_id: {
+					id: In([
+						createUserRelationshipDto.source_id,
+						createUserRelationshipDto.target_id,
+					]),
+				},
+				target_id: {
+					id: In([
+						createUserRelationshipDto.source_id,
+						createUserRelationshipDto.target_id,
+					]),
+				},
 			},
 		});
 		// const rel1 = await this.userRelationshipService.findOne({
@@ -46,8 +55,10 @@ export class UserRelationshipController {
 		// 	},
 		// 	relations: { source_id: true, target_id: true },
 		// });
-		if (rel) {
-			console.log('Rel: ', rel);
+
+		// rel always exists, since findAll can return an empty array (which is "truthy")
+		if (rel.length > 0) {
+			console.log('Rel:', rel);
 			console.log('\nreturning here!!!\n');
 			return;
 		}
