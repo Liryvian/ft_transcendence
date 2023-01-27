@@ -114,7 +114,8 @@ describe('UserAchievementsController', () => {
 		});
 
 		it('should be possible to have many achievements', async () => {
-			await service.create([
+			// save new achievements
+			await service.save([
 				{
 					user_id: allUsers[0].id,
 					achievement_id: allAchievements[1].id,
@@ -124,12 +125,16 @@ describe('UserAchievementsController', () => {
 					achievement_id: allAchievements[2].id,
 				},
 			]);
+
+			//  get the achievements of a specific user
 			const userWithAllAchievements: Achievement[] = (
 				await userService.findOne({
 					where: { id: allUsers[0].id },
 					relations: { achievements: true },
 				})
 			).achievements;
+
+			// check that it contains an array of achievements
 			expect(userWithAllAchievements).toEqual(
 				expect.arrayContaining([
 					expect.objectContaining({
@@ -150,12 +155,12 @@ describe('UserAchievementsController', () => {
 
 		it('should only be possible to have one of each achievement', async () => {
 			await expect(
-				service.create({
+				service.save({
 					user_id: allUsers[0].id,
 					achievement_id: allAchievements[0],
 				}),
 			).rejects.toThrow('UNIQUE constraint failed: user_achievements.user_id');
-			//  service throws SQL error but controlelr catches it and throw BadRequestException
+			//  service throws SQL error but controller catches it and throw BadRequestException
 		});
 	});
 });
