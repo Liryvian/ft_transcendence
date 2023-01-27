@@ -146,7 +146,7 @@ describe('Auth', () => {
 					},
 					{
 						name: fakeUserData.login + '_2091_4894',
-						id: u3.id,
+						id: u3.identifiers[0].id,
 					},
 					{
 						name: expect.stringMatching(

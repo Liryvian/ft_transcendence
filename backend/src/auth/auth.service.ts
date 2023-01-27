@@ -48,7 +48,7 @@ export class AuthService {
 			.then((userData) => userData);
 	}
 
-	async exchangeCodeForToken(code: string, state: string) {
+	async exchangeCodeForToken(code: string) {
 		const data = new URLSearchParams({
 			grant_type: 'authorization_code',
 			code: code,

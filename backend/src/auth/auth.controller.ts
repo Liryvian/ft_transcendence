@@ -50,10 +50,7 @@ export class AuthController {
 		@Query('state') state: string,
 		@Res() response: Response,
 	): Promise<any> {
-		const rawTokenData = await this.authService.exchangeCodeForToken(
-			code,
-			state,
-		);
+		const rawTokenData = await this.authService.exchangeCodeForToken(code);
 
 		if (rawTokenData.hasOwnProperty('error')) {
 			throw new BadRequestException(rawTokenData.error_description);
