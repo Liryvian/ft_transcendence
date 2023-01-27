@@ -2,7 +2,6 @@ import {
 	Check,
 	Column,
 	Entity,
-	Index,
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
@@ -16,7 +15,6 @@ export enum validRelationships {
 
 @Entity('user_relationships')
 @Check(`"source_id" <> "target_id"`) // 				makes [2,2] impossible
-@Index(['source_id', 'target_id'], { unique: true }) // makes [2,1] unique from [2,1] but not from [1,2]
 export class UserRelationship {
 	@PrimaryGeneratedColumn()
 	id: number;

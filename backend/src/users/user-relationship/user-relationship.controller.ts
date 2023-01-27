@@ -11,45 +11,19 @@ import {
 import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
-import { In } from 'typeorm';
 
 @Controller('user-relationships')
 export class UserRelationshipController {
-	constructor(
-		private readonly userRelationshipService: UserRelationshipService,
-	) {}
+	constructor(private readonly service: UserRelationshipService) {}
 
 	@Post()
-	async create(@Body() createUserRelationshipDto: CreateUserRelationshipDto) {
-		const rel = await this.userRelationshipService.findAll({
-			relations: {
-				source_id: true,
-				target_id: true,
-			},
-			where: {
-				source_id: {
-					id: In([
-						createUserRelationshipDto.source_id,
-						createUserRelationshipDto.target_id,
-					]),
-				},
-				target_id: {
-					id: In([
-						createUserRelationshipDto.source_id,
-						createUserRelationshipDto.target_id,
-					]),
-				},
-			},
-		});
-		if (rel.length > 0) {
-			console.log('Rel:', rel);
-			console.log('\nreturning here!!!\n');
-			return;
+	async create(@Body() realtionshipData: CreateUserRelationshipDto) {
+		if (await this.service.hasExistingRelationship(realtionshipData)) {
+			throw new BadRequestException('Relation already exists between users');
 		}
+
 		try {
-			const newRelationship = await this.userRelationshipService.save(
-				createUserRelationshipDto,
-			);
+			const newRelationship = await this.service.save(realtionshipData);
 			return newRelationship;
 		} catch (e) {
 			throw new BadRequestException(
@@ -60,14 +34,14 @@ export class UserRelationshipController {
 
 	@Get()
 	async findAll() {
-		return this.userRelationshipService.findAll({
+		return this.service.findAll({
 			relations: { source_id: true, target_id: true },
 		});
 	}
 
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
-		return this.userRelationshipService.findOne({
+		return this.service.findOne({
 			where: { id },
 			relations: { source_id: true, target_id: true },
 		});
@@ -78,11 +52,11 @@ export class UserRelationshipController {
 		@Param('id') id: number,
 		@Body() updateUserRelationshipDto: UpdateUserRelationshipDto,
 	) {
-		return this.userRelationshipService.update(id, updateUserRelationshipDto);
+		return this.service.update(id, updateUserRelationshipDto);
 	}
 
 	@Delete(':id')
 	async remove(@Param('id') id: number) {
-		return this.userRelationshipService.remove(id);
+		return this.service.remove(id);
 	}
 }

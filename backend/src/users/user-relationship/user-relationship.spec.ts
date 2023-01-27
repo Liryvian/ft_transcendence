@@ -103,11 +103,45 @@ describe('GameInvite unit tests', () => {
 		});
 	});
 
+	describe('Validation of relationshipRequest', () => {
+		it('shoud return true users already have a relationship source/target', async () => {
+			const testObject: CreateUserRelationshipDto = {
+				source_id: 1,
+				target_id: 2,
+				type: 'friend',
+			};
+			expect(await service.hasExistingRelationship(testObject)).toBe(true);
+		});
+
+		it("should return true when source and target id's are switched around", async () => {
+			const user_id: number = (
+				await userService.save({
+					name: 'Kokkenoster',
+					password: 'K',
+				})
+			).id;
+
+			await controller.create({
+				source_id: user_id,
+				target_id: allUsers[0].id,
+				type: 'blocked',
+			});
+
+			const testObject: CreateUserRelationshipDto = {
+				source_id: 1,
+				target_id: 4,
+				type: 'friend',
+			};
+			// check that new relationship request cannot be mae even if ids are switched around
+			expect(await service.hasExistingRelationship(testObject)).toBe(true);
+		});
+	});
 	describe('CreateUserRelationshipDto', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
 		const testObject = {
-			players: [1, 2],
+			source_id: 1,
+			target_id: 2,
 			type: 'invalidType',
 		};
 
@@ -117,6 +151,12 @@ describe('GameInvite unit tests', () => {
 		};
 
 		it('should throw when invalid type is given', async () => {
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				BadRequestException,
+			);
+		});
+		testObject.target_id = 1;
+		it('should throw when ids are the same', async () => {
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);
