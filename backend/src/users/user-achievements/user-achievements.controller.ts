@@ -21,7 +21,7 @@ export class UserAchievementsController {
 	@Post()
 	async create(@Body() createUserAchievementDto: CreateUserAchievementDto) {
 		try {
-			const newUserAchievement = await this.userAchievementsService.create(
+			const newUserAchievement = await this.userAchievementsService.save(
 				createUserAchievementDto,
 			);
 			return newUserAchievement;
