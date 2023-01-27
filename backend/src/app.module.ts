@@ -15,6 +15,7 @@ import { UserModule } from './users/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { UserRelationshipModule } from './users/user-relationship/user-relationship.module';
+import { AchievementsModule } from './users/achievements/achievements.module';
 
 @Module({
 	imports: [
@@ -31,6 +32,7 @@ import { UserRelationshipModule } from './users/user-relationship/user-relations
 		GameInvitesModule,
 		MatchmakingRequestModule,
 		UserRelationshipModule,
+		AchievementsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
