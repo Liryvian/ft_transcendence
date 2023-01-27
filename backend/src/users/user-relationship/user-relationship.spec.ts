@@ -128,8 +128,8 @@ describe('GameInvite unit tests', () => {
 			});
 
 			const testObject: CreateUserRelationshipDto = {
-				source_id: 1,
-				target_id: 4,
+				source_id: allUsers[0].id,
+				target_id: user_id,
 				type: 'friend',
 			};
 			// check that new relationship request cannot be mae even if ids are switched around
