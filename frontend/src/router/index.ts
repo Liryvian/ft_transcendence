@@ -10,18 +10,46 @@ const router = createRouter({
 			component: HomeView,
 		},
 		{
-			path: '/about',
-			name: 'about',
+			path: '/settings',
+			name: 'settings',
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/AboutView.vue'),
+			component: () => import('../views/SettingsView.vue'),
+		},
+		{
+			path: '/game',
+			name: 'game',
+			// route level code-splitting
+			// this generates a separate chunk (About.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import('../views/GameView.vue'),
+		},
+		{
+			path: '/chat',
+			name: 'chat',
+			// route level code-splitting
+			// this generates a separate chunk (About.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import('../views/ChatView.vue'),
+		},
+		{
+			path: '/profiles',
+			name: 'profiles',
+			// route level code-splitting
+			// this generates a separate chunk (About.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import('../views/ProfilesView.vue'),
+		},
+		{
+			path: '/logout',
+			name: 'logout',
+			// route level code-splitting
+			// this generates a separate chunk (About.[hash].js) for this route
+			// which is lazy-loaded when the route is visited.
+			component: () => import('../views/LogoutView.vue'),
 		},
 	],
-});
-
-router.afterEach((to, from, failure) => {
-	console.log({ to, from, failure });
 });
 
 export default router;
