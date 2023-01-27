@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
+	DeepPartial,
 	DeleteResult,
 	FindManyOptions,
 	FindOneOptions,
@@ -23,8 +24,17 @@ export abstract class AbstractService<T> {
 
 		DOES NOT HANDLE RELATIONSHIPS, USE SAVE METHOD INSTEAD!
 	*/
-	async create(data): Promise<InsertResult> {
+	async insert(data): Promise<InsertResult> {
 		return this.repository.insert(data);
+	}
+
+	/*
+		Creates a new entity of the given type, does not store it in the DB
+	*/
+	create(data?: DeepPartial<T>): T;
+	create(data?: DeepPartial<T>[]): T[];
+	create(data?): T[] | T {
+		return this.repository.create(data);
 	}
 
 	/*

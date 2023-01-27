@@ -26,18 +26,18 @@ export class User {
 	@Column({ default: true })
 	is_intra: boolean;
 
+	@Column({ nullable: true })
+	intra_id: number;
+
+	@Column({ nullable: true })
+	intra_login: string;
+
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	@Exclude()
 	password: string;
-
-	@CreateDateColumn()
-	created_at: Date;
-
-	@UpdateDateColumn()
-	updated_at: Date;
 
 	@Column({ nullable: true })
 	avatar: string;
@@ -90,4 +90,10 @@ export class User {
 		},
 	})
 	chats: Chat[];
+
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 }
