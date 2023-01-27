@@ -92,7 +92,7 @@ describe('UserAchievementsController', () => {
 		});
 
 		it('should be possible for multiple users to have the same achievement', async () => {
-			await service.create([
+			await service.save([
 				{
 					user_id: allUsers[1].id,
 					achievement_id: allAchievements[1].id,
