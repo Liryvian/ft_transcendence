@@ -1,8 +1,9 @@
 import {
+	Check,
 	Column,
 	Entity,
 	JoinColumn,
-	OneToMany,
+	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
@@ -13,13 +14,25 @@ export enum validRelationships {
 }
 
 @Entity('user_relationships')
+@Check(`"source_id" <> "target_id"`) // 				makes [2,2] impossible
 export class UserRelationship {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@OneToMany(() => User, (user: User) => user.connections) //connection
-	@JoinColumn({ name: 'connection' })
-	connection: User[];
+	@ManyToOne(() => User, (user: User) => user.relationshipSource, {
+		eager: true,
+	})
+	@JoinColumn({ name: 'source_id' })
+	source_id: User;
+
+	@ManyToOne(() => User, (user: User) => user.relationshipTarget, {
+		eager: true,
+	})
+	@JoinColumn({ name: 'target_id' })
+	target_id: User;
+
+	// @Column()
+	// specifier_id: number;
 
 	@Column()
 	type: string;

@@ -11,21 +11,19 @@ import {
 import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
-import { UserRelationship } from './entities/user-relationship.entity';
 
 @Controller('user-relationships')
 export class UserRelationshipController {
-	constructor(
-		private readonly userRelationshipService: UserRelationshipService,
-	) {}
+	constructor(private readonly service: UserRelationshipService) {}
 
 	@Post()
-	async create(@Body() createUserRelationshipDto: CreateUserRelationshipDto) {
+	async create(@Body() realtionshipData: CreateUserRelationshipDto) {
+		if (await this.service.hasExistingRelationship(realtionshipData)) {
+			throw new BadRequestException('Relation already exists between users');
+		}
+
 		try {
-			const newRelationship: UserRelationship =
-				await this.userRelationshipService.createAndSave(
-					createUserRelationshipDto,
-				);
+			const newRelationship = await this.service.save(realtionshipData);
 			return newRelationship;
 		} catch (e) {
 			throw new BadRequestException(
@@ -36,16 +34,16 @@ export class UserRelationshipController {
 
 	@Get()
 	async findAll() {
-		return this.userRelationshipService.findAll({
-			relations: { connection: true },
+		return this.service.findAll({
+			relations: { source_id: true, target_id: true },
 		});
 	}
 
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
-		return this.userRelationshipService.findOne({
+		return this.service.findOne({
 			where: { id },
-			relations: { connection: true },
+			relations: { source_id: true, target_id: true },
 		});
 	}
 
@@ -54,11 +52,11 @@ export class UserRelationshipController {
 		@Param('id') id: number,
 		@Body() updateUserRelationshipDto: UpdateUserRelationshipDto,
 	) {
-		return this.userRelationshipService.update(id, updateUserRelationshipDto);
+		return this.service.update(id, updateUserRelationshipDto);
 	}
 
 	@Delete(':id')
 	async remove(@Param('id') id: number) {
-		return this.userRelationshipService.remove(id);
+		return this.service.remove(id);
 	}
 }
