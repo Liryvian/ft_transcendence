@@ -41,7 +41,7 @@ export class UserController {
 		};
 
 		try {
-			const newUser: InsertResult = await this.userService.create(
+			const newUser: InsertResult = await this.userService.insert(
 				createUserDto,
 			);
 			return newUser;
