@@ -18,6 +18,7 @@ import { UserRelationshipModule } from './users/user-relationship/user-relations
 import { AchievementsModule } from './users/achievements/achievements.module';
 import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
 
+
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
