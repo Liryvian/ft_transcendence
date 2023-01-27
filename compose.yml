@@ -1,6 +1,6 @@
 services:
     frontend:
-        container_name: frontend
+        container_name: "frontend_${COMPOSE_PROJECT_NAME:-ts}"
         build:
             context: ./frontend
             dockerfile: Dockerfile
@@ -12,7 +12,7 @@ services:
             - .env
 
     backend:
-        container_name: backend
+        container_name: "backend_${COMPOSE_PROJECT_NAME:-ts}"
         build:
             context: ./backend
             dockerfile: Dockerfile
@@ -29,7 +29,7 @@ services:
             - database
 
     database:
-        container_name: database
+        container_name: "database_${COMPOSE_PROJECT_NAME:-ts}"
         command: postgres -c stats_temp_directory=/tmp
         image: postgres:14
         restart: always
@@ -41,12 +41,12 @@ services:
             - 5432:5432
 
     adminer:
-        container_name: adminer
+        container_name: "adminer_${COMPOSE_PROJECT_NAME:-ts}"
         image: adminer:4.8.1-standalone
         restart: always
 
     nginx:
-        container_name: nginx
+        container_name: "nginx_${COMPOSE_PROJECT_NAME:-ts}"
         image: nginx:1.23-alpine
         restart: unless-stopped
         volumes:
