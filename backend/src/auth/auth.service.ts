@@ -66,8 +66,6 @@ export class AuthService {
 			.then(async (data) => data);
 	}
 
-	async newUserFromIntra(userData: any) {}
-
 	async processUserData(userData: any): Promise<ProcessedUserDto> {
 		try {
 			const user = await this.userService.findOne({
