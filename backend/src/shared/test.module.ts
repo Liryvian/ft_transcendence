@@ -20,6 +20,8 @@ import { UserChatModule } from '../chats/user-chat/user-chat.module';
 import { GameModule } from '../pong/game/game.module';
 import { MessageModule } from '../chats/message/message.module';
 import { RoleModule } from '../chats/role/role.module';
+import { UserRelationship } from '../users/user-relationship/entities/user-relationship.entity';
+import { UserRelationshipModule } from '../users/user-relationship/user-relationship.module';
 
 @Module({
 	imports: [
@@ -34,6 +36,7 @@ import { RoleModule } from '../chats/role/role.module';
 			Role,
 			User,
 			UserChat,
+			UserRelationship,
 		]),
 		SharedModule,
 		AuthModule,
@@ -46,6 +49,7 @@ import { RoleModule } from '../chats/role/role.module';
 		RoleModule,
 		UserChatModule,
 		UserModule,
+		UserRelationshipModule,
 	],
 })
 export class AllTestingModule {}
