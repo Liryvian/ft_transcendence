@@ -86,19 +86,18 @@ export class User {
 	})
 	chats: Chat[];
 
-	// @Exclude()
+	@Exclude()
 	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
 	@JoinColumn({ name: 'relationshipSource' })
 	relationshipSource: UserRelationship[];
 
-	// @Exclude()
+	@Exclude()
 	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target_id)
 	@JoinColumn({ name: 'relationshipTarget' })
 	relationshipTarget: UserRelationship[];
 
 	@Expose()
 	get relationships(): UserRelationship[] {
-		//  if games_as_player_one/two are null set them = []
 		return [
 			...(this.relationshipSource ?? []),
 			...(this.relationshipTarget ?? []),
