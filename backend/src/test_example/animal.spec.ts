@@ -54,6 +54,14 @@ describe('AnimalController', () => {
 					name: expect.any(String),
 					id: expect.any(Number),
 				}),
+				expect.objectContaining({
+					name: expect.any(String),
+					id: expect.any(Number),
+				}),
+				expect.objectContaining({
+					name: expect.any(String),
+					id: expect.any(Number),
+				}),
 			]),
 		);
 	});
