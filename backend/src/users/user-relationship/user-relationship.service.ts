@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AbstractService } from '../../shared/abstract.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UserRelationship } from './entities/user-relationship.entity';
@@ -13,16 +13,30 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 	) {
 		super(repository);
 	}
-
-	async createAndSave(
-		data: CreateUserRelationshipDto,
-	): Promise<UserRelationship> {
-		const newInvite = this.repository.create({
-			connection: data.connection.map((connectionId) => ({
-				id: connectionId,
-			})),
-			type: data.type,
+	//  check that id: a - b and id: b - a doesn't already exists
+	async hasExistingRelationship(
+		relationshipRequest: CreateUserRelationshipDto,
+	): Promise<boolean> {
+		const relationships: UserRelationship[] = await this.findAll({
+			relations: {
+				source_id: true,
+				target_id: true,
+			},
+			where: {
+				source_id: {
+					id: In([
+						relationshipRequest.source_id,
+						relationshipRequest.target_id,
+					]),
+				},
+				target_id: {
+					id: In([
+						relationshipRequest.source_id,
+						relationshipRequest.target_id,
+					]),
+				},
+			},
 		});
-		return this.repository.save(newInvite);
+		return relationships.length > 0;
 	}
 }

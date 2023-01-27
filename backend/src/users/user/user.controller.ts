@@ -41,7 +41,7 @@ export class UserController {
 		};
 
 		try {
-			const newUser: InsertResult = await this.userService.create(
+			const newUser: InsertResult = await this.userService.insert(
 				createUserDto,
 			);
 			return newUser;
@@ -53,16 +53,18 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(): Promise<User[]> {
-		return this.userService.findAll({
+		const users = this.userService.findAll({
 			relations: {
 				matchmaking_request: true,
 				invite: true,
 				games_as_player_one: true,
 				games_as_player_two: true,
-				connections: true,
+				relationshipTarget: true,
+				relationshipSource: true,
 				achievements: true,
 			},
 		});
+		return users;
 	}
 
 	@UseGuards(AuthGuard)
@@ -77,7 +79,9 @@ export class UserController {
 				invite: true,
 				games_as_player_one: true,
 				games_as_player_two: true,
-				connections: true,
+				relationshipSource: true,
+				relationshipTarget: true,
+				achievements: true,
 			},
 		});
 	}

@@ -26,10 +26,12 @@ describe('GameInvite unit tests', () => {
 	const mockUsers: CreateUserDto[] = [
 		{ name: 'Miskruier', password: 'P' },
 		{ name: 'Tor', password: 'T' },
+		{ name: 'Visarend', password: 'V' },
 	];
 
 	const mockConnection: CreateUserRelationshipDto = {
-		connection: [],
+		source_id: null,
+		target_id: null,
 		type: validRelationships.FRIEND,
 	};
 
@@ -46,9 +48,8 @@ describe('GameInvite unit tests', () => {
 
 		await userService.save(mockUsers);
 		allUsers = await userService.findAll();
-		allUsers.forEach((user: User) => {
-			mockConnection.connection.push(user.id);
-		});
+		mockConnection.source_id = allUsers[0].id;
+		mockConnection.target_id = allUsers[1].id;
 	});
 
 	it('should be defined, service and controller', () => {
@@ -56,21 +57,91 @@ describe('GameInvite unit tests', () => {
 		expect(controller).toBeDefined();
 	});
 
-	describe('Creating relationship test', () => {
-		it('should create a relationship between invite and user', async () => {
-			const invite: UserRelationship = await controller.create(mockConnection);
-			expect(invite.connection.length).toBe(2);
-			expect(
-				invite.connection.every((connectId) => connectId instanceof User),
-			).toBeTruthy();
+	describe('Single relationship test', () => {
+		it('should create a relationship between two users', async () => {
+			await service.save(mockConnection);
+			const relationShips: UserRelationship[] = await service.findAll();
+
+			expect(relationShips[0].source_id).toEqual(allUsers[0]);
+			expect(relationShips[0].target_id).toEqual(allUsers[1]);
+			expect(relationShips[0].type).toEqual(validRelationships.FRIEND);
 		});
 	});
 
+	describe('multiple relationships test', () => {
+		it('should create a relationship between two users', async () => {
+			const arrayOfRelationship: CreateUserRelationshipDto[] = [
+				{
+					source_id: allUsers[0].id,
+					target_id: allUsers[2].id,
+					type: validRelationships.FRIEND,
+				},
+				{
+					source_id: allUsers[2].id,
+					target_id: allUsers[1].id,
+					type: validRelationships.FRIEND,
+				},
+			];
+			await service.save(arrayOfRelationship);
+			const relationShips: UserRelationship[] = await service.findAll();
+
+			expect(relationShips.length).toEqual(3);
+			expect(relationShips[1].source_id).toEqual(allUsers[0]);
+			expect(relationShips[1].target_id).toEqual(allUsers[2]);
+			expect(relationShips[0].type).toEqual(validRelationships.FRIEND);
+
+			expect(relationShips[2].source_id).toEqual(allUsers[2]);
+			expect(relationShips[2].target_id).toEqual(allUsers[1]);
+			expect(relationShips[0].type).toEqual(validRelationships.FRIEND);
+
+			const users: User[] = await userService.findAll({
+				relations: { relationshipSource: true, relationshipTarget: true },
+			});
+			users.forEach((user) => {
+				expect(user.relationships.length).toEqual(2);
+			});
+		});
+	});
+
+	describe('Validation of relationshipRequest', () => {
+		it('shoud return true users already have a relationship source/target', async () => {
+			const testObject: CreateUserRelationshipDto = {
+				source_id: 1,
+				target_id: 2,
+				type: 'friend',
+			};
+			expect(await service.hasExistingRelationship(testObject)).toBe(true);
+		});
+
+		it("should return true when source and target id's are switched around", async () => {
+			const user_id: number = (
+				await userService.save({
+					name: 'Kokkenoster',
+					password: 'K',
+				})
+			).id;
+
+			await controller.create({
+				source_id: user_id,
+				target_id: allUsers[0].id,
+				type: 'blocked',
+			});
+
+			const testObject: CreateUserRelationshipDto = {
+				source_id: 1,
+				target_id: 4,
+				type: 'friend',
+			};
+			// check that new relationship request cannot be mae even if ids are switched around
+			expect(await service.hasExistingRelationship(testObject)).toBe(true);
+		});
+	});
 	describe('CreateUserRelationshipDto', () => {
 		const validator = new ValidationPipe(globalValidationPipeOptions());
 
 		const testObject = {
-			players: [1, 2],
+			source_id: 1,
+			target_id: 2,
 			type: 'invalidType',
 		};
 
@@ -80,6 +151,12 @@ describe('GameInvite unit tests', () => {
 		};
 
 		it('should throw when invalid type is given', async () => {
+			await expect(validator.transform(testObject, meta)).rejects.toThrow(
+				BadRequestException,
+			);
+		});
+		testObject.target_id = 1;
+		it('should throw when ids are the same', async () => {
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);

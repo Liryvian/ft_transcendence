@@ -40,10 +40,6 @@ export class User {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => UserRelationship, (r: UserRelationship) => r.connection)
-	@JoinColumn({ name: 'connections' })
-	connections: UserRelationship[];
-
 	@Column({ nullable: true })
 	avatar: string;
 
@@ -107,4 +103,21 @@ export class User {
 		},
 	})
 	achievements: Achievement[];
+	@Exclude()
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
+	@JoinColumn({ name: 'relationshipSource' })
+	relationshipSource: UserRelationship[];
+
+	@Exclude()
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target_id)
+	@JoinColumn({ name: 'relationshipTarget' })
+	relationshipTarget: UserRelationship[];
+
+	@Expose()
+	get relationships(): UserRelationship[] {
+		return [
+			...(this.relationshipSource ?? []),
+			...(this.relationshipTarget ?? []),
+		];
+	}
 }
