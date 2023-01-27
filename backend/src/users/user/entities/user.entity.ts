@@ -103,6 +103,7 @@ export class User {
 			...(this.relationshipTarget ?? []),
 		];
 	}
+
 	@CreateDateColumn()
 	created_at: Date;
 
