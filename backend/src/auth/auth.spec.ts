@@ -63,7 +63,7 @@ describe('Auth', () => {
 
 		describe('for existing user', () => {
 			it('should redirect to dashboard and not update name', async () => {
-				await userService.create({
+				await userService.insert({
 					name: 'not_fakeintrauser',
 					intra_id: fakeUserData.id,
 				});
@@ -99,7 +99,7 @@ describe('Auth', () => {
 
 		describe('when other user with same name as new user intra_login exists', () => {
 			it('should add a suffix to the new users displayname', async () => {
-				const u0 = await userService.create({
+				const u0 = await userService.insert({
 					name: fakeUserData.login,
 					password: 'abc',
 					is_intra: false,
@@ -117,7 +117,7 @@ describe('Auth', () => {
 
 				// create a 'non-intra' user with the username
 				// that would be generated if it was an intra user...
-				const u3 = await userService.save({
+				const u3 = await userService.insert({
 					name: fakeUserData.login + '_2091_4894',
 					password: 'p',
 					is_intra: false,
