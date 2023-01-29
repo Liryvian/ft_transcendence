@@ -1,15 +1,7 @@
 <template>
-	<div class="about">
-		<h1>This is an logout page</h1>
+	<div class="page_box_wrapper">
+		<div class="page_box">
+			<h1>This is a logout page</h1>
+		</div>
 	</div>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-	.about {
-		min-height: 100vh;
-		display: flex;
-		align-items: center;
-	}
-}
-</style>

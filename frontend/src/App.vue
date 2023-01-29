@@ -1,29 +1,51 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
-</script>
-
-<script lang="ts">
-export default {
-	watch: {
-		$route(to, from) {
-			console.log(to, from);
-		},
-	},
-};
+import router from './router';
 </script>
 
 <template>
 	<header>
-		<nav @click="$event.target.classList.toggle('bla')">
-			<div class="nav_balk"></div>
-			<div class="nav_ball"></div>
-			<RouterLink v-bind="$props" class="test" to="/settings"
-				>Settings</RouterLink
-			>
-			<RouterLink to="/game">Game</RouterLink>
-			<RouterLink to="/chat">Chat</RouterLink>
-			<RouterLink to="/profiles">Profiles</RouterLink>
-			<RouterLink to="/logout">Logout</RouterLink>
+		<nav id="mainnav">
+			<!--
+					// NOTE / TODO
+
+					Look into `transitionGroup`
+					Make this a v-for list and move the ball element around
+
+					OR
+
+					Look into 'class based animations'
+					https://vuejs.org/guide/extras/animation.html#class-based-animations
+
+					This might help for any of those two:
+					```js
+					watch: {
+						$route(to, from) {
+							this.activeLink = to.name;
+						},
+					},
+					```
+			-->
+			<RouterLink to="/settings">
+				<div class="nav_ball"></div>
+				Settings
+			</RouterLink>
+			<RouterLink to="/game">
+				<div class="nav_ball"></div>
+				Game
+			</RouterLink>
+			<RouterLink to="/chat">
+				<div class="nav_ball"></div>
+				Chat
+			</RouterLink>
+			<RouterLink to="/profiles">
+				<div class="nav_ball"></div>
+				Profiles
+			</RouterLink>
+			<RouterLink to="/logout">
+				<div class="nav_ball"></div>
+				Logout
+			</RouterLink>
 		</nav>
 	</header>
 
@@ -36,6 +58,7 @@ header {
 	border-bottom: var(--border-width) solid var(--color-border);
 	padding: 0.2em;
 	background-color: var(--color-background-soft);
+	font-size: 0.9em
 }
 
 nav {
@@ -55,60 +78,26 @@ nav {
 	border-radius: 50%;
 	top: 50%;
 	transform: translateY(-50%);
-	left: 38.2%;
+	opacity: 0;
+	left: 0.60em;
 	transition: all 0.1s linear;
 }
 
-.nav_balk {
-	display: block;
-	position: absolute;
-	width: 4px;
-	height: 35px;
-	background-color: black;
-	left: 37.8%;
-	top: 7px;
-	transition: all 0.1s linear;
-}
-
-nav a.router-link-exact-active {
-	/* color: var(--color-text); */
-}
-
-nav a.router-link-exact-active:hover {
-	/* background-color: transparent; */
+nav a.router-link-exact-active .nav_ball {
+	opacity: 1;
 }
 
 nav a {
 	display: inline-block;
-	padding: 1em 2em;
+	padding: 1em 1.6em;
 	text-transform: uppercase;
 	font-style: normal;
+	position: relative;
 }
 
-/* nav a:first-of-type {
-	border: 0;
-} */
-
 @media (min-width: 1024px) {
-	header {
-		/* display: flex; */
-		/* place-items: center; */
-		/* padding-right: calc(var(--section-gap) / 2); */
-	}
-
-	header .wrapper {
-		/* display: flex; */
-		/* place-items: flex-start; */
-		/* flex-wrap: wrap; */
-	}
-
-	nav {
-		/* text-align: left; */
-		/* margin-left: -1rem; */
-		/* font-size: 1rem; */
-
-		/* padding: 1rem 0; */
-		/* margin-top: 1rem; */
+	nav a {
+		padding: 1em 2em;
 	}
 }
 </style>
