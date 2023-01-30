@@ -5,21 +5,16 @@
 	--c-white-soft: #f0f0f0;
 	--c-white-mute: #e0e0e0;
 
+	--c-black-full: #000000;
 	--c-black: #181818;
 	--c-black-soft: #222222;
 	--c-black-mute: #282828;
 
-	--c-indigo: #2c3e50;
-
-	--c-divider-light-1: rgba(60, 60, 60, 0.29);
-	--c-divider-light-2: rgba(60, 60, 60, 0.12);
-	--c-divider-dark-1: rgba(84, 84, 84, 0.65);
-	--c-divider-dark-2: rgba(84, 84, 84, 0.48);
+	--c-divider-dark-1: var(--c-black);
+	--c-divider-dark-2: var(--c-black-soft);
 
 	--c-text-light-1: var(--c-black);
-	--c-text-light-2: rgba(60, 60, 60, 0.66);
-	--c-text-dark-1: var(--c-white);
-	--c-text-dark-2: var(--c-white-mute);
+	--c-text-light-2: var(--c-black-soft);
 }
 
 :root {
@@ -33,35 +28,29 @@
 	--color-heading: var(--c-text-light-1);
 	--color-text: var(--c-text-light-1);
 
-	--section-gap: 10em;
-
 	--border-width: 0.125em;
 
 	--ball-size: 0.75em;
 }
 
+
 /*
-@media (prefers-color-scheme: dark) {
-	:root {
-		--color-background: var(--c-black);
-		--color-background-soft: var(--c-black-soft);
-		--color-background-mute: var(--c-black-mute);
+	from "slightly better box sizing"
+	https: //css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
+*/
 
-		--color-border: var(--c-divider-dark-2);
-		--color-border-hover: var(--c-divider-dark-1);
-
-		--color-heading: var(--c-text-dark-1);
-		--color-text: var(--c-text-dark-2);
-	}
-} */
+html {
+	box-sizing: border-box;
+}
 
 *,
 *::before,
 *::after {
-	box-sizing: border-box;
-	margin: 0;
-	position: relative;
-	font-weight: normal;
+	box-sizing: inherit;
+}
+
+img {
+	box-sizing: content-box;
 }
 
 body {

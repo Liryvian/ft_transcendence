@@ -5,8 +5,7 @@
 	min-height: 100vh;
 }
 
-a,
-.green {
+a {
 	text-decoration: none;
 	color: var(--color-text);
 	font-style: italic;
