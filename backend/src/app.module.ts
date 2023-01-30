@@ -15,6 +15,9 @@ import { UserModule } from './users/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { SeedersModule } from './seeders/seeders.module';
+import { UserRelationshipModule } from './users/user-relationship/user-relationship.module';
+import { AchievementsModule } from './users/achievements/achievements.module';
+import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
 
 @Module({
 	imports: [
@@ -31,6 +34,9 @@ import { SeedersModule } from './seeders/seeders.module';
 		GameInvitesModule,
 		MatchmakingRequestModule,
 		SeedersModule,
+		UserRelationshipModule,
+		AchievementsModule,
+		UserAchievementsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

@@ -17,4 +17,8 @@ export class UpdateUserDto {
 	@ValidateIf((o) => o.hasOwnProperty('new_password'))
 	@IsNotEmpty()
 	password?: string;
+
+	@IsOptional()
+	@IsNotEmpty()
+	achievements?: number;
 }

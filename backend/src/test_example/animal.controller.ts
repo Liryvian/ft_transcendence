@@ -23,7 +23,7 @@ export class AnimalController {
 	@Post()
 	async create(@Body() createAnimalDto: CreateAnimalDto) {
 		try {
-			const insertedAnimal: InsertResult = await this.animalService.create(
+			const insertedAnimal: InsertResult = await this.animalService.insert(
 				createAnimalDto,
 			);
 			return insertedAnimal.identifiers;
@@ -51,7 +51,7 @@ export class AnimalController {
 			return [];
 		}
 		try {
-			const insertedAnimals: InsertResult = await this.animalService.create(
+			const insertedAnimals: InsertResult = await this.animalService.insert(
 				createAnimalDtos,
 			);
 			return insertedAnimals.identifiers;
