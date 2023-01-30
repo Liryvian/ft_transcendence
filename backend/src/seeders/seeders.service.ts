@@ -2,15 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { AnimalService } from '../test_example/animal.service';
 import * as fs from 'fs';
 import seedData from './seed.data';
-import { UserService } from 'src/users/user/user.service';
-import { GameService } from 'src/pong/game/game.service';
+import { UserService } from '../users/user/user.service';
+import { GameService } from '../pong/game/game.service';
 import { assert } from 'console';
-import { Game } from 'src/pong/game/entities/game.entity';
-import { UserController } from 'src/users/user/user.controller';
-import { ChatService } from 'src/chats/chat/chat.service';
-import { Chat } from 'src/chats/chat/entities/chat.entity';
-import { UserChatService } from 'src/chats/user-chat/user-chat.service';
-import { User } from 'src/users/user/entities/user.entity';
+import { Game } from '../pong/game/entities/game.entity';
+import { ChatService } from '../chats/chat/chat.service';
+import { Chat } from '../chats/chat/entities/chat.entity';
+import { User } from '../users/user/entities/user.entity';
 
 @Injectable()
 export class SeederService {
@@ -21,7 +19,6 @@ export class SeederService {
 		private readonly userService: UserService,
 		private readonly gameService: GameService,
 		private readonly chatService: ChatService,
-		private readonly userChatService: UserChatService,
 	) {}
 
 	private readonly shouldSeedFilePath = './dist/seeders/.hasSeeded';
