@@ -24,6 +24,8 @@ import { UserRelationship } from '../users/user-relationship/entities/user-relat
 import { UserRelationshipModule } from '../users/user-relationship/user-relationship.module';
 import { AchievementsModule } from '../users/achievements/achievements.module';
 import { Achievement } from '../users/achievements/entities/achievement.entity';
+import { UserAchievement } from '../users/user-achievements/entities/user-achievement.entity';
+import { UserAchievementsModule } from '../users/user-achievements/user-achievements.module';
 
 @Module({
 	imports: [
@@ -40,6 +42,7 @@ import { Achievement } from '../users/achievements/entities/achievement.entity';
 			UserChat,
 			UserRelationship,
 			Achievement,
+			UserAchievement,
 		]),
 		SharedModule,
 		AuthModule,
@@ -56,6 +59,7 @@ import { Achievement } from '../users/achievements/entities/achievement.entity';
 		UserModule,
 		UserRelationshipModule,
 		AchievementsModule,
+		UserAchievementsModule,
 	],
 })
 export class AllTestingModule {}
