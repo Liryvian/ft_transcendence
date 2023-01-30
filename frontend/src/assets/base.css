@@ -28,11 +28,47 @@
 	--color-heading: var(--c-text-light-1);
 	--color-text: var(--c-text-light-1);
 
-	--border-width: 0.125em;
+	--border-width: 0.0625em;
 
+	--game-border-width: 0.1em;
 	--ball-size: 0.75em;
 }
 
+@font-face {
+	font-family: 'Source Sans Pro';
+	src: url('/fonts/subset-SourceSansPro-Italic.woff2') format('woff2'),
+		url('/fonts/subset-SourceSansPro-Italic.woff') format('woff');
+	font-weight: normal;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	src: url('/fonts/subset-SourceSansPro-BoldItalic.woff2') format('woff2'),
+		url('/fonts/subset-SourceSansPro-BoldItalic.woff') format('woff');
+	font-weight: bold;
+	font-style: italic;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	src: url('/fonts/subset-SourceSansPro-Bold.woff2') format('woff2'),
+		url('/fonts/subset-SourceSansPro-Bold.woff') format('woff');
+	font-weight: bold;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Source Sans Pro';
+	src: url('/fonts/subset-SourceSansPro-Regular.woff2') format('woff2'),
+		url('/fonts/subset-SourceSansPro-Regular.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
 
 /*
 	from "slightly better box sizing"
@@ -58,7 +94,7 @@ body {
 	color: var(--color-text);
 	background: var(--color-background);
 	transition: color 0.5s, background-color 0.5s;
-	font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+	font-family: 'Source Sans Pro', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 		Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
 		sans-serif;
 	text-rendering: optimizeLegibility;

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
-import router from './router';
 </script>
 
 <template>
@@ -74,10 +73,10 @@ nav {
 	position: absolute;
 	width: var(--ball-size);
 	height: var(--ball-size);
-	border: var(--border-width) solid var(--color-border);
+	border: var(--game-border-width) solid var(--color-border);
 	border-radius: 50%;
 	top: 50%;
-	transform: translateY(-50%);
+	transform: translateY(-45%);
 	opacity: 0;
 	left: 0.60em;
 	transition: all 0.1s linear;
