@@ -58,7 +58,7 @@ import { UserAchievementsModule } from '../users/user-achievements/user-achievem
 		UserChatModule,
 
 		UserModule,
-		SeedersModule
+		SeedersModule,
 
 		UserRelationshipModule,
 		AchievementsModule,

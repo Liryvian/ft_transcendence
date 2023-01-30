@@ -78,9 +78,11 @@ export abstract class AbstractService<T> {
 		return this.repository.delete(id);
 	}
 
-	async trySeed(data: any): Promise<InsertResult> {
+	async trySeed(data: any): Promise<T>;
+	async trySeed(data: any): Promise<T[]>;
+	async trySeed(data: any): Promise<T | T[]> {
 		try {
-			const seedResult: InsertResult = await this.create(data);
+			const seedResult: any= await this.save(data);
 			return seedResult;
 		} catch (e) {
 			console.error('Already seeded');
