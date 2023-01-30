@@ -18,8 +18,9 @@
   </template>
 
 <script lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { defineComponent } from "vue";
+import type { Ref } from 'vue'
 
 type User = {
   name: string;
@@ -27,7 +28,7 @@ type User = {
 }
 const defautAvatar: string = '../../public/favicon-32x32.png';
 
-let allUsers: User[] = [];
+let allUsers: Ref<User[]> = ref([]);
   export default defineComponent({
     name: 'ProfileList',
     data(){
@@ -37,7 +38,7 @@ let allUsers: User[] = [];
     {
       const response = await fetch('http://localhost:8080/api/users');
           allUsers = await response.json();
-          allUsers.sort((a: User, b: User) => a.id - b.id)
+          // allUsers.sort((a: User, b: User) => a.id - b.id)
           return {allUsers};
     }, 
     // setup() {

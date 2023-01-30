@@ -93,10 +93,10 @@ describe('userChat e2e', () => {
 		await app.close();
 	});
 
-	describe('/user_chats (GET)', () => {
+	describe('/user-chats (GET)', () => {
 		it('should return OK', () => {
 			return request(app.getHttpServer())
-				.get('/user_chats')
+				.get('/user-chats')
 				.expect(HttpStatus.OK);
 		});
 	});
