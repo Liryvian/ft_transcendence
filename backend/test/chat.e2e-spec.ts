@@ -5,31 +5,15 @@ import { ChatController } from '../src/chats/chat/chat.controller';
 import * as request from 'supertest';
 import { Chat } from '../src/chats/chat/entities/chat.entity';
 import { AllTestingModule } from '../src/shared/test.module';
-import {CreateMessageDto} from "../src/chats/message/dto/create-message.dto";
-import {MessageService} from "../src/chats/message/message.service";
-import {MessageController} from "../src/chats/message/message.controller";
 
 describe('chat e2e', () => {
 	let app: INestApplication;
 	let chatController: ChatController;
-	let messageService: MessageService;
-	let messageController: MessageController;
-
-	const testMessages: CreateMessageDto[] = [
-		{ sender_id: 1, chat_id: 1, content: 'hello' },
-		{ sender_id: 2, chat_id: 1, content: 'world!' },
-	];
 
 	const testChats: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
-
-	const MockChat: CreateChatDto = {
-		name: 'C',
-		visibility: 'Indeed',
-		password: 'C',
-	};
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
