@@ -8,6 +8,9 @@ import {
 import { User } from '../../../users/user/entities/user.entity';
 import { Exclude } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
+import { IsIn } from 'class-validator';
+
+const validVisibility = ['public', 'private'];
 
 @Entity('chats')
 export class Chat {
@@ -23,10 +26,11 @@ export class Chat {
 	})
 	users: User[];
 
+	@IsIn(validVisibility)
 	@Column({ default: 'public' })
 	visibility: string;
 
-	@Column()
+	@Column({ nullable: true })
 	@Exclude()
 	password: string;
 
