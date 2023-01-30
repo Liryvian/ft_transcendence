@@ -8,11 +8,13 @@ import { AnimalEntity } from '../src/test_example/entities/animals.entity';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
 import { AllTestingModule } from '../src/shared/test.module';
 import { AnimalModule } from '../src/test_example/animal.module';
+import { AnimalService } from '../src/test_example/animal.service';
+import seedData from '../src/seeders/seed.data';
 
 describe('AnimalController (e2e)', () => {
 	let app: INestApplication;
 	let animalController: AnimalController;
-	const testAnimals = ['Pikkewyn', 'Renoster', 'Kameelperd'];
+	let animalService: AnimalService;
 
 	const mockAnimal: CreateAnimalDto = { name: 'Ystervarkie' };
 
@@ -26,11 +28,10 @@ describe('AnimalController (e2e)', () => {
 		await app.init();
 
 		animalController = moduleFixture.get<AnimalController>(AnimalController);
+		animalService = moduleFixture.get<AnimalService>(AnimalService);
 
 		// seed db with animals for each testcase
-		for (const animal in testAnimals) {
-			await animalController.create({ name: testAnimals[animal] });
-		}
+		await animalService.trySeed(seedData.animals());
 	});
 
 	afterAll(async () => {
@@ -50,19 +51,19 @@ describe('AnimalController (e2e)', () => {
 
 	describe('/test/:id (GET)', () => {
 		it('should return an animal', () => {
-			const animalId: number = 3;
+			const animalId = 3;
+			const expected: string = seedData.animals()[2].name;
 			return request(app.getHttpServer())
 				.get('/test/' + animalId)
 				.expect(HttpStatus.OK)
 				.expect((response: request.Response) => {
 					const { id, name } = response.body;
-					expect(typeof id).toBe('number'),
-						expect(name).toEqual(testAnimals[2]);
+					expect(typeof id).toBe('number'), expect(name).toEqual(expected);
 				});
 		});
 
 		it('should return a 404 for non-existant entry', () => {
-			const nonExistantId: number = 10000;
+			const nonExistantId = 10000;
 
 			return request(app.getHttpServer())
 				.get('/test/' + nonExistantId)
@@ -115,14 +116,14 @@ describe('AnimalController (e2e)', () => {
 
 	describe('/test/:id  (DELETE)', () => {
 		it('should delete an animal', () => {
-			const id: number = 1;
+			const id = 1;
 			return request(app.getHttpServer())
 				.delete('/test/' + id)
 				.expect(HttpStatus.OK);
 		});
 
 		it('should still return OK even if non-existant entry', () => {
-			const id: number = 10000;
+			const id = 10000;
 			return request(app.getHttpServer())
 				.delete('/test/' + id)
 				.expect(HttpStatus.OK);
@@ -131,7 +132,7 @@ describe('AnimalController (e2e)', () => {
 
 	describe('/test/:id (PATCH)', () => {
 		it('update animal with id 2', () => {
-			const ValidId: number = 2;
+			const ValidId = 2;
 			const updateData: UpdateAnimalDto = { name: 'Nagapie' };
 			return request(app.getHttpServer())
 				.patch('/test/' + ValidId)
@@ -145,7 +146,7 @@ describe('AnimalController (e2e)', () => {
 		});
 
 		it('should return not found if non-existant', () => {
-			const nonExistantId: number = 10000;
+			const nonExistantId = 10000;
 			const updateData: UpdateAnimalDto = { name: 'Nagapie' };
 			return request(app.getHttpServer())
 				.patch('/test/' + nonExistantId)

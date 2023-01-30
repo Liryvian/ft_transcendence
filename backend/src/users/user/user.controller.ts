@@ -58,9 +58,10 @@ export class UserController {
 				matchmaking_request: true,
 				invite: true,
 				games_as_player_one: true,
-				relationshipTarget: true,
 				games_as_player_two: true,
+				relationshipTarget: true,
 				relationshipSource: true,
+				achievements: true,
 			},
 		});
 		return users;
@@ -80,6 +81,7 @@ export class UserController {
 				games_as_player_two: true,
 				relationshipSource: true,
 				relationshipTarget: true,
+				achievements: true,
 			},
 		});
 	}
