@@ -9,16 +9,11 @@ import { AllTestingModule } from '../src/shared/test.module';
 describe('chat e2e', () => {
 	let app: INestApplication;
 	let chatController: ChatController;
+
 	const testChats: CreateChatDto[] = [
 		{ name: 'A', visibility: 'Not', password: 'A' },
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
-
-	const MockChat: CreateChatDto = {
-		name: 'C',
-		visibility: 'Indeed',
-		password: 'C',
-	};
 
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
