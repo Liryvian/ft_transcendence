@@ -1,7 +1,6 @@
 import {
 	Column,
 	Entity,
-	JoinColumn,
 	ManyToMany,
 	OneToMany,
 	PrimaryGeneratedColumn,
@@ -27,7 +26,7 @@ export class Chat {
 	@Column({ default: 'public' })
 	visibility: string;
 
-	@Column()
+	@Column({ nullable: true })
 	@Exclude()
 	password: string;
 
