@@ -26,11 +26,46 @@ a {
 	position: relative;
 	display: flex;
 	justify-content: center;
+	align-content: flex-start;
 	flex-wrap: wrap;
 }
 
 p {
 	margin-bottom: 1em;
+}
+
+/* assuming h1 usage within flexbox scope */
+h1 {
+	flex-basis: 100%;
+	text-align: center;
+}
+
+.form_group {
+
+}
+
+.field_group {
+	flex-basis: 100%;
+	margin-bottom: 0.7em;
+}
+
+.field_group label {
+	display: block;
+	padding: 0.2em 0 0.3em;
+}
+
+.field_group input {
+	border-width: var(--border-width) var(--border-width) var(--border-width) var(--paddle-width);
+	border-color: var(--color-border);
+	padding: 0.7em 1em;
+}
+
+.field_group input:disabled {
+	border-top-width: 0;
+	border-bottom-width: 0;
+	border-right-width: 0;
+	color: var(--c-black-mute);
+	font-style: italic;
 }
 
 @media (hover: hover) {

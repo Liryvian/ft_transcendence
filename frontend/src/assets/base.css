@@ -30,8 +30,10 @@
 
 	--border-width: 0.0625em;
 
-	--game-border-width: 0.1em;
+	--ball-line: 0.1em;
 	--ball-size: 0.75em;
+
+	--paddle-width: .38em
 }
 
 @font-face {
