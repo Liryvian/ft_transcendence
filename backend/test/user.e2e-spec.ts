@@ -31,7 +31,7 @@ describe('User (e2e)', () => {
 		userService = moduleFixture.get<UserService>(UserService);
 
 		await userService
-			.create([
+			.insert([
 				{ name: 'n1', password: 'p1' },
 				{ name: 'n2', password: 'p2' },
 			])

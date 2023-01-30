@@ -18,7 +18,7 @@ export class UserChatController {
 	@Post()
 	async create(@Body() createUserChatDto: CreateUserChatDto) {
 		try {
-			return await this.userChatService.create(createUserChatDto);
+			return await this.userChatService.insert(createUserChatDto);
 		} catch {
 			throw new BadRequestException('user can only be in a chat once');
 		}

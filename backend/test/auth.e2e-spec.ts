@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InsertResult } from 'typeorm';
 import * as cookieParser from 'cookie-parser';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
+import { ConfigService } from '@nestjs/config';
 
 import { User } from '../src/users/user/entities/user.entity';
 import { UserController } from '../src/users/user/user.controller';
@@ -16,6 +17,7 @@ describe('Auth (e2e)', () => {
 	let userController: UserController;
 	let userService: UserService;
 	let jwtService: JwtService;
+	let configService: ConfigService;
 
 	let users = [
 		{ name: 'u1', password: 'p1', id: -1 },
@@ -36,6 +38,7 @@ describe('Auth (e2e)', () => {
 		userController = moduleFixture.get<UserController>(UserController);
 		userService = moduleFixture.get<UserService>(UserService);
 		jwtService = moduleFixture.get<JwtService>(JwtService);
+		configService = moduleFixture.get<ConfigService>(ConfigService);
 
 		await Promise.all(
 			users.map(async (usr, i) => {
@@ -58,6 +61,23 @@ describe('Auth (e2e)', () => {
 
 		userService.remove(allUsers.map((obj) => obj.id));
 		app.close();
+	});
+
+	describe('intra api register/login flow', () => {
+		describe('Redirect to intra authentication page, /auth/authenticate/ (GET)', () => {
+			it('should redirect to intra authentication page', async () => {
+				const res = await request(app.getHttpServer()).get(
+					'/auth/authenticate/',
+				);
+				expect(res.headers.location).toMatch(
+					`https://api.intra.42.fr/oauth/authorize?client_id=${configService.get(
+						'API_UID',
+					)}&redirect_uri=${configService.get(
+						'API_REDIR_URI',
+					)}&response_type=code`,
+				);
+			});
+		});
 	});
 
 	describe('/login (POST)', () => {

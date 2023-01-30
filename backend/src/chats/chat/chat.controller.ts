@@ -20,7 +20,7 @@ export class ChatController {
 	@Post()
 	create(@Body() createChatDto: CreateChatDto) {
 		// use bcrypt to hash passwords!
-		return this.chatService.create(createChatDto);
+		return this.chatService.insert(createChatDto);
 	}
 
 	@Get()

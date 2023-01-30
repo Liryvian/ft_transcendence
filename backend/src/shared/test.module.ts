@@ -20,6 +20,13 @@ import { UserChatModule } from '../chats/user-chat/user-chat.module';
 import { GameModule } from '../pong/game/game.module';
 import { MessageModule } from '../chats/message/message.module';
 import { RoleModule } from '../chats/role/role.module';
+import { SeedersModule } from '../seeders/seeders.module';
+import { UserRelationship } from '../users/user-relationship/entities/user-relationship.entity';
+import { UserRelationshipModule } from '../users/user-relationship/user-relationship.module';
+import { AchievementsModule } from '../users/achievements/achievements.module';
+import { Achievement } from '../users/achievements/entities/achievement.entity';
+import { UserAchievement } from '../users/user-achievements/entities/user-achievement.entity';
+import { UserAchievementsModule } from '../users/user-achievements/user-achievements.module';
 
 @Module({
 	imports: [
@@ -34,18 +41,28 @@ import { RoleModule } from '../chats/role/role.module';
 			Role,
 			User,
 			UserChat,
+			UserRelationship,
+			Achievement,
+			UserAchievement,
 		]),
 		SharedModule,
 		AuthModule,
 
-		ChatModule,
 		GameModule,
 		GameInvitesModule,
 		MatchmakingRequestModule,
+
+		ChatModule,
 		MessageModule,
 		RoleModule,
 		UserChatModule,
+
 		UserModule,
+		SeedersModule,
+
+		UserRelationshipModule,
+		AchievementsModule,
+		UserAchievementsModule,
 	],
 })
 export class AllTestingModule {}

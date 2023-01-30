@@ -14,9 +14,10 @@ import {
 import { Exclude, Expose } from 'class-transformer';
 import { MatchmakingRequest } from '../../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Game } from '../../../pong/game/entities/game.entity';
-import { IsOptional } from 'class-validator';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
+import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
+import { Achievement } from '../../achievements/entities/achievement.entity';
 
 @Entity('users')
 export class User {
@@ -26,23 +27,22 @@ export class User {
 	@Column({ default: true })
 	is_intra: boolean;
 
+	@Column({ nullable: true })
+	intra_id: number;
+
+	@Column({ nullable: true })
+	intra_login: string;
+
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@Column()
+	@Column({ nullable: true })
 	@Exclude()
 	password: string;
-
-	@CreateDateColumn()
-	created_at: Date;
-
-	@UpdateDateColumn()
-	updated_at: Date;
 
 	@Column({ nullable: true })
 	avatar: string;
 
-	@IsOptional()
 	@OneToOne(
 		() => MatchmakingRequest,
 		(matchRequest: MatchmakingRequest) => matchRequest.user,
@@ -50,17 +50,14 @@ export class User {
 	matchmaking_request: MatchmakingRequest;
 
 	@Exclude()
-	@IsOptional()
 	@OneToMany(() => Game, (game: Game) => game.player_one)
 	games_as_player_one: Game[];
 
 	@Exclude()
-	@IsOptional()
 	@OneToMany(() => Game, (game: Game) => game.player_two)
 	games_as_player_two: Game[];
 
 	@Expose()
-	@IsOptional()
 	get games(): Game[] {
 		//  if games_as_player_one/two are null set them = []
 		return [
@@ -69,7 +66,6 @@ export class User {
 		];
 	}
 
-	@IsOptional()
 	@ManyToOne(() => GameInvite, (invite) => invite.players)
 	@JoinColumn({ name: 'invite' })
 	invite: GameInvite;
@@ -90,4 +86,44 @@ export class User {
 		},
 	})
 	chats: Chat[];
+
+	@ManyToMany(() => Achievement, {
+		onDelete: 'NO ACTION',
+		onUpdate: 'CASCADE',
+	})
+	@JoinTable({
+		name: 'user_achievements',
+		joinColumn: {
+			name: 'user_id',
+			referencedColumnName: 'id',
+		},
+		inverseJoinColumn: {
+			name: 'achievement_id',
+			referencedColumnName: 'id',
+		},
+	})
+	achievements: Achievement[];
+	@Exclude()
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
+	@JoinColumn({ name: 'relationshipSource' })
+	relationshipSource: UserRelationship[];
+
+	@Exclude()
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target_id)
+	@JoinColumn({ name: 'relationshipTarget' })
+	relationshipTarget: UserRelationship[];
+
+	@Expose()
+	get relationships(): UserRelationship[] {
+		return [
+			...(this.relationshipSource ?? []),
+			...(this.relationshipTarget ?? []),
+		];
+	}
+
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 }

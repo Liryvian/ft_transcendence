@@ -38,7 +38,7 @@ describe('Game unit tests', () => {
 		controller = module.get<GameController>(GameController);
 		userService = module.get<UserService>(UserService);
 
-		await userService.create(relationTestUsers).then((res: InsertResult) => {
+		await userService.insert(relationTestUsers).then((res: InsertResult) => {
 			relationTestUsersIds = res.identifiers.map((obj) => obj.id);
 			return res;
 		});
