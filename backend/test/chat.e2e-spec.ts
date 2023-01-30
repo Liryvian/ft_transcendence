@@ -15,12 +15,6 @@ describe('chat e2e', () => {
 		{ name: 'B', visibility: 'Yes', password: 'B' },
 	];
 
-	const MockChat: CreateChatDto = {
-		name: 'C',
-		visibility: 'Indeed',
-		password: 'C',
-	};
-
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
