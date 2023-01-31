@@ -20,7 +20,7 @@ describe('Permissions', () => {
 
 	it('should have unique constraint on permission name', async () => {
 		expect(service.save([{ name: 'name' }, { name: 'name' }])).rejects.toThrow(
-			'unique constraint',
+			'UNIQUE constraint failed',
 		);
 	});
 });
