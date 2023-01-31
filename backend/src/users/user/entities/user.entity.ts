@@ -103,6 +103,7 @@ export class User {
 		},
 	})
 	achievements: Achievement[];
+
 	@Exclude()
 	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
 	@JoinColumn({ name: 'relationshipSource' })
