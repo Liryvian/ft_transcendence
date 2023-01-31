@@ -9,7 +9,7 @@ export class SeederService {
 
 	constructor(private readonly animalService: AnimalService) {}
 
-	private readonly shouldSeedFilePath = './dist/seeders/.hasSeeded';
+	private readonly shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
 
 	shouldSeed(): boolean {
 		return fs.existsSync(this.shouldSeedFilePath) === false;
