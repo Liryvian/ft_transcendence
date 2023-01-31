@@ -100,7 +100,6 @@ export default defineComponent({
 
     async unBlockUser(user: User) {
       const rel = this.getExistingRelationship(user.id);
-
       if (rel.length > 0)
       {
         await patchRequest(`user-relationships/${rel[0].id}`, {type: "none"})
@@ -111,13 +110,11 @@ export default defineComponent({
     },
 
      isFriend(id: number): boolean {
-      return this.me.relationships.filter((rel) => (rel.source_id.id === id || rel.target_id.id === id) &&
-        (rel.target_id.id === this.me.id || rel.source_id.id === this.me.id)).length > 0;
+      return this.getExistingRelationship(id).length > 0;
     },
 
     async removeFriend(id: number) {
-      const rel: any[] = this.me.relationships.filter((rel) => (rel.source_id.id === id || rel.target_id.id === id) &&
-        (rel.target_id.id === this.me.id || rel.source_id.id === this.me.id));
+      const rel: any[] = this.getExistingRelationship(id);
 
       await deleteRequest(`user-relationships/${rel[0].id}`);
       console.log("removing: ", JSON.stringify(rel[0], null, 2));
@@ -125,8 +122,7 @@ export default defineComponent({
 
     isBlocked(id: number)
     {
-      const rel: any[] = this.me.relationships.filter((rel) => (rel.source_id.id === id || rel.target_id.id === id) &&
-        (rel.target_id.id === this.me.id || rel.source_id.id === this.me.id));
+      const rel: any[] = this.getExistingRelationship(id);
       if (rel.length > 0 && rel[0].type === 'blocked')
       {
         return true;
