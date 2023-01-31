@@ -104,8 +104,6 @@ export class SeederService {
 				type: validRelationships.BLOCKED,
 			},
 		];
-		console.log(allUsers);
-		console.log(rel);
 		await this.userRelService.save(rel);
 	}
 
