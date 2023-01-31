@@ -34,6 +34,12 @@ type User = {
   relationships: any[];
 }
 
+type FriendRequest = {
+  source_id: number;
+  target_id: number;
+  type: string;
+}
+
 interface DataObject {
   allUsers: User[],
   me: User,
@@ -60,7 +66,13 @@ export default defineComponent({
     createChat(user: User) {
       console.log(`Starting chat with ${user.name}`);
     },
-    addFriend(user: User) {
+    async addFriend(user: User) {
+      const friendRequest: FriendRequest = {
+        source_id: this.me.id,
+        target_id: user.id,
+        type: "friend"
+      }
+      await this.axios.post("http://localhost:8080/api/user-relationships", friendRequest);
       console.log(`Adding ${user.name} as a friend`);
     },
     blockUser(user: User) {
