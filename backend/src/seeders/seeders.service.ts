@@ -9,6 +9,9 @@ import { Game } from '../pong/game/entities/game.entity';
 import { ChatService } from '../chats/chat/chat.service';
 import { Chat } from '../chats/chat/entities/chat.entity';
 import { User } from '../users/user/entities/user.entity';
+import { UserRelationshipService } from '../users/user-relationship/user-relationship.service';
+import { CreateUserRelationshipDto } from '../users/user-relationship/dto/create-user-relationship.dto';
+import { validRelationships } from '../users/user-relationship/entities/user-relationship.entity';
 
 @Injectable()
 export class SeederService {
@@ -19,9 +22,10 @@ export class SeederService {
 		private readonly userService: UserService,
 		private readonly gameService: GameService,
 		private readonly chatService: ChatService,
+		private readonly userRelService: UserRelationshipService,
 	) {}
 
-	private readonly shouldSeedFilePath = './dist/seeders/.hasSeeded';
+	private readonly shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
 
 	shouldSeed(): boolean {
 		return fs.existsSync(this.shouldSeedFilePath) === false;
@@ -80,12 +84,38 @@ export class SeederService {
 		await this.chatService.save(allChats);
 	}
 
+	async seedUserRelationships() {
+		const allUsers: User[] = await this.userService.findAll({
+			where: [
+				{ name: 'flamink' },
+				{ name: 'vaalboskat' },
+				{ name: 'renoster' },
+			],
+		});
+		const rel: CreateUserRelationshipDto[] = [
+			{
+				source_id: allUsers[0].id,
+				target_id: allUsers[1].id,
+				type: validRelationships.FRIEND,
+			},
+			{
+				source_id: allUsers[0].id,
+				target_id: allUsers[2].id,
+				type: validRelationships.BLOCKED,
+			},
+		];
+		console.log(allUsers);
+		console.log(rel);
+		await this.userRelService.save(rel);
+	}
+
 	async seedDatabase() {
 		if (this.shouldSeed()) {
 			await this.seedUsers();
 			await this.seedGames();
 			await this.seedChats();
 			await this.seedUserChats();
+			await this.seedUserRelationships();
 			await this.animalService.trySeed(seedData.animals());
 			this.finilizeSeeding();
 		}
