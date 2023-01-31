@@ -9,6 +9,7 @@ import {
 import { User } from '../../user/entities/user.entity';
 
 export enum validRelationships {
+	NONE = 'none',
 	FRIEND = 'friend',
 	BLOCKED = 'blocked',
 }
