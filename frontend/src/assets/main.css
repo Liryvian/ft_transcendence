@@ -23,8 +23,9 @@ a {
 
 .page_box {
 	display: flex;
-	justify-content: center;
-	align-content: flex-start;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-content: center;
 	flex-wrap: wrap;
 	padding: 1em 2em;
 	overflow: scroll;
@@ -63,7 +64,6 @@ p {
 
 /* assuming h1 usage within flexbox scope */
 h1 {
-	flex-basis: 100%;
 	text-align: center;
 }
 
@@ -94,6 +94,46 @@ h1 {
 	color: var(--c-black-mute);
 	font-style: italic;
 }
+
+.c_media {
+	--media-size-w: 4em;
+	--media-size-h: var(--media-size-w);
+	display: flex;
+	align-items: center;
+	margin-bottom: 0.7em;
+}
+
+.c_media__asset {
+	margin-right: 1.2em;
+}
+
+.c_asset__circle {
+	border-radius: 50%;
+	width: var(--media-size-w);
+	height: var(--media-size-h);
+	overflow: hidden;
+	position: relative;
+}
+
+.c_asset__circle::after {
+	content: "";
+	padding-top: 100%;
+	display: block;
+	background-color: grey;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: -1;
+}
+
+.c_asset__circle img {
+	max-width: 100%;
+	max-height: 100%;
+	display: block;
+}
+
 
 @media (hover: hover) {
 	a:hover {

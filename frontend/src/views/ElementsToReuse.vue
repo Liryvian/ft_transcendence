@@ -23,6 +23,15 @@
                 </div>
             </div>
 
+            <div class="c_media">
+                <div class="c_media__asset c_asset__circle">
+                    <img src="/test-profile.png" alt="">
+                </div>
+                <div class="c_media__content">
+                    some piece of text
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
