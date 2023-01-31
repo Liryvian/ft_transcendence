@@ -12,22 +12,20 @@ a {
 	transition: 0.4s;
 }
 
-.page_box_wrapper {
-	margin: 2em auto 0 auto;
-	padding: 0 10vw;
-	position: relative;
-}
-
 .page_box {
-	border: 1px solid black;
-	height: 70vh;
-	overflow: scroll;
-	padding: 1em 2em;
 	position: relative;
 	display: flex;
 	justify-content: center;
 	align-content: flex-start;
 	flex-wrap: wrap;
+	aspect-ratio: 5/4;
+	max-width: 90vw;
+	margin-top: 2em;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 1em 2em;
+	overflow: scroll;
+	border: 1px solid black;
 }
 
 p {
@@ -76,19 +74,20 @@ h1 {
 
 @media (min-width: 600px) {
 	.page_box {
-		height: 80vh;
+		max-height: 80vh;
 	}
 }
 
 @media (min-width: 900px) {
 	.page_box {
 		margin-top: 3em;
-		height: 80vh;
+		max-height: 80vh;
 	}
 }
 
 @media (min-width: 600px) and (max-height: 700px) {
 	.page_box {
-		height: 75vh;
+		margin-top: 2em;
+		max-height: 70vh;
 	}
 }
