@@ -12,14 +12,18 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
+import * as bcrypt from 'bcrypt';
 
 @Controller('chats')
 export class ChatController {
 	constructor(private readonly chatService: ChatService) {}
 
 	@Post()
-	create(@Body() createChatDto: CreateChatDto) {
-		// use bcrypt to hash passwords!
+	async create(@Body() createChatDto: CreateChatDto) {
+		if (createChatDto.hasOwnProperty('password')) {
+			const hashed = await bcrypt.hash(createChatDto.password, 11);
+			createChatDto.password = hashed;
+		}
 		return this.chatService.insert(createChatDto);
 	}
 
@@ -40,8 +44,9 @@ export class ChatController {
 				where: { id },
 			});
 			// check userRole
-			// use bcrypt to hash passwords!
-			if (current_Chat.password !== updateChatDto.password) {
+			if (
+				!(await bcrypt.compare(current_Chat.password, updateChatDto.password))
+			) {
 				throw new BadRequestException('wrong password');
 			}
 			updateChatDto.password = updateChatDto.new_password;
