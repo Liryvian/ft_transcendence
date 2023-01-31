@@ -1,85 +1,102 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+	<header>
+		<nav id="mainnav">
+			<!--
+					// NOTE / TODO
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+					Look into `transitionGroup`
+					Make this a v-for list and move the ball element around
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+					OR
 
-  <RouterView />
+					Look into 'class based animations'
+					https://vuejs.org/guide/extras/animation.html#class-based-animations
+
+					This might help for any of those two:
+					```js
+					watch: {
+						$route(to, from) {
+							this.activeLink = to.name;
+						},
+					},
+					```
+			-->
+			<RouterLink to="/settings">
+				<div class="nav_ball"></div>
+				Settings
+			</RouterLink>
+			<RouterLink to="/game">
+				<div class="nav_ball"></div>
+				Game
+			</RouterLink>
+			<RouterLink to="/chat">
+				<div class="nav_ball"></div>
+				Chat
+			</RouterLink>
+			<RouterLink to="/profiles">
+				<div class="nav_ball"></div>
+				Profiles
+			</RouterLink>
+			<RouterLink to="/logout">
+				<div class="nav_ball"></div>
+				Logout
+			</RouterLink>
+		</nav>
+	</header>
+
+	<RouterView />
 </template>
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+	width: 100vw;
+	border-bottom: var(--border-width) solid var(--color-border);
+	padding: 0.2em;
+	background-color: var(--color-background-soft);
+	font-size: 0.9em
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	position: relative;
+	color: var(--color-text);
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.nav_ball {
+	display: block;
+	position: absolute;
+	width: var(--ball-size);
+	height: var(--ball-size);
+	border: var(--game-border-width) solid var(--color-border);
+	border-radius: 50%;
+	top: 50%;
+	transform: translateY(-45%);
+	opacity: 0;
+	left: 0.60em;
+	transition: all 0.1s linear;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+nav a.router-link-exact-active .nav_ball {
+	opacity: 1;
 }
 
 nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
+	display: inline-block;
+	padding: 1em 1.6em;
+	text-transform: uppercase;
+	font-style: normal;
+	position: relative;
 }
 
 @media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+	nav a {
+		padding: 1em 2em;
+	}
 }
 </style>
