@@ -18,14 +18,12 @@ import { SeedersModule } from './seeders/seeders.module';
 import { UserRelationshipModule } from './users/user-relationship/user-relationship.module';
 import { AchievementsModule } from './users/achievements/achievements.module';
 import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
-import { Chat_User_Permissions } from './chats/chat_user_permission/entities/chat_user_permission.entity';
-import { ChatPermission } from './chats/permissions/entities/chatpermissions.entity';
+import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-		TypeOrmModule.forFeature([Chat_User_Permissions, ChatPermission]),
 		AuthModule,
 		SharedModule,
 		ChatModule,
@@ -33,7 +31,7 @@ import { ChatPermission } from './chats/permissions/entities/chatpermissions.ent
 		UserModule,
 		RoleModule,
 		GameModule,
-		// UserChatModule,
+		ChatUserPermissionModule,
 		GameInvitesModule,
 		MatchmakingRequestModule,
 		SeedersModule,

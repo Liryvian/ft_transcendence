@@ -6,11 +6,11 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../../users/user/entities/user.entity';
-import { ChatPermission } from '../../permissions/entities/chatpermissions.entity';
-import { Chat } from '../../../chats/chat/entities/chat.entity';
+import { Chat } from '../../chat/entities/chat.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity()
-export class Chat_User_Permissions {
+export class ChatUserPermission {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -31,7 +31,7 @@ export class Chat_User_Permissions {
 	@Column()
 	permission_id: number;
 
-	@ManyToOne(() => ChatPermission, (chatpermission) => chatpermission.id)
+	@ManyToOne(() => Permission, (permission) => permission.id)
 	@JoinColumn({ name: 'permission_id' })
-	permissions: ChatPermission[];
+	permissions: Permission[];
 }

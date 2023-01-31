@@ -15,19 +15,18 @@ import { Exclude, Expose } from 'class-transformer';
 import { MatchmakingRequest } from '../../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Game } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
-import { Chat } from '../../../chats/chat/entities/chat.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
-import { Chat_User_Permissions } from '../../../chats/chat_user_permission/entities/chat_user_permission.entity';
-import { IsArray, IsNumber, IsString } from 'class-validator';
-import { ChatPermission } from '../../../chats/permissions/entities/chatpermissions.entity';
+import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import { IsArray, IsNumber } from 'class-validator';
+import { Permission } from '../../../chats/permissions/entities/permission.entity';
 
 export class UserInChat {
 	@IsNumber()
 	chat_id: number;
 
 	@IsArray()
-	permissions: ChatPermission[];
+	permissions: Permission[];
 }
 
 @Entity('users')
@@ -81,23 +80,6 @@ export class User {
 	@JoinColumn({ name: 'invite' })
 	invite: GameInvite;
 
-	// @ManyToMany(() => Chat, (chat) => chat.users, {
-	// 	onDelete: 'NO ACTION',
-	// 	onUpdate: 'CASCADE',
-	// })
-	// @JoinTable({
-	// 	name: 'user_chats',
-	// 	joinColumn: {
-	// 		name: 'user_id',
-	// 		referencedColumnName: 'id',
-	// 	},
-	// 	inverseJoinColumn: {
-	// 		name: 'chat_id',
-	// 		referencedColumnName: 'id',
-	// 	},
-	// })
-	// chats: Chat[];
-
 	@ManyToMany(() => Achievement, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'CASCADE',
@@ -134,17 +116,17 @@ export class User {
 	}
 
 	@Exclude()
-	@OneToMany(() => Chat_User_Permissions, (cup) => cup.users)
-	chatuser: Chat_User_Permissions[];
+	@OneToMany(() => ChatUserPermission, (cup) => cup.users)
+	chatuser: ChatUserPermission[];
 
 	@Expose()
-	get chat(): UserInChat[] {
+	get chats(): UserInChat[] {
 		return this.chatuser.reduce((acc, curr) => {
-			const target = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
-			if (target === -1) {
+			const index = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
+			if (index === -1) {
 				acc.push({ chat_id: curr.chat_id, permissions: [curr.permissions] });
 			} else {
-				acc[target].permissions.push(curr.permissions);
+				acc[index].permissions.push(curr.permissions);
 			}
 			return acc;
 		}, []);

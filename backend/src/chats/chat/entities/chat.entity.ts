@@ -1,18 +1,20 @@
-import {
-	Column,
-	Entity,
-	JoinTable,
-	ManyToMany,
-	OneToMany,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from '../../../users/user/entities/user.entity';
-import { Exclude } from 'class-transformer';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
-import { Chat_User_Permissions } from '../../chat_user_permission/entities/chat_user_permission.entity';
+import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
+import { IsArray, IsNumber } from 'class-validator';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 const validVisibility = ['public', 'private'];
+
+export class UsersWithPermissions {
+	@IsNumber()
+	user_id: number;
+
+	@IsArray()
+	permissions: Permission[];
+}
 
 @Entity('chats')
 export class Chat {
@@ -22,25 +24,22 @@ export class Chat {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	// @ManyToMany(() => User, (user) => user.chats, {
-	// 	onDelete: 'CASCADE',
-	// 	onUpdate: 'CASCADE',
-	// })
-	// @JoinTable({
-	// 	name: 'user_chats',
-	// 	joinColumn: {
-	// 		name: 'chat_id',
-	// 		referencedColumnName: 'id',
-	// 	},
-	// 	inverseJoinColumn: {
-	// 		name: 'user_id',
-	// 		referencedColumnName: 'id',
-	// 	},
-	// })
-	// users: User[];
+	@OneToMany(() => ChatUserPermission, (cup) => cup.users)
+	@Exclude()
+	users_permissions: ChatUserPermission[];
 
-	@OneToMany(() => Chat_User_Permissions, (cup) => cup.users)
-	userchat: Chat_User_Permissions[];
+	@Expose()
+	get users(): UsersWithPermissions[] {
+		return this.users_permissions.reduce((acc, curr) => {
+			const index = acc.findIndex((obj) => obj.user_id == curr.user_id);
+			if (index === -1) {
+				acc.push({ user_id: curr.user_id, permissions: [curr.permissions] });
+			} else {
+				acc[index].permissions.push(curr.permissions);
+			}
+			return acc;
+		}, []);
+	}
 
 	@IsIn(validVisibility)
 	@Column({ default: 'public' })

@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateChatUserPermissionsDto {
+export class CreateChatUserPermissionDto {
 	@IsNotEmpty()
 	user_id: number;
 
