@@ -3,7 +3,6 @@ import {
 	Entity,
 	JoinTable,
 	ManyToMany,
-	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserChat } from '../../user-chat/entities/user-chat.entity';
@@ -13,7 +12,7 @@ export class Role {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ nullable: false })
+	@Column({ unique: true, nullable: false })
 	name: string;
 
 	@ManyToMany(() => UserChat)
