@@ -18,6 +18,17 @@ import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entit
 import { Chat } from '../../../chats/chat/entities/chat.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
+import { Chat_User_Permissions } from '../../../chats/chat_user_permission/entities/chat_user_permission.entity';
+import { IsArray, IsNumber, IsString } from 'class-validator';
+import { ChatPermission } from '../../../chats/permissions/entities/chatpermissions.entity';
+
+export class UserInChat {
+	@IsNumber()
+	chat_id: number;
+
+	@IsArray()
+	permissions: ChatPermission[];
+}
 
 @Entity('users')
 export class User {
@@ -70,22 +81,22 @@ export class User {
 	@JoinColumn({ name: 'invite' })
 	invite: GameInvite;
 
-	@ManyToMany(() => Chat, (chat) => chat.users, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'CASCADE',
-	})
-	@JoinTable({
-		name: 'user_chats',
-		joinColumn: {
-			name: 'user_id',
-			referencedColumnName: 'id',
-		},
-		inverseJoinColumn: {
-			name: 'chat_id',
-			referencedColumnName: 'id',
-		},
-	})
-	chats: Chat[];
+	// @ManyToMany(() => Chat, (chat) => chat.users, {
+	// 	onDelete: 'NO ACTION',
+	// 	onUpdate: 'CASCADE',
+	// })
+	// @JoinTable({
+	// 	name: 'user_chats',
+	// 	joinColumn: {
+	// 		name: 'user_id',
+	// 		referencedColumnName: 'id',
+	// 	},
+	// 	inverseJoinColumn: {
+	// 		name: 'chat_id',
+	// 		referencedColumnName: 'id',
+	// 	},
+	// })
+	// chats: Chat[];
 
 	@ManyToMany(() => Achievement, {
 		onDelete: 'NO ACTION',
@@ -103,6 +114,7 @@ export class User {
 		},
 	})
 	achievements: Achievement[];
+
 	@Exclude()
 	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
 	@JoinColumn({ name: 'relationshipSource' })
@@ -119,6 +131,23 @@ export class User {
 			...(this.relationshipSource ?? []),
 			...(this.relationshipTarget ?? []),
 		];
+	}
+
+	@Exclude()
+	@OneToMany(() => Chat_User_Permissions, (cup) => cup.users)
+	chatuser: Chat_User_Permissions[];
+
+	@Expose()
+	get chat(): UserInChat[] {
+		return this.chatuser.reduce((acc, curr) => {
+			const target = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
+			if (target === -1) {
+				acc.push({ chat_id: curr.chat_id, permissions: [curr.permissions] });
+			} else {
+				acc[target].permissions.push(curr.permissions);
+			}
+			return acc;
+		}, []);
 	}
 
 	@CreateDateColumn()

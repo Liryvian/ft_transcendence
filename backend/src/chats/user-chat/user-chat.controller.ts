@@ -5,7 +5,6 @@ import {
 	Delete,
 	Get,
 	Param,
-	Patch,
 	Post,
 } from '@nestjs/common';
 import { UserChatService } from './user-chat.service';
@@ -18,7 +17,9 @@ export class UserChatController {
 	@Post()
 	async create(@Body() createUserChatDto: CreateUserChatDto) {
 		try {
-			return await this.userChatService.insert(createUserChatDto);
+			const x = await this.userChatService.save(createUserChatDto);
+			console.log({ x });
+			return x;
 		} catch {
 			throw new BadRequestException('user can only be in a chat once');
 		}
@@ -27,7 +28,7 @@ export class UserChatController {
 	@Get()
 	findAll() {
 		return this.userChatService.findAll({
-			relations: { chats: true, users: true },
+			relations: { chats: true, users: true, roles: true },
 		});
 	}
 

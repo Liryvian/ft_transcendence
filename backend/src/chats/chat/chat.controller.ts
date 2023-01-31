@@ -29,7 +29,8 @@ export class ChatController {
 
 	@Get()
 	findAll() {
-		return this.chatService.findAll({ relations: { users: true } });
+		return this.chatService.findAll({ relations: {} });
+		// return this.chatService.findAll({ relations: { users: true } });
 	}
 
 	@Get(':id')
