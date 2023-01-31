@@ -35,13 +35,25 @@ a {
 .page_button {
 	position: absolute;
 	z-index: 50;
+	right: 0;
+	top: 0;
+	transform: translate(50%,-50%);
+}
+
+.pb_bottom {
+	top: auto;
+	bottom: 0;
+	transform: translate(50%, 50%);
+}
+
+.page_button a {
 	padding: 1.5em;
 	border: var(--border-width) solid var(--color-border);
 	border-radius: 50%;
 	aspect-ratio: 1/1;
-	right: 0;
-	top: 0;
-	transform: translate(50%,-50%);
+	background: var(--color-background);
+	line-height: 1.8;
+	display: block;
 }
 
 
