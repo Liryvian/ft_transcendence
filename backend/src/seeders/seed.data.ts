@@ -1,7 +1,7 @@
-import { RegisterUserDto } from 'src/users/user/dto/register-user.dto';
+import { RegisterUserDto } from '../users/user/dto/register-user.dto';
 import { CreateAnimalDto } from '../test_example/dto/create-animal.dto';
-import { CreateGameDto } from 'src/pong/game/dto/create-game.dto';
-import { CreateChatDto } from 'src/chats/chat/dto/create-chat.dto';
+import { CreateGameDto } from '../pong/game/dto/create-game.dto';
+import { CreateChatDto } from '../chats/chat/dto/create-chat.dto';
 
 const seedData = {
 	animals: () => {

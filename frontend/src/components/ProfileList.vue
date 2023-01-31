@@ -3,12 +3,12 @@
   <table class="table table-striped table-sm">
     <tbody>
     <tr v-for="user in allUsers" :key="user.id">
-      <td><img src="../../public/favicon-32x32.png" alt="Avatar" class="avatar"></td>
+      <td><button v-on:click="viewProfile(user)"><img src="/favicon-32x32.png" alt="Avatar" class="avatar"></button></td>
       <td>{{ user.id }}</td>
       <td>{{ user.name }} </td>
-      <td> <button>Chat</button> </td>
-      <td> <button>Add as friend</button> </td>
-      <td> <button>Block</button> </td>
+      <td> <button v-on:click="createChat(user)">Chat</button> </td>
+      <td> <button v-on:click="addFriend(user)">Add as friend</button> </td>
+      <td> <button v-on:click="blockUser(user)">Block</button> </td>
       <td></td>
     </tr>
     </tbody>
@@ -18,44 +18,36 @@
   </template>
 
 <script lang="ts">
-import { onMounted, ref } from 'vue';
-import { defineComponent } from "vue";
-import type { Ref } from 'vue'
+import { defineComponent } from 'vue';
 
 type User = {
   name: string;
   id: number;
 }
-const defautAvatar: string = '../../public/favicon-32x32.png';
 
-let allUsers: Ref<User[]> = ref([]);
   export default defineComponent({
-    name: 'ProfileList',
-    data(){
-      return {allUsers};
+    data() {
+      return {allUsers: <User[]>[]};
     },
-    async mounted()
-    {
-      const response = await fetch('http://localhost:8080/api/users');
-          allUsers = await response.json();
-          // allUsers.sort((a: User, b: User) => a.id - b.id)
-          return {allUsers};
-    }, 
-    // setup() {
-        
-    //     onMounted(async () => {
-    //       const response = await fetch('http://localhost:8080/api/users');
-    //       allUsers = await response.json();
-    //       allUsers.sort((a: User, b: User) => a.id - b.id)
-    //       // allUsers.forEach(user => {
-    //       //   if (!user.avatar) {
-    //       //     user.avatar = defautAvatar;
-    //       //   }
-    //       // })
-    //     }
-    //     );
-    //     return {allUsers};
-    //   },
+    name: 'ProfileList',
+    methods: {
+      viewProfile(user: User) {
+        console.log(`Profile of ${user.name} clicked`);
+      },      
+      createChat(user: User) {
+        console.log(`Starting chat with ${user.name}`);
+      },      
+      addFriend(user: User) {
+        console.log(`Adding ${user.name} as a friend`);
+      },  
+      blockUser(user: User) {
+        console.log(`Blocking ${user.name}`);
+      },
+    },
+    created: async function() {
+      const res = await this.axios.get("http://localhost:8080/api/users");
+      this.allUsers = res.data;
+    }
  })
 </script>
 
