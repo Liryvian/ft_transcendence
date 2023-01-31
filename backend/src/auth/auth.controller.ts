@@ -113,10 +113,18 @@ export class AuthController {
 	@Get('me')
 	async getAuthenticatedUser(@Req() request: Request) {
 		const id = await this.authService.userId(request);
-		return this.userService.findOne({
+		const user = await this.userService.findOne({
 			where: {
 				id: id,
 			},
+			relations: {
+				relationshipSource: true,
+				relationshipTarget: true,
+				games_as_player_one: true,
+				games_as_player_two: true,
+			},
 		});
+		console.log(user);
+		return user;
 	}
 }
