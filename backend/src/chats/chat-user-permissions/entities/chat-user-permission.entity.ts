@@ -20,20 +20,20 @@ export class ChatUserPermission {
 	user_id: number;
 
 	@ManyToOne(() => User, (user) => user.id)
-	@JoinColumn({ name: 'user_id' })
+	@JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
 	users: User[];
 
 	@Column()
 	chat_id: number;
 
 	@ManyToOne(() => Chat, (chat) => chat.id)
-	@JoinColumn({ name: 'chat_id' })
+	@JoinColumn({ name: 'chat_id', referencedColumnName: 'id' })
 	chats: Chat[];
 
 	@Column()
 	permission_id: number;
 
-	@ManyToOne(() => Permission, (permission) => permission.id)
-	@JoinColumn({ name: 'permission_id' })
+	@ManyToOne(() => Permission, (permission) => permission.id, { eager: true })
+	@JoinColumn({ name: 'permission_id', referencedColumnName: 'id' })
 	permissions: Permission[];
 }
