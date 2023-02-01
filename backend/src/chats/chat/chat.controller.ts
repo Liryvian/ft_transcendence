@@ -27,18 +27,17 @@ export class ChatController {
 		return this.chatService.insert(createChatDto);
 	}
 
-	@Post('/:id/join')
-	async join(@Param('id') id: number) {}
-
 	@Get()
 	findAll() {
-		return this.chatService.findAll({ relations: {} });
-		// return this.chatService.findAll({ relations: { users: true } });
+		return this.chatService.findAll({ relations: { has_users: true } });
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.chatService.findOne({ where: { id } });
+		return this.chatService.findOne({
+			where: { id },
+			relations: { has_users: true },
+		});
 	}
 
 	@Patch(':id')
@@ -60,7 +59,7 @@ export class ChatController {
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: number) {
+	async remove(@Param('id') id: number) {
 		return this.chatService.remove(id);
 	}
 }

@@ -19,21 +19,28 @@ export class ChatUserPermission {
 	@Column()
 	chat_id: number;
 
-	@ManyToOne(() => Chat, (chat) => chat.id)
+	@ManyToOne(() => Chat, (chat) => chat.id, {
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn({ name: 'chat_id', referencedColumnName: 'id' })
 	chats: Chat[];
 
 	@Column()
 	user_id: number;
 
-	@ManyToOne(() => User, (user) => user.id)
+	@ManyToOne(() => User, (user) => user.id, {
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
 	users: User[];
 
 	@Column()
 	permission_id: number;
 
-	@ManyToOne(() => Permission, (permission) => permission.id, { eager: true })
+	@ManyToOne(() => Permission, (permission) => permission.id, {
+		eager: true,
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn({ name: 'permission_id' })
 	permissions: Permission[];
 }
