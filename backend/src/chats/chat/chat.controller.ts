@@ -44,7 +44,7 @@ export class ChatController {
 			const current_Chat: Chat = await this.chatService.findOne({
 				where: { id },
 			});
-			// check userRole
+			// check permissions
 			if (
 				!(await bcrypt.compare(current_Chat.password, updateChatDto.password))
 			) {

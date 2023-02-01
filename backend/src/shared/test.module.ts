@@ -27,14 +27,10 @@ import { MatchmakingRequestModule } from '../pong/matchmaking-request/matchmakin
 import { Message } from '../chats/message/entities/message.entity';
 import { MessageModule } from '../chats/message/message.module';
 
-// import { Role } from '../chats/role/entities/role.entity';
-// import { RoleModule } from '../chats/role/role.module';
-
 import { User } from '../users/user/entities/user.entity';
 import { UserAchievement } from '../users/user-achievements/entities/user-achievement.entity';
 import { UserAchievementsModule } from '../users/user-achievements/user-achievements.module';
-// import { UserChat } from '../chats/user-chat/entities/user-chat.entity';
-// import { UserChatModule } from '../chats/user-chat/user-chat.module';
+
 import { UserModule } from '../users/user/user.module';
 import { UserRelationship } from '../users/user-relationship/entities/user-relationship.entity';
 import { UserRelationshipModule } from '../users/user-relationship/user-relationship.module';
@@ -49,7 +45,6 @@ import { UserRelationshipModule } from '../users/user-relationship/user-relation
 			GameInvite,
 			MatchmakingRequest,
 			Message,
-			// Role,
 			User,
 			UserRelationship,
 			Achievement,
@@ -66,7 +61,6 @@ import { UserRelationshipModule } from '../users/user-relationship/user-relation
 
 		ChatModule,
 		MessageModule,
-		// RoleModule,
 		PermissionModule,
 		ChatUserPermissionModule,
 

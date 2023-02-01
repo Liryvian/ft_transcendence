@@ -8,5 +8,5 @@ export class CreateChatUserPermissionDto {
 	chat_id: number;
 
 	@IsNotEmpty()
-	role_id: number;
+	permission_id: number;
 }
