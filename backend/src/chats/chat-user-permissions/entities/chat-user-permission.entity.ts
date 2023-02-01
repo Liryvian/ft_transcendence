@@ -11,17 +11,10 @@ import { Chat } from '../../chat/entities/chat.entity';
 import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity()
-@Index(['user_id', 'chat_id', 'permission_id'], { unique: true })
+@Index(['chat_id', 'user_id', 'permission_id'], { unique: true })
 export class ChatUserPermission {
 	@PrimaryGeneratedColumn()
 	id: number;
-
-	@Column()
-	user_id: number;
-
-	@ManyToOne(() => User, (user) => user.id)
-	@JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-	users: User[];
 
 	@Column()
 	chat_id: number;
@@ -31,9 +24,16 @@ export class ChatUserPermission {
 	chats: Chat[];
 
 	@Column()
+	user_id: number;
+
+	@ManyToOne(() => User, (user) => user.id)
+	@JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
+	users: User[];
+
+	@Column()
 	permission_id: number;
 
 	@ManyToOne(() => Permission, (permission) => permission.id, { eager: true })
-	@JoinColumn({ name: 'permission_id', referencedColumnName: 'id' })
+	@JoinColumn({ name: 'permission_id' })
 	permissions: Permission[];
 }

@@ -233,9 +233,11 @@ describe('Chat - User - Permission relationship', () => {
 
 		it('From CHAT - should return the relationship to the chat/user/permission', async () => {
 			const chats: Chat[] = await chatService.findAll({
+				where: { users_permissions: { chat_id: chat_ids[2] } },
 				relations: { users_permissions: true },
 				// relations: { users_permissions: { permissions: true } },
 			});
+			console.log(chats);
 			chats.forEach((chat) => {
 				console.log(JSON.stringify(chat, null, 2));
 				// console.log(`chat ${chat.id}`, JSON.stringify(chat.users, null, 2));

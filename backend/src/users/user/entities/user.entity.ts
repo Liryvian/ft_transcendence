@@ -116,7 +116,7 @@ export class User {
 		];
 	}
 
-	// @Exclude()
+	@Exclude()
 	@OneToMany(() => ChatUserPermission, (cup) => cup.users, { eager: true })
 	chatuser: ChatUserPermission[];
 

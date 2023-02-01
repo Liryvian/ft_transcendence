@@ -27,6 +27,9 @@ export class ChatController {
 		return this.chatService.insert(createChatDto);
 	}
 
+	@Post('/:id/join')
+	async join(@Param('id') id: number) {}
+
 	@Get()
 	findAll() {
 		return this.chatService.findAll({ relations: {} });
