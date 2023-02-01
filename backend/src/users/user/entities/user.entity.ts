@@ -20,7 +20,6 @@ import { Achievement } from '../../achievements/entities/achievement.entity';
 import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { IsArray, IsNumber } from 'class-validator';
 import { Permission } from '../../../chats/permissions/entities/permission.entity';
-var groupBy = require('lodash/groupBy');
 
 export class UserInChat {
 	@IsNumber()
@@ -118,17 +117,20 @@ export class User {
 
 	@Exclude()
 	@OneToMany(() => ChatUserPermission, (cup) => cup.users, { eager: true })
-	chatuser: ChatUserPermission[];
+	in_chats: ChatUserPermission[];
 
 	@Expose()
 	get chats(): UserInChat[] {
-		return this.chatuser.reduce((acc, curr) => {
-			const index = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
+		return this.in_chats.reduce((acc, curr) => {
+			let index = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
 			if (index === -1) {
-				acc.push({ chat_id: curr.chat_id, permissions: [curr.permissions] });
-			} else {
-				acc[index].permissions.push(curr.permissions);
+				index = acc.push({
+					chat_id: curr.chat_id,
+					permissions: [],
+				});
+				index--;
 			}
+			acc[index].permissions.push(curr.permissions);
 			return acc;
 		}, []);
 	}

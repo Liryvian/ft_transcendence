@@ -209,72 +209,74 @@ describe('Chat - User - Permission relationship', () => {
 			});
 		});
 
-		it('From USER - should return the relationship to the chat/user/permission', async () => {
-			const users: User[] = await userService.findAll({
-				relations: { chatuser: { permissions: true } },
+		it('should have user1 in 3 chats', async () => {
+			const userOne_chats = await userService.findOne({
+				select: {
+					id: true,
+					name: true,
+				},
+				order: { in_chats: { chat_id: 'ASC' } },
+				where: { id: user_ids[0] },
+				relations: { in_chats: true },
 			});
-			const dataToVerify = users.map((user) => ({
-				id: user.id,
-				chats: user.chats.map((chat) => chat.chat_id),
-			}));
-			expect(dataToVerify).toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({
-						id: user_ids[0],
-						chats: expect.arrayContaining([chat_ids[0], chat_ids[1]]),
-					}),
-					expect.objectContaining({
-						id: user_ids[1],
-						chats: expect.arrayContaining([chat_ids[0]]),
-					}),
-				]),
+			// the result of the relationship
+			expect(userOne_chats.in_chats).toHaveLength(4);
+			// the result of the grouping on chat_id
+			expect(userOne_chats.chats).toHaveLength(3);
+
+			expect(userOne_chats.chats[0].chat_id).toBe(chat_ids[0]);
+			expect(userOne_chats.chats[0].permissions.map((perm) => perm.id)).toEqual(
+				[permission_ids[0], permission_ids[1]],
+			);
+			expect(userOne_chats.chats[1].chat_id).toBe(chat_ids[1]);
+			expect(userOne_chats.chats[1].permissions.map((perm) => perm.id)).toEqual(
+				[permission_ids[0]],
+			);
+			expect(userOne_chats.chats[2].chat_id).toBe(chat_ids[2]);
+			expect(userOne_chats.chats[2].permissions.map((perm) => perm.id)).toEqual(
+				[permission_ids[2]],
 			);
 		});
 
-		it('From CHAT - should return the relationship to the chat/user/permission', async () => {
-			const chats: Chat[] = await chatService.findAll({
-				where: { users_permissions: { chat_id: chat_ids[2] } },
-				relations: { users_permissions: true },
-				// relations: { users_permissions: { permissions: true } },
+		it('should have user1 in chat1 with 2 permissions', async () => {
+			const userOne_chats: User = await userService.findOne({
+				select: {
+					id: true,
+					name: true,
+				},
+				where: { id: user_ids[0], in_chats: { chat_id: chat_ids[0] } },
+				relations: { in_chats: true },
 			});
-			console.log(chats);
-			chats.forEach((chat) => {
-				console.log(JSON.stringify(chat, null, 2));
-				// console.log(`chat ${chat.id}`, JSON.stringify(chat.users, null, 2));
+			// the result of the relationship
+			expect(userOne_chats.in_chats).toHaveLength(2);
+			// the result of the grouping on chat_id
+			expect(userOne_chats.chats).toHaveLength(1);
+
+			expect(userOne_chats.chats[0].chat_id).toBe(chat_ids[0]);
+			expect(userOne_chats.chats[0].permissions).toHaveLength(2);
+		});
+
+		it('should have 3 users in chat 3', async () => {
+			const chat: Chat = await chatService.findOne({
+				select: {
+					id: true,
+					name: true,
+				},
+				order: { has_users: { user_id: 'ASC' } },
+				where: { id: chat_ids[2] },
+				relations: { has_users: true },
 			});
 
-			console.log(
-				JSON.stringify(
-					await service.findAll({
-						where: { chat_id: chat_ids[2] },
-					}),
-					null,
-					2,
-				),
-			);
+			expect(chat.has_users).toHaveLength(3);
+			expect(chat.users).toHaveLength(3);
 
-			// console.log(JSON.stringify(chats[0].users_permissions, null, 2));
-			// console.log(JSON.stringify(chats[1].users_permissions, null, 2));
-			// console.log('chat 1', JSON.stringify(chats[0].users, null, 2));
-			// const dataToVerify = chats.map((chat) => ({
-			// 	id: chat.id,
-			// 	users: chat.users.map((user) => user.user_id),
-			// }));
-			// console.log('chat 2', JSON.stringify(chats[1].users, null, 2));
-			// console.log(JSON.stringify(dataToVerify, null, 2));
-			// console.log(JSON.stringify(chats, null, 2));
-			// expect(dataToVerify).toEqual(
-			// 	expect.arrayContaining([
-			// 		expect.objectContaining({
-			// 			id: chat_ids[0],
-			// 			users: expect.arrayContaining([user_ids[0], user_ids[1]]),
-			// 		}),
-			// 		expect.objectContaining({
-			// 			id: chat_ids[1],
-			// 			users: expect.arrayContaining([user_ids[0]]),
-			// 		}),
-			// 	]),
-			// );
+			expect(chat.users[0].user_id).toBe(user_ids[0]);
+			expect(chat.users[1].user_id).toBe(user_ids[1]);
+			expect(chat.users[2].user_id).toBe(user_ids[2]);
+
+			expect(chat.users[0].permissions).toHaveLength(1);
+			expect(chat.users[1].permissions).toHaveLength(1);
+			expect(chat.users[2].permissions).toHaveLength(1);
 		});
 	});
 });
