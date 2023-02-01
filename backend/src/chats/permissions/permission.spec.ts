@@ -23,4 +23,8 @@ describe('Permissions', () => {
 			'UNIQUE constraint failed',
 		);
 	});
+
+	it('should have not null constrain on permission name', async () => {
+		expect(service.save({})).rejects.toThrow('NOT NULL');
+	});
 });

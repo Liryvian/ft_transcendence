@@ -1,6 +1,7 @@
 import {
 	Column,
 	Entity,
+	Index,
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
@@ -10,6 +11,7 @@ import { Chat } from '../../chat/entities/chat.entity';
 import { Permission } from '../../permissions/entities/permission.entity';
 
 @Entity()
+@Index(['user_id', 'chat_id', 'permission_id'], { unique: true })
 export class ChatUserPermission {
 	@PrimaryGeneratedColumn()
 	id: number;
