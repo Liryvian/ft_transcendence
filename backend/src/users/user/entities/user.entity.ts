@@ -116,12 +116,12 @@ export class User {
 	}
 
 	@Exclude()
-	@OneToMany(() => ChatUserPermission, (cup) => cup.users, { eager: true })
+	@OneToMany(() => ChatUserPermission, (cup) => cup.users)
 	in_chats: ChatUserPermission[];
 
 	@Expose()
 	get chats(): UserInChat[] {
-		return this.in_chats.reduce((acc, curr) => {
+		return this.in_chats?.reduce((acc, curr) => {
 			let index = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
 			if (index === -1) {
 				index = acc.push({

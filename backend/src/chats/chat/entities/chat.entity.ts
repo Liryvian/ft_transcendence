@@ -24,13 +24,13 @@ export class Chat {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@OneToMany(() => ChatUserPermission, (cup) => cup.chats, { eager: true })
+	@OneToMany(() => ChatUserPermission, (cup) => cup.chats)
 	@Exclude()
 	has_users: ChatUserPermission[];
 
 	@Expose()
 	get users() {
-		return this.has_users.reduce((acc, curr) => {
+		return this.has_users?.reduce((acc, curr) => {
 			let index = acc.findIndex((obj) => obj.user_id == curr.user_id);
 
 			if (index === -1) {
