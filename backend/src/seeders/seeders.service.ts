@@ -24,7 +24,7 @@ export class SeederService {
 		private readonly chatService: ChatService,
 		private readonly userRelService: UserRelationshipService,
 	) {}
-
+	// on my local machine the src doesn't exist in this path
 	private readonly shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
 
 	shouldSeed(): boolean {
@@ -104,8 +104,6 @@ export class SeederService {
 				type: validRelationships.BLOCKED,
 			},
 		];
-		console.log(allUsers);
-		console.log(rel);
 		await this.userRelService.save(rel);
 	}
 
