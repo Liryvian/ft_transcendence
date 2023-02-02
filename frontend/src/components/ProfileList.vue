@@ -2,7 +2,7 @@
    <div class="table-responsive">
   <table class="table table-striped table-sm">
     <tbody>
-    <tr v-for="user in allUsers" :key="user.id">
+    <tr v-for="user in userStore.allUsers" :key="user.id">
       <!--  view profile wil be replaced by <ViewProfile /> -->
       <td>
         <router-link to="/profile"> <img src="/favicon-32x32.png" alt="Avatar" class="avatar"></router-link>
@@ -31,6 +31,7 @@
   </template>
 
 <script lang="ts">
+import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
 import { postRequest, getRequest, deleteRequest, patchRequest } from '../shared/apiRequests'
 import  ProfileView_tmp  from '../views/ProfileView-tmp.vue'
@@ -63,6 +64,15 @@ export default defineComponent({
   components: {
     ProfileView_tmp,
   },
+  setup() {
+    const userStore = useUserStore()
+    userStore.login();
+    userStore.initData();
+
+    return {
+      userStore
+    }
+  },
 
   methods: {
     viewProfile(user: User) {
@@ -74,13 +84,13 @@ export default defineComponent({
 
     getExistingRelationship(id: number)
     {
-      return this.me.relationships.filter((rel) => (rel.source_id.id === id || rel.target_id.id === id) &&
-        (rel.target_id.id === this.me.id || rel.source_id.id === this.me.id))
+      return this.userStore.me.relationships.filter((rel) => (rel.source_id.id === id || rel.target_id.id === id) &&
+        (rel.target_id.id === this.userStore.me.id || rel.source_id.id === this.userStore.me.id))
     },
 
     async addFriend(user: User) {
       const friendRequest: FriendRequest = {
-        source_id: this.me.id,
+        source_id: this.userStore.me.id,
         target_id: user.id,
         type: "friend"
       }
@@ -99,7 +109,7 @@ export default defineComponent({
       }
 
       const blockUser: FriendRequest = {
-        source_id: this.me.id,
+        source_id: this.userStore.me.id,
         target_id: user.id,
         type: "blocked"
       }
@@ -142,17 +152,17 @@ export default defineComponent({
   },
     created: async function () {
       const loginData = {
-          name: "renoster",
+          name: "Renoster",
             password: 'R'
       }
       await postRequest("login", loginData);
       const res = await getRequest("users")
       await getRequest("me").then(res => {
-        this.me = res.data;
-        console.log(this.me);
+        this.userStore.me = res.data;
+        console.log(this.userStore.me);
       })
       //  filter out ME user
-      this.allUsers = res.data.filter((user: User) => (user.id != this.me.id))
+      this.allUsers = res.data.filter((user: User) => (user.id != this.userStore.me.id))
     },
  })
 </script>
