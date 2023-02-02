@@ -3,7 +3,12 @@
   <table class="table table-striped table-sm">
     <tbody>
     <tr v-for="user in allUsers" :key="user.id">
-      <td><button v-on:click="viewProfile(user)"><img src="/favicon-32x32.png" alt="Avatar" class="avatar"></button></td>
+      <!--  view profile wil be replaced by <ViewProfile /> -->
+      <td>
+        <router-link to="/profile"> <img src="/favicon-32x32.png" alt="Avatar" class="avatar"></router-link>
+      </td>
+        <!-- <button v-on:click="viewProfile(user)"><img src="/favicon-32x32.png" alt="Avatar" class="avatar"></button></td>
+      </router-link> -->
       <td>{{ user.id }}</td>
       <td>{{ user.name }} </td>
       
@@ -28,6 +33,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { postRequest, getRequest, deleteRequest, patchRequest } from '../shared/apiRequests'
+import  ProfileView_tmp  from '../views/ProfileView-tmp.vue'
 
 type User = {
   name: string;
@@ -54,6 +60,9 @@ export default defineComponent({
     };
   },
   name: 'ProfileList',
+  components: {
+    ProfileView_tmp,
+  },
 
   methods: {
     viewProfile(user: User) {
@@ -94,6 +103,7 @@ export default defineComponent({
         target_id: user.id,
         type: "blocked"
       }
+
       await postRequest("user-relationships", blockUser);
       console.log(`Blocking ${user.name}`);
     },
@@ -132,9 +142,10 @@ export default defineComponent({
   },
     created: async function () {
       const loginData = {
-          name: "flamink",
-            password: 'F'
-          }
+          name: "renoster",
+            password: 'R'
+      }
+      await postRequest("login", loginData);
       const res = await getRequest("users")
       await getRequest("me").then(res => {
         this.me = res.data;
