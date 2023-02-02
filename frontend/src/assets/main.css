@@ -15,8 +15,10 @@ a {
 .page_box_wrapper {
 	position: relative;
 	aspect-ratio: 5/4;
-	max-width: 90vw;
+	max-width: 70em;
 	margin-top: 2em;
+	padding-left: 2em;
+	padding-right: 2em;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -26,24 +28,38 @@ a {
 	overflow: scroll;
 	border: 1px solid black;
 	height: 100%;
+	margin-bottom: 4em;
+}
+
+.c_game__name {
+	position: absolute;
+	left: 0em;
+	top: 50%;
+	transform: rotate(-90deg) translateX(50%);
+}
+
+.c_game__name--right {
+	left: auto;
+	right: 0em;
+	transform: rotate(90deg) translateX(-50%);
 }
 
 .page_button {
 	position: absolute;
 	z-index: 50;
-	right: 0;
+	right: 2em;
 	top: 0;
-	transform: translate(50%, -50%);
+	transform: translate(20%, -32%);
 }
 
 .pb_bottom {
 	top: auto;
 	bottom: 0;
-	transform: translate(50%, 50%);
+	transform: translate(20%, 70%);
 }
 
 .page_button a {
-	padding: 1.5em;
+	padding: 1.4em;
 	border: var(--border-width) solid var(--color-border);
 	border-radius: 50%;
 	aspect-ratio: 1/1;
@@ -67,19 +83,19 @@ h1 {
 	margin-bottom: var(--double-spacing);
 }
 
-.field_group {
+.c_field_group {
 	flex-basis: 100%;
 	margin-bottom: var(--single-spacing);
 	max-width: 25em;
 }
 
-.field_group label {
+.c_field_group label {
 	display: block;
 	padding: 0.2em 0 0.3em;
 	cursor: pointer;
 }
 
-.field_group input {
+.c_field_group input {
 	border-width: var(--border-width) var(--border-width) var(--border-width)
 		var(--paddle-width);
 	border-color: var(--color-border);
@@ -87,12 +103,22 @@ h1 {
 	width: 100%;
 }
 
-.field_group input:disabled {
+.c_field_group input:disabled {
 	border-top-width: 0;
 	border-bottom-width: 0;
 	border-right-width: 0;
 	color: var(--c-black-mute);
 	font-style: italic;
+}
+
+.c_field_group--radio {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.c_radio_group {
+	flex-basis: 50%;
+	text-align: center;
 }
 
 .c_list {
@@ -145,6 +171,17 @@ h1 {
 	position: relative;
 }
 
+.c_asset--multi .c_asset:nth-child(2),
+.c_asset--multi .c_asset:nth-child(3) {
+	margin-top: calc(-1 * var(--media-size-h));
+	margin-left: var(--single-spacing);
+	box-shadow: -2px 0 2px -2px var(--c-black);
+}
+
+.c_asset--multi .c_asset:nth-child(3) {
+	margin-left: var(--double-spacing);
+}
+
 .c_asset__circle::after {
 	content: '';
 	padding-top: 100%;
@@ -184,6 +221,20 @@ h1 {
 	.page_box_wrapper {
 		margin-top: 3em;
 		max-height: 80vh;
+	}
+
+	.page_button {
+		position: absolute;
+		z-index: 50;
+		right: 2em;
+		top: 0;
+		transform: translate(50%, -50%);
+	}
+
+	.pb_bottom {
+		top: auto;
+		bottom: 0;
+		transform: translate(50%, 50%);
 	}
 }
 
