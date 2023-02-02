@@ -22,11 +22,6 @@ a {
 }
 
 .page_box {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	align-content: center;
-	flex-wrap: wrap;
 	padding: 1em 2em;
 	overflow: scroll;
 	border: 1px solid black;
@@ -38,7 +33,7 @@ a {
 	z-index: 50;
 	right: 0;
 	top: 0;
-	transform: translate(50%,-50%);
+	transform: translate(50%, -50%);
 }
 
 .pb_bottom {
@@ -57,9 +52,8 @@ a {
 	display: block;
 }
 
-
 p {
-	margin-bottom: 1em;
+	margin-bottom: var(--single-spacing);
 }
 
 /* assuming h1 usage within flexbox scope */
@@ -68,23 +62,29 @@ h1 {
 }
 
 .form_group {
-
+	margin: 0 auto;
+	max-width: 25em;
+	margin-bottom: var(--double-spacing);
 }
 
 .field_group {
 	flex-basis: 100%;
-	margin-bottom: 0.7em;
+	margin-bottom: var(--single-spacing);
+	max-width: 25em;
 }
 
 .field_group label {
 	display: block;
 	padding: 0.2em 0 0.3em;
+	cursor: pointer;
 }
 
 .field_group input {
-	border-width: var(--border-width) var(--border-width) var(--border-width) var(--paddle-width);
+	border-width: var(--border-width) var(--border-width) var(--border-width)
+		var(--paddle-width);
 	border-color: var(--color-border);
-	padding: 0.7em 1em;
+	padding: var(--single-spacing);
+	width: 100%;
 }
 
 .field_group input:disabled {
@@ -95,16 +95,46 @@ h1 {
 	font-style: italic;
 }
 
+.c_list {
+	max-width: 25em;
+	margin: 0 auto;
+	margin-bottom: var(--double-spacing);
+}
+
 .c_media {
-	--media-size-w: 4em;
+	--media-size-w: 3em;
 	--media-size-h: var(--media-size-w);
 	display: flex;
 	align-items: center;
-	margin-bottom: 0.7em;
+	margin-bottom: var(--single-spacing);
+}
+
+.c_media--clickable {
+	cursor: pointer;
 }
 
 .c_media__asset {
-	margin-right: 1.2em;
+	margin-right: var(--single-spacing);
+	position: relative;
+}
+
+.c_asset--online::before,
+.c_asset--offline::before {
+	content: '';
+	display: block;
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	right: -0.1em;
+	width: 0.8em;
+	height: 0.8em;
+	border-radius: 50%;
+	border: 0.111em solid var(--color-border);
+	background-color: var(--c-offline);
+}
+
+.c_asset--online::before {
+	background-color: var(--c-online);
 }
 
 .c_asset__circle {
@@ -116,7 +146,7 @@ h1 {
 }
 
 .c_asset__circle::after {
-	content: "";
+	content: '';
 	padding-top: 100%;
 	display: block;
 	background-color: grey;
@@ -134,9 +164,12 @@ h1 {
 	display: block;
 }
 
-
 @media (hover: hover) {
 	a:hover {
+		text-decoration: underline;
+	}
+
+	.c_media--clickable:hover {
 		text-decoration: underline;
 	}
 }
