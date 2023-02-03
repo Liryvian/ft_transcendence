@@ -35,13 +35,15 @@ a {
 	position: absolute;
 	left: 0em;
 	top: 50%;
-	transform: rotate(-90deg) translateX(50%);
+	transform: rotate(180deg);
+	writing-mode: vertical-lr;
+	text-orientation: mixed;
 }
 
 .c_game__name--right {
 	left: auto;
 	right: 0em;
-	transform: rotate(90deg) translateX(-50%);
+	transform: rotate(0deg);
 }
 
 .page_button {
