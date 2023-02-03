@@ -40,6 +40,8 @@ export abstract class AbstractService<T> {
 	/*
 		Use this if you want to create entities WITH relationships
 	*/
+	async save(data: DeepPartial<T>): Promise<T>;
+	async save(data: DeepPartial<T>[]): Promise<T[]>;
 	async save(data): Promise<T>;
 	async save(data): Promise<T[]>;
 	async save(data): Promise<T | T[]> {
@@ -82,7 +84,7 @@ export abstract class AbstractService<T> {
 	async trySeed(data: any): Promise<T[]>;
 	async trySeed(data: any): Promise<T | T[]> {
 		try {
-			const seedResult: any= await this.save(data);
+			const seedResult: any = await this.save(data);
 			return seedResult;
 		} catch (e) {
 			console.error('Already seeded');
