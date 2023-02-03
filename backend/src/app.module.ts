@@ -6,9 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
 import { ChatModule } from './chats/chat/chat.module';
 import { MessageModule } from './chats/message/message.module';
-import { RoleModule } from './chats/role/role.module';
 import { GameModule } from './pong/game/game.module';
-import { UserChatModule } from './chats/user-chat/user-chat.module';
 import { GameInvitesModule } from './pong/game_invite/game-invite.module';
 import { MatchmakingRequestModule } from './pong/matchmaking-request/matchmaking-request.module';
 import { UserModule } from './users/user/user.module';
@@ -18,6 +16,8 @@ import { SeedersModule } from './seeders/seeders.module';
 import { UserRelationshipModule } from './users/user-relationship/user-relationship.module';
 import { AchievementsModule } from './users/achievements/achievements.module';
 import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
+import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
+import { PermissionModule } from './chats/permissions/permission.module';
 
 @Module({
 	imports: [
@@ -28,9 +28,9 @@ import { UserAchievementsModule } from './users/user-achievements/user-achieveme
 		ChatModule,
 		MessageModule,
 		UserModule,
-		RoleModule,
 		GameModule,
-		UserChatModule,
+		PermissionModule,
+		ChatUserPermissionModule,
 		GameInvitesModule,
 		MatchmakingRequestModule,
 		SeedersModule,
