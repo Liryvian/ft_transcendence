@@ -46,8 +46,6 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 			relationsRequest.source_id,
 			relationsRequest.target_id,
 		);
-		console.log('LOGING IN HAS EXISTING', relation);
-		console.log(relation);
 		return relation !== null;
 	}
 }
