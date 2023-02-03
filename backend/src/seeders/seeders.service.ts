@@ -7,7 +7,6 @@ import { GameService } from '../pong/game/game.service';
 import { assert } from 'console';
 import { Game } from '../pong/game/entities/game.entity';
 import { ChatService } from '../chats/chat/chat.service';
-import { Chat } from '../chats/chat/entities/chat.entity';
 import { User } from '../users/user/entities/user.entity';
 import { UserRelationshipService } from '../users/user-relationship/user-relationship.service';
 import { CreateUserRelationshipDto } from '../users/user-relationship/dto/create-user-relationship.dto';
@@ -63,27 +62,6 @@ export class SeederService {
 		await this.chatService.trySeed(seedData.chats());
 	}
 
-	async seedUserChats() {
-		const allChats: Chat[] = await this.chatService.findAll();
-		assert(allChats.length === 3);
-
-		// get seeded users
-		const allUsers: User[] = await this.userService.findAll({
-			where: [
-				{ name: 'flamink' },
-				{ name: 'vaalboskat' },
-				{ name: 'renoster' },
-			],
-		});
-		assert(allUsers.length === 3);
-
-		// add users to chat, which create teh userCaht rel
-		allChats[0].users = allUsers;
-		allChats[1].users = allUsers.slice(0, 2);
-		allChats[2].users = allUsers.slice(1, 3);
-		await this.chatService.save(allChats);
-	}
-
 	async seedUserRelationships() {
 		const allUsers: User[] = await this.userService.findAll({
 			where: [
@@ -112,7 +90,6 @@ export class SeederService {
 			await this.seedUsers();
 			await this.seedGames();
 			await this.seedChats();
-			await this.seedUserChats();
 			await this.seedUserRelationships();
 			await this.animalService.trySeed(seedData.animals());
 			this.finilizeSeeding();
