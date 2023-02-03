@@ -35,6 +35,6 @@ export class UserRelationship {
 	// @Column()
 	// specifier_id: number;
 
-	@Column()
+	@Column({ default: validRelationships.NONE })
 	type: string;
 }

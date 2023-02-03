@@ -14,29 +14,40 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 		super(repository);
 	}
 	//  check that id: a - b and id: b - a doesn't already exists
+	async getExistingRelationship(
+		source: number,
+		target: number,
+	): Promise<UserRelationship> | null {
+		try {
+			const relationships: UserRelationship = await this.findOne({
+				relations: {
+					source_id: true,
+					target_id: true,
+				},
+				where: {
+					source_id: {
+						id: In([source, target]),
+					},
+					target_id: {
+						id: In([source, target]),
+					},
+				},
+			});
+			return relationships;
+		} catch (e) {
+			return null;
+		}
+	}
+
 	async hasExistingRelationship(
-		relationshipRequest: CreateUserRelationshipDto,
+		relationsRequest: CreateUserRelationshipDto,
 	): Promise<boolean> {
-		const relationships: UserRelationship[] = await this.findAll({
-			relations: {
-				source_id: true,
-				target_id: true,
-			},
-			where: {
-				source_id: {
-					id: In([
-						relationshipRequest.source_id,
-						relationshipRequest.target_id,
-					]),
-				},
-				target_id: {
-					id: In([
-						relationshipRequest.source_id,
-						relationshipRequest.target_id,
-					]),
-				},
-			},
-		});
-		return relationships.length > 0;
+		const relation: UserRelationship = await this.getExistingRelationship(
+			relationsRequest.source_id,
+			relationsRequest.target_id,
+		);
+		console.log('LOGING IN HAS EXISTING', relation);
+		console.log(relation);
+		return relation !== null;
 	}
 }

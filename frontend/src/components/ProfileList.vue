@@ -14,13 +14,13 @@
       
       <td> <button v-on:click="createChat(user)">Chat</button> </td>
 
-      <td v-if="user.id === userStore.me.id || userStore.isBlocked(user.id)"><p class="grayedOut">Add friend</p></td>
-      <td v-else-if="userStore.isFriend(user.id)"><button v-on:click="userStore.removeFriend(user.id)">Remove friend</button></td>
-      <td v-else-if="!userStore.isFriend(user.id)"><button v-on:click="userStore.addFriend(user)">Add friend</button></td>
+      <td v-if="user.id === me.id || isBlocked(user.id)"><p class="grayedOut">Add friend</p></td>
+      <td v-else-if="isFriend(user.id)"><button v-on:click="updateRelationship(user.id, 'none')">Remove friend</button></td>
+      <td v-else-if="!isFriend(user.id)"><button v-on:click="updateRelationship(user.id, 'friend')">Add friend</button></td>
 
 
-      <td v-if="userStore.isBlocked(user.id) || user.id == userStore.me.id"> <button v-on:click="userStore.unBlockUser(user)">Unblock</button> </td>
-      <td v-else> <button v-on:click="userStore.blockUser(user)">Block</button> </td>
+      <td v-if="isBlocked(user.id) || user.id == me.id"> <button v-on:click="updateRelationship(user.id, 'none')">Unblock</button> </td>
+      <td v-else> <button v-on:click="updateRelationship(user.id, 'blocked')">Block</button> </td>
 
       <td></td>
     </tr>
@@ -28,13 +28,14 @@
   </table>
 </div>
 
-  </template>
+</template>
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
 import ProfileView_tmp from '../views/ProfileView-tmp.vue'
 import type { User } from '@/types/User';
+import { MutationType } from 'pinia';
 
 export default defineComponent({
   name: 'ProfileList',
@@ -43,11 +44,19 @@ export default defineComponent({
   },
   setup() {
     const userStore = useUserStore()
-    userStore.login();
-    userStore.initData();
+    const { login, initData, isBlocked, isFriend, updateRelationship, allUsers, me } = userStore;
+    login();
+    initData();
 
     return {
-      userStore
+      userStore,
+      login,
+      initData,
+      isBlocked,
+      isFriend,
+      updateRelationship,
+      allUsers,
+      me
     }
   },
 

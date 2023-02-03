@@ -5,8 +5,8 @@ export interface User {
 	relationships: any[];
 };
 
-type RelationshipRequest = {
+export interface RelationshipRequest {
 	source_id: number;
 	target_id: number;
 	type: string;
-  }
+};

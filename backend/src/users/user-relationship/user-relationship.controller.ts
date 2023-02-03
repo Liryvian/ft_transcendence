@@ -11,6 +11,7 @@ import {
 import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
+import { UserRelationship } from './entities/user-relationship.entity';
 
 @Controller('user-relationships')
 export class UserRelationshipController {
@@ -18,6 +19,7 @@ export class UserRelationshipController {
 
 	@Post()
 	async create(@Body() realtionshipData: CreateUserRelationshipDto) {
+		console.log('POST DATA', realtionshipData);
 		if (await this.service.hasExistingRelationship(realtionshipData)) {
 			throw new BadRequestException('Relation already exists between users');
 		}
@@ -39,12 +41,18 @@ export class UserRelationshipController {
 		});
 	}
 
-	@Get(':id')
-	async findOne(@Param('id') id: number) {
-		return this.service.findOne({
-			where: { id },
-			relations: { source_id: true, target_id: true },
-		});
+	// @Get(':id')
+	// async findOne
+
+	@Get(':source/:target')
+	async findExistingOne(
+		@Param('source') source: number,
+		@Param('target') target: number,
+	): Promise<UserRelationship> {
+		const rel = await this.service.getExistingRelationship(source, target);
+		console.log('rel in controller: ', rel);
+		return rel;
+		return this.service.getExistingRelationship(source, target);
 	}
 
 	@Patch(':id')
