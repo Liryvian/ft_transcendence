@@ -53,7 +53,17 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(): Promise<User[]> {
-		const users = this.userService.findAll();
+		const users = this.userService.findAll({
+			relations: {
+				matchmaking_request: true,
+				invite: true,
+				games_as_player_one: true,
+				games_as_player_two: true,
+				relationshipSource: true,
+				relationshipTarget: true,
+				achievements: true,
+			},
+		});
 		return users;
 	}
 
