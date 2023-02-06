@@ -9,6 +9,10 @@ import {
 	UpdateResult,
 } from 'typeorm';
 
+class hasId {
+	id: number;
+}
+
 @Injectable()
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}
@@ -71,10 +75,7 @@ export abstract class AbstractService<T> {
 		// in TS/JS NULL is an object, so we can check for it quite easily
 		if (typeof id === 'object') {
 			if (id === null || (id.hasOwnProperty('length') && id.length === 0)) {
-				const res: DeleteResult = new DeleteResult();
-				res.raw = [];
-				res.affected = 0;
-				return res;
+				return { raw: [], affected: 0 } as DeleteResult;
 			}
 		}
 		return this.repository.delete(id);
@@ -89,5 +90,15 @@ export abstract class AbstractService<T> {
 		} catch (e) {
 			console.error('Already seeded');
 		}
+	}
+
+	async removeAll() {
+		const all: hasId[] = (await this.repository.find()) as hasId[];
+		const ids: number[] = all.map((el) => el.id);
+
+		if (ids.length > 0) {
+			return this.repository.delete(ids);
+		}
+		return true;
 	}
 }

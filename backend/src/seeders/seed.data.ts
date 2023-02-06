@@ -1,12 +1,22 @@
 import { CreateAnimalDto } from '../test_example/dto/create-animal.dto';
-import { CreateGameDto } from '../pong/game/dto/create-game.dto';
 import { CreateChatDto } from '../chats/chat/dto/create-chat.dto';
+import { CreateUserRelationshipDto } from '../users/user-relationship/dto/create-user-relationship.dto';
+import { validRelationships } from '../users/user-relationship/entities/user-relationship.entity';
+import * as bcrypt from 'bcrypt';
 
 class seedUser {
 	name: string;
 	password: string;
 	is_intra: boolean;
-	avatar: string;
+	avatar?: string;
+}
+
+class seedGame {
+	player_one: number;
+	player_two: number;
+	score_player_one: number;
+	score_player_two: number;
+	is_active: boolean;
 }
 
 const seedData = {
@@ -19,43 +29,81 @@ const seedData = {
 		return animalSeeds;
 	},
 
-	users: () => {
-		const users: any[] = [
+	users: async () => {
+		const users: seedUser[] = [
 			{
 				name: 'flamink',
-				password: 'f',
+				password: await bcrypt.hash('f', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_flamink.png',
 			},
 			{
 				name: 'renoster',
-				password: 'r',
+				password: await bcrypt.hash('r', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_renoster.png',
 			},
 			{
 				name: 'vaalboskat',
-				password: 'v',
+				password: await bcrypt.hash('v', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_vaalboskat.png',
+			},
+			{
+				name: 'aardwolf',
+				password: await bcrypt.hash('a', 11),
+				is_intra: false,
+				avatar: 'seeded_profile_aardwolf.png',
 			},
 		];
 		return users;
 	},
 
-	games: () => {
-		const games: CreateGameDto[] = [
+	userRelations: (ids: number[]) => {
+		const userRelations: CreateUserRelationshipDto[] = [
 			{
-				player_one: 1,
-				player_two: 2,
+				source_id: ids[0],
+				target_id: ids[1],
+				type: validRelationships.FRIEND,
 			},
 			{
-				player_one: 2,
-				player_two: 3,
+				source_id: ids[0],
+				target_id: ids[2],
+				type: validRelationships.BLOCKED,
+			},
+		];
+		return userRelations;
+	},
+
+	games: (ids: number[]) => {
+		const games: seedGame[] = [
+			{
+				player_one: ids[0],
+				player_two: ids[1],
+				score_player_one: 10,
+				score_player_two: 5,
+				is_active: false,
 			},
 			{
-				player_one: 3,
-				player_two: 1,
+				player_one: ids[1],
+				player_two: ids[2],
+				score_player_one: 8,
+				score_player_two: 3,
+				is_active: false,
+			},
+			{
+				player_one: ids[2],
+				player_two: ids[0],
+				score_player_one: 12,
+				score_player_two: 7,
+				is_active: false,
+			},
+			{
+				player_one: ids[3],
+				player_two: ids[2],
+				score_player_one: 4,
+				score_player_two: 10,
+				is_active: false,
 			},
 		];
 		return games;
