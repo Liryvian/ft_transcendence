@@ -12,7 +12,7 @@
 				<a href="#">save</a>
 			</div>
 
-			<div class="form_group">
+			<div class="c_block c_form_group">
 				<div class="c_field_group">
 					<label for="disabled_field">field label:</label>
 					<input
@@ -55,7 +55,12 @@
 				</div>
 			</div>
 
-			<div class="c_list">
+			<div class="c_block c_split">
+				<p><a href="#">one</a> / <a href="#">two</a></p>
+				<p><a href="#">three</a></p>
+			</div>
+
+			<div class="c_block c_list">
 				<div class="c_media">
 					<div class="c_media__asset c_asset--online">
 						<div class="c_asset__circle">

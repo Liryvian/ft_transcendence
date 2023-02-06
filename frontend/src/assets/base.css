@@ -97,6 +97,10 @@ img {
 	box-sizing: content-box;
 }
 
+p {
+	margin-block-start: 0;
+}
+
 body {
 	min-height: 100vh;
 	color: var(--color-text);
