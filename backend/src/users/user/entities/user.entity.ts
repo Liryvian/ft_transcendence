@@ -15,9 +15,19 @@ import { Exclude, Expose } from 'class-transformer';
 import { MatchmakingRequest } from '../../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Game } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
-import { Chat } from '../../../chats/chat/entities/chat.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
+import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import { IsArray, IsNumber } from 'class-validator';
+import { Permission } from '../../../chats/permissions/entities/permission.entity';
+
+export class UserInChat {
+	@IsNumber()
+	chat_id: number;
+
+	@IsArray()
+	permissions: Permission[];
+}
 
 @Entity('users')
 export class User {
@@ -70,23 +80,6 @@ export class User {
 	@JoinColumn({ name: 'invite' })
 	invite: GameInvite;
 
-	@ManyToMany(() => Chat, (chat) => chat.users, {
-		onDelete: 'NO ACTION',
-		onUpdate: 'CASCADE',
-	})
-	@JoinTable({
-		name: 'user_chats',
-		joinColumn: {
-			name: 'user_id',
-			referencedColumnName: 'id',
-		},
-		inverseJoinColumn: {
-			name: 'chat_id',
-			referencedColumnName: 'id',
-		},
-	})
-	chats: Chat[];
-
 	@ManyToMany(() => Achievement, {
 		onDelete: 'NO ACTION',
 		onUpdate: 'CASCADE',
@@ -103,6 +96,7 @@ export class User {
 		},
 	})
 	achievements: Achievement[];
+
 	@Exclude()
 	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
 	@JoinColumn({ name: 'relationshipSource' })
@@ -119,6 +113,26 @@ export class User {
 			...(this.relationshipSource ?? []),
 			...(this.relationshipTarget ?? []),
 		];
+	}
+
+	@Exclude()
+	@OneToMany(() => ChatUserPermission, (cup) => cup.users)
+	in_chats: ChatUserPermission[];
+
+	@Expose()
+	get chats(): UserInChat[] {
+		return this.in_chats?.reduce((acc, curr) => {
+			let index = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
+			if (index === -1) {
+				index = acc.push({
+					chat_id: curr.chat_id,
+					permissions: [],
+				});
+				index--;
+			}
+			acc[index].permissions.push(curr.permissions);
+			return acc;
+		}, []);
 	}
 
 	@CreateDateColumn()
