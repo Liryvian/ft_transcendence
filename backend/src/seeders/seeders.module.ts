@@ -13,10 +13,13 @@ import { UserController } from '../users/user/user.controller';
 import { UserModule } from '../users/user/user.module';
 import { AnimalModule } from '../test_example/animal.module';
 import { SeederService } from './seeders.service';
+import { PermissionModule } from '../chats/permissions/permission.module';
+import { ChatUserPermissionModule } from '../chats/chat-user-permissions/chat-user-permission.module';
 
 @Module({
 	imports: [
 		AnimalModule,
+		AchievementsModule,
 		AuthModule,
 		SharedModule,
 		ChatModule,
@@ -28,6 +31,8 @@ import { SeederService } from './seeders.service';
 		UserRelationshipModule,
 		AchievementsModule,
 		UserAchievementsModule,
+		PermissionModule,
+		ChatUserPermissionModule,
 	],
 	providers: [SeederService],
 	controllers: [UserController],
