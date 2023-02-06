@@ -56,6 +56,11 @@ const router = createRouter({
 			name: 'profile',
 			component: () => import('../views/ProfileView.vue'),
 		},
+		{
+			path: '/elements-to-reuse',
+			name: 'elements-to-reuse',
+			component: () => import('../views/ElementsToReuse.vue'),
+		},
 
 	],
 });
