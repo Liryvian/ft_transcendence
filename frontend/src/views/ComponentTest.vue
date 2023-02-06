@@ -9,6 +9,8 @@
 			<OverviewWithMidline/>
 			<HorizontalAvatarAndUserName/>
 			<VerticalAvatarAndUserName/>
+			<PlayerLeft/>
+			<PlayerRight/>
 		</div>
 	</div>
 </template>
@@ -23,9 +25,11 @@ import InputField from '@/components/input-fields/InputField.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
 import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
+import PlayerLeft from '@/components/game-info/PlayerLeft.vue';
+import PlayerRight from '@/components/game-info/PlayerRight.vue';
 export default {
 	name: 'ComponentTest',
-	components: { VerticalAvatarAndUserName, HorizontalAvatarAndUserName, OverviewWithMidline, InputField, DisabledField, CornerButton, ButtonsOnTheEdgeOfFields, BallButton },
+	components: { PlayerRight, PlayerLeft, VerticalAvatarAndUserName, HorizontalAvatarAndUserName, OverviewWithMidline, InputField, DisabledField, CornerButton, ButtonsOnTheEdgeOfFields, BallButton },
 };
 
 </script>
