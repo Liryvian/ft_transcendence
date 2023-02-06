@@ -19,10 +19,19 @@ export const useChatStore = defineStore("chats", {
 			try {
 				const data = await getRequest ("chats");
 				this.allChats = data.data;
+				console.log(this.allChats)
 			}
 			  catch (e) {
 				console.error(e);
 			}
 		},
+		async refreshMyChats() {
+			await useUserStore().refreshMe()
+		},
+
+		async refreshData() {
+			await this.refreshAllChats();
+			await this.refreshMyChats();
+		}
 	}
 })

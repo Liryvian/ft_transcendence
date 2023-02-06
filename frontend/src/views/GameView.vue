@@ -26,14 +26,13 @@
 					</tr>
 					
 				</tbody>
-
+				
 			</table>
-			
 		</div>
 	</div>
 </template>
 
-<!--  THIS SCRIPT IS ONLY TO SHOW A WORKING STORE -->
+<!--  THIS SCRIPT IS ONLY TO SHOW A WORKING GAME STORE SETUP-->
 <script lang="ts">
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent, ref } from 'vue';

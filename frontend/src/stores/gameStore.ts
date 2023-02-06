@@ -8,7 +8,6 @@ export const useGameStore = defineStore("games", {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
-		myGames: <Game[]>[]
 	}),
 	// getters == computed values
 	getters: {
