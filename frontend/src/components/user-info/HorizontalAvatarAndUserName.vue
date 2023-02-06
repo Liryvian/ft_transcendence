@@ -1,17 +1,22 @@
 <template>
 	<div class="c_media">
-		<div class="c_media__asset c_asset--online">
+		<div class="c_media__asset" :class="{ 'c_asset--online': online, 'c_asset--offline': !online }">
 			<div class="c_asset__circle">
-				<img src="/test-profile.png" alt="" />
+				<img :src="profile_picture" alt="" />
 			</div>
 		</div>
-		<div class="c_media__content">some piece of text</div>
+		<div class="c_media__content">{{ profile_name }}</div>
 	</div>
 </template>
 
 <script>
 export default {
 	name: 'horizontalAvatarAndUserName',
+	props: {
+		profile_name: String,
+		profile_picture: String,
+		online: true,
+	},
 };
 </script>
 

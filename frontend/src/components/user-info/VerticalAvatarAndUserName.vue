@@ -1,19 +1,20 @@
 <template>
 	<div class="circle">
-		<img src="../assets/default-avatar/seasnail.jpg" alt="" />
+		<img :src="profile_picture" alt="" />
 	</div>
 	<div class="userName">
-		<b>username</b>
-<!--			<b>{{ username }}</b>//should be connected-->
+		<b>{{ profile_name }}</b>
 	</div>
 </template>
 
 <script>
 export default {
 	name: 'verticalAvatarAndUserName',
-	// props: {
-	// 	name: String,
-	// },
+	props: {
+		profile_name: String,
+		profile_picture: String,
+		online: true,
+	},
 };
 </script>
 

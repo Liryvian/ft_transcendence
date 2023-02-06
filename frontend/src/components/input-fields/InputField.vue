@@ -1,17 +1,25 @@
 <template>
 	<div class="c_field_group">
-		<label for="example_field">field label:</label>
+		<label :for="id">{{ name }}:</label>
 		<input
-			id="example_field"
+			:id="id"
 			type="text"
-			placeholder="placeholder text (optional)"
+			v-model="input_data"
+			:disabled="is_disabled"
 		/>
 	</div>
+
 </template>
 
 <script>
 export default {
 	name: 'InputField',
+	props: {
+		id: String,
+		name: String,
+		// input_data: String,   //not sure what to dooo
+		is_disabled: false
+	},
 };
 </script>
 

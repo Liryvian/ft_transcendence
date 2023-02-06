@@ -1,35 +1,32 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<ball-button/>
-			<buttons-on-the-edge-of-fields/>
-			<corner-button/>
-			<DisabledField/>
-			<InputField/>
+			<div class="c_field_group c_field_group--radio">
+				<RadioButton label="hallo" id="r1"/>
+				<RadioButton label="doei" id="r2"/>
+			</div>
+			<corner-button link_text='save' link_target='/'/>
+			<InputField name="hallo" />
 			<OverviewWithMidline/>
-			<HorizontalAvatarAndUserName/>
-			<VerticalAvatarAndUserName/>
-			<PlayerLeft/>
-			<PlayerRight/>
+			<HorizontalAvatarAndUserName profile_picture="/test-profile.png" profile_name='Georgio'/>
+			<VerticalAvatarAndUserName profile_picture="/test-profile.png" profile_name='Jenny'/>
+			<PlayerNames/>
 		</div>
 	</div>
 </template>
 
 
 <script lang="ts">
-import BallButton from '@/components/buttons/BallButton.vue';
-import ButtonsOnTheEdgeOfFields from '@/components/buttons/ButtonsOnTheEdgeOfInputFields.vue';
+import RadioButton from '@/components/input-fields/RadioButton.vue';
 import CornerButton from '@/components/buttons/CornerButton.vue';
-import DisabledField from '@/components/input-fields/DisabledInputField.vue';
 import InputField from '@/components/input-fields/InputField.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
 import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
-import PlayerLeft from '@/components/game-info/PlayerLeft.vue';
-import PlayerRight from '@/components/game-info/PlayerRight.vue';
+import PlayerNames from '@/components/game-info/PlayerNames.vue';
 export default {
 	name: 'ComponentTest',
-	components: { PlayerRight, PlayerLeft, VerticalAvatarAndUserName, HorizontalAvatarAndUserName, OverviewWithMidline, InputField, DisabledField, CornerButton, ButtonsOnTheEdgeOfFields, BallButton },
+	components: { PlayerNames, VerticalAvatarAndUserName, HorizontalAvatarAndUserName, OverviewWithMidline, InputField, CornerButton, RadioButton},
 };
 
 </script>

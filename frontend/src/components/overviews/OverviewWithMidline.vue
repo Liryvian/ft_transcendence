@@ -10,7 +10,7 @@
 
 <script>
 export default {
-	name: 'OverviewWithMidline',
+name: 'OverviewWithMidline',
 	props: {
 		dataArray: Array,
 	},
@@ -22,10 +22,9 @@ export default {
 .line {
 	margin-left: auto;
 	margin-right: auto;
-	width: var(--game-border-width);
-	/*height: 30em;*/
+	/*width: var(--game-border-width);*/   /* !!!!!!  this one doesnt work*/
+	width: 0.1em;
 	background-color: var(--color-border);
-	/*margin-top: 0em;*/
 	position: absolute;
 	left: 50%;
 	top: 0.55em;
@@ -37,8 +36,6 @@ export default {
 	margin-right: auto;
 	width: 30em;
 	height: 10.5em;
-	/*background-color: brown;*/
-	/*overflow: hidden;*/
 	margin-top: 1em;
 	position: relative;
 	/*outline: 1px solid cyan;*/

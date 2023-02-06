@@ -1,40 +1,24 @@
 <template>
-<!--	/<div class="c_field_group c_field_group&#45;&#45;radio">-->
 		<div class="c_radio_group">
-			<<label :for="id">{{ name }}:</label>
+			<label :for="id">{{ label }}</label>
 			<input
-				name="same"
-				id="example_radio2"
+				:id="id"
 				type="radio"
-				value="on"
-				checked
+				v-model="model"
+				:value="value"
 			/>
 		</div>
-<!--		<div class="c_radio_group">-->
-<!--			<label for="example_radio1">private</label>-->
-<!--			<input-->
-<!--				name="same"-->
-<!--				id="example_radio1"-->
-<!--				type="radio"-->
-<!--				value="on"-->
-<!--			/>-->
-<!--		</div>-->
-<!--	</div>-->
-
-<!--	<div class="c_field_group c_field_group&#45;&#45;radio">-->
-<!--		<InputRadio values='' />-->
-<!--		<InputRadio values='' />-->
-<!--	</div>-->
-
 </template>
 
+//
 <script>
 export default {
-	name: 'ballButton',
-	data: {
-		name: 'ball name',
-	};
-},
+	name: 'RadioButton',
+	props: {
+		label: String,
+		id: String,
+		value: String,
+	},
 };
 </script>
 
