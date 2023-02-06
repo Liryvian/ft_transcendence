@@ -92,13 +92,12 @@ export abstract class AbstractService<T> {
 		}
 	}
 
-	async removeAll() {
-		const all: hasId[] = (await this.repository.find()) as hasId[];
-		const ids: number[] = all.map((el) => el.id);
+	async removeAll(): Promise<T[]> {
+		const all: T[] = await this.repository.find();
 
-		if (ids.length > 0) {
-			return this.repository.delete(ids);
+		if (all.length > 0) {
+			return this.repository.remove(all);
 		}
-		return true;
+		return [];
 	}
 }
