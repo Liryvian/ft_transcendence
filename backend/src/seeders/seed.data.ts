@@ -1,7 +1,13 @@
-import { RegisterUserDto } from '../users/user/dto/register-user.dto';
 import { CreateAnimalDto } from '../test_example/dto/create-animal.dto';
 import { CreateGameDto } from '../pong/game/dto/create-game.dto';
 import { CreateChatDto } from '../chats/chat/dto/create-chat.dto';
+
+class seedUser {
+	name: string;
+	password: string;
+	is_intra: boolean;
+	avatar: string;
+}
 
 const seedData = {
 	animals: () => {
@@ -14,10 +20,25 @@ const seedData = {
 	},
 
 	users: () => {
-		const users: RegisterUserDto[] = [
-			{ name: 'flamink', password: 'f', password_confirm: 'f' },
-			{ name: 'renoster', password: 'r', password_confirm: 'r' },
-			{ name: 'vaalboskat', password: 'v', password_confirm: 'v' },
+		const users: any[] = [
+			{
+				name: 'flamink',
+				password: 'f',
+				is_intra: false,
+				avatar: 'seeded_profile_flamink.png',
+			},
+			{
+				name: 'renoster',
+				password: 'r',
+				is_intra: false,
+				avatar: 'seeded_profile_renoster.png',
+			},
+			{
+				name: 'vaalboskat',
+				password: 'v',
+				is_intra: false,
+				avatar: 'seeded_profile_vaalboskat.png',
+			},
 		];
 		return users;
 	},
