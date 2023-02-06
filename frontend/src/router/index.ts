@@ -36,6 +36,11 @@ const router = createRouter({
 			name: 'logout',
 			component: () => import('../views/LogoutView.vue'),
 		},
+		{
+			path: '/elements-to-reuse',
+			name: 'elements-to-reuse',
+			component: () => import('../views/ElementsToReuse.vue'),
+		},
 	],
 });
 
