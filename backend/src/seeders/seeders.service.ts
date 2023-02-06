@@ -23,8 +23,8 @@ export class SeederService {
 		private readonly chatService: ChatService,
 		private readonly userRelService: UserRelationshipService,
 	) {}
+	private readonly shouldSeedFilePath = './.hasSeeded';
 	// on my local machine the src doesn't exist in this path
-	private readonly shouldSeedFilePath = './dist/src/seeders/.hasSeeded';
 
 	shouldSeed(): boolean {
 		return fs.existsSync(this.shouldSeedFilePath) === false;
