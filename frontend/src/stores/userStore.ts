@@ -12,6 +12,8 @@ export const useUserStore = defineStore("users", {
   }),
   // getters == computed values
   getters: {
+    getAllUsers: (state) => state.allUsers,
+    getMe: (state) => state.me
   },
   // actions == methods
   actions: {
@@ -23,16 +25,24 @@ export const useUserStore = defineStore("users", {
         await postRequest("login", loginData);
     },
 
-    async getMe() {
-      await getRequest("me").then((res : any) => {
-        this.me = res.data;
-      })
+    async refreshMe() {
+      try {
+        const data = await getRequest("me");
+        this.me = data.data;
+      }
+      catch (e) {
+        console.error(e);
+      }
     },
 
-    async getAllUsers() {
-      await getRequest("users").then((res: any) => {
-        this.allUsers = res.data.filter((user: User) => (user.id != this.me.id));
-      });
+    async refreshAllUsers() {
+      try {
+        const data = await getRequest("users");
+        this.allUsers = data.data;
+      }
+      catch (e) {
+        console.error(e);
+      }
     },
 
     async getRelationship(source: number, target: number)
@@ -41,8 +51,8 @@ export const useUserStore = defineStore("users", {
     },
 
     async refreshData() {
-      await this.getMe();
-      await this.getAllUsers();
+      await this.refreshMe();
+      await this.refreshAllUsers();
     },
 // wanna use this helper to filter me.relationships, but
     isMatchingRelationship(userId: number, rel: Relationship): boolean
@@ -67,7 +77,7 @@ export const useUserStore = defineStore("users", {
     async updateRelationship(userId: number, type: string) {
       const rel: Relationship = await this.getRelationship(userId, this.me.id);
       await patchRequest(`user-relationships/${rel.id}`, { type });
-      this.refreshData();
+      this.refreshMe();
     },
 
     isFriend(id: number): boolean {
@@ -78,8 +88,6 @@ export const useUserStore = defineStore("users", {
     isBlocked(id: number) : boolean
     {
       const rel: Relationship | null = this.getExistingRelationship(id);
-      console.log("printing rel: ", rel)
-      console.log("returning", (rel !== null && rel.type === ValidRelationships.BLOCKED));
       return (rel !== null && rel.type === ValidRelationships.BLOCKED)
     },
   }
