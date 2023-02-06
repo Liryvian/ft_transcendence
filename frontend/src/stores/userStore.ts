@@ -1,5 +1,5 @@
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
-import { getRequest, patchRequest } from '@/utils/apiRequests';
+import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import type { User } from "../types/User";
 
@@ -15,6 +15,14 @@ export const useUserStore = defineStore("users", {
   },
   // actions == methods
   actions: {
+    async login() {
+      const loginData = {
+        name: "renoster",
+          password: 'R'
+        }
+        await postRequest("login", loginData);
+    },
+
     async getMe() {
       await getRequest("me").then((res : any) => {
         this.me = res.data;
@@ -36,7 +44,7 @@ export const useUserStore = defineStore("users", {
       await this.getMe();
       await this.getAllUsers();
     },
-
+// wanna use this helper to filter me.relationships, but
     isMatchingRelationship(userId: number, rel: Relationship): boolean
     {
       const myId: number = this.me.id;
@@ -49,11 +57,11 @@ export const useUserStore = defineStore("users", {
     
     getExistingRelationship(id: number): Relationship | null
     {
-      const filtered = this.me.relationships.filter((rel: Relationship) => {
-        this.isMatchingRelationship(id, rel);
+      this.me.relationships.forEach((rel: Relationship) => {
+        if (this.isMatchingRelationship(id, rel))
+          return rel;
       })
-
-      return filtered.length > 0 ? filtered[0] : null;
+      return null;
     },
 
     async updateRelationship(userId: number, type: string) {
@@ -70,7 +78,9 @@ export const useUserStore = defineStore("users", {
     isBlocked(id: number) : boolean
     {
       const rel: Relationship | null = this.getExistingRelationship(id);
-      return (rel  != null && rel.type === ValidRelationships.BLOCKED)
+      console.log("printing rel: ", rel)
+      console.log("returning", (rel !== null && rel.type === ValidRelationships.BLOCKED));
+      return (rel !== null && rel.type === ValidRelationships.BLOCKED)
     },
   }
 })
