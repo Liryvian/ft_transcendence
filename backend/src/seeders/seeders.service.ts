@@ -8,6 +8,10 @@ import { ChatService } from '../chats/chat/chat.service';
 import { User } from '../users/user/entities/user.entity';
 import { UserRelationshipService } from '../users/user-relationship/user-relationship.service';
 import { MessageService } from '../chats/message/message.service';
+import { PermissionService } from '../chats/permissions/permission.service';
+import { ChatUserPermissionService } from '../chats/chat-user-permissions/chat-user-permission.service';
+import { AchievementsService } from '../users/achievements/achievements.service';
+import { UserAchievementsService } from '../users/user-achievements/user-achievements.service';
 
 @Injectable()
 export class SeederService {
@@ -20,6 +24,10 @@ export class SeederService {
 		private readonly chatService: ChatService,
 		private readonly userRelService: UserRelationshipService,
 		private readonly messageService: MessageService,
+		private readonly permissionService: PermissionService,
+		private readonly chatUserPermissionService: ChatUserPermissionService,
+		private readonly achievementService: AchievementsService,
+		private readonly userAchievementsService: UserAchievementsService,
 	) {}
 	// on my local machine the src doesn't exist in this path
 	private readonly shouldSeedFilePath = './.hasSeeded';
@@ -46,8 +54,57 @@ export class SeederService {
 	}
 
 	async seedUserRelationships() {
-		const allUsers: User[] = await this.userService.findAll();
-		return await this.userRelService.trySeed(allUsers.map((u) => u.id));
+		const users: User[] = await this.userService.findAll();
+		return await this.userRelService.trySeed(
+			seedData.userRelations(users.map((u) => u.id)),
+		);
+	}
+
+	async seedPermissions() {
+		return await this.permissionService.trySeed(seedData.permissions());
+	}
+
+	async seedChatUserPermissions() {
+		const users: number[] = (
+			await this.userService.findAll({ order: { name: 'asc' } })
+		).map((u) => u.id);
+		const chats: number[] = (
+			await this.chatService.findAll({ order: { name: 'asc' } })
+		).map((c) => c.id);
+		const permissions: number[] = (
+			await this.permissionService.findAll({ order: { name: 'asc' } })
+		).map((p) => p.id);
+
+		return this.chatUserPermissionService.trySeed(
+			seedData.chatUserPermission(users, chats, permissions),
+		);
+	}
+
+	async seedAchievements() {
+		return this.achievementService.trySeed(seedData.achievements());
+	}
+
+	async seedUserAchievements() {
+		const achievements = (await this.achievementService.findAll()).map(
+			(a) => a.id,
+		);
+		const users: number[] = (
+			await this.userService.findAll({ order: { name: 'asc' } })
+		).map((u) => u.id);
+		return this.userAchievementsService.trySeed(
+			seedData.userAchievements(users, achievements),
+		);
+	}
+
+	async seedMessages() {
+		const users: number[] = (
+			await this.userService.findAll({ order: { name: 'asc' } })
+		).map((u) => u.id);
+		const chats: number[] = (
+			await this.chatService.findAll({ order: { name: 'asc' } })
+		).map((c) => c.id);
+
+		return this.messageService.trySeed(seedData.messages(users, chats));
 	}
 
 	async seedDatabase() {
@@ -55,15 +112,25 @@ export class SeederService {
 			await this.animalService.removeAll();
 			await this.userRelService.removeAll();
 			await this.gameService.removeAll();
+			await this.chatUserPermissionService.removeAll();
+			await this.userAchievementsService.removeAll();
 
 			await this.messageService.removeAll();
 			await this.chatService.removeAll();
 			await this.userService.removeAll();
 
+			await this.permissionService.removeAll();
+			await this.achievementService.removeAll();
+
 			await this.seedUsers();
 			await this.seedGames();
 			await this.seedChats();
 			await this.seedUserRelationships();
+			await this.seedPermissions();
+			await this.seedChatUserPermissions();
+			await this.seedAchievements();
+			await this.seedUserAchievements();
+			await this.seedMessages();
 			await this.animalService.trySeed(seedData.animals());
 			this.finilizeSeeding();
 		}
