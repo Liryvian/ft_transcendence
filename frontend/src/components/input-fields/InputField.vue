@@ -11,7 +11,7 @@
 
 <script>
 export default {
-	name: 'Field',
+	name: 'InputField',
 };
 </script>
 

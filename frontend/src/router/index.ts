@@ -61,6 +61,11 @@ const router = createRouter({
 			name: 'elements-to-reuse',
 			component: () => import('../views/ElementsToReuse.vue'),
 		},
+		{
+			path: '/component-test',
+			name: 'component-test',
+			component: () => import('../views/ComponentTest.vue'),
+		},
 
 	],
 });
