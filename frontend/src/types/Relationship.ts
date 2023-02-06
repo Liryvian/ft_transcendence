@@ -1,11 +1,16 @@
+import type { User } from "./User";
+
 export interface Relationship {
-	source_id: number;
-	target_id: number;
+	id: number;
+
+	source_id: User;
+	target_id: User;
+
 	type: string;
 };
 
-export enum VRelationships {
+export enum ValidRelationships {
 	FRIEND = "friend",
 	BLOCKED = "blocked",
-	NONE = "NONE"
+	NONE = "none"
   }
