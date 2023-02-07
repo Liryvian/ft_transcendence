@@ -12,6 +12,7 @@ import {
 	ParseFilePipe,
 	Patch,
 	Post,
+	Query,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -25,6 +26,8 @@ import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserRelationsBodyDto } from './dto/user-relations-body.dto';
+import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -50,23 +53,14 @@ export class UserController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	@Get()
-	async findAll(): Promise<User[]> {
-		const users = this.userService.findAll({
-			relations: {
-				matchmaking_request: true,
-				invite: true,
-				games_as_player_one: true,
-				games_as_player_two: true,
-				relationshipTarget: true,
-				relationshipSource: true,
-				achievements: true,
-				in_chats: {
-					permissions: true,
-				},
-			},
-		});
+	async findAll(
+		@Query() userRelationsQuery?: UserRelationsQueryDto,
+		@Body() userRelationsBody?: UserRelationsBodyDto,
+	): Promise<User[]> {
+		const userRelationsDto = userRelationsBody ?? userRelationsQuery ?? {};
+		const users = this.userService.findAll({ relations: userRelationsDto });
 		return users;
 	}
 
