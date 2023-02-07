@@ -103,24 +103,6 @@ describe('GameInvite unit tests', () => {
 		});
 	});
 
-	describe('hasExistingRelaionship', () => {
-		it('should return true when rel exists', async () => {
-			expect(await service.hasExistingRelationship(mockConnection)).toEqual(
-				true,
-			);
-		});
-
-		it('should return false on nonexistant', async () => {
-			expect(
-				await service.hasExistingRelationship({
-					source_id: 1,
-					target_id: 999,
-					type: 'none',
-				}),
-			).toEqual(false);
-		});
-	});
-
 	describe('Validation of relationshipRequest', () => {
 		it('shoud return true users already have a relationship source/target', async () => {
 			const testObject: CreateUserRelationshipDto = {

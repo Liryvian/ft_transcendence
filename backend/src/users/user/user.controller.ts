@@ -59,8 +59,8 @@ export class UserController {
 				invite: true,
 				games_as_player_one: true,
 				games_as_player_two: true,
-				relationshipSource: true,
 				relationshipTarget: true,
+				relationshipSource: true,
 				achievements: true,
 				in_chats: {
 					permissions: true,

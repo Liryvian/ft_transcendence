@@ -33,7 +33,7 @@
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
-import ProfileView_tmp from '../views/ProfileView-tmp.vue'
+import ProfileView_tmp from '@/views/ProfileView-tmp.vue'
 import type { User } from '@/types/User';
 
 export default defineComponent({
