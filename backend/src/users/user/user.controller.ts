@@ -34,6 +34,8 @@ import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
 export class UserController {
 	constructor(private userService: UserService) {}
 
+	private readonly defaultRelationships = {};
+
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
 		const hashed = await bcrypt.hash(registerUserDto.password, 11);
@@ -53,36 +55,32 @@ export class UserController {
 		}
 	}
 
-	// @UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
 		@Body() userRelationsBody?: UserRelationsBodyDto,
 	): Promise<User[]> {
-		const userRelationsDto = userRelationsBody ?? userRelationsQuery ?? {};
+		const userRelationsDto =
+			userRelationsBody ?? userRelationsQuery ?? this.defaultRelationships;
 		const users = this.userService.findAll({ relations: userRelationsDto });
 		return users;
 	}
 
 	@UseGuards(AuthGuard)
 	@Get(':id')
-	async findOne(@Param('id') id: number): Promise<User> {
+	async findOne(
+		@Param('id') id: number,
+		@Query() userRelationsQuery?: UserRelationsQueryDto,
+		@Body() userRelationsBody?: UserRelationsBodyDto,
+	): Promise<User> {
+		const userRelationsDto =
+			userRelationsBody ?? userRelationsQuery ?? this.defaultRelationships;
 		return this.userService.findOne({
 			where: {
 				id: id,
 			},
-			relations: {
-				matchmaking_request: true,
-				invite: true,
-				games_as_player_one: true,
-				games_as_player_two: true,
-				relationshipSource: true,
-				relationshipTarget: true,
-				achievements: true,
-				in_chats: {
-					permissions: true,
-				},
-			},
+			relations: userRelationsDto,
 		});
 	}
 

@@ -241,7 +241,10 @@ describe('User', () => {
 		describe('Relationship to games', () => {
 			it('should return a single game attached to a userId', async () => {
 				const usersGames: Game[] = (
-					await controller.findOne(seedUsers[3].userId)
+					await controller.findOne(seedUsers[3].userId, {
+						games_as_player_one: true,
+						games_as_player_two: true,
+					})
 				).games;
 				expect(usersGames.length).toBe(1);
 				expect(usersGames[0].id).toBe(4);
@@ -249,7 +252,10 @@ describe('User', () => {
 
 			it('should return an array of games attached to a userId', async () => {
 				const usersGames: Game[] = (
-					await controller.findOne(seedUsers[2].userId)
+					await controller.findOne(seedUsers[2].userId, {
+						games_as_player_one: true,
+						games_as_player_two: true,
+					})
 				).games;
 				expect(usersGames.length).toBe(3);
 				expect(usersGames).toEqual(
@@ -268,8 +274,12 @@ describe('User', () => {
 			});
 
 			it('should return the user object with the relation to games', async () => {
-				const userWithGames = (await controller.findOne(seedUsers[2].userId))
-					.games;
+				const userWithGames = (
+					await controller.findOne(seedUsers[2].userId, {
+						games_as_player_one: true,
+						games_as_player_two: true,
+					})
+				).games;
 				const usersGameIds = userWithGames.map((game) => game.id);
 
 				usersGameIds.sort();
@@ -278,7 +288,10 @@ describe('User', () => {
 			});
 
 			test('should return array of users with relation to games', async () => {
-				const usersWithGames = await controller.findAll();
+				const usersWithGames = await controller.findAll({
+					games_as_player_one: true,
+					games_as_player_two: true,
+				});
 				const map_output_to_values_to_test = usersWithGames.map((u) => ({
 					id: u.id,
 					games: u.games.map((g) => g.id).sort(),
