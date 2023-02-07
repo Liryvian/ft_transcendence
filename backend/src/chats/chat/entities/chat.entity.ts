@@ -7,6 +7,7 @@ import { IsArray, IsNumber } from 'class-validator';
 import { Permission } from '../../permissions/entities/permission.entity';
 
 const validVisibility = ['public', 'private'];
+const chatType = ['dm', 'channel'];
 
 export class UsersWithPermissions {
 	@IsNumber()
@@ -45,6 +46,10 @@ export class Chat {
 	@IsIn(validVisibility)
 	@Column({ default: 'public' })
 	visibility: string;
+
+	@IsIn(chatType)
+	@Column({ default: 'channel' })
+	type: string;
 
 	@Column({ nullable: true })
 	@Exclude()

@@ -13,6 +13,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
 import * as bcrypt from 'bcrypt';
+import {} from 'typeorm';
 
 @Controller('chats')
 export class ChatController {

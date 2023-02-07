@@ -4,7 +4,6 @@ import {
 	Entity,
 	JoinColumn,
 	ManyToOne,
-	OneToOne,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
@@ -22,7 +21,7 @@ export class Message {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@OneToOne((type) => User, (user) => user.id)
+	@ManyToOne((type) => User, (user) => user.id)
 	@JoinColumn({ name: 'sender_id' })
 	sender_id: User;
 
