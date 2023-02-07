@@ -11,21 +11,21 @@
 <script lang="ts">
 import type {OverviewArray} from '../../types/OverviewArray';
 
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'OverviewWithMidline',
 	props: {
 		dataArray: Array<OverviewArray>
 	},
-};
+});
 </script>
 
-<!--// vincent you probably dont want this style below, but I'm not sure where to put this :)-->
 <style scoped>
 .line {
 	margin-left: auto;
 	margin-right: auto;
-	/*width: var(--game-border-width);*/   /* !!!!!!  this one doesnt work*/
-	width: 0.1em;
+	width: var(--width-midline);
 	background-color: var(--color-border);
 	position: absolute;
 	left: 50%;
@@ -50,7 +50,6 @@ export default {
 .table_cell {
 	flex-basis: 50%;
 	padding: 0.2em 1em;
-	/*outline: 2px solid cyan;*/
 }
 
 .table_right {

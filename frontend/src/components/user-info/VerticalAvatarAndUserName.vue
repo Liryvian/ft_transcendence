@@ -8,16 +8,17 @@
 </template>
 
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'verticalAvatarAndUserName',
 	props: {
 		profile_name: String,
 		profile_picture: String,
 	},
-};
+});
 </script >
 
-// vincent you probably dont want this style below, but I'm not sure where to put this :)
 <style scoped>
 .circle {
 	margin-left: auto;

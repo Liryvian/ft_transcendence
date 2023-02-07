@@ -13,16 +13,18 @@
 </template>
 
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'InputField',
 	props: {
 		id: String,
 		label: String,
-		is_disabled: false,
+		is_disabled: Boolean,
 		modelValue: String
 	},
 	emits: ['update:modelValue'],
-};
+});
 </script>
 
 <style scoped>

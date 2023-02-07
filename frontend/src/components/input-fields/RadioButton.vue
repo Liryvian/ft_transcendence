@@ -11,9 +11,10 @@
 		</div>
 </template>
 
-//
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'RadioButton',
 	props: {
 		name: String,
@@ -22,7 +23,7 @@ export default {
 		value: Boolean
 	},
 	emits: ['update:modelValue'],
-};
+});
 </script >
 
 <style scoped>

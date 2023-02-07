@@ -6,14 +6,16 @@
 </template>
 
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'cornerButton',
 	props: {
 		link_target: String,
 		link_text: String,
 		position: String
 	},
-};
+});
 </script >
 
 <style scoped>

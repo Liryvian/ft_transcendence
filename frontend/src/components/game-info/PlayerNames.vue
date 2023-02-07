@@ -4,13 +4,15 @@
 </template>
 
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'PlayerNames',
 	props: {
 		player_left: String,
 		player_right: String
 	},
-};
+});
 </script>
 
 <style scoped>

@@ -10,14 +10,16 @@
 </template>
 
 <script lang="ts">
-export default {
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'horizontalAvatarAndUserName',
 	props: {
 		profile_name: String,
 		profile_picture: String,
-		online: true,
+		online: Boolean,
 	},
-};
+});
 </script>
 
 <style scoped>
