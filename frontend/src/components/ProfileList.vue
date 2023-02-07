@@ -15,12 +15,12 @@
       <td> <button v-on:click="createChat(user)">Chat</button> </td>
 
       <td v-if="user.id === me.id || isBlocked(user.id)"><p class="grayedOut">Add friend</p></td>
-      <td v-else-if="isFriend(user.id)"><button v-on:click="updateRelationship(user.id, 'none')">Remove friend</button></td>
-      <td v-else-if="!isFriend(user.id)"><button v-on:click="updateRelationship(user.id, 'friend')">Add friend</button></td>
+      <td v-else-if="userStore.isFriend(user.id)"><button v-on:click="userStore.updateRelationship(user.id, 'none')">Remove friend</button></td>
+      <td v-else-if="!userStore.isFriend(user.id)"><button v-on:click="userStore.updateRelationship(user.id, 'friend')">Add friend</button></td>
 
 
-      <td v-if="isBlocked(user.id) || user.id == me.id"> <button v-on:click="updateRelationship(user.id, 'none')">Unblock</button> </td>
-      <td v-else> <button v-on:click="updateRelationship(user.id, 'blocked')">Block</button> </td>
+      <td v-if="isBlocked(user.id) || user.id == me.id"> <button v-on:click="userStore.updateRelationship(user.id, 'none')">Unblock</button> </td>
+      <td v-else> <button v-on:click="userStore.updateRelationship(user.id, 'blocked')">Block</button> </td>
 
       <td></td>
     </tr>

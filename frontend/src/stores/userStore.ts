@@ -8,8 +8,8 @@ export const useUserStore = defineStore("users", {
 
   //  actions == data definitions
   state: () => ({
-      allUsers: [] as User[],
-      me: {} as User,
+      allUsers: <User[]>[],
+      me: <User>{},
   }),
   // getters == computed values
   getters: {
@@ -37,8 +37,9 @@ export const useUserStore = defineStore("users", {
 
     async refreshAllUsers() {
       try {
-        const data = await getRequest("users");
-        this.allUsers = data.data;
+        await getRequest("users").then(res => {
+          this.allUsers = res.data.filter((user: User) => (user.id != this.me.id));
+        })
       }
       catch (e) {
         console.error(e);
@@ -48,6 +49,8 @@ export const useUserStore = defineStore("users", {
 
     async getRelationship(source: number, target: number)
     {
+      const data = await getRequest(`user-relationships/${source}/${target}`);
+      console.log("data:", data.data)
       return await (await getRequest(`user-relationships/${source}/${target}`)).data
     },
 
@@ -62,27 +65,43 @@ export const useUserStore = defineStore("users", {
       const sourceId: number = rel.source_id.id;
       const targetId: number = rel.target_id.id;
 
+      console.log("MyID: ", myId, "\nuserId", userId, "\nsourceid:", sourceId, "\ntargetid:", targetId)
+      console.log("returning: ", (sourceId === userId || targetId === userId) &&
+      (targetId === myId || sourceId === myId))
       return (sourceId === userId || targetId === userId) &&
       (targetId === myId || sourceId === myId)
     },
     
-    getExistingRelationship(id: number): Relationship | null
+    // getExistingRelationship(id: number): Relationship | null
+    // {
+    //   this.me.relationships.forEach((rel: Relationship) => {
+    //     if (this.isMatchingRelationship(id, rel) === true) {
+    //       console.log("MatchFound: ", rel);
+    //         return rel;
+    //       }
+    //   })
+    //   return null;
+    // },
+
+    getExistingRelationship(id: number) : Relationship | null
     {
-      this.me.relationships.forEach((rel: Relationship) => {
-        if (this.isMatchingRelationship(id, rel))
-          return rel;
-      })
-      return null;
+      const filtered = this.me.relationships.filter((rel) => (rel.source_id.id === id || rel.target_id.id === id) &&
+        (rel.target_id.id === this.me.id || rel.source_id.id === this.me.id));
+        return (filtered.length > 0 ? filtered[0] : null)
     },
 
     async updateRelationship(userId: number, type: string) {
+      console.log("userID: ", userId, "\nMe: ", this.me.id);
       const rel: Relationship = await this.getRelationship(userId, this.me.id);
+      console.log("relationship to update: ", rel);
       await patchRequest(`user-relationships/${rel.id}`, { type });
-      this.refreshMe();
+      await this.refreshData();
     },
 
     isFriend(id: number): boolean {
-       const rel: Relationship | null = this.getExistingRelationship(id);
+      const rel: Relationship | null = this.getExistingRelationship(id);
+      console.log("Found rel: ", rel)
+      console.log("Is friend: ", (rel != null && rel.type === ValidRelationships.FRIEND))
         return (rel != null && rel.type === ValidRelationships.FRIEND);
     },
 

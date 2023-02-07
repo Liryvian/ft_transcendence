@@ -11,6 +11,7 @@ import { User } from '../../user/entities/user.entity';
 export enum validRelationships {
 	FRIEND = 'friend',
 	BLOCKED = 'blocked',
+	NONE = 'none',
 }
 
 @Entity('user_relationships')
@@ -34,6 +35,6 @@ export class UserRelationship {
 	// @Column()
 	// specifier_id: number;
 
-	@Column()
+	@Column({ default: validRelationships.NONE })
 	type: string;
 }
