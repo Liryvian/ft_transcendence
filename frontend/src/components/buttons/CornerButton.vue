@@ -5,7 +5,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: 'cornerButton',
 	props: {
@@ -13,7 +13,7 @@ export default {
 		link_text: String
 	},
 };
-</script>
+</script >
 
 <style scoped>
 

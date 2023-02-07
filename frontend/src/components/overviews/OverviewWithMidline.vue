@@ -8,16 +8,18 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import type {OverviewArray} from '../../types/OverviewArray';
+
 export default {
-name: 'OverviewWithMidline',
+	name: 'OverviewWithMidline',
 	props: {
-		dataArray: Array,
+		dataArray: Array<OverviewArray>
 	},
 };
 </script>
 
-// vincent you probably dont want this style below, but I'm not sure where to put this :)
+<!--// vincent you probably dont want this style below, but I'm not sure where to put this :)-->
 <style scoped>
 .line {
 	margin-left: auto;

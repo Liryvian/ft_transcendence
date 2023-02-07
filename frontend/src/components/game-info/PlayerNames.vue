@@ -3,7 +3,7 @@
 	<div class="c_game__name c_game__name--right">{{ player_right }}</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: 'PlayerNames',
 	props: {

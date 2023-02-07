@@ -7,7 +7,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
 	name: 'verticalAvatarAndUserName',
 	props: {
@@ -16,7 +16,7 @@ export default {
 		online: true,
 	},
 };
-</script>
+</script >
 
 // vincent you probably dont want this style below, but I'm not sure where to put this :)
 <style scoped>

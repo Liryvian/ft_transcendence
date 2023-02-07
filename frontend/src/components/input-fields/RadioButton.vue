@@ -11,7 +11,7 @@
 </template>
 
 //
-<script>
+<script lang="ts">
 export default {
 	name: 'RadioButton',
 	props: {
@@ -20,7 +20,7 @@ export default {
 		value: String,
 	},
 };
-</script>
+</script >
 
 <style scoped>
 
