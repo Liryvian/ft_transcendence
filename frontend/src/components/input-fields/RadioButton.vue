@@ -3,24 +3,28 @@
 			<label :for="id">{{ label }}</label>
 			<input
 				:id="id"
+				:name="name"
 				type="radio"
-				v-model="model"
 				:value="value"
+				@input="$emit('update:modelValue', $event.target.value)"
 			/>
 		</div>
 </template>
 
-//
-<script>
-export default {
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
 	name: 'RadioButton',
 	props: {
+		name: String,
 		label: String,
 		id: String,
-		value: String,
+		value: Boolean
 	},
-};
-</script>
+	emits: ['update:modelValue'],
+});
+</script >
 
 <style scoped>
 

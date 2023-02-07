@@ -1,10 +1,11 @@
 <template>
 	<div class="c_field_group">
-		<label :for="id">{{ name }}:</label>
+		<label :for="id">{{ label }}:</label>
 		<input
 			:id="id"
 			type="text"
-			v-model="input_data"
+			:value="modelValue"
+			@input="$emit('update:modelValue', $event.target.value)"
 			:disabled="is_disabled"
 		/>
 	</div>
@@ -18,10 +19,11 @@ export default defineComponent({
 	name: 'InputField',
 	props: {
 		id: String,
-		name: String,
-		input_data: String,   //not sure what to dooo
-		is_disabled: Boolean
+		label: String,
+		is_disabled: Boolean,
+		modelValue: String
 	},
+	emits: ['update:modelValue'],
 });
 </script>
 

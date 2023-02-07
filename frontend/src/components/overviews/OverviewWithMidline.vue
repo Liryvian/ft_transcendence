@@ -8,22 +8,24 @@
 	</div>
 </template>
 
-<script>
-export default {
-name: 'OverviewWithMidline',
+<script lang="ts">
+import type {OverviewArray} from '../../types/OverviewArray';
+
+import {defineComponent} from "vue";
+
+export default defineComponent({
+	name: 'OverviewWithMidline',
 	props: {
-		dataArray: Array,
+		dataArray: Array<OverviewArray>
 	},
-};
+});
 </script>
 
-// vincent you probably dont want this style below, but I'm not sure where to put this :)
 <style scoped>
 .line {
 	margin-left: auto;
 	margin-right: auto;
-	/*width: var(--game-border-width);*/   /* !!!!!!  this one doesnt work*/
-	width: 0.1em;
+	width: var(--width-midline);
 	background-color: var(--color-border);
 	position: absolute;
 	left: 50%;
@@ -48,7 +50,6 @@ name: 'OverviewWithMidline',
 .table_cell {
 	flex-basis: 50%;
 	padding: 0.2em 1em;
-	/*outline: 2px solid cyan;*/
 }
 
 .table_right {
