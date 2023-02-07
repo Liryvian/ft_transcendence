@@ -24,7 +24,7 @@ export class SeederService {
 		private readonly userRelService: UserRelationshipService,
 	) {}
 	// on my local machine the src doesn't exist in this path
-	private readonly shouldSeedFilePath = './';
+	private readonly shouldSeedFilePath = './.hasSeeded';
 
 	shouldSeed(): boolean {
 		return fs.existsSync(this.shouldSeedFilePath) === false;

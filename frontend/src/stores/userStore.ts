@@ -7,8 +7,8 @@ export const useUserStore = defineStore("users", {
 
   //  actions == data definitions
   state: () => ({
-      allUsers: <User[]>[],
-      me: <User>{},
+      allUsers: [] as User[],
+      me: {} as User,
   }),
   // getters == computed values
   getters: {
