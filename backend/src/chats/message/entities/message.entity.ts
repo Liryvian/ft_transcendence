@@ -10,7 +10,11 @@ import {
 import { Chat } from '../../chat/entities/chat.entity';
 import { User } from '../../../users/user/entities/user.entity';
 
-@Entity('messages')
+@Entity('messages', {
+	orderBy: {
+		created_at: 'ASC',
+	},
+})
 export class Message {
 	@PrimaryGeneratedColumn()
 	id: number;
