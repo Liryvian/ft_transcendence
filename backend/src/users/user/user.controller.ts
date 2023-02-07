@@ -55,27 +55,35 @@ export class UserController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	@Get()
 	async findAll(
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
 		@Body() userRelationsBody?: UserRelationsBodyDto,
 	): Promise<User[]> {
-		const userRelationsDto =
-			userRelationsBody ?? userRelationsQuery ?? this.defaultRelationships;
+		const userRelationsDto = Object.keys(userRelationsBody ?? {}).length
+			? userRelationsBody
+			: Object.keys(userRelationsQuery ?? {}).length
+			? userRelationsQuery
+			: this.defaultRelationships;
+
 		const users = this.userService.findAll({ relations: userRelationsDto });
 		return users;
 	}
 
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	@Get(':id')
 	async findOne(
 		@Param('id') id: number,
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
 		@Body() userRelationsBody?: UserRelationsBodyDto,
 	): Promise<User> {
-		const userRelationsDto =
-			userRelationsBody ?? userRelationsQuery ?? this.defaultRelationships;
+		const userRelationsDto = Object.keys(userRelationsBody ?? {}).length
+			? userRelationsBody
+			: Object.keys(userRelationsQuery ?? {}).length
+			? userRelationsQuery
+			: this.defaultRelationships;
+
 		return this.userService.findOne({
 			where: {
 				id: id,
