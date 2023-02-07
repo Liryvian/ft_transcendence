@@ -54,10 +54,7 @@ export class UserRelationshipController {
 		@Param('source') source: number,
 		@Param('target') target: number,
 	): Promise<UserRelationship> {
-		const rel = await this.service.getExistingRelationship(source, target);
-		console.log('rel in controller: ', rel);
-		return rel;
-		return this.service.getExistingRelationship(source, target);
+		return await this.service.getExistingRelationship(source, target);
 	}
 
 	@Patch(':id')
