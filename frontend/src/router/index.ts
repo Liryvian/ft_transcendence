@@ -12,7 +12,7 @@ const router = createRouter({
 			component: () => import('../views/LoginView.vue'),
 		},
 		{
-			path: '/settings',
+			path: '/settings',     // !! minor thing, but maybe change this name back to "me" or "profile settings"? since we do have channel settings and settings are a bit off in the menu?
 			name: 'settings',
 			component: () => import('../views/SettingsView.vue'),
 		},
@@ -37,10 +37,36 @@ const router = createRouter({
 			component: () => import('../views/LogoutView.vue'),
 		},
 		{
+			path: '/channel-settings',
+			name: 'channel-settings',
+			component: () => import('../views/ChannelSettingsView.vue'),
+		},
+		{
+			path: '/match-history',
+			name: 'match-history',
+			component: () => import('../views/MatchHistoryView.vue'),
+		},
+		{
+			path: '/new-channel',
+			name: 'new-channel',
+			component: () => import('../views/NewChannelView.vue'),
+		},
+		{
+			path: '/profile',
+			name: 'profile',
+			component: () => import('../views/ProfileView.vue'),
+		},
+		{
 			path: '/elements-to-reuse',
 			name: 'elements-to-reuse',
 			component: () => import('../views/ElementsToReuse.vue'),
 		},
+		{
+			path: '/component-test',
+			name: 'component-test',
+			component: () => import('../views/ComponentTest.vue'),
+		},
+
 	],
 });
 
