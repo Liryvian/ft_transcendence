@@ -23,7 +23,6 @@ export class SeederService {
 		private readonly chatService: ChatService,
 		private readonly userRelService: UserRelationshipService,
 	) {}
-	// on my local machine the src doesn't exist in this path
 	private readonly shouldSeedFilePath = './.hasSeeded';
 
 	shouldSeed(): boolean {

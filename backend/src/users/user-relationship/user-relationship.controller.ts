@@ -19,13 +19,13 @@ export class UserRelationshipController {
 
 	// to be removed as all users will be initialized with default NONE relationship
 	@Post()
-	async create(@Body() realtionshipData: CreateUserRelationshipDto) {
-		if (await this.service.hasExistingRelationship(realtionshipData)) {
+	async create(@Body() relationshipData: CreateUserRelationshipDto) {
+		if (await this.service.hasExistingRelationship(relationshipData)) {
 			throw new BadRequestException('Relation already exists between users');
 		}
 
 		try {
-			const newRelationship = await this.service.save(realtionshipData);
+			const newRelationship = await this.service.save(relationshipData);
 			return newRelationship;
 		} catch (e) {
 			throw new BadRequestException(
