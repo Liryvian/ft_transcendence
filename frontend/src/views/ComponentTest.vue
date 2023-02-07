@@ -2,11 +2,11 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<div class="c_field_group c_field_group--radio">
-				<RadioButton label="hallo" id="r1"/>
-				<RadioButton label="doei" id="r2"/>
+				<RadioButton v-model="inputData2" :value="true" name="radio1" label="on" id="r1"/>
+				<RadioButton v-model="inputData2" :value="false" name="radio1" label="off" id="r2"/>
 			</div>
-			<corner-button link_text='save' link_target='/'/>
-			<InputField name="hallo" />
+			<corner-button link_text="save" link_target="/" position="pb_bottom"/>
+			<InputField label="hallo" v-model="inputData"/>
 			<OverviewWithMidline :dataArray="dataArray"/>
 			<HorizontalAvatarAndUserName profile_picture="/test-profile.png" profile_name='Georgio'/>
 			<VerticalAvatarAndUserName profile_picture="/test-profile.png" profile_name='Jenny'/>
@@ -31,6 +31,8 @@ export default{
 	name: 'ComponentTest',
 	data() {
 		return {
+			inputData: '',
+			inputData2: '',
 			dataArray: [
 				{ left: 'intra name', right: 'x' },
 				{ left: 'member since', right: 'a' },

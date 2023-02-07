@@ -3,9 +3,10 @@
 			<label :for="id">{{ label }}</label>
 			<input
 				:id="id"
+				:name="name"
 				type="radio"
-				v-model="model"
 				:value="value"
+				@input="$emit('update:modelValue', $event.target.value)"
 			/>
 		</div>
 </template>
@@ -15,10 +16,12 @@
 export default {
 	name: 'RadioButton',
 	props: {
+		name: String,
 		label: String,
 		id: String,
-		value: String,
+		value: Boolean
 	},
+	emits: ['update:modelValue'],
 };
 </script >
 

@@ -13,7 +13,6 @@ export default {
 	props: {
 		profile_name: String,
 		profile_picture: String,
-		online: true,
 	},
 };
 </script >
