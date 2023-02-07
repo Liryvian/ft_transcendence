@@ -40,6 +40,8 @@ export abstract class AbstractService<T> {
 	/*
 		Use this if you want to create entities WITH relationships
 	*/
+	async save(data: DeepPartial<T>): Promise<T>;
+	async save(data: DeepPartial<T>[]): Promise<T[]>;
 	async save(data): Promise<T>;
 	async save(data): Promise<T[]>;
 	async save(data): Promise<T | T[]> {
@@ -69,10 +71,7 @@ export abstract class AbstractService<T> {
 		// in TS/JS NULL is an object, so we can check for it quite easily
 		if (typeof id === 'object') {
 			if (id === null || (id.hasOwnProperty('length') && id.length === 0)) {
-				const res: DeleteResult = new DeleteResult();
-				res.raw = [];
-				res.affected = 0;
-				return res;
+				return { raw: [], affected: 0 } as DeleteResult;
 			}
 		}
 		return this.repository.delete(id);
@@ -82,10 +81,19 @@ export abstract class AbstractService<T> {
 	async trySeed(data: any): Promise<T[]>;
 	async trySeed(data: any): Promise<T | T[]> {
 		try {
-			const seedResult: any= await this.save(data);
+			const seedResult: any = await this.save(data);
 			return seedResult;
 		} catch (e) {
 			console.error('Already seeded');
 		}
+	}
+
+	async removeAll(): Promise<T[]> {
+		const all: T[] = await this.repository.find();
+
+		if (all.length > 0) {
+			return this.repository.remove(all);
+		}
+		return [];
 	}
 }

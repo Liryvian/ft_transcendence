@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { ChatModule } from '../chats/chat/chat.module';
 import { MessageModule } from '../chats/message/message.module';
-import { RoleModule } from '../chats/role/role.module';
-import { UserChatModule } from '../chats/user-chat/user-chat.module';
 import { GameModule } from '../pong/game/game.module';
 import { GameInvitesModule } from '../pong/game_invite/game-invite.module';
 import { MatchmakingRequestModule } from '../pong/matchmaking-request/matchmaking-request.module';
@@ -15,24 +13,26 @@ import { UserController } from '../users/user/user.controller';
 import { UserModule } from '../users/user/user.module';
 import { AnimalModule } from '../test_example/animal.module';
 import { SeederService } from './seeders.service';
+import { PermissionModule } from '../chats/permissions/permission.module';
+import { ChatUserPermissionModule } from '../chats/chat-user-permissions/chat-user-permission.module';
 
 @Module({
 	imports: [
 		AnimalModule,
+		AchievementsModule,
 		AuthModule,
 		SharedModule,
 		ChatModule,
 		MessageModule,
 		UserModule,
-		RoleModule,
 		GameModule,
-		UserChatModule,
 		GameInvitesModule,
 		MatchmakingRequestModule,
-		SeedersModule,
 		UserRelationshipModule,
 		AchievementsModule,
 		UserAchievementsModule,
+		PermissionModule,
+		ChatUserPermissionModule,
 	],
 	providers: [SeederService],
 	controllers: [UserController],

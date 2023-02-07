@@ -17,15 +17,15 @@ import { UserRelationship } from './entities/user-relationship.entity';
 export class UserRelationshipController {
 	constructor(private readonly service: UserRelationshipService) {}
 
+	// to be removed as all users will be initialized with default NONE relationship
 	@Post()
-	async create(@Body() realtionshipData: CreateUserRelationshipDto) {
-		console.log('POST DATA', realtionshipData);
-		if (await this.service.hasExistingRelationship(realtionshipData)) {
+	async create(@Body() relationshipData: CreateUserRelationshipDto) {
+		if (await this.service.hasExistingRelationship(relationshipData)) {
 			throw new BadRequestException('Relation already exists between users');
 		}
 
 		try {
-			const newRelationship = await this.service.save(realtionshipData);
+			const newRelationship = await this.service.save(relationshipData);
 			return newRelationship;
 		} catch (e) {
 			throw new BadRequestException(
@@ -40,19 +40,20 @@ export class UserRelationshipController {
 			relations: { source_id: true, target_id: true },
 		});
 	}
-
-	// @Get(':id')
-	// async findOne
+	@Get(':id')
+	async findOne(@Param('id') id: number) {
+		return this.service.findOne({
+			where: { id },
+			relations: { source_id: true, target_id: true },
+		});
+	}
 
 	@Get(':source/:target')
 	async findExistingOne(
 		@Param('source') source: number,
 		@Param('target') target: number,
 	): Promise<UserRelationship> {
-		const rel = await this.service.getExistingRelationship(source, target);
-		console.log('rel in controller: ', rel);
-		return rel;
-		return this.service.getExistingRelationship(source, target);
+		return await this.service.getExistingRelationship(source, target);
 	}
 
 	@Patch(':id')

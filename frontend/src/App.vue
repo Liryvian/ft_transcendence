@@ -45,6 +45,10 @@ import { RouterLink, RouterView } from 'vue-router';
 				<div class="nav_ball"></div>
 				Logout
 			</RouterLink>
+			<RouterLink to="/elements-to-reuse">
+				<div class="nav_ball"></div>
+				elems
+			</RouterLink>
 		</nav>
 	</header>
 
@@ -73,7 +77,7 @@ nav {
 	position: absolute;
 	width: var(--ball-size);
 	height: var(--ball-size);
-	border: var(--game-border-width) solid var(--color-border);
+	border: var(--ball-line) solid var(--color-border);
 	border-radius: 50%;
 	top: 50%;
 	transform: translateY(-45%);

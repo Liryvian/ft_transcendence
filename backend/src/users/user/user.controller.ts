@@ -62,6 +62,9 @@ export class UserController {
 				relationshipSource: true,
 				relationshipTarget: true,
 				achievements: true,
+				in_chats: {
+					permissions: true,
+				},
 			},
 		});
 		return users;
@@ -82,6 +85,9 @@ export class UserController {
 				relationshipSource: true,
 				relationshipTarget: true,
 				achievements: true,
+				in_chats: {
+					permissions: true,
+				},
 			},
 		});
 	}

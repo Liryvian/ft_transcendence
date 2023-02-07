@@ -19,7 +19,7 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 		target: number,
 	): Promise<UserRelationship> | null {
 		try {
-			const relationships: UserRelationship = await this.findOne({
+			const relationship: UserRelationship = await this.findOne({
 				relations: {
 					source_id: true,
 					target_id: true,
@@ -33,7 +33,7 @@ export class UserRelationshipService extends AbstractService<UserRelationship> {
 					},
 				},
 			});
-			return relationships;
+			return relationship;
 		} catch (e) {
 			return null;
 		}

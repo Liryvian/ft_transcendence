@@ -13,6 +13,7 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
 import * as bcrypt from 'bcrypt';
+import {} from 'typeorm';
 
 @Controller('chats')
 export class ChatController {
@@ -29,12 +30,15 @@ export class ChatController {
 
 	@Get()
 	findAll() {
-		return this.chatService.findAll({ relations: { users: true } });
+		return this.chatService.findAll({ relations: { has_users: true } });
 	}
 
 	@Get(':id')
 	findOne(@Param('id') id: number) {
-		return this.chatService.findOne({ where: { id } });
+		return this.chatService.findOne({
+			where: { id },
+			relations: { has_users: true },
+		});
 	}
 
 	@Patch(':id')
@@ -43,7 +47,7 @@ export class ChatController {
 			const current_Chat: Chat = await this.chatService.findOne({
 				where: { id },
 			});
-			// check userRole
+			// check permissions
 			if (
 				!(await bcrypt.compare(current_Chat.password, updateChatDto.password))
 			) {
@@ -56,7 +60,7 @@ export class ChatController {
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: number) {
+	async remove(@Param('id') id: number) {
 		return this.chatService.remove(id);
 	}
 }

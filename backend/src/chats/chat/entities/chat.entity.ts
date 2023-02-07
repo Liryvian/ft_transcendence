@@ -1,16 +1,21 @@
-import {
-	Column,
-	Entity,
-	ManyToMany,
-	OneToMany,
-	PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from '../../../users/user/entities/user.entity';
-import { Exclude } from 'class-transformer';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
+import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
+import { IsArray, IsNumber } from 'class-validator';
+import { Permission } from '../../permissions/entities/permission.entity';
 
 const validVisibility = ['public', 'private'];
+const chatType = ['dm', 'channel'];
+
+export class UsersWithPermissions {
+	@IsNumber()
+	user_id: number;
+
+	@IsArray()
+	permissions: Permission[];
+}
 
 @Entity('chats')
 export class Chat {
@@ -20,15 +25,31 @@ export class Chat {
 	@Column({ unique: true, nullable: false })
 	name: string;
 
-	@ManyToMany(() => User, (user) => user.chats, {
-		onDelete: 'CASCADE',
-		onUpdate: 'CASCADE',
-	})
-	users: User[];
+	@OneToMany(() => ChatUserPermission, (cup) => cup.chats)
+	@Exclude()
+	has_users: ChatUserPermission[];
+
+	@Expose()
+	get users() {
+		return this.has_users?.reduce((acc, curr) => {
+			let index = acc.findIndex((obj) => obj.user_id == curr.user_id);
+
+			if (index === -1) {
+				index = acc.push({ user_id: curr.user_id, permissions: [] });
+				index--;
+			}
+			acc[index].permissions.push(curr.permissions);
+			return acc;
+		}, []);
+	}
 
 	@IsIn(validVisibility)
 	@Column({ default: 'public' })
 	visibility: string;
+
+	@IsIn(chatType)
+	@Column({ default: 'channel' })
+	type: string;
 
 	@Column({ nullable: true })
 	@Exclude()

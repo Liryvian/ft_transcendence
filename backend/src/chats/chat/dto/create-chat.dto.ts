@@ -9,4 +9,7 @@ export class CreateChatDto {
 
 	@IsOptional()
 	password?: string;
+
+	@IsOptional()
+	type?: string;
 }
