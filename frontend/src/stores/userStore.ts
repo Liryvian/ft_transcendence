@@ -32,6 +32,7 @@ export const useUserStore = defineStore("users", {
       }
       catch (e) {
         console.error(e);
+        return [];
       }
     },
 
@@ -42,6 +43,7 @@ export const useUserStore = defineStore("users", {
       }
       catch (e) {
         console.error(e);
+        return [];
       }
     },
 
@@ -54,7 +56,7 @@ export const useUserStore = defineStore("users", {
       await this.refreshMe();
       await this.refreshAllUsers();
     },
-// wanna use this helper to filter me.relationships, but
+
     isMatchingRelationship(userId: number, rel: Relationship): boolean
     {
       const myId: number = this.me.id;

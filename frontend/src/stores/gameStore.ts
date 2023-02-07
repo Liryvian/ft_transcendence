@@ -24,6 +24,7 @@ export const useGameStore = defineStore("games", {
 			}
 			catch (e) {
 				console.error(e);
+				return [];
 			}
 		},
 

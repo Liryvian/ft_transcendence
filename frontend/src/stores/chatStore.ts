@@ -17,11 +17,12 @@ export const useChatStore = defineStore("chats", {
 	actions: {
 		async refreshAllChats() {
 			try {
-				const data = await getRequest ("chats");
+				const data = await getRequest("chats");
 				this.allChats = data.data;
 			}
 			  catch (e) {
 				console.error(e);
+				return [];
 			}
 		},
 		async refreshMyChats() {
