@@ -35,14 +35,13 @@
 <!--  THIS SCRIPT IS ONLY TO SHOW A WORKING GAME STORE SETUP-->
 <script lang="ts">
 import { useGameStore } from '@/stores/gameStore';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
 	name: "GameView",
 
 	setup(){
 		const gameStore = useGameStore();
-		
 		gameStore.refreshData();
 		return {
 			gameStore,
