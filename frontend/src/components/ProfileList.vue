@@ -43,14 +43,13 @@ export default defineComponent({
   },
   setup() {
     const userStore = useUserStore()
-    const { login, initData, isBlocked, isFriend, updateRelationship, allUsers, me } = userStore;
-    login();
-    initData();
+    const { login, refreshData, isBlocked, isFriend, updateRelationship, allUsers, me } = userStore;
+    refreshData();
 
     return {
       userStore,
       login,
-      initData,
+      refreshData,
       isBlocked,
       isFriend,
       updateRelationship,
