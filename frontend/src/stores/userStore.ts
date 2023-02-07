@@ -21,7 +21,7 @@ export const useUserStore = defineStore("users", {
     async login(loginForm: LoginForm) {
       await postRequest("login", loginForm);
       await this.refreshMe();
-      await router.push("/profiles")
+      await router.push("/")
     },
 
     async refreshMe() {
