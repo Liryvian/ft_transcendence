@@ -17,6 +17,7 @@ import { UserRelationship } from './entities/user-relationship.entity';
 export class UserRelationshipController {
 	constructor(private readonly service: UserRelationshipService) {}
 
+	// to be removed as all users will be initialized with default NONE relationship
 	@Post()
 	async create(@Body() realtionshipData: CreateUserRelationshipDto) {
 		if (await this.service.hasExistingRelationship(realtionshipData)) {
