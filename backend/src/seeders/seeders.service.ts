@@ -29,7 +29,7 @@ export class SeederService {
 		private readonly achievementService: AchievementsService,
 		private readonly userAchievementsService: UserAchievementsService,
 	) {}
-	// on my local machine the src doesn't exist in this path
+
 	private readonly shouldSeedFilePath = './.hasSeeded';
 
 	shouldSeed(): boolean {
