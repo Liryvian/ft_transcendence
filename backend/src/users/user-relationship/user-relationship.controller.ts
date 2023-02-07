@@ -11,6 +11,7 @@ import {
 import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
+import { UserRelationship } from './entities/user-relationship.entity';
 
 @Controller('user-relationships')
 export class UserRelationshipController {
@@ -45,6 +46,17 @@ export class UserRelationshipController {
 			where: { id },
 			relations: { source_id: true, target_id: true },
 		});
+	}
+
+	@Get(':source/:target')
+	async findExistingOne(
+		@Param('source') source: number,
+		@Param('target') target: number,
+	): Promise<UserRelationship> {
+		const rel = await this.service.getExistingRelationship(source, target);
+		console.log('rel in controller: ', rel);
+		return rel;
+		return this.service.getExistingRelationship(source, target);
 	}
 
 	@Patch(':id')
