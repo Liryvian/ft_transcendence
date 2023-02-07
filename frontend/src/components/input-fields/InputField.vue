@@ -11,16 +11,18 @@
 
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
 	name: 'InputField',
 	props: {
 		id: String,
 		name: String,
-		// input_data: String,   //not sure what to dooo
-		is_disabled: false
+		input_data: String,   //not sure what to dooo
+		is_disabled: Boolean
 	},
-};
+});
 </script>
 
 <style scoped>
