@@ -3,33 +3,33 @@ import { IsBoolean, IsOptional } from 'class-validator';
 export class UserRelationsBodyDto {
 	@IsOptional()
 	@IsBoolean()
-	matchmaking_request?: boolean = false;
+	matchmaking_request?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	invite?: boolean = false;
+	invite?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	games_as_player_one?: boolean = false;
+	games_as_player_one?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	games_as_player_two?: boolean = false;
+	games_as_player_two?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	relationshipTarget?: boolean = false;
+	relationshipTarget?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	relationshipSource?: boolean = false;
+	relationshipSource?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	achievements?: boolean = false;
+	achievements?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
-	in_chats?: boolean = false;
+	in_chats?: boolean;
 }

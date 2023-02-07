@@ -5,40 +5,40 @@ export class UserRelationsQueryDto {
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public matchmaking_request?: boolean;
+	matchmaking_request?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public invite?: boolean;
+	invite?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public games_as_player_one?: boolean;
+	games_as_player_one?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public games_as_player_two?: boolean;
+	games_as_player_two?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public relationshipTarget?: boolean;
+	relationshipTarget?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public relationshipSource?: boolean;
+	relationshipSource?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public achievements?: boolean;
+	achievements?: boolean;
 
 	@IsOptional()
 	@IsBoolean()
 	@Transform(({ value }) => value === 'true')
-	public in_chats?: boolean;
+	in_chats?: boolean;
 }
