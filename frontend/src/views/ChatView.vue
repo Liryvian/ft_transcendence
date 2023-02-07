@@ -118,13 +118,47 @@
 				</div>
 			</div>
 		</div>
+		<table class="table table-striped table-sm">
+			All Chats:
+			<tbody>
+				<tr v-for="chat in chatStore.allChats" :key="chat.id">
+					<td>Game id: {{ chat.id }}</td>
+					<td> Chat name: {{ chat.name }}</td>
+					<td>Visibility: {{ chat.visibility }}</td>
+				</tr>
+				
+			</tbody>
+		</table>
+		<table class="table table-striped table-sm">
+			My Chats:
+			<tbody>
+				<tr v-for="chat in chatStore.getMyChats" :key="chat.id">
+					<td>Game id: {{ chat.id }}</td>
+					<td> Chat name: {{ chat.name }}</td>
+					<td>Visibility: {{ chat.visibility }}</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { useChatStore } from '@/stores/chatStore';
 
 export default defineComponent({
+	name: "ChatView",
+	
+	setup(){
+		const chatStore = useChatStore();
+		
+		chatStore.refreshData();
+		return {
+			chatStore,
+		}
+	},
 	// type inference enabled
 	data() {
 		return {
