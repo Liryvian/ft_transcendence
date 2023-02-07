@@ -6,6 +6,12 @@ interface Achievement {
     name: string;
 }
 
+export interface LoginForm {
+	name: string;
+    password: string
+}
+
+
 export interface User {
     id: number;
     name: string;
