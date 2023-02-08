@@ -6,6 +6,12 @@ interface Achievement {
     name: string;
 }
 
+export interface RegisterForm {
+    username: string;
+    password: string;
+    password_confirm: string;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -25,3 +31,4 @@ export interface User {
     created_at: Date;
     updated_at: Date;
 }
+
