@@ -6,11 +6,11 @@
 				method="post"
 				action=""
 				class="c_block c_form_group"
-				v-on:click@submit.prevent="userStore.register(registerForm)"
+				@submit.prevent="userStore.register(registerForm)"
 			>
-			<InputField label="username" v-model="username"/>
-			<InputField label="password" v-model="password"/>
-			<InputField label="confirm password" v-model="password_confirm"/>
+			<InputField label="username" v-model="registerForm.name"/>
+			<InputField label="password" v-model="registerForm.password"/>
+			<InputField label="confirm password" v-model="registerForm.password_confirm"/>
 				<div class="c_block c_split">
 					<p><a href="/login">back</a> </p>
 					<p><input class="link_button" type="submit" value="register" /></p>
@@ -36,7 +36,7 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 		const registerForm: RegisterForm = reactive({
-			username: '',
+			name: '',
 			password: '',
 			password_confirm: '',
 		})

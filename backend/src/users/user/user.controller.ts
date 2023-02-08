@@ -39,7 +39,6 @@ export class UserController {
 			password: hashed,
 			is_intra: false,
 		};
-
 		try {
 			const newUser: InsertResult = await this.userService.insert(
 				createUserDto,

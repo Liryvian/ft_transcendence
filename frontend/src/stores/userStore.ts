@@ -1,7 +1,8 @@
+import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User } from "../types/User";
+import type { RegisterForm, User } from '../types/User';
 
 export const useUserStore = defineStore("users", {
 
@@ -23,6 +24,12 @@ export const useUserStore = defineStore("users", {
           password: 'R'
         }
         await postRequest("login", loginData);
+    },
+
+    async register(registerForm: RegisterForm) {
+      await postRequest("users", registerForm);
+      // await this.refreshMe();
+      await router.push("/");
     },
 
     async refreshMe() {
