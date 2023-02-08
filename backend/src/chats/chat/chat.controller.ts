@@ -41,17 +41,17 @@ export class ChatController {
 
 	@Get()
 	findAll(
-		@Query() userRelationsQuery?: ChatRelationsQueryDto,
-		@Body() userRelationsBody?: ChatRelationsBodyDto,
+		@Query() chatRelationsQuery?: ChatRelationsQueryDto,
+		@Body() chatRelationsBody?: ChatRelationsBodyDto,
 	) {
-		const userRelationsDto = Object.keys(userRelationsBody ?? {}).length
-			? userRelationsBody
-			: Object.keys(userRelationsQuery ?? {}).length
-			? userRelationsQuery
+		const chatRelationsDto = Object.keys(chatRelationsBody ?? {}).length
+			? chatRelationsBody
+			: Object.keys(chatRelationsQuery ?? {}).length
+			? chatRelationsQuery
 			: this.defaultRelationships;
 
 		return this.chatService.findAll({
-			relations: userRelationsDto,
+			relations: chatRelationsDto,
 			order: this.defaultOrder,
 		});
 	}
@@ -59,18 +59,18 @@ export class ChatController {
 	@Get(':id')
 	findOne(
 		@Param('id') id: number,
-		@Query() userRelationsQuery?: ChatRelationsQueryDto,
-		@Body() userRelationsBody?: ChatRelationsBodyDto,
+		@Query() chatRelationsQuery?: ChatRelationsQueryDto,
+		@Body() chatRelationsBody?: ChatRelationsBodyDto,
 	) {
-		const userRelationsDto = Object.keys(userRelationsBody ?? {}).length
-			? userRelationsBody
-			: Object.keys(userRelationsQuery ?? {}).length
-			? userRelationsQuery
+		const chatRelationsDto = Object.keys(chatRelationsBody ?? {}).length
+			? chatRelationsBody
+			: Object.keys(chatRelationsQuery ?? {}).length
+			? chatRelationsQuery
 			: this.defaultRelationships;
 
 		return this.chatService.findOne({
 			where: { id },
-			relations: userRelationsDto,
+			relations: chatRelationsDto,
 			order: this.defaultOrder,
 		});
 	}
