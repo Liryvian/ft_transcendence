@@ -19,9 +19,14 @@ export const useUserStore = defineStore("users", {
   // actions == methods
   actions: {
     async login(loginForm: LoginForm) {
-      await postRequest("login", loginForm);
-      await this.refreshMe();
-      await router.push("/")
+      try{
+        await postRequest("login", loginForm);
+        await this.refreshMe();
+        await router.push("/")
+      }
+      catch (e) {
+        alert('Invalid user/password combination')
+      }
     },
 
     async refreshMe() {

@@ -11,6 +11,7 @@
 					class="c_block c_form_group"
 					@submit.prevent="userStore.login(loginForm)"
 					>
+					
 					<InputField label="Username" placeholder="username" v-model="loginForm.name"/>
 					<InputField label="Password" placeholder="password" v-model="loginForm.password"/>
 					
@@ -58,4 +59,8 @@ export default defineComponent({
 		}
 	}
 })
-</script>   
+</script>
+
+<style>
+
+</style>
