@@ -62,10 +62,16 @@ const router = createRouter({
 			component: () => import('../views/ElementsToReuse.vue'),
 		},
 		{
+			path: '/register',
+			name: 'register',
+			component: () => import('../views/RegisterView.vue'),
+		},
+		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),
 		},
+
 
 	],
 });
