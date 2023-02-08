@@ -27,9 +27,15 @@ export const useUserStore = defineStore("users", {
     },
 
     async register(registerForm: RegisterForm) {
-      await postRequest("users", registerForm);
-      // await this.refreshMe();
-      await router.push("/");
+      try {
+        await postRequest("users", registerForm);
+        // await this.refreshMe();
+        await router.push("/");
+      }
+      catch (e) {
+        console.error(e);
+        return [];
+      }
     },
 
     async refreshMe() {
