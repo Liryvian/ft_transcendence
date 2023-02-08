@@ -1,4 +1,4 @@
-export interface OverviewArray{
+export interface OverviewArray {
 	left: String;
 	right: String;
 }

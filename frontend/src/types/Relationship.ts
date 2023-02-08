@@ -1,4 +1,4 @@
-import type { User } from "./User";
+import type { User } from './User';
 
 export interface Relationship {
 	id: number;
@@ -7,10 +7,10 @@ export interface Relationship {
 	target_id: User;
 
 	type: string;
-};
+}
 
 export enum ValidRelationships {
-	FRIEND = "friend",
-	BLOCKED = "blocked",
-	NONE = "none"
-  }
+	FRIEND = 'friend',
+	BLOCKED = 'blocked',
+	NONE = 'none',
+}

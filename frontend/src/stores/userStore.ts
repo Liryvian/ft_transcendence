@@ -4,119 +4,110 @@ import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import type { RegisterForm, User } from '../types/User';
 
-export const useUserStore = defineStore("users", {
+export const useUserStore = defineStore('users', {
+	//  actions == data definitions
+	state: () => ({
+		allUsers: [] as User[],
+		me: {} as User,
+		errors: [],
+	}),
+	// getters == computed values
+	getters: {
+		getAllUsers: (state) => state.allUsers,
+		getMe: (state) => state.me,
+	},
+	// actions == methods
+	actions: {
+		async login() {
+			const loginData = {
+				name: 'renoster',
+				password: 'R',
+			};
+			await postRequest('login', loginData);
+		},
 
-  //  actions == data definitions
-  state: () => ({
-      allUsers: [] as User[],
-      me: {} as User,
-      errors: []
-  }),
-  // getters == computed values
-  getters: {
-    getAllUsers: (state) => state.allUsers,
-    getMe: (state) => state.me
-  },
-  // actions == methods
-  actions: {
-    async login() {
-      const loginData = {
-        name: "renoster",
-          password: 'R'
-        }
-        await postRequest("login", loginData);
-    },
+		async register(registerForm: RegisterForm) {
+			try {
+				await postRequest('users', registerForm);
+				await router.push('/settings');
+			} catch (e) {
+				if (typeof e.response.data.message === 'string') {
+					this.errors = [e.response.data.message];
+				} else {
+					this.errors = e.response.data.message.map((msg: String) =>
+						msg.replace('(o) => o.', ''),
+					);
+				}
+				return [];
+			}
+		},
 
-    async register(registerForm: RegisterForm) {
-      try {
-        await postRequest("users", registerForm);
-        // await this.refreshMe();
-        await router.push("/");
-      }
-      catch (e) {
+		async refreshMe() {
+			try {
+				const data = await getRequest('me');
+				this.me = data.data;
+			} catch (e) {
+				console.error(e);
+				return [];
+			}
+		},
 
-        // if(e.response.data.message.contains("bla") < 0>){
-        //   this.errors.push("name");
-        // }
-        // else if (typeof e.response.data.message === 'array'){
-        //     this.errors = e.response.data;
-        // }
-        // else {
-        //   this.errors.push(e.response.data.message);
-        // }
-        // e.response.data.message.replace("[", "");
-        this.errors.push(e.response.data.message);
-        return [];
-        await router.push("/register");
-      }
-    },
+		async refreshAllUsers() {
+			try {
+				const data = await getRequest('users');
+				this.allUsers = data.data;
+			} catch (e) {
+				console.error(e);
+				return [];
+			}
+		},
 
-    async refreshMe() {
-      try {
-        const data = await getRequest("me");
-        this.me = data.data;
-      }
-      catch (e) {
-        console.error(e);
-        return [];
-      }
-    },
+		async getRelationship(source: number, target: number) {
+			return await (
+				await getRequest(`user-relationships/${source}/${target}`)
+			).data;
+		},
 
-    async refreshAllUsers() {
-      try {
-        const data = await getRequest("users");
-        this.allUsers = data.data;
-      }
-      catch (e) {
-        console.error(e);
-        return [];
-      }
-    },
+		async refreshData() {
+			await this.refreshMe();
+			await this.refreshAllUsers();
+		},
 
-    async getRelationship(source: number, target: number)
-    {
-      return await (await getRequest(`user-relationships/${source}/${target}`)).data
-    },
+		isMatchingRelationship(userId: number, rel: Relationship): boolean {
+			const myId: number = this.me.id;
+			const sourceId: number = rel.source_id.id;
+			const targetId: number = rel.target_id.id;
 
-    async refreshData() {
-      await this.refreshMe();
-      await this.refreshAllUsers();
-    },
+			return (
+				(sourceId === userId || targetId === userId) &&
+				(targetId === myId || sourceId === myId)
+			);
+		},
 
-    isMatchingRelationship(userId: number, rel: Relationship): boolean
-    {
-      const myId: number = this.me.id;
-      const sourceId: number = rel.source_id.id;
-      const targetId: number = rel.target_id.id;
+		getExistingRelationship(id: number): Relationship | null {
+			this.me.relationships.forEach((rel: Relationship) => {
+				if (this.isMatchingRelationship(id, rel)) return rel;
+			});
+			return null;
+		},
 
-      return (sourceId === userId || targetId === userId) &&
-      (targetId === myId || sourceId === myId)
-    },
-    
-    getExistingRelationship(id: number): Relationship | null
-    {
-      this.me.relationships.forEach((rel: Relationship) => {
-        if (this.isMatchingRelationship(id, rel))
-          return rel;
-      })
-      return null;
-    },
+		async updateRelationship(userId: number, type: string) {
+			const rel: Relationship = await this.getRelationship(
+				userId,
+				this.me.id,
+			);
+			await patchRequest(`user-relationships/${rel.id}`, { type });
+			this.refreshMe();
+		},
 
-    async updateRelationship(userId: number, type: string) {
-      const rel: Relationship = await this.getRelationship(userId, this.me.id);
-      await patchRequest(`user-relationships/${rel.id}`, { type });
-      this.refreshMe();
-    },
+		isFriend(id: number): boolean {
+			const rel: Relationship | null = this.getExistingRelationship(id);
+			return rel != null && rel.type === ValidRelationships.FRIEND;
+		},
 
-    isFriend(id: number): boolean {
-       const rel: Relationship | null = this.getExistingRelationship(id);
-        return (rel != null && rel.type === ValidRelationships.FRIEND);
-    },
-
-    isBlocked(id: number) : boolean
-    {
-      const rel: Relationship | null = this.getExistingRelationship(id);
-      return (rel !== null && rel.type === ValidRelationships.BLOCKED)
-    },
-  }
-})
+		isBlocked(id: number): boolean {
+			const rel: Relationship | null = this.getExistingRelationship(id);
+			return rel !== null && rel.type === ValidRelationships.BLOCKED;
+		},
+	},
+});
