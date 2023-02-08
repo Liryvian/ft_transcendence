@@ -22,12 +22,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { AuthGuard } from '../../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-	FindOptionsOrder,
-	InsertResult,
-	QueryFailedError,
-	UpdateResult,
-} from 'typeorm';
+import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -40,12 +35,6 @@ export class UserController {
 	constructor(private userService: UserService) {}
 
 	private readonly defaultRelationships = {};
-	private readonly defaultOrder: FindOptionsOrder<User> = {
-		name: 'ASC',
-		in_chats: {
-			created_at: 'ASC',
-		},
-	};
 
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
