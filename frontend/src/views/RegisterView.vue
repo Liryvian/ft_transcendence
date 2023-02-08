@@ -19,16 +19,13 @@
 					<p>
 						<input
 							class="link_button"
-							action="/settings"
 							type="submit"
 							value="register"
 						/>
 					</p>
 				</div>
 				<div v-if="userStore.errors.length">
-					<p v-for="error in userStore.errors">
-					<p style="color:red;">!! {{ error }}</p>
-					</p>
+					<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
 				</div>
 			</form>
 		</div>

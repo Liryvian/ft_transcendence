@@ -12,7 +12,7 @@ const router = createRouter({
 			component: () => import('../views/LoginView.vue'),
 		},
 		{
-			path: '/settings',     // !! minor thing, but maybe change this name back to "me" or "profile settings"? since we do have channel settings and settings are a bit off in the menu?
+			path: '/settings',
 			name: 'settings',
 			component: () => import('../views/SettingsView.vue'),
 		},
@@ -71,8 +71,6 @@ const router = createRouter({
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),
 		},
-
-
 	],
 });
 
