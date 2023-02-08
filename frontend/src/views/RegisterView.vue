@@ -8,12 +8,17 @@
 				class="c_block c_form_group"
 				@submit.prevent="userStore.register(registerForm)"
 			>
-			<InputField label="username" v-model="registerForm.name"/>
-			<InputField label="password" v-model="registerForm.password"/>
-			<InputField label="confirm password" v-model="registerForm.password_confirm"/>
+				<InputField label="username" v-model="registerForm.name"/>
+				<InputField label="password" v-model="registerForm.password"/>
+				<InputField label="confirm password" v-model="registerForm.password_confirm"/>
 				<div class="c_block c_split">
 					<p><a href="/login">back</a> </p>
 					<p><input class="link_button" type="submit" value="register" /></p>
+				</div>
+				<div v-if="userStore.errors.length">
+					<p v-for="error in userStore.errors">
+						{{ error }}
+					</p>
 				</div>
 			</form>
 		</div>
@@ -40,7 +45,6 @@ export default defineComponent({
 			password: '',
 			password_confirm: '',
 		})
-
 		return {
 			userStore,
 			registerForm

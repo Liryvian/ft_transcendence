@@ -10,6 +10,7 @@ export const useUserStore = defineStore("users", {
   state: () => ({
       allUsers: [] as User[],
       me: {} as User,
+      errors: []
   }),
   // getters == computed values
   getters: {
@@ -33,8 +34,20 @@ export const useUserStore = defineStore("users", {
         await router.push("/");
       }
       catch (e) {
-        console.error(e);
+
+        // if(e.response.data.message.contains("bla") < 0>){
+        //   this.errors.push("name");
+        // }
+        // else if (typeof e.response.data.message === 'array'){
+        //     this.errors = e.response.data;
+        // }
+        // else {
+        //   this.errors.push(e.response.data.message);
+        // }
+        // e.response.data.message.replace("[", "");
+        this.errors.push(e.response.data.message);
         return [];
+        await router.push("/register");
       }
     },
 
