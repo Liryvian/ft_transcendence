@@ -27,7 +27,7 @@
 				</div>
 				<div v-if="userStore.errors.length">
 					<p v-for="error in userStore.errors">
-						{{ error }}
+					<p style="color:red;">!! {{ error }}</p>
 					</p>
 				</div>
 			</form>
