@@ -1,7 +1,8 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<HorizontalAvatarAndUserName :username="name" />
+			<VerticalAvatarAndUserName profile_picture="/test-profile.png" profile_name="name" />
+<!--			<VerticalAvatarAndUserName profile_picture="/test-profile.png" :profile_name="name" />-->
 			<OverviewWithMidline :data-array="dataArray" />
 		</div>
 	</div>
@@ -13,11 +14,11 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/userStore';
-import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
+import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
 
 type User = {
-	name: string;
+	name: '';
 };
 
 let dataArray = [
@@ -32,7 +33,7 @@ export default defineComponent({
 	name: 'ProfileView',
 	components: {
 		OverviewWithMidline,
-		HorizontalAvatarAndUserName,
+		VerticalAvatarAndUserName,
 	},
 
 	setup() {
