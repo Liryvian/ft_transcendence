@@ -12,6 +12,8 @@ class seedUser {
 	password: string;
 	is_intra: boolean;
 	avatar?: string;
+	created_at?: string;
+	updated_at?: string;
 }
 
 class seedGame {
@@ -21,6 +23,23 @@ class seedGame {
 	score_player_two: number;
 	is_active: boolean;
 }
+
+class seedMessage {
+	sender_id: number;
+	chat_id: number;
+	content: string;
+	created_at?: string;
+	updated_at?: string;
+}
+
+const date_source = new Date();
+date_source.setDate(date_source.getDate() - 1);
+const user_dates: string[] = [
+	new Date(date_source.setHours(6, 14, 32)).toISOString(),
+	new Date(date_source.setHours(6, 18, 45)).toISOString(),
+	new Date(date_source.setHours(6, 32, 8)).toISOString(),
+	new Date(date_source.setHours(6, 59, 12)).toISOString(),
+];
 
 const seedData = {
 	animals: () => {
@@ -39,24 +58,32 @@ const seedData = {
 				password: await bcrypt.hash('a', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_aardwolf.png',
+				created_at: user_dates[0],
+				updated_at: user_dates[0],
 			},
 			{
 				name: 'flamink',
 				password: await bcrypt.hash('f', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_flamink.png',
+				created_at: user_dates[1],
+				updated_at: user_dates[1],
 			},
 			{
 				name: 'renoster',
 				password: await bcrypt.hash('r', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_renoster.png',
+				created_at: user_dates[2],
+				updated_at: user_dates[2],
 			},
 			{
 				name: 'vaalboskat',
 				password: await bcrypt.hash('v', 11),
 				is_intra: false,
 				avatar: 'seeded_profile_vaalboskat.png',
+				created_at: user_dates[3],
+				updated_at: user_dates[3],
 			},
 		];
 		return users;
@@ -231,17 +258,23 @@ const seedData = {
 	},
 
 	messages: (users: number[], chats: number[]) => {
-		const messages: CreateMessageDto[] = [];
+		const messages: seedMessage[] = [];
 
 		[
 			'Hello everybody,',
 			'Welcome to the Zoo!',
 			'We hope you will enjoy your time here and please take this opportunity to send some messages',
-		].forEach((msg) => {
+		].forEach((msg, index) => {
 			messages.push({
 				sender_id: users[2],
 				chat_id: chats[3],
 				content: msg,
+				created_at: new Date(
+					date_source.setHours(8, 12 + index, 0),
+				).toISOString(),
+				updated_at: new Date(
+					date_source.setHours(8, 12 + index, 0),
+				).toISOString(),
 			});
 		});
 
@@ -258,6 +291,12 @@ const seedData = {
 				sender_id: users[index % 2 === 0 ? 2 : 3],
 				chat_id: chats[2],
 				content: msg,
+				created_at: new Date(
+					date_source.setHours(9, 2 + index, 0),
+				).toISOString(),
+				updated_at: new Date(
+					date_source.setHours(9, 2 + index, 0),
+				).toISOString(),
 			});
 		});
 
@@ -282,6 +321,12 @@ const seedData = {
 				sender_id: users[index % users.length],
 				chat_id: chats[0],
 				content: msg,
+				created_at: new Date(
+					date_source.setHours(10, 25 + index * 2, 0),
+				).toISOString(),
+				updated_at: new Date(
+					date_source.setHours(10, 25 + index * 2, 0),
+				).toISOString(),
 			});
 		});
 
@@ -290,6 +335,12 @@ const seedData = {
 				sender_id: users[index % 2 === 0 ? 2 : 1],
 				chat_id: chats[1],
 				content: msg,
+				created_at: new Date(
+					date_source.setHours(11, 48 + index, 0),
+				).toISOString(),
+				updated_at: new Date(
+					date_source.setHours(11, 48 + index, 0),
+				).toISOString(),
 			});
 		});
 
