@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const apiUrl = 'http://localhost:8080/api';
+import { apiUrl } from '@/types/Constants';
 
 export async function postRequest(path: string, data: any) {
 	return await axios.post(`${apiUrl}/${path}`, data);

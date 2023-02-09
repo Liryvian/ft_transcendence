@@ -12,6 +12,12 @@ export interface RegisterForm {
 	password_confirm: string;
 }
 
+export interface LoginForm {
+	name: string;
+    password: string
+}
+
+
 export interface User {
 	id: number;
 	name: string;

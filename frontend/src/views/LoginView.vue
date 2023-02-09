@@ -1,13 +1,63 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>This is a login page</h1>
+          <!-- Content should be here -->
+		  <h1> HI WANNA PLAY PONG? </h1>
+		  
+		  <div class="c_block c_form_group">
+			  <form 
+			  method="post"
+					action=""
+					class="c_block c_form_group"
+					@submit.prevent="userStore.login(loginForm)"
+					>
+					
+					<InputField label="Username" placeholder="username" v-model="loginForm.name"/>
+					<InputField label="Password" placeholder="password" v-model="loginForm.password"/>
+					
+					<div class="c_block c_split">
+						<p>
+							<input class="link_button" type="submit" value="Login" />
+							/
+							<a href="/register">Register</a>
+						</p>
+						<p>
+							<a :href="redirectUrl">Sign in with 42</a>
+						</p>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </template>
 
+<script lang="ts">
+import { useUserStore } from '@/stores/userStore';
+import { defineComponent, reactive } from 'vue';
+import InputField from '@/components/input-fields/InputField.vue';
+import type { LoginForm } from "@/types/User"
+import {apiUrl} from '@/types/Constants'
 
-<!--	<div class="c_field_group c_field_group&#45;&#45;radio">-->
-<!--		<InputRadio values='' />-->
-<!--		<InputRadio values='' />-->
-<!--	</div>-->
+export default defineComponent({
+	name: "Login",
+	components: {
+		InputField
+	},
+
+	setup() {
+		const redirectUrl: string = `${apiUrl}/auth/authenticate`;
+		const userStore = useUserStore();
+		const loginForm: LoginForm = reactive({
+			name: '',
+			password: ''
+		})
+
+		return {
+			userStore,
+			loginForm,
+			redirectUrl
+		}
+	}
+})
+</script>
+
