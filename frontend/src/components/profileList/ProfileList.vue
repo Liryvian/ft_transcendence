@@ -1,7 +1,7 @@
 <template>
 	<div class="c_profileslist__table">
 		<template v-for="user in userStore.allUsers">
-			<ListLine :user="user" />
+			<ListLine :user=user />
 		</template>
 	</div>
 </template>
@@ -10,7 +10,7 @@
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
 import ProfileView_tmp from '@/views/ProfileView-tmp.vue';
-import ListLine from '@/components/listLine.vue';
+import ListLine from '@/components/profileList/ListLine.vue';
 import type { User } from '@/types/User';
 
 export default defineComponent({
@@ -65,14 +65,5 @@ export default defineComponent({
 
 .grayedOut {
 	color: grey;
-}
-
-button {
-	all: unset;
-	cursor: pointer;
-}
-
-button:focus {
-	outline: blue 5px auto;
 }
 </style>

@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import ProfileList from '@/components/ProfileList.vue';
+import ProfileList from '@/components/profileList/ProfileList.vue';
 export default {
 	components: {
 		ProfileList
