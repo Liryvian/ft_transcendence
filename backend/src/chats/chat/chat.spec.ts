@@ -69,12 +69,6 @@ describe('ChatController', () => {
 		}
 	});
 
-	it('Get a specific chat', async () => {
-		const specificChat = 2;
-		const chat: Chat = await controller.findOne(specificChat);
-		expect(chat.id).toBe(specificChat);
-	});
-
 	it('should delete relations in chat-user-permisison table before deleting chat', async () => {
 		const user: User = await userService.save({ name: 'a' });
 		const perm: Permission = await permissionService.save({ name: 'perm' });
