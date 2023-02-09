@@ -3,19 +3,9 @@ import { Exclude, Expose } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
 import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
-import { IsArray, IsNumber } from 'class-validator';
-import { Permission } from '../../permissions/entities/permission.entity';
 
 const validVisibility = ['public', 'private'];
 const chatType = ['dm', 'channel'];
-
-export class UsersWithPermissions {
-	@IsNumber()
-	user_id: number;
-
-	@IsArray()
-	permissions: Permission[];
-}
 
 @Entity('chats')
 export class Chat {

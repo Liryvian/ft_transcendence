@@ -7,17 +7,28 @@ import {
 	Param,
 	Delete,
 	BadRequestException,
+	Query,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
 import * as bcrypt from 'bcrypt';
-import {} from 'typeorm';
+import { FindOptionsOrder } from 'typeorm';
+import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
+import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
 
 @Controller('chats')
 export class ChatController {
 	constructor(private readonly chatService: ChatService) {}
+
+	private readonly defaultRelationships = { has_users: true };
+	private readonly defaultOrder: FindOptionsOrder<Chat> = {
+		name: 'ASC',
+		messages: {
+			created_at: 'ASC',
+		},
+	};
 
 	@Post()
 	async create(@Body() createChatDto: CreateChatDto) {
@@ -29,15 +40,38 @@ export class ChatController {
 	}
 
 	@Get()
-	findAll() {
-		return this.chatService.findAll({ relations: { has_users: true } });
+	findAll(
+		@Query() chatRelationsQuery?: ChatRelationsQueryDto,
+		@Body() chatRelationsBody?: ChatRelationsBodyDto,
+	) {
+		const chatRelationsDto = Object.keys(chatRelationsBody ?? {}).length
+			? chatRelationsBody
+			: Object.keys(chatRelationsQuery ?? {}).length
+			? chatRelationsQuery
+			: this.defaultRelationships;
+
+		return this.chatService.findAll({
+			relations: chatRelationsDto,
+			order: this.defaultOrder,
+		});
 	}
 
 	@Get(':id')
-	findOne(@Param('id') id: number) {
+	findOne(
+		@Param('id') id: number,
+		@Query() chatRelationsQuery?: ChatRelationsQueryDto,
+		@Body() chatRelationsBody?: ChatRelationsBodyDto,
+	) {
+		const chatRelationsDto = Object.keys(chatRelationsBody ?? {}).length
+			? chatRelationsBody
+			: Object.keys(chatRelationsQuery ?? {}).length
+			? chatRelationsQuery
+			: this.defaultRelationships;
+
 		return this.chatService.findOne({
 			where: { id },
-			relations: { has_users: true },
+			relations: chatRelationsDto,
+			order: this.defaultOrder,
 		});
 	}
 

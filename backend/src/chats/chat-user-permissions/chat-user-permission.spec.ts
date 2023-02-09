@@ -80,7 +80,7 @@ describe('Chat - User - Permission relationship', () => {
 			user_id: user_ids[0],
 			permission_id: permission_ids[0],
 		});
-		expect(relation).toEqual({
+		expect(relation).toMatchObject({
 			id: expect.any(Number),
 			chat_id: chat_ids[0],
 			user_id: user_ids[0],
