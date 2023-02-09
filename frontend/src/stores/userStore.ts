@@ -33,7 +33,7 @@ export const useUserStore = defineStore('users', {
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);
-				await router.push('/settings');
+				await router.push('/login');
 			} catch (e) {
 				if (typeof e.response.data.message === 'string') {
 					this.errors = [e.response.data.message];
