@@ -1,4 +1,4 @@
-import type { User } from "./User";
+import type { User } from './User';
 
 export interface UserChatPermissions {
 	id: number;
@@ -19,10 +19,10 @@ export interface UserChatPermissions {
 export interface Message {
 	id: number;
 
-    sender_id: User;
+	sender_id: User;
 	chat_id: Chat;
-    
-    content: string;
+
+	content: string;
 
 	created_at: Date;
 	updated_at: Date;
@@ -30,10 +30,10 @@ export interface Message {
 
 export interface Chat {
 	id: number;
-    name: string;
-    
+	name: string;
+
 	has_users: UserChatPermissions[];
-    users: User
+	users: User;
 
 	visibility: string;
 	password: string;
