@@ -486,6 +486,7 @@ h1 {
 	border: 0px;
 	padding: 0;
 	font-style: italic;
+	cursor: pointer;
 }
 
 .link_button:hover {

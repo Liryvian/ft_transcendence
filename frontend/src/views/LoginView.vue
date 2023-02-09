@@ -17,7 +17,7 @@
 					
 					<div class="c_block c_split">
 						<p>
-							<input v-on:submit="userStore.login(loginForm)" class="link_button" type="submit" value="Login" />
+							<input class="link_button" type="submit" value="Login" />
 							/
 							<a href="/register">Register</a>
 						</p>
@@ -61,6 +61,3 @@ export default defineComponent({
 })
 </script>
 
-<style>
-
-</style>
