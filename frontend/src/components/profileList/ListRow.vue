@@ -1,11 +1,12 @@
 <template>
 	<Avatar :avatar="user.avatar" :is-online="true" v-on:click="routeToProfile(user.id)"/>
+	<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{user.name}}</a>
 
-	<router-link :to="{name: 'profile', params: {id: user.id}}">{{ user.name }}</router-link>
-	<a href="#" v-on:click.prevent="createChat(user)">Chat</a>
-	<!-- <InitializeChat user.id> -->
+	<a href="#" v-on:click.prevent="createChat(user.id)">Chat</a>
+
 	<FriendInvite :user-id="user.id"  />
 	<BlockUser :user-id="user.id"  />
+	
 </template>
 
 <script lang="ts">
@@ -45,11 +46,12 @@ export default defineComponent({
 		online: Boolean,
 	},
 	methods: {
-		createChat(user: User) {
-			console.log(`Starting chat with ${user.name}`);
+		async createChat(userId: number) {
+			console.log(`Starting chat with ${userId}`);
+			await router.push({ name: 'chat', params: {id: userId} })
 		},
-		async routeToProfile(id: number) {
-			await router.push({name: 'profile', params: {id : id}})
+		async routeToProfile(userId: number) {
+			await router.push({name: 'profile', params: {id : userId}})
 		},
 	},
 });

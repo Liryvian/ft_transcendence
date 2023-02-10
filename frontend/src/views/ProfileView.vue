@@ -28,7 +28,7 @@ export default defineComponent({
 	},
 	async created() {
 		this.user = (await getRequest(`users/${this.$route.params.id}`)).data
-		console.log("Params: ", this.user);
+		console.log("User found with params: ", this.user);
 	}
 
 
