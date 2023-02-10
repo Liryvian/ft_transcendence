@@ -42,9 +42,9 @@ export default defineComponent({
 		onMounted(async () => {
 			const userStore = useUserStore();
 			await userStore.refreshData();
-			console.log('id: ', props);
+			// console.log('id: ', props);
 			user = await (await getRequest(`users/5`)).data;
-			console.log("name: " , user.name);
+			// console.log("name: " , user.name);
 			dataArray.value = [
 				{ left: 'intra name', right: user.name },
 				{ left: 'member since', right: user.created_at },
