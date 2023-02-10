@@ -1,8 +1,11 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<VerticalAvatarAndUserName profile_picture="/test-profile.png" profile_name="name" />
-<!--			<VerticalAvatarAndUserName profile_picture="/test-profile.png" :profile_name="name" />-->
+			<VerticalAvatarAndUserName
+				profile_picture="/test-profile.png"
+				:profile_name="userStore.me.name"
+			/>
+			<!--			<VerticalAvatarAndUserName profile_picture="/test-profile.png" :profile_name="name" />-->
 			<OverviewWithMidline :data-array="dataArray" />
 		</div>
 	</div>
@@ -17,12 +20,12 @@ import { useUserStore } from '@/stores/userStore';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
 
-type User = {
-	name: '';
-};
+// type User = {
+// 	name: '';
+// };
 
 let dataArray = [
-	{ left: 'intra name', right: 'x' },
+	{ left: 'intra name', right: "userStore.me.name" },
 	{ left: 'member since', right: 'a' },
 	{ left: 'wins', right: 'a' },
 	{ left: 'losses', right: 'a' },
@@ -36,8 +39,13 @@ export default defineComponent({
 		VerticalAvatarAndUserName,
 	},
 
+
 	setup() {
 		const userStore = useUserStore();
+		userStore.refreshData();
+		// console.log("meee", userStore.me.name);
+		dataArray[0].right = userStore.me.name;
+		// console.log(userStore.me.games[0].player_two);
 		// const userForm: UserForm = reactive ({
 		//   name: '',
 		// })
@@ -45,12 +53,10 @@ export default defineComponent({
 			userStore,
 			dataArray,
 		};
+
 	},
 });
 </script>
-
-
-
 
 <!--<template>-->
 <!--	<div class="page_box_wrapper">-->
