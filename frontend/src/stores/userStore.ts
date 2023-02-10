@@ -13,10 +13,8 @@ export const useUserStore = defineStore('users', {
 	}),
 
   	// getters == computed values
-  	getters: {
-  	  getAllUsers: (state) => state.allUsers,
-  	  getMe: (state) => state.me
-  	},
+	getters: {
+	},
   	// actions == methods
   	actions: {
     	async login(loginForm: LoginForm) {
@@ -34,7 +32,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('users', registerForm);
 				await router.push('/login');
-			} catch (e) {
+			} catch (e: any) {
 				if (typeof e.response.data.message === 'string') {
 					this.errors = [e.response.data.message];
 				} else {
@@ -86,15 +84,15 @@ export const useUserStore = defineStore('users', {
       		(targetId === myId || sourceId === myId)
     	},
     
-    	getExistingRelationship(id: number) : Relationship | null
+    	getExistingRelationship(userId: number) : Relationship | null
     	{
 			for (let i = 0; i < this.me.relationships.length; i++) {
 				const rel: Relationship = this.me.relationships[i]
-				if (this.isMatchingRelationship(id, rel))
+				if (this.isMatchingRelationship(userId, rel))
 					return rel;
 			}
 			return null;
-    	},
+		},
 	
     	async updateRelationship(userId: number, type: string) {
     	  const rel: Relationship = await this.getRelationship(userId, this.me.id);
@@ -102,13 +100,13 @@ export const useUserStore = defineStore('users', {
     	  await this.refreshData();
     	},
 	
-    	isFriend(id: number): boolean {
-    	  const rel: Relationship | null = this.getExistingRelationship(id);
+    	isFriend(userId: number): boolean {	
+			const rel: Relationship | null = this.getExistingRelationship(userId);
     	    return (rel != null && rel.type === ValidRelationships.FRIEND);
     	},
 	
-		isBlocked(id: number): boolean {
-			const rel: Relationship | null = this.getExistingRelationship(id);
+		isBlocked(userId: number): boolean {
+			const rel: Relationship | null = this.getExistingRelationship(userId);
 			return rel !== null && rel.type === ValidRelationships.BLOCKED;
 		},
 	},
