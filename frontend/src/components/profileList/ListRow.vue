@@ -2,7 +2,7 @@
 	<Avatar :avatar="user.avatar" :is-online="true" v-on:click="routeToProfile(user.id)"/>
 	<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{user.name}}</a>
 
-	<a href="#" v-on:click.prevent="createChat(user.id)">Chat</a>
+	<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
 
 	<FriendInvite :user-id="user.id"  />
 	<BlockUser :user-id="user.id"  />
@@ -46,7 +46,7 @@ export default defineComponent({
 		online: Boolean,
 	},
 	methods: {
-		async createChat(userId: number) {
+		async routeToChat(userId: number) {
 			console.log(`Starting chat with ${userId}`);
 			await router.push({ name: 'chat', params: {id: userId} })
 		},
