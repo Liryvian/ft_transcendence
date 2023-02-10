@@ -29,6 +29,10 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
+		// async createArray(dataArray: DataArray, user: User){
+		//
+		// }
+
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);
@@ -48,7 +52,7 @@ export const useUserStore = defineStore('users', {
 
 		async refreshMe() {
 			try {
-				const data = await getRequest('me');
+				const data =  await getRequest('me');
 				this.me = data.data;
 			} catch (e) {
 				console.error(e);
