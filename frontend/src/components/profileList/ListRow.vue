@@ -19,7 +19,7 @@ import BlockUser from '@/components/profileList/BlockUser.vue'
 import router from '@/router';
 
 export default defineComponent({
-	name: 'ListLine',
+	name: 'ListRow',
 
 	setup() {
 		const userStore = useUserStore();
