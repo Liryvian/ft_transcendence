@@ -8,10 +8,11 @@
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
 import ProfileView_tmp from '@/views/ProfileView-tmp.vue';
 import ListLine from '@/components/profileList/ListLine.vue';
 import type { User } from '@/types/User';
+import router from '@/router';
 
 export default defineComponent({
 	name: 'ProfileList',
@@ -22,35 +23,29 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 		const {
-			login,
 			refreshData,
-			isBlocked,
-			isFriend,
-			updateRelationship,
 			allUsers,
-			me,
 		} = userStore;
-		refreshData();
+
+		onMounted(async () => {
+			await refreshData();
+		});
 
 		return {
 			userStore,
-			login,
 			refreshData,
-			isBlocked,
-			isFriend,
-			updateRelationship,
 			allUsers,
-			me,
 		};
 	},
 
 	methods: {
-		viewProfile(user: User) {
-			console.log(`Profile of ${user.name} clicked`);
+		routeToProfile(id: number) {
+			router.push(`/ProfileView/${id}`)
 		},
 		createChat(user: User) {
 			console.log(`Starting chat with ${user.name}`);
 		},
+
 	},
 });
 </script>
