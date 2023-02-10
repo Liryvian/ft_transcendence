@@ -2,18 +2,13 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>This is a profiles page</h1>
+			<div class="c_block c_split">
+				<p><a href="/profile" :id="5">back</a></p>
+				<p>
+					<input class="link_button" id="6" />
+				</p>
+			</div>
 		</div>
-		<p class="table table-striped table-sm">
-			All Profiles:
-			<tbody>
-				<tr v-for="user in userStore.allUsers" :key="user.id">
-					<td> Id: {{ user.id }} </td>
-					<td> Username: {{ user.name }} </td>
-				</tr>
-				
-			</tbody>
-
-		</p>
 	</div>
 </template>
 
@@ -21,16 +16,16 @@
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
+import ProfileView from '@/views/ProfileView.vue';
 
 export default defineComponent({
-	name: "ProfilesView",
-
-	setup(){
+	name: 'ProfilesView',
+	setup() {
 		const userStore = useUserStore();
 		userStore.refreshData();
 		return {
 			userStore,
-		}
-	}
-})
+		};
+	},
+});
 </script>

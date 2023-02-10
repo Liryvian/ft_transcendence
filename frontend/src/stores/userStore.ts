@@ -29,9 +29,15 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-		// async createArray(dataArray: DataArray, user: User){
-		//
-		// }
+		// async getUser(id: number){
+		// 	try{
+		// 		await getRequest('/users/${id}');
+		// 		return User[];
+		// 	}
+		// 	catch (e) {
+		// 		alert('Invalid user');
+		// 	}
+		// },
 
 		async register(registerForm: RegisterForm) {
 			try {
