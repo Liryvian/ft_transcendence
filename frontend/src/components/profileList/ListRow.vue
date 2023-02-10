@@ -1,8 +1,30 @@
 <template>
-	<Avatar :avatar="user.avatar" :is-online="true" v-on:click="routeToProfile(user.id)"/>
-	<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{user.name}}</a>
+	<!-- Route to profile via avatar link -->
+	<div v-if="!userStore.isBlocked(user.id)">
+		<Avatar :avatar="user.avatar" :is-online="true" v-on:click="routeToProfile(user.id)"/>
+	</div>
+	<div v-else>
+		<Avatar :avatar="user.avatar" :is-online="false" class="grayedOut"/>
+	</div>
 
-	<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
+
+	<!-- Route to profile via username link -->
+	<div v-if="!userStore.isBlocked(user.id)">
+		<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{user.name}}</a>
+	</div>
+	<div v-else>
+		<a href="#" class="grayedOut">{{user.name}}</a>
+	</div>
+	
+	
+	<!-- Route to chat -->
+	<div v-if="!userStore.isBlocked(user.id)">
+		<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
+	</div>
+	<div v-else>
+		<a href="#" class="grayedOut">Chat</a>
+	</div>
+
 
 	<FriendInvite :user-id="user.id"  />
 	<BlockUser :user-id="user.id"  />
@@ -10,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, type PropType, ref } from 'vue';
 import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
 import type { User } from '@/types/User';
 import { useUserStore } from '@/stores/userStore';
@@ -19,6 +41,7 @@ import FriendInvite from '@/components/profileList/FriendInvite.vue'
 import BlockUser from '@/components/profileList/BlockUser.vue'
 import router from '@/router';
 
+let isBlocked = ref(false);
 export default defineComponent({
 	name: 'ListRow',
 
@@ -63,9 +86,5 @@ export default defineComponent({
 	width: 50px;
 	height: 50px;
 	border-radius: 50%;
-}
-
-.grayedOut {
-	color: grey;
 }
 </style>

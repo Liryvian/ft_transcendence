@@ -38,9 +38,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style>
-.grayedOut {
-	color: grey;
-}
-</style>
