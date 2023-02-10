@@ -1,7 +1,7 @@
 <template>
 	<Avatar :avatar="user.avatar" :is-online="true"/>
 
-	<a href="#">{{user.name}}</a>
+	<a href="#" v-on:click.prevent="">{{user.name}}</a>
 	<a href="#" v-on:click.prevent="createChat(user)">Chat</a>
 	<!-- <InitializeChat user.id> -->
 	<FriendInvite :user-id="user.id"  />

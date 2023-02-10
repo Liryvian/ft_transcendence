@@ -22,7 +22,7 @@ export const useUserStore = defineStore('users', {
     	async login(loginForm: LoginForm) {
     	  try{
     	    await postRequest("login", loginForm);
-    	    await this.refreshMe();
+    	    await this.refreshData();
     	    await router.push("/")
     	  }
     	  catch (e) {
