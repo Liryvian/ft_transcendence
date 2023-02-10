@@ -1,10 +1,12 @@
 import {
 	Column,
+	CreateDateColumn,
 	Entity,
 	Index,
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../../users/user/entities/user.entity';
 import { Chat } from '../../chat/entities/chat.entity';
@@ -43,4 +45,10 @@ export class ChatUserPermission {
 	})
 	@JoinColumn({ name: 'permission_id' })
 	permissions: Permission[];
+
+	@CreateDateColumn()
+	created_at: Date;
+
+	@UpdateDateColumn()
+	updated_at: Date;
 }

@@ -27,7 +27,6 @@ export default defineComponent({
 
 	setup(){
 		const userStore = useUserStore();
-		useUserStore().login();
 		userStore.refreshData();
 		return {
 			userStore,

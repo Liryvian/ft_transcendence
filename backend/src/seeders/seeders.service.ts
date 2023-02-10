@@ -29,7 +29,6 @@ export class SeederService {
 		private readonly achievementService: AchievementsService,
 		private readonly userAchievementsService: UserAchievementsService,
 	) {}
-
 	private readonly shouldSeedFilePath = './.hasSeeded';
 
 	shouldSeed(): boolean {

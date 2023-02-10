@@ -9,10 +9,10 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/LoginView.vue'),
+			component: () => import('../views/ProfilesView.vue'),
 		},
 		{
-			path: '/settings',     // !! minor thing, but maybe change this name back to "me" or "profile settings"? since we do have channel settings and settings are a bit off in the menu?
+			path: '/settings',
 			name: 'settings',
 			component: () => import('../views/SettingsView.vue'),
 		},
@@ -35,6 +35,11 @@ const router = createRouter({
 			path: '/logout',
 			name: 'logout',
 			component: () => import('../views/LogoutView.vue'),
+		},
+		{
+			path: '/login',
+			name: 'login',
+			component: () => import('../views/LoginView.vue'),
 		},
 		{
 			path: '/channel-settings',
@@ -62,11 +67,15 @@ const router = createRouter({
 			component: () => import('../views/ElementsToReuse.vue'),
 		},
 		{
+			path: '/register',
+			name: 'register',
+			component: () => import('../views/RegisterView.vue'),
+		},
+		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),
 		},
-
 	],
 });
 

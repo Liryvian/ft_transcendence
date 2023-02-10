@@ -12,6 +12,7 @@ import {
 	ParseFilePipe,
 	Patch,
 	Post,
+	Query,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -25,11 +26,15 @@ import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserRelationsBodyDto } from './dto/user-relations-body.dto';
+import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UserController {
 	constructor(private userService: UserService) {}
+
+	private readonly defaultRelationships = {};
 
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
@@ -39,7 +44,6 @@ export class UserController {
 			password: hashed,
 			is_intra: false,
 		};
-
 		try {
 			const newUser: InsertResult = await this.userService.insert(
 				createUserDto,
@@ -50,45 +54,40 @@ export class UserController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	@Get()
-	async findAll(): Promise<User[]> {
-		const users = this.userService.findAll({
-			relations: {
-				matchmaking_request: true,
-				invite: true,
-				games_as_player_one: true,
-				games_as_player_two: true,
-				relationshipTarget: true,
-				relationshipSource: true,
-				achievements: true,
-				in_chats: {
-					permissions: true,
-				},
-			},
-		});
+	async findAll(
+		@Query() userRelationsQuery?: UserRelationsQueryDto,
+		@Body() userRelationsBody?: UserRelationsBodyDto,
+	): Promise<User[]> {
+		const userRelationsDto = Object.keys(userRelationsBody ?? {}).length
+			? userRelationsBody
+			: Object.keys(userRelationsQuery ?? {}).length
+			? userRelationsQuery
+			: this.defaultRelationships;
+
+		const users = this.userService.findAll({ relations: userRelationsDto });
 		return users;
 	}
 
-	@UseGuards(AuthGuard)
+	// @UseGuards(AuthGuard)
 	@Get(':id')
-	async findOne(@Param('id') id: number): Promise<User> {
+	async findOne(
+		@Param('id') id: number,
+		@Query() userRelationsQuery?: UserRelationsQueryDto,
+		@Body() userRelationsBody?: UserRelationsBodyDto,
+	): Promise<User> {
+		const userRelationsDto = Object.keys(userRelationsBody ?? {}).length
+			? userRelationsBody
+			: Object.keys(userRelationsQuery ?? {}).length
+			? userRelationsQuery
+			: this.defaultRelationships;
+
 		return this.userService.findOne({
 			where: {
 				id: id,
 			},
-			relations: {
-				matchmaking_request: true,
-				invite: true,
-				games_as_player_one: true,
-				games_as_player_two: true,
-				relationshipSource: true,
-				relationshipTarget: true,
-				achievements: true,
-				in_chats: {
-					permissions: true,
-				},
-			},
+			relations: userRelationsDto,
 		});
 	}
 
