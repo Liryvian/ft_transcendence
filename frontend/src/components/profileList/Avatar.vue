@@ -14,15 +14,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-const avatarPath: string = "/api/avatar/"
 export default defineComponent({
 	name: 'Avatar',
-
-    methods: {
-        getAvatar() {
-            console.log("getting avatar");
-        }
-    },
 
 	props: {
         avatar: String,
