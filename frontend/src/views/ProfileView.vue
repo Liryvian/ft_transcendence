@@ -18,22 +18,27 @@ import { defineComponent } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
-import { ref, onMounted, type Ref, defineProps } from 'vue';
+import { ref, onMounted, type Ref, defineProps, useRouter } from 'vue';
 import type { OverviewArray } from '@/types/OverviewArray';
 import { getRequest } from '@/utils/apiRequests';
 import type { User } from '../types/User';
+import { $computed } from 'vue/macros';
 
 let dataArray: Ref<OverviewArray[]> = ref([]);
 let user: User = {} as User;
-// const props = defineProps({
-// 	id: Number,
-// });
+
 export default defineComponent({
 	name: 'ProfileView',
 	components: {
 		OverviewWithMidline,
 		VerticalAvatarAndUserName,
 	},
+	computed: {
+		getId: function () {
+			return { id: this.$route.params.id };
+		}
+	},
+
 	setup() {
 		const userStore = useUserStore();
 		const props = defineProps({ id: Number });
@@ -43,10 +48,11 @@ export default defineComponent({
 			const userStore = useUserStore();
 			await userStore.refreshData();
 			// console.log('id: ', props);
+
 			user = await (await getRequest(`users/5`)).data;
 			// console.log("name: " , user.name);
 			dataArray.value = [
-				{ left: 'intra name', right: user.name },
+				{ left: 'intra name', right: user.name},
 				{ left: 'member since', right: user.created_at },
 				{ left: 'wins', right: 1 },
 				{ left: 'losses', right: 19000000 },

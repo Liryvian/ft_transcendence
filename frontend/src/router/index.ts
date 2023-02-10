@@ -57,7 +57,7 @@ const router = createRouter({
 			component: () => import('../views/NewChannelView.vue'),
 		},
 		{
-			path: '/profile',
+			path: '/profile/:id',
 			name: 'profile',
 			component: () => import('../views/ProfileView.vue'),
 		},

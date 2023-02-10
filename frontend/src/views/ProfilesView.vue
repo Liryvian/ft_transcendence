@@ -2,12 +2,9 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>This is a profiles page</h1>
-			<div class="c_block c_split">
-				<p><a href="/profile" id="5">back</a></p>
-				<p>
-					<input class="link_button" id="6" />
-				</p>
-			</div>
+				<div v-for="user in userStore.allUsers">
+					<router-link :to="{name: 'profile', params: {id: user.id}}">{{ user.name }}</router-link>
+				</div>
 		</div>
 	</div>
 </template>
