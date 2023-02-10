@@ -3,7 +3,7 @@
 		<div class="page_box">
 			<h1>This is a profiles page</h1>
 			<div class="c_block c_split">
-				<p><a href="/profile" :id="5">back</a></p>
+				<p><a href="/profile"  :this.id>back</a></p>
 				<p>
 					<input class="link_button" id="6" />
 				</p>
