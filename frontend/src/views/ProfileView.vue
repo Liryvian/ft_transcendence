@@ -20,8 +20,6 @@ import { ref, onMounted, type Ref, defineProps } from 'vue';
 import type { OverviewArray } from '@/types/OverviewArray';
 import { getRequest } from '@/utils/apiRequests';
 import type { User } from '../types/User';
-import type { UserAchievement } from '../types/User';
-import type { Achievement } from '../types/User';
 
 let dataArray: Ref<OverviewArray[]> = ref([]);
 let user: User = {} as User;
@@ -38,12 +36,12 @@ export default defineComponent({
 	data() {
 		return {
 			user: {} as User,
-			userAchievement: [] as UserAchievement[],
-			achievement: [] as Achievement[],
 		};
 	},
 	async created() {
 		this.user = (await getRequest(`users/${this.profile_id}`)).data;
+		// await useUserStore().refreshAllUsers();
+		// this.user = useUserStore().allUsers.filter((user: User) => (Number(user.id) === Number(this.profile_id)))[0];
 		if (!this.profile_id) {
 			dataArray.value = [
 				{ left: 'this profile', right: 'does not exist' },
@@ -52,7 +50,7 @@ export default defineComponent({
 			dataArray.value = [
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },
-				{ left: 'wins', right: 1 }, //needs to be connected
+				{ left: 'wins', right: 1 },
 				{ left: 'losses', right: 190 },
 				{
 					left: 'achievements',
@@ -73,8 +71,9 @@ export default defineComponent({
 		};
 	},
 });
+
 </script>
 
-// notes: //needs to be connected // { // left: 'achievements', // right:
-// this.user.achievements.map((ach) => { // return ach.name; // }), // }, //
+// notes: //needs to be connected // { // left: 'achievements', // right: //
+this.user.achievements.map((ach) => { // return ach.name; // }), // }, //
 <!--So maybe for now add a join with a comma after the map? (map().join(', '))-->
