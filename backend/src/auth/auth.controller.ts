@@ -110,25 +110,4 @@ export class AuthController {
 			message: 'Success',
 		};
 	}
-
-	@UseGuards(AuthGuard)
-	@Get('me')
-	async getAuthenticatedUser(@Req() request: Request) {
-		const id = await this.authService.userId(request);
-		try {
-			const found: User = await this.userService.findOne({
-				where: {
-					id: id,
-				},
-				relations: {
-					games_as_player_one: true,
-					games_as_player_two: true,
-					in_chats: true,
-				},
-			});
-			return found;
-		} catch (e) {
-			throw new NotFoundException('Me not found!');
-		}
-	}
 }
