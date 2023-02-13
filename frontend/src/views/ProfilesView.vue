@@ -1,30 +1,7 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>This is a profiles page</h1>
-			<div v-for="user in userStore.allUsers">
-				<router-link
-					:to="{ name: 'profile', params: { id: user.id } }"
-					>{{ user.name }}</router-link
-				>
-			</div>
+			<h1>This is a profiles settings page</h1>
 		</div>
 	</div>
 </template>
-
-<script lang="ts">
-import { useUserStore } from '@/stores/userStore';
-import { defineComponent } from 'vue';
-import ProfileView from '@/views/ProfileView.vue';
-
-export default defineComponent({
-	name: 'ProfilesView',
-	setup() {
-		const userStore = useUserStore();
-		userStore.refreshData();
-		return {
-			userStore,
-		};
-	},
-});
-</script>
