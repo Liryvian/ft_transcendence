@@ -43,8 +43,8 @@ export default defineComponent({
 		dataArray.value = [
 			{ left: 'intra name', right: this.user.name },
 			{ left: 'member since', right: this.user.created_at },
-			{ left: 'wins', right: 1 },
-			{ left: 'losses', right: 19000000 },
+			{ left: 'wins', right: 1 }, // needs to be connected
+			{ left: 'losses', right: 19000000 }, // needs to be connected
 			// { left: 'achievements', right: this.user.achievements[0] },  // this needs to be looped
 		];
 	},
