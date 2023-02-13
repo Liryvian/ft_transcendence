@@ -2,7 +2,8 @@ import type { Chat } from './Chat';
 import type { Game, GameRequest } from './Game';
 import type { Relationship } from './Relationship';
 
-interface Achievement {
+export interface Achievement {
+	id: number;
 	name: string;
 }
 
@@ -14,9 +15,8 @@ export interface RegisterForm {
 
 export interface LoginForm {
 	name: string;
-    password: string
+	password: string;
 }
-
 
 export interface User {
 	id: number;
@@ -36,4 +36,9 @@ export interface User {
 
 	created_at: Date;
 	updated_at: Date;
+}
+
+export interface UserAchievement {
+	user_id: number;
+	achievement_id: number;
 }

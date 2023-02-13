@@ -20,6 +20,8 @@ import { ref, onMounted, type Ref, defineProps } from 'vue';
 import type { OverviewArray } from '@/types/OverviewArray';
 import { getRequest } from '@/utils/apiRequests';
 import type { User } from '../types/User';
+import type { UserAchievement } from '../types/User';
+import type { Achievement } from '../types/User';
 
 let dataArray: Ref<OverviewArray[]> = ref([]);
 let user: User = {} as User;
@@ -36,6 +38,8 @@ export default defineComponent({
 	data() {
 		return {
 			user: {} as User,
+			userAchievement: [] as UserAchievement[],
+			achievement: [] as Achievement[],
 		};
 	},
 	async created() {
@@ -50,7 +54,12 @@ export default defineComponent({
 				{ left: 'member since', right: this.user.created_at },
 				{ left: 'wins', right: 1 }, //needs to be connected
 				{ left: 'losses', right: 19000000 }, //needs to be connected
-				// { left: 'achievements', right: this.user.achievements[0] },  // this needs to be looped
+				{
+					left: 'achievements',
+					right: this.user.achievements.map((ach) => {
+						return ach.name;
+					}),
+				},
 			];
 		}
 	},
