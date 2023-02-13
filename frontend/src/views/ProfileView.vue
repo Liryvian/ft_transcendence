@@ -40,13 +40,19 @@ export default defineComponent({
 	},
 	async created() {
 		this.user = (await getRequest(`users/${this.profile_id}`)).data;
-		dataArray.value = [
-			{ left: 'intra name', right: this.user.name },
-			{ left: 'member since', right: this.user.created_at },
-			{ left: 'wins', right: 1 }, // needs to be connected
-			{ left: 'losses', right: 19000000 }, // needs to be connected
-			// { left: 'achievements', right: this.user.achievements[0] },  // this needs to be looped
-		];
+		if (!this.profile_id) {
+			dataArray.value = [
+				{ left: 'this profile', right: 'does not exist' },
+			];
+		} else {
+			dataArray.value = [
+				{ left: 'intra name', right: this.user.name },
+				{ left: 'member since', right: this.user.created_at },
+				{ left: 'wins', right: 1 }, //needs to be connected
+				{ left: 'losses', right: 19000000 }, //needs to be connected
+				// { left: 'achievements', right: this.user.achievements[0] },  // this needs to be looped
+			];
+		}
 	},
 
 	setup() {

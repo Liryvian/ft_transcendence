@@ -2,14 +2,16 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>This is a profiles page</h1>
-				<div v-for="user in userStore.allUsers">
-					<router-link :to="{name: 'profile', params: {id: user.id}}">{{ user.name }}</router-link>
-				</div>
+			<div v-for="user in userStore.allUsers">
+				<router-link
+					:to="{ name: 'profile', params: { id: user.id } }"
+					>{{ user.name }}</router-link
+				>
+			</div>
 		</div>
 	</div>
 </template>
 
-<!--  THIS SCRIPT IS ONLY TO SHOW A WORKING GAME STORE SETUP-->
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
