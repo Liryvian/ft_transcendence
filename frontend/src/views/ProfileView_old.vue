@@ -33,57 +33,37 @@ export default defineComponent({
 		OverviewWithMidline,
 		VerticalAvatarAndUserName,
 	},
-	props: {
-		profile_id: String,
-	},
-	data() {
-		return {
-			user: {} as User,
-		};
-	},
-	// computed: {
-	// 	getId: function () {
-	// 		return { id: this.$route.params.id };
-	// 	}
-	// },
-	async created() {
-		// this.user = (await getRequest(`users/${this.$route.params.id}`)).data;
-		this.user = (await getRequest(`users/${this.profile_id}`)).data;
-		dataArray.value = [
-			{ left: 'intra name', right: this.user.name },
-			{ left: 'member since', right: this.user.created_at },
-			{ left: 'wins', right: 1 },
-			{ left: 'losses', right: 19000000 },
-			{ left: 'achievements', right: '' },
-		];
-		// console.log('Params: ', this.user);
+	computed: {
+		getId: function () {
+			return { id: this.$route.params.id };
+		}
 	},
 
 	setup() {
-		// const userStore = useUserStore();
-		// const props = defineProps({ id: Number });
+		const userStore = useUserStore();
+		const props = defineProps({ id: Number });
 		// const props = defineProps({ myProp: Object });
 		// const { myProp } = toRefs(props);
-		// onMounted(async () => {
-		// 	const userStore = useUserStore();
-		// 	await userStore.refreshData();
-		// console.log('id: ', props);
+		onMounted(async () => {
+			const userStore = useUserStore();
+			await userStore.refreshData();
+			// console.log('id: ', props);
 
-		// user = await (await getRequest(`users/5`)).data;
-		// console.log("name: " , user.name);
-		dataArray.value = [
-			{ left: 'intra name', right: user.name },
-			{ left: 'member since', right: user.created_at },
-			{ left: 'wins', right: 1 },
-			{ left: 'losses', right: 19000000 },
-			{ left: 'achievements', right: '' },
-		];
-		// }),
-		// console.log('name: ', user.name);
+			user = await (await getRequest(`users/5`)).data;
+			// console.log("name: " , user.name);
+			dataArray.value = [
+				{ left: 'intra name', right: user.name},
+				{ left: 'member since', right: user.created_at },
+				{ left: 'wins', right: 1 },
+				{ left: 'losses', right: 19000000 },
+				{ left: 'achievements', right: ''},
+			];
+		}),
+			console.log("name: " , user.name);
 		return {
-			// userStore,
+			userStore,
 			dataArray,
-			// props,
+			props,
 			name: user.name,
 		};
 	},

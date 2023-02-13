@@ -57,9 +57,10 @@ const router = createRouter({
 			component: () => import('../views/NewChannelView.vue'),
 		},
 		{
-			path: '/profile/:id',
+			path: '/profile/:profile_id?',
 			name: 'profile',
 			component: () => import('../views/ProfileView.vue'),
+			props: true,
 		},
 		{
 			path: '/elements-to-reuse',
