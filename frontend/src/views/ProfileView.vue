@@ -53,13 +53,8 @@ export default defineComponent({
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },
 				{ left: 'wins', right: 1 }, //needs to be connected
-				{ left: 'losses', right: 190 }, //needs to be connected
-				{
-					left: 'achievements',
-					right: this.user.achievements.map((ach) => {
-						return ach.name;
-					}),
-				},
+				{ left: 'losses', right: 190 },
+				{ left: 'achievements', right: 'should be connected'},
 			];
 		}
 	},
@@ -72,3 +67,12 @@ export default defineComponent({
 	},
 });
 </script>
+
+//notes:
+//needs to be connected
+// {
+// 	left: 'achievements',
+// 	right: this.user.achievements.map((ach) => {
+// 		return ach.name;
+// 	}),
+// },

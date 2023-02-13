@@ -32,17 +32,17 @@ export class UserAchievementsController {
 		}
 	}
 
-	// @Get()
-	// async findAll() {
-	// 	return this.userAchievementsService.findAll({
-	// 		relations: { users: true, achievements: true },
-	// 	});
-	// }
-
-	@Get(':id')
-	async findAll(@Param('id') id: number) {
-		return this.userAchievementsService.findAll({ where: { user_id: id } });
+	@Get()
+	async findAll() {
+		return this.userAchievementsService.findAll({
+			relations: { users: true, achievements: true },
+		});
 	}
+
+	// @Get(':id')
+	// async findAll(@Param('id') id: number) {
+	// 	return this.userAchievementsService.findAll({ where: { user_id: id } });
+	// }
 
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
