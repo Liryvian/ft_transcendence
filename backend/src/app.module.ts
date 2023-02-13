@@ -25,6 +25,9 @@ import { join } from 'path';
 	imports: [
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '../../', 'public'),
+			serveStaticOptions: {
+				index: false,
+			},
 		}),
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
