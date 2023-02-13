@@ -54,7 +54,14 @@ export default defineComponent({
 				{ left: 'member since', right: this.user.created_at },
 				{ left: 'wins', right: 1 }, //needs to be connected
 				{ left: 'losses', right: 190 },
-				{ left: 'achievements', right: 'should be connected'},
+				{
+					left: 'achievements',
+					right: this.user.achievements
+						.map((ach) => {
+							return ach.name;
+						})
+						.join(', '),
+				},
 			];
 		}
 	},
@@ -68,12 +75,6 @@ export default defineComponent({
 });
 </script>
 
-//notes:
-//needs to be connected
-// {
-// 	left: 'achievements',
-// 	right: this.user.achievements.map((ach) => {
-// 		return ach.name;
-// 	}),
-// },
-// <!--So maybe for now add a join with a comma after the map? (map().join(', '))-->
+// notes: //needs to be connected // { // left: 'achievements', // right:
+// this.user.achievements.map((ach) => { // return ach.name; // }), // }, //
+<!--So maybe for now add a join with a comma after the map? (map().join(', '))-->
