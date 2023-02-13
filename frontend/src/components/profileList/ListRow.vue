@@ -45,13 +45,14 @@
 		>Chat</a>
 	</div>
 
-
+	<!-- Update friend status -->
 	<FriendInvite
-		:user-id="user.id"
-		:isBlocked="isBlocked(relationshipType)"
-		:isFriend="isFriend(relationshipType)"  
+	:user-id="user.id"
+	:isBlocked="isBlocked(relationshipType)"
+	:isFriend="isFriend(relationshipType)"  
 	/>
-
+	
+	<!-- Update blocked status -->
 	<BlockUser :user-id="user.id" :isBlocked="isBlocked(relationshipType)" />
 	
 </template>
