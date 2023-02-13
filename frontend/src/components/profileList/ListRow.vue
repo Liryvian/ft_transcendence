@@ -15,7 +15,6 @@
 			/>
 	</div>
 
-
 	<!-- Route to profile via username link -->
 	<div v-if="!isBlocked(relationshipType)">
 		<a 
@@ -29,7 +28,6 @@
 		 	class="grayedOut"
 			>{{user.name}}</a>
 	</div>
-	
 	
 	<!-- Route to chat -->
 	<div v-if="!isBlocked(relationshipType)">
