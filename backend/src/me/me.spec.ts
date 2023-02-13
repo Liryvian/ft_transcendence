@@ -5,6 +5,7 @@ import { UserService } from '../users/user/user.service';
 import { InsertResult } from 'typeorm';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { UserController } from '../users/user/user.controller';
+import { AllTestingModule } from '../shared/test.module';
 
 describe('MeController', () => {
 	let app: INestApplication;
@@ -20,7 +21,7 @@ describe('MeController', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			controllers: [MeController],
+			imports: [AllTestingModule],
 		}).compile();
 
 		app = module.createNestApplication();
