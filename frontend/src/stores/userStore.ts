@@ -64,10 +64,24 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
+		async initializeRelationship(source: number, target: number) {
+			const createRelationship = {
+				source_id: source,
+				target_id: target,
+				type: "none"
+			}
+			return await (await postRequest("user-relationships/", createRelationship)).data;
+		},
+
 		async getRelationship(source: number, target: number) {
-			return await (
+			const existingRel: Relationship = await (
 				await getRequest(`user-relationships/${source}/${target}`)
 			).data;
+
+			if (!existingRel) {
+				return this.initializeRelationship(source, target);
+			}
+			return existingRel
 		},
 
 		async refreshData() {
@@ -80,16 +94,17 @@ export const useUserStore = defineStore('users', {
 			const sourceId: number = rel.source_id.id;
 			const targetId: number = rel.target_id.id;
 
-      		return (sourceId === userId || targetId === userId) &&
-      		(targetId === myId || sourceId === myId)
+			return (targetId === myId || sourceId === myId) 
+				&& (sourceId === userId || targetId === userId)
     	},
     
     	getExistingRelationship(userId: number) : Relationship | null
     	{
 			for (let i = 0; i < this.me.relationships.length; i++) {
 				const rel: Relationship = this.me.relationships[i]
-				if (this.isMatchingRelationship(userId, rel))
+				if (this.isMatchingRelationship(userId, rel)) {
 					return rel;
+				}
 			}
 			return null;
 		},
@@ -99,15 +114,21 @@ export const useUserStore = defineStore('users', {
     	  await patchRequest(`user-relationships/${rel.id}`, { type });
     	  await this.refreshData();
     	},
-	
-    	isFriend(userId: number): boolean {	
+		
+		getCurrentRelType(userId: number): string {
 			const rel: Relationship | null = this.getExistingRelationship(userId);
-    	    return (rel != null && rel.type === ValidRelationships.FRIEND);
+			if (rel) {
+				return rel.type;
+			}
+			return "none";
+		},
+			
+		isFriend(type: string): boolean {
+			return type === ValidRelationships.FRIEND;
     	},
-	
-		isBlocked(userId: number): boolean {
-			const rel: Relationship | null = this.getExistingRelationship(userId);
-			return rel !== null && rel.type === ValidRelationships.BLOCKED;
+		
+		isBlocked(type: string): boolean {
+			return type === ValidRelationships.BLOCKED;	
 		},
 	},
 });

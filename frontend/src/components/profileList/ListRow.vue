@@ -1,33 +1,58 @@
 <template>
 	<!-- Route to profile via avatar link -->
-	<div v-if="!userStore.isBlocked(user.id)">
-		<Avatar :avatar="user.avatar" :is-online="true" v-on:click="routeToProfile(user.id)"/>
+	<div v-if="!isBlocked(relationshipType)">
+		<Avatar
+			:avatar="user.avatar"
+			:is-online="true"
+			v-on:click="routeToProfile(user.id)"
+			/>
 	</div>
 	<div v-else>
-		<Avatar :avatar="user.avatar" :is-online="false" class="grayedOut"/>
+		<Avatar
+			:avatar="user.avatar"
+			:is-online="false"
+			class="grayedOut"
+			/>
 	</div>
 
 
 	<!-- Route to profile via username link -->
-	<div v-if="!userStore.isBlocked(user.id)">
-		<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{user.name}}</a>
+	<div v-if="!isBlocked(relationshipType)">
+		<a 
+			href="#"
+			v-on:click.prevent="routeToProfile(user.id)"
+			>{{user.name}}</a>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut">{{user.name}}</a>
+		<a 	
+			href="#"
+		 	class="grayedOut"
+			>{{user.name}}</a>
 	</div>
 	
 	
 	<!-- Route to chat -->
-	<div v-if="!userStore.isBlocked(user.id)">
-		<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
+	<div v-if="!isBlocked(relationshipType)">
+		<a
+			href="#"
+			v-on:click.prevent="routeToChat(user.id)"
+			>Chat</a>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut">Chat</a>
+		<a 
+		href="#"
+		class="grayedOut"
+		>Chat</a>
 	</div>
 
 
-	<FriendInvite :user-id="user.id"  />
-	<BlockUser :user-id="user.id"  />
+	<FriendInvite
+		:user-id="user.id"
+		:isBlocked="isBlocked(relationshipType)"
+		:isFriend="isFriend(relationshipType)"  
+	/>
+
+	<BlockUser :user-id="user.id" :isBlocked="isBlocked(relationshipType)" />
 	
 </template>
 
@@ -41,16 +66,17 @@ import FriendInvite from '@/components/profileList/FriendInvite.vue'
 import BlockUser from '@/components/profileList/BlockUser.vue'
 import router from '@/router';
 
-let isBlocked = ref(false);
 export default defineComponent({
 	name: 'ListRow',
 
 	setup() {
 		const userStore = useUserStore();
+		const { isFriend, isBlocked } = useUserStore();
 		userStore.refreshData();
-
 		return {
 			userStore,
+			isFriend,
+			isBlocked
 		};
 	},
 
@@ -67,6 +93,10 @@ export default defineComponent({
 			required: true,
 		},
 		online: Boolean,
+		relationshipType: {
+			type: String,
+			required: true,
+		},
 	},
 	methods: {
 		async routeToChat(userId: number) {
@@ -80,11 +110,3 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.avatar {
-	vertical-align: middle;
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-}
-</style>

@@ -4,7 +4,10 @@
 			<h1>Profiles</h1>
 			<div class="c_profileslist__table">
 				<template v-for="user in userStore.allUsers">
-					<ListRow :user=user />
+					<ListRow
+						:user=user
+						:relationshipType="getCurrentRelType(user.id)"
+						/>
 				</template>
 			</div>
 		</div>
@@ -15,7 +18,6 @@
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, onMounted } from 'vue';
-import ProfileView_tmp from '@/views/ProfileView-tmp.vue';
 import ListRow from '@/components/profileList/ListRow.vue';
 import type { User } from '@/types/User';
 import router from '@/router';
@@ -23,7 +25,6 @@ import router from '@/router';
 export default defineComponent({
 	name: 'ProfileList',
 	components: {
-		ProfileView_tmp,
 		ListRow,
 	},
 	setup() {
@@ -31,6 +32,8 @@ export default defineComponent({
 		const {
 			refreshData,
 			allUsers,
+			isBlocked,
+			getCurrentRelType
 		} = userStore;
 
 		onMounted(async () => {
@@ -41,6 +44,8 @@ export default defineComponent({
 			userStore,
 			refreshData,
 			allUsers,
+			isBlocked,
+			getCurrentRelType
 		};
 	},
 

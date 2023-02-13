@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isBlocked(userId) === true">
+    <div v-if="isBlocked === true">
        <a href="#" v-on:click.prevent="updateRelationship(userId, ValidRelationships.NONE)" >Unblock</a>
    </div>
    <div v-else>
@@ -15,10 +15,9 @@ import { defineComponent } from 'vue';
 export default defineComponent({
    name: 'BlockUser',
    setup (){
-       const { isBlocked, updateRelationship} = useUserStore();
+       const {updateRelationship} = useUserStore();
        
        return {
-           isBlocked,
            updateRelationship,
            ValidRelationships
        }
@@ -28,7 +27,8 @@ export default defineComponent({
        userId: {
            type: Number,
            required: true
-       },            
+       },
+       isBlocked: Boolean
    },
 });
 </script>

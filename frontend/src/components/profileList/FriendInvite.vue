@@ -1,8 +1,8 @@
 <template>
-     <div v-if="!isFriend(userId) && !isBlocked(userId)">
+     <div v-if="!isFriend && !isBlocked">
         <a href="#" v-on:click.prevent="updateRelationship(userId, ValidRelationships.FRIEND)" >Add Friend</a>
     </div>
-    <div v-else-if="isFriend(userId) && !isBlocked(userId)">
+    <div v-else-if="isFriend && !isBlocked">
         <a href="#" v-on:click.prevent="updateRelationship(userId,  ValidRelationships.NONE)" >Remove Friend</a>
     </div>
     <div v-else>
@@ -20,11 +20,9 @@ import { defineComponent } from 'vue';
 export default defineComponent({
 	name: 'FriendInvite',
     setup (){
-        const { isFriend, isBlocked, updateRelationship} = useUserStore();
+        const { updateRelationship} = useUserStore();
         
         return {
-            isFriend,
-            isBlocked,
             updateRelationship,
             ValidRelationships
         }
@@ -35,6 +33,8 @@ export default defineComponent({
             type: Number,
             required: true
         },            
+        isBlocked: Boolean,
+        isFriend: Boolean,
 	},
 });
 </script>
