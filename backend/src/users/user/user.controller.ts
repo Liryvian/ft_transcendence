@@ -34,7 +34,9 @@ import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
 export class UserController {
 	constructor(private userService: UserService) {}
 
-	private readonly defaultRelationships = {};
+	private readonly defaultRelationships = {
+		achievements: true,
+	};
 
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
