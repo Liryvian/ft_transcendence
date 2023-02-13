@@ -3,9 +3,8 @@
 		<div class="page_box">
 			<VerticalAvatarAndUserName
 				profile_picture="/test-profile.png"
-				:profile_name="name"
+				:profile_name="this.user.name"
 			/>
-			<!--			<VerticalAvatarAndUserName profile_picture="/test-profile.png" :profile_name="name" />-->
 			<OverviewWithMidline :data-array="dataArray" />
 		</div>
 	</div>
@@ -15,14 +14,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useUserStore } from '@/stores/userStore';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
-import { ref, onMounted, type Ref, defineProps, useRouter } from 'vue';
+import { ref, onMounted, type Ref, defineProps } from 'vue';
 import type { OverviewArray } from '@/types/OverviewArray';
 import { getRequest } from '@/utils/apiRequests';
 import type { User } from '../types/User';
-import { $computed } from 'vue/macros';
 
 let dataArray: Ref<OverviewArray[]> = ref([]);
 let user: User = {} as User;
@@ -41,49 +38,20 @@ export default defineComponent({
 			user: {} as User,
 		};
 	},
-	// computed: {
-	// 	getId: function () {
-	// 		return { id: this.$route.params.id };
-	// 	}
-	// },
 	async created() {
-		// this.user = (await getRequest(`users/${this.$route.params.id}`)).data;
 		this.user = (await getRequest(`users/${this.profile_id}`)).data;
 		dataArray.value = [
 			{ left: 'intra name', right: this.user.name },
 			{ left: 'member since', right: this.user.created_at },
 			{ left: 'wins', right: 1 },
 			{ left: 'losses', right: 19000000 },
-			{ left: 'achievements', right: '' },
+			// { left: 'achievements', right: this.user.achievements[0] },  // this needs to be looped
 		];
-		// console.log('Params: ', this.user);
 	},
 
 	setup() {
-		// const userStore = useUserStore();
-		// const props = defineProps({ id: Number });
-		// const props = defineProps({ myProp: Object });
-		// const { myProp } = toRefs(props);
-		// onMounted(async () => {
-		// 	const userStore = useUserStore();
-		// 	await userStore.refreshData();
-		// console.log('id: ', props);
-
-		// user = await (await getRequest(`users/5`)).data;
-		// console.log("name: " , user.name);
-		dataArray.value = [
-			{ left: 'intra name', right: user.name },
-			{ left: 'member since', right: user.created_at },
-			{ left: 'wins', right: 1 },
-			{ left: 'losses', right: 19000000 },
-			{ left: 'achievements', right: '' },
-		];
-		// }),
-		// console.log('name: ', user.name);
 		return {
-			// userStore,
 			dataArray,
-			// props,
 			name: user.name,
 		};
 	},
