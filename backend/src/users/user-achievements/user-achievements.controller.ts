@@ -39,11 +39,6 @@ export class UserAchievementsController {
 		});
 	}
 
-	// @Get(':id')
-	// async findAll(@Param('id') id: number) {
-	// 	return this.userAchievementsService.findAll({ where: { user_id: id } });
-	// }
-
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
 		return this.userAchievementsService.findOne({ where: { user_id: id } });
