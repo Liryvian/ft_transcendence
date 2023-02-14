@@ -11,7 +11,7 @@
 						<p class="playerTwoScore"> 3 </p>
 					</div>
 					<!-- <div class="centerLine"></div> -->
-					<canvas ref="GameRef" id="GameCanvas" class="gameBlock">
+					<canvas ref="GameRef" id="GameCanvas" class="gameBlock" width="1200"  height="960">
 					</canvas>
 
 				</div>
@@ -24,8 +24,18 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent, onMounted } from 'vue';
 
+interface DataObject {
+	context: CanvasRenderingContext2D
+}
+
 export default defineComponent({
 	name: "GameView",
+
+	data(): DataObject {
+		return {
+			context: {} as CanvasRenderingContext2D
+		}
+	},
 
 	setup(){
 		const gameStore = useGameStore();
@@ -43,35 +53,78 @@ export default defineComponent({
 			return (this.$refs.GameRef as HTMLCanvasElement).height;
 		},
 	},
+	methods: {
+		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
+		drawMiddleLine() {
+			const widthStart: number = this.width / 2;
+			const heightStart: number = 0;
+			const lineWidth: number = 4;
+			const lineHeight: number = this.height; 
+			
+			this.context.fillRect(
+				widthStart,
+				heightStart,
+				lineWidth,
+				lineHeight
+				);
+			},
+			
+		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
+		drawBall() {
+			const startingX: number = this.width / 2 - 100;
+			const startingY: number = this.height / 2 - 100;
+			const radius: number = 15;
+			const startAngle: number = 0;
+			const endAngle: number = Math.PI * 2; // full circle
+			// const 
+			this.context.arc(
+				startingX,
+				startingY,
+				radius,
+				startAngle,
+				endAngle,
+				)
+				this.context.fill()
+			},
+				
+		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
+		drawPaddles() {
+			let widthStart: number = 0;
+			const lineWidth: number = 15;
+			const lineHeight: number = this.height / 5; 
+			const heightStart: number = this.height / 2 - (lineHeight / 2); // middle of the canvas
+
+			this.context.fillRect(
+				widthStart,
+				heightStart,
+				lineWidth,
+				lineHeight
+			)
+
+
+			widthStart = this.width - lineWidth;
+			this.context.fillRect(
+				widthStart,
+				heightStart,
+				lineWidth,
+				lineHeight
+			)
+		}
+	},
 
 	mounted() {
-		// var c = document.getElementById("GameCanvas");
-		var ctx = (this.$refs.GameRef as any).getContext('2d');
-		// c.getContext("2d");
-		if (!ctx) {
-			console.log("NO CONTEXT!!!");
-		}
-		else {
-			console.log("Drawing!");
-			ctx.fillRect(this.width / 2 -+ 1, 0, 1, this.height )
-			// ctx.beginPath();
-			// ctx.moveTo(this.width / 2 + 10, 0)
-			// ctx.lineTo(this.width / 2 + 10, this.height);
-			// // ctx.moveTo(0, 0);
-			// ctx.lineWidth = 1;
-			// ctx.strokeStyle = 'black';
-			// ctx.stroke();
-			// ctx.fill
-		}
-
-	}
+		this.context = (this.$refs.GameRef as any).getContext('2d');
+		this.drawMiddleLine();
+		this.drawBall();
+		this.drawPaddles();
+	},
 })
 </script> 
 
 <style>
 .gameBlock {
 	height: 70%;
-	width: 95%;
+	width: 80%;
 	display: block;
 	margin: auto;
 }
