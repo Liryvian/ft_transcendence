@@ -5,7 +5,7 @@
 			<PlayerNames player_left="renoster" player_right="aardwolf" />
 
 				<div class="page_box">
-					<div class="gameHeader  space-between">
+					<div class="gameHeader space-between">
 						<p class="playerOneSore"> 5 </p>
 						<p class="pongHeader">PONG</p>
 						<p class="playerTwoScore"> 3 </p>
@@ -24,12 +24,10 @@
 	</div>
 </template>
 
-<!--  THIS SCRIPT IS ONLY TO SHOW A WORKING GAME STORE SETUP-->
 <script lang="ts">
 import { useGameStore } from '@/stores/gameStore';
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-
 
 interface DataObject {
 	context: CanvasRenderingContext2D
@@ -72,10 +70,10 @@ export default defineComponent({
 			const lineHeight: number = this.height; 
 			
 			this.context.fillRect(
-				widthStart,
-				heightStart,
-				lineWidth,
-				lineHeight
+					widthStart,
+					heightStart,
+					lineWidth,
+					lineHeight
 				);
 			},
 			
@@ -88,12 +86,13 @@ export default defineComponent({
 			const endAngle: number = Math.PI * 2; // full circle
 
 			this.context.arc(
-				startingX,
-				startingY,
-				radius,
-				startAngle,
-				endAngle,
-				)
+					startingX,
+					startingY,
+					radius,
+					startAngle,
+					endAngle,
+			)
+				// this fills the above defined arc/circle
 				this.context.fill()
 			},
 				
@@ -111,8 +110,8 @@ export default defineComponent({
 				lineHeight
 			)
 
-
-			widthStart = this.width - lineWidth;
+			//  opposite side / right side
+			widthStart = this.width - lineWidth; 
 			this.context.fillRect(
 				widthStart,
 				heightStart,
