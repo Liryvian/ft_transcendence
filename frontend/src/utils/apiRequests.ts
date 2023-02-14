@@ -5,7 +5,9 @@ export async function postRequest(path: string, data: any) {
 	return await axios.post(`${apiUrl}/${path}`, data);
 }
 
-export async function getRequest(path: string) {
+export async function getRequest(path: string, data?: any) {
+	if (data)
+		return await axios.get(`${apiUrl}/${path}`, data);
 	return await axios.get(`${apiUrl}/${path}`);
 }
 

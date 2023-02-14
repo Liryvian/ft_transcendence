@@ -8,14 +8,12 @@ import {
 	UseInterceptors,
 	ClassSerializerInterceptor,
 	Get,
-	Req,
 	HttpCode,
 	HttpStatus,
 	Query,
-	NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user/user.service';
 import { AuthGuard } from './auth.guard';
@@ -23,7 +21,6 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
-import { User } from '../users/user/entities/user.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -111,26 +108,26 @@ export class AuthController {
 		};
 	}
 
-	@UseGuards(AuthGuard)
-	@Get('me')
-	async getAuthenticatedUser(@Req() request: Request) {
-		const id = await this.authService.userId(request);
-		try {
-			const found: User = await this.userService.findOne({
-				where: {
-					id: id,
-				},
-				relations: {
-					games_as_player_one: true,
-					games_as_player_two: true,
-					in_chats: true,
-					relationshipSource: true,
-					relationshipTarget: true,
-				},
-			});
-			return found;
-		} catch (e) {
-			throw new NotFoundException('Me not found!');
-		}
-	}
+	// @UseGuards(AuthGuard)
+	// @Get('me')
+	// async getAuthenticatedUser(@Req() request: Request) {
+	// 	const id = await this.authService.userId(request);
+	// 	try {
+	// 		const found: User = await this.userService.findOne({
+	// 			where: {
+	// 				id: id,
+	// 			},
+	// 			relations: {
+	// 				games_as_player_one: true,
+	// 				games_as_player_two: true,
+	// 				in_chats: true,
+	// 				relationshipSource: true,
+	// 				relationshipTarget: true,
+	// 			},
+	// 		});
+	// 		return found;
+	// 	} catch (e) {
+	// 		throw new NotFoundException('Me not found!');
+	// 	}
+	// }
 }

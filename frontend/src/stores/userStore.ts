@@ -2,7 +2,7 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm } from "../types/User";
+import type { User, LoginForm, RegisterForm, UserRelationsQuery } from "../types/User";
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -45,8 +45,16 @@ export const useUserStore = defineStore('users', {
 		},
 
 		async refreshMe() {
+			const relationQuery : UserRelationsQuery = {
+				relationshipSource: true,
+				relationshipTarget: true,
+			}
+			const queryString = "?relationshipSource=true\
+								&relationshipTarget=true"
 			try {
-				const data = await getRequest('me');
+
+				const data = await getRequest(`me/${queryString}`);
+				console.log("Received user: ", data.data)
 				this.me = data.data;
 			} catch (e) {
 				console.error(e);

@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
@@ -6,6 +6,8 @@ import { Chat, ChatUser } from '../chats/chat/entities/chat.entity';
 import { ChatService } from '../chats/chat/chat.service';
 import { UserService } from '../users/user/user.service';
 import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dto';
+import { UserRelationsBodyDto } from '../users/user/dto/user-relations-body.dto';
+import { User } from '../users/user/entities/user.entity';
 
 @Controller('me')
 export class MeController {
@@ -20,20 +22,29 @@ export class MeController {
 	async me(
 		@Req() request: Request,
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
+		@Body() userRelationsBody?: UserRelationsBodyDto,
 	) {
 		const id = await this.authService.userId(request);
+		const userRelations = Object.keys(userRelationsBody ?? {}).length
+			? userRelationsBody
+			: Object.keys(userRelationsQuery ?? {}).length
+			? userRelationsQuery
+			: {};
 
-		return this.userService.findAll({
+		const user: User[] = await this.userService.findAll({
 			select: {
 				id: true,
 				name: true,
 				is_intra: true,
 				intra_login: true,
 				avatar: true,
+				// relationships: true,
 			},
 			where: { id },
-			relations: userRelationsQuery ?? {},
+			relations: userRelations,
 		});
+		console.log(user[0].relationships);
+		return user[0];
 	}
 
 	@UseGuards(AuthGuard)
