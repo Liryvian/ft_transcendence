@@ -40,7 +40,6 @@ export class UserRelationshipController {
 			relations: { source_id: true, target_id: true },
 		});
 	}
-
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
 		return this.service.findOne({

@@ -8,14 +8,12 @@ import {
 	UseInterceptors,
 	ClassSerializerInterceptor,
 	Get,
-	Req,
 	HttpCode,
 	HttpStatus,
 	Query,
-	NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user/user.service';
 import { AuthGuard } from './auth.guard';
@@ -23,7 +21,6 @@ import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
-import { User } from '../users/user/entities/user.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()

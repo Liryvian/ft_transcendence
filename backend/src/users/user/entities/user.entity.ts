@@ -11,7 +11,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { MatchmakingRequest } from '../../../pong/matchmaking-request/entities/matchmaking-request.entity';
 import { Game } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
@@ -149,4 +149,8 @@ export class User {
 
 	@UpdateDateColumn()
 	updated_at: Date;
+
+	toJSON() {
+		return instanceToPlain(this);
+	}
 }

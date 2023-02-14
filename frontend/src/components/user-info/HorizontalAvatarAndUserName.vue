@@ -5,7 +5,8 @@
 				<img :src="profile_picture" alt="" />
 			</div>
 		</div>
-		<div class="c_media__content">{{ profile_name }}</div>
+		<div class="c_media__content">{{ profile_name }}
+		</div>
 	</div>
 </template>
 
@@ -13,7 +14,7 @@
 import {defineComponent} from "vue";
 
 export default defineComponent({
-	name: 'horizontalAvatarAndUserName',
+	name: 'HorizontalAvatarAndUserName',
 	props: {
 		profile_name: String,
 		profile_picture: String,
