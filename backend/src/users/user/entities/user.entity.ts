@@ -129,10 +129,10 @@ export class User {
 	@Expose()
 	get chats(): UserInChat[] {
 		return this.in_chats?.reduce((acc, curr) => {
-			let index = acc.findIndex((obj) => obj.id == curr.id);
+			let index = acc.findIndex((obj) => obj.id == curr.chat_id);
 			if (index === -1) {
 				index = acc.push({
-					id: curr.id,
+					id: curr.chat_id,
 					type: (curr.chats as unknown as Chat)?.type,
 					name: (curr.chats as unknown as Chat)?.name,
 					permissions: [],

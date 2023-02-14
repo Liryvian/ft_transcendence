@@ -24,7 +24,7 @@ export class Chat {
 	@Expose()
 	get users() {
 		return this.has_users?.reduce((acc, curr) => {
-			let index = acc.findIndex((obj) => obj.user_id == curr.user_id);
+			let index = acc.findIndex((obj) => obj.id == curr.user_id);
 
 			if (index === -1) {
 				index = acc.push({
