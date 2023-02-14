@@ -3,7 +3,7 @@
 		<label :for="id">{{ label }}:</label>
 		<input
 			:id="id"
-			:type="type"
+			:type="inputType"
 			:value="modelValue"
 			@input="$emit('update:modelValue', $event.target.value)"
 			:disabled="is_disabled"
@@ -22,7 +22,10 @@ export default defineComponent({
 		label: String,
 		is_disabled: Boolean,
 		modelValue: String,
-		type: String
+		inputType: {
+			type: String,
+			default: "text"
+		}
 	},
 	emits: ['update:modelValue'],
 });

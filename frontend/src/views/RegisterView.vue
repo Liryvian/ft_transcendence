@@ -8,10 +8,10 @@
 				class="c_block c_form_group"
 				@submit.prevent="userStore.register(registerForm)"
 			>
-				<InputField type="text" label="username" v-model="registerForm.name" />
-				<InputField type="password"  label="password" v-model="registerForm.password" />
+				<InputField label="username" v-model="registerForm.name" />
+				<InputField inputType="password"  label="password" v-model="registerForm.password" />
 				<InputField
-					type="password"
+					inputType="password"
 					label="confirm password"
 					v-model="registerForm.password_confirm"
 				/>
