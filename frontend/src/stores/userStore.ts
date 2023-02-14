@@ -50,9 +50,12 @@ export const useUserStore = defineStore('users', {
 		},
 
 		async refreshMe() {
+			const queryString = "?relationshipSource=true\
+								&relationshipTarget=true"
 			try {
-				const data = await getRequest('me');
-				this.me = data.data;
+
+				const { data } = await getRequest(`me/${queryString}`);
+				this.me = data;
 			} catch (e) {
 				console.error(e);
 				return [];
@@ -61,18 +64,32 @@ export const useUserStore = defineStore('users', {
 
 		async refreshAllUsers() {
 			try {
-				const data = await getRequest('users');
-				this.allUsers = data.data;
+				const {data} = await getRequest('users');
+				this.allUsers = data.filter((user: User) => (user.id !== this.me.id));
 			} catch (e) {
 				console.error(e);
 				return [];
 			}
 		},
 
+		async initializeRelationship(source: number, target: number) {
+			const createRelationship = {
+				source_id: source,
+				target_id: target,
+				type: "none"
+			}
+			return await (await postRequest("user-relationships/", createRelationship)).data;
+		},
+
 		async getRelationship(source: number, target: number) {
-			return await (
+			const existingRel: Relationship = await (
 				await getRequest(`user-relationships/${source}/${target}`)
 			).data;
+
+			if (!existingRel) {
+				return this.initializeRelationship(source, target);
+			}
+			return existingRel
 		},
 
 		async refreshData() {
@@ -85,36 +102,36 @@ export const useUserStore = defineStore('users', {
 			const sourceId: number = rel.source_id.id;
 			const targetId: number = rel.target_id.id;
 
-			return (
-				(sourceId === userId || targetId === userId) &&
-				(targetId === myId || sourceId === myId)
-			);
+			return (targetId === myId || sourceId === myId)
+				&& (sourceId === userId || targetId === userId)
 		},
-
-		getExistingRelationship(id: number): Relationship | null {
-			this.me.relationships.forEach((rel: Relationship) => {
-				if (this.isMatchingRelationship(id, rel)) return rel;
-			});
-			return null;
+    
+		getExistingRelationship(userId: number): Relationship {
+			for (let i = 0; i < this.me.relationships.length; i++) {
+				const rel: Relationship = this.me.relationships[i]
+				if (this.isMatchingRelationship(userId, rel)) {
+					return rel;
+				}
+			}
+			return this.me.relationships[0];
 		},
-
+	
 		async updateRelationship(userId: number, type: string) {
-			const rel: Relationship = await this.getRelationship(
-				userId,
-				this.me.id,
-			);
+			const rel: Relationship = await this.getRelationship(userId, this.me.id);
 			await patchRequest(`user-relationships/${rel.id}`, { type });
-			this.refreshMe();
+			await this.refreshData();
 		},
-
-		isFriend(id: number): boolean {
-			const rel: Relationship | null = this.getExistingRelationship(id);
-			return rel != null && rel.type === ValidRelationships.FRIEND;
+		
+		getCurrentRel(userId: number): Relationship {
+			return this.getExistingRelationship(userId);
 		},
-
-		isBlocked(id: number): boolean {
-			const rel: Relationship | null = this.getExistingRelationship(id);
-			return rel !== null && rel.type === ValidRelationships.BLOCKED;
+			
+		isFriend(type: string): boolean {
+			return type === ValidRelationships.FRIEND;
+    	},
+		
+		isBlocked(type: string): boolean {
+			return type === ValidRelationships.BLOCKED;	
 		},
 	},
 });

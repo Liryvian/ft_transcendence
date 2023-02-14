@@ -128,7 +128,6 @@ h1 {
 	text-align: center;
 }
 
-
 .c_form--error {
 	color: red;
 }
@@ -163,6 +162,33 @@ h1 {
 
 .c_media__content {
 	line-height: 1;
+}
+
+.c_profileslist {
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+.c_profileslist h1 {
+	flex-basis: 100%;
+}
+
+.c_profileslist__table {
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-template-columns: min-content max-content max-content max-content max-content;
+	grid-template-rows: 1fr;
+	gap: var(--single-spacing) var(--single-spacing);
+	grid-template-areas: '. . . . .';
+	align-items: center;
+	max-width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.c_profileslist .c_media {
+	margin-bottom: 0;
 }
 
 .c_media--clickable {
@@ -504,4 +530,14 @@ h1 {
 
 .link_button:hover {
 	text-decoration: underline;
+}
+
+.grayedOut {
+	color: grey;
+	text-decoration: none;
+	cursor: unset;
+}
+
+.grayedOut:hover {
+	text-decoration: none;
 }
