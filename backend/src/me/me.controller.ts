@@ -2,7 +2,7 @@ import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
-import { Chat } from '../chats/chat/entities/chat.entity';
+import { Chat, ChatUser } from '../chats/chat/entities/chat.entity';
 import { ChatService } from '../chats/chat/chat.service';
 import { UserService } from '../users/user/user.service';
 import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dto';

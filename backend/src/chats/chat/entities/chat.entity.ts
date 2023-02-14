@@ -3,6 +3,8 @@ import { Exclude, Expose } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
 import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
+import { User } from '../../../users/user/entities/user.entity';
 
 const validVisibility = ['public', 'private'];
 const chatType = ['dm', 'channel'];
@@ -25,7 +27,13 @@ export class Chat {
 			let index = acc.findIndex((obj) => obj.user_id == curr.user_id);
 
 			if (index === -1) {
-				index = acc.push({ user_id: curr.user_id, permissions: [] });
+				index = acc.push({
+					id: curr.user_id,
+					name: (curr.users as unknown as User)?.name,
+					avatar: (curr.users as unknown as User)?.avatar,
+					permissions: [],
+				});
+
 				index--;
 			}
 			acc[index].permissions.push(curr.permissions);
@@ -47,4 +55,11 @@ export class Chat {
 
 	@OneToMany(() => Message, (message) => message.chat_id)
 	messages: Message[];
+}
+
+export class ChatUser {
+	id: number;
+	name?: String;
+	avatar?: String;
+	permissions: Permission[];
 }
