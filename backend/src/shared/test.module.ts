@@ -32,6 +32,7 @@ import { UserAchievementsModule } from '../users/user-achievements/user-achievem
 import { UserModule } from '../users/user/user.module';
 import { UserRelationship } from '../users/user-relationship/entities/user-relationship.entity';
 import { UserRelationshipModule } from '../users/user-relationship/user-relationship.module';
+import { MeModule } from '../me/me.module';
 
 @Module({
 	imports: [
@@ -51,6 +52,7 @@ import { UserRelationshipModule } from '../users/user-relationship/user-relation
 		]),
 		SharedModule,
 		AuthModule,
+		MeModule,
 
 		GameModule,
 		GameInvitesModule,
