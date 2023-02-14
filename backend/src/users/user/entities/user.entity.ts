@@ -18,12 +18,19 @@ import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entit
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
 import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
-import { IsArray, IsNumber } from 'class-validator';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 import { Permission } from '../../../chats/permissions/entities/permission.entity';
+import { Chat } from '../../../chats/chat/entities/chat.entity';
 
 export class UserInChat {
 	@IsNumber()
-	chat_id: number;
+	id: number;
+
+	@IsString()
+	type?: string;
+
+	@IsString()
+	name?: string;
 
 	@IsArray()
 	permissions: Permission[];
@@ -122,10 +129,12 @@ export class User {
 	@Expose()
 	get chats(): UserInChat[] {
 		return this.in_chats?.reduce((acc, curr) => {
-			let index = acc.findIndex((obj) => obj.chat_id == curr.chat_id);
+			let index = acc.findIndex((obj) => obj.id == curr.chat_id);
 			if (index === -1) {
 				index = acc.push({
-					chat_id: curr.chat_id,
+					id: curr.chat_id,
+					type: (curr.chats as unknown as Chat)?.type,
+					name: (curr.chats as unknown as Chat)?.name,
 					permissions: [],
 				});
 				index--;

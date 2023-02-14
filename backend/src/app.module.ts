@@ -18,6 +18,7 @@ import { AchievementsModule } from './users/achievements/achievements.module';
 import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
 import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 import { PermissionModule } from './chats/permissions/permission.module';
+import { MeModule } from './me/me.module';
 
 @Module({
 	imports: [
@@ -37,6 +38,7 @@ import { PermissionModule } from './chats/permissions/permission.module';
 		UserRelationshipModule,
 		AchievementsModule,
 		UserAchievementsModule,
+		MeModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
