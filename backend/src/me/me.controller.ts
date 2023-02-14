@@ -72,16 +72,31 @@ export class MeController {
 	@Get('chats')
 	async chats(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
+
+		// if you add the relationship here it only returns relations where you are the user, not all users in the chat
 		const chatIds: Chat[] = await this.chatService.findAll({
 			select: { id: true },
-			where: { has_users: { user_id: id } },
-			// add WHERE clause to filter blocked..
+			where: {
+				has_users: {
+					user_id: id,
+				},
+			},
 		});
 
-		const chats: Chat[] = await this.chatService.findAll({
-			where: chatIds,
-			relations: { has_users: { users: true } },
-		});
+		const chats: Chat[] = (
+			await this.chatService.findAll({
+				where: chatIds,
+				relations: { has_users: { users: true } },
+			})
+		).filter(
+			// removes chats where "I" am blocked
+			(chat: Chat) =>
+				chat.users.findIndex(
+					(user: ChatUser) =>
+						user.id == id &&
+						user.permissions.findIndex((p) => p.name === 'blocked') !== -1,
+				) === -1,
+		);
 
 		return chats.map((chat) => {
 			const obj = {
