@@ -25,13 +25,6 @@ export class MeController {
 		const id = await this.authService.userId(request);
 
 		return this.userService.findAll({
-			select: {
-				id: true,
-				name: true,
-				is_intra: true,
-				intra_login: true,
-				avatar: true,
-			},
 			where: { id },
 			relations: userRelationsQuery ?? {},
 		});
@@ -94,12 +87,16 @@ export class MeController {
 		).filter(
 			// removes chats where "I" am blocked
 			(chat: Chat) =>
-				chat.users.findIndex(
-					(user: ChatUser) =>
-						user.id == id &&
+				chat.users.findIndex((user: ChatUser) => {
+					if (user.id === id) {
+						console.log(user.permissions);
+					}
+					return (
+						user.id === id &&
 						user.permissions.findIndex((p) => p === permissionsEnum.BLOCKED) !==
-							-1,
-				) === -1,
+							-1
+					);
+				}) === -1,
 		);
 
 		return chats.map((chat) => {

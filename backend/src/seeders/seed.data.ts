@@ -88,7 +88,8 @@ const seedData = {
 			},
 			{
 				name: 'X the bitch',
-				is_intra: true,
+				password: await bcrypt.hash('x', 11),
+				is_intra: false,
 				created_at: user_dates[4],
 				updated_at: user_dates[4],
 			},
@@ -181,17 +182,6 @@ const seedData = {
 		return chats;
 	},
 
-	permissions: () => {
-		return [
-			{ name: 'blocked' }, //       0
-			{ name: 'edit_settings' }, // 1
-			{ name: 'left' }, //          2
-			{ name: 'manage_users' }, //  3
-			{ name: 'post' }, //          4
-			{ name: 'read' }, //          5
-		];
-	},
-
 	achievements: () => {
 		return [
 			{ name: 'logged in 10 times' },
@@ -247,7 +237,7 @@ const seedData = {
 			});
 		});
 
-		// add everybody with all permissions to 'Zoo'
+		// add almost everybody with all permissions to 'Zoo'
 		[
 			permissionsEnum.EDIT_SETTINGS,
 			permissionsEnum.MANAGE_USERS,
@@ -263,7 +253,7 @@ const seedData = {
 			});
 		});
 
-		// add everybody to 'Desert' with read permission
+		// add almost everybody to 'Desert' with read permission
 		users
 			.slice(0, -1)
 			.map(
