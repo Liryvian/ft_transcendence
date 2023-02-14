@@ -14,8 +14,6 @@ import { Chat } from '../chats/chat/entities/chat.entity';
 import { ChatModule } from '../chats/chat/chat.module';
 import { ChatUserPermission } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { ChatUserPermissionModule } from '../chats/chat-user-permissions/chat-user-permission.module';
-import { Permission } from '../chats/permissions/entities/permission.entity';
-import { PermissionModule } from '../chats/permissions/permission.module';
 
 import { Game } from '../pong/game/entities/game.entity';
 import { GameInvite } from '../pong/game_invite/entities/game-invite.entity';
@@ -49,7 +47,6 @@ import { UserRelationshipModule } from '../users/user-relationship/user-relation
 			UserRelationship,
 			Achievement,
 			UserAchievement,
-			Permission,
 			ChatUserPermission,
 		]),
 		SharedModule,
@@ -61,7 +58,6 @@ import { UserRelationshipModule } from '../users/user-relationship/user-relation
 
 		ChatModule,
 		MessageModule,
-		PermissionModule,
 		ChatUserPermissionModule,
 
 		UserModule,

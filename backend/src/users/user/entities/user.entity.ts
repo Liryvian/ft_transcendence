@@ -19,14 +19,13 @@ import { UserRelationship } from '../../user-relationship/entities/user-relation
 import { Achievement } from '../../achievements/entities/achievement.entity';
 import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { IsArray, IsNumber } from 'class-validator';
-import { Permission } from '../../../chats/permissions/entities/permission.entity';
 
 export class UserInChat {
 	@IsNumber()
 	chat_id: number;
 
 	@IsArray()
-	permissions: Permission[];
+	permissions: String[];
 }
 
 @Entity('users')
@@ -130,7 +129,7 @@ export class User {
 				});
 				index--;
 			}
-			acc[index].permissions.push(curr.permissions);
+			acc[index].permissions.push(curr.permission);
 			return acc;
 		}, []);
 	}

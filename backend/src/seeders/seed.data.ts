@@ -209,11 +209,7 @@ const seedData = {
 		return userAchievements;
 	},
 
-	chatUserPermission: (
-		users: number[],
-		chats: number[],
-		permissions: number[],
-	) => {
+	chatUserPermission: (users: number[], chats: number[]) => {
 		const cups: CreateChatUserPermissionDto[] = [];
 
 		// Add flamink and renoster to their DM

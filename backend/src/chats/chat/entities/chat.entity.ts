@@ -28,7 +28,7 @@ export class Chat {
 				index = acc.push({ user_id: curr.user_id, permissions: [] });
 				index--;
 			}
-			acc[index].permissions.push(curr.permissions);
+			acc[index].permissions.push(curr.permission);
 			return acc;
 		}, []);
 	}

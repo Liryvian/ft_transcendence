@@ -8,9 +8,10 @@ import { AllTestingModule } from '../../shared/test.module';
 import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
 import { UserService } from '../../users/user/user.service';
 import { User } from '../../users/user/entities/user.entity';
-import { PermissionService } from '../permissions/permission.service';
-import { Permission } from '../permissions/entities/permission.entity';
-import { ChatUserPermission } from '../chat-user-permissions/entities/chat-user-permission.entity';
+import {
+	ChatUserPermission,
+	permissionsEnum,
+} from '../chat-user-permissions/entities/chat-user-permission.entity';
 import { DeleteResult } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 
@@ -19,7 +20,6 @@ describe('ChatController', () => {
 	let service: ChatService;
 	let testingModule: TestingModule;
 	let chatUserPermissionService: ChatUserPermissionService;
-	let permissionService: PermissionService;
 	let userService: UserService;
 
 	const testChats: CreateChatDto[] = [
@@ -38,7 +38,6 @@ describe('ChatController', () => {
 			ChatUserPermissionService,
 		);
 		userService = testingModule.get<UserService>(UserService);
-		permissionService = testingModule.get<PermissionService>(PermissionService);
 
 		for (const chat in testChats) {
 			await controller.create(testChats[chat]);
@@ -71,13 +70,12 @@ describe('ChatController', () => {
 
 	it('should delete relations in chat-user-permisison table before deleting chat', async () => {
 		const user: User = await userService.save({ name: 'a' });
-		const perm: Permission = await permissionService.save({ name: 'perm' });
 		const chat: Chat = await service.save({ name: 'chatroom' });
 
 		const relation: ChatUserPermission = await chatUserPermissionService.save({
 			chat_id: chat.id,
 			user_id: user.id,
-			permission_id: perm.id,
+			permission: permissionsEnum.READ,
 		});
 		const removed: DeleteResult = await controller.remove(chat.id);
 		expect(removed.affected).toBe(1);
@@ -86,7 +84,6 @@ describe('ChatController', () => {
 		).rejects.toThrow(NotFoundException);
 
 		await userService.remove(user.id);
-		await permissionService.remove(perm.id);
 		await service.remove(chat.id);
 	});
 });
