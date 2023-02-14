@@ -1,8 +1,8 @@
 <template>
-    <div v-if="isBlocked === true && relationshipSourceId !== userId">
+    <div v-if="isBlocked && relationshipSourceId !== userId">
        <a href="#" class="grayedOut" > Unblock </a>
    </div>
-    <div v-else-if="isBlocked === true">
+    <div v-else-if="isBlocked">
        <a
         href="#"
         v-on:click.prevent="updateRelationship(userId, ValidRelationships.NONE)"
@@ -33,7 +33,10 @@ export default defineComponent({
    },
 
    props: {
-       isBlocked: Boolean,
+       isBlocked: {
+           type: Boolean,
+           required: true,
+       },
        userId: {
            type: Number,
            required: true
