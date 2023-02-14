@@ -25,6 +25,9 @@
 							<a :href="redirectUrl">Sign in with 42</a>
 						</p>
 					</div>
+					<div v-if="userStore.errors.length">
+						<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
+					</div>
 				</form>
 			</div>
 		</div>

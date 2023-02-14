@@ -18,15 +18,25 @@ export const useUserStore = defineStore('users', {
   	  getMe: (state) => state.me
   	},
   	// actions == methods
-  	actions: {
+	actions: {
+		handleFormError(responseData: any) {
+			if (typeof responseData.message === 'string') {
+				this.errors = [responseData.message];
+			} else {
+				this.errors = responseData.message.map((msg: String) =>
+					msg.replace('(o) => o.', ''),
+				);
+			}
+		},
+
     	async login(loginForm: LoginForm) {
     	  try{
     	    await postRequest("login", loginForm);
     	    await this.refreshMe();
     	    await router.push("/")
     	  }
-    	  catch (e) {
-    	    alert('Invalid user/password combination')
+		  catch (e) {
+			  this.handleFormError(e.response.data);
     	  }
 	  },
 
@@ -35,14 +45,7 @@ export const useUserStore = defineStore('users', {
 				await postRequest('users', registerForm);
 				await router.push('/login');
 			} catch (e) {
-				if (typeof e.response.data.message === 'string') {
-					this.errors = [e.response.data.message];
-				} else {
-					this.errors = e.response.data.message.map((msg: String) =>
-						msg.replace('(o) => o.', ''),
-					);
-				}
-				return [];
+				this.handleFormError(e.response.data)
 			}
 		},
 
