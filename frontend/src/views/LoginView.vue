@@ -12,8 +12,8 @@
 					@submit.prevent="userStore.login(loginForm)"
 					>
 					
-					<InputField label="Username" placeholder="username" v-model="loginForm.name"/>
-					<InputField label="Password" placeholder="password" v-model="loginForm.password"/>
+					<InputField type="text" label="Username" placeholder="username" v-model="loginForm.name"/>
+					<InputField type="password" label="Password" placeholder="password" v-model="loginForm.password"/>
 					
 					<div class="c_block c_split">
 						<p>
