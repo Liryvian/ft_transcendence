@@ -2,16 +2,21 @@
 	<div >
 
 		<div class="page_box_wrapper">
-			<div>Renoster</div>
-			<div>Aardwolf</div>
+			<PlayerNames player_left="Renoster" player_right="Aardwolf" />
+
 				<div class="page_box">
 					<div class="gameHeader  space-between">
 						<p class="playerOneSore"> 5 </p>
 						<p class="pongHeader">PONG</p>
 						<p class="playerTwoScore"> 3 </p>
 					</div>
-					<!-- <div class="centerLine"></div> -->
-					<canvas ref="GameRef" id="GameCanvas" class="gameBlock" width="1200"  height="960">
+
+					<canvas
+					ref="GameRef"
+					id="GameCanvas"
+					class="gameBlock"
+					width="1200"  
+					height="960">
 					</canvas>
 
 				</div>
@@ -23,6 +28,8 @@
 <script lang="ts">
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent, onMounted } from 'vue';
+import PlayerNames from '@/components/game-info/PlayerNames.vue'
+
 
 interface DataObject {
 	context: CanvasRenderingContext2D
@@ -30,6 +37,9 @@ interface DataObject {
 
 export default defineComponent({
 	name: "GameView",
+	components: {
+		PlayerNames
+	},
 
 	data(): DataObject {
 		return {
@@ -76,7 +86,7 @@ export default defineComponent({
 			const radius: number = 15;
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
-			// const 
+
 			this.context.arc(
 				startingX,
 				startingY,
@@ -123,38 +133,21 @@ export default defineComponent({
 
 <style>
 .gameBlock {
-	height: 70%;
-	width: 80%;
+	height: 80%;
+	width: 90%;
 	display: block;
 	margin: auto;
+  	transform: translateY(5%);
 }
-
-/* .pongHeader {
-	font-weight: bold;
-	text-align: center;
-}
-
-.playerOne{
-	font-weight: bold;
-	text-align: left;
-}
-
-.playerTwo{
-	font-weight: bold;
-	text-align: right;
-} */
 
 .gameHeader{
 	font-weight: bold;
 	display: flex;
-	font-size: 2.5vw;
+	/* font size changes on window HEIGHT! */
+	font-size: 2.5vh; 
 	padding-left: 5%;
 	padding-right: 5%;
-	padding-top: 3%;
-}
-
-.gameHeader.space-around {
-	justify-content: space-around;
+	padding-top: 4%;
 }
 
 .gameHeader.space-between {
