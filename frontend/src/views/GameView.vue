@@ -137,8 +137,7 @@ export default defineComponent({
 	width: 90%;
 	display: block;
 	margin: auto;
-  	transform: translateY(4%);
-	padding-bottom: 0;
+  	transform: translateY(5%);
 }
 
 .gameHeader{
