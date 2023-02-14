@@ -93,6 +93,7 @@ describe('Auth (e2e)', () => {
 						.split(';')[0];
 					const data = jwtService.verify(cookie);
 					expect(data.id).toBe(users[0].id);
+					return true;
 				});
 		});
 	});
