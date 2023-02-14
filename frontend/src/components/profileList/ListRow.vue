@@ -1,6 +1,6 @@
 <template>
 	<!-- Route to profile via avatar link -->
-	<div v-if="!isBlocked(relationshipType)">
+	<div v-if="!isBlocked(relationship.type)">
 		<Avatar
 			:avatar="user.avatar"
 			:is-online="true"
@@ -17,7 +17,7 @@
 
 
 	<!-- Route to profile via username link -->
-	<div v-if="!isBlocked(relationshipType)">
+	<div v-if="!isBlocked(relationship.type)">
 		<a 
 			href="#"
 			v-on:click.prevent="routeToProfile(user.id)"
@@ -32,7 +32,7 @@
 	
 	
 	<!-- Route to chat -->
-	<div v-if="!isBlocked(relationshipType)">
+	<div v-if="!isBlocked(relationship.type)">
 		<a
 			href="#"
 			v-on:click.prevent="routeToChat(user.id)"
@@ -48,12 +48,16 @@
 	<!-- Update friend status -->
 	<FriendInvite
 	:user-id="user.id"
-	:isBlocked="isBlocked(relationshipType)"
-	:isFriend="isFriend(relationshipType)"  
+	:isBlocked="isBlocked(relationship.type)"
+	:isFriend="isFriend(relationship.type)"  
 	/>
 	
 	<!-- Update blocked status -->
-	<BlockUser :user-id="user.id" :isBlocked="isBlocked(relationshipType)" />
+	<BlockUser
+		:user-id="user.id" 
+		:isBlocked="isBlocked(relationship.type)" 
+		:relationshipSourceId="relationship.source_id.id"
+		/>
 	
 </template>
 
@@ -66,6 +70,7 @@ import Avatar from '@/components/profileList/Avatar.vue'
 import FriendInvite from '@/components/profileList/FriendInvite.vue'
 import BlockUser from '@/components/profileList/BlockUser.vue'
 import router from '@/router';
+import type { Relationship } from '@/types/Relationship';
 
 export default defineComponent({
 	name: 'ListRow',
@@ -94,8 +99,8 @@ export default defineComponent({
 			required: true,
 		},
 		online: Boolean,
-		relationshipType: {
-			type: String,
+		relationship: {
+			type: Object as PropType<Relationship>,
 			required: true,
 		},
 	},
