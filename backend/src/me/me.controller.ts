@@ -62,6 +62,7 @@ export class MeController {
 		return 'list of users that I friended';
 	}
 
+	// gets chats where "I" am not blocked
 	@UseGuards(AuthGuard)
 	@Get('chats')
 	async chats(@Req() request: Request) {
@@ -87,25 +88,14 @@ export class MeController {
 		).filter(
 			// removes chats where "I" am blocked
 			(chat: Chat) =>
-				chat.users.findIndex((user: ChatUser) => {
-					if (user.id === id) {
-						console.log(user.permissions);
-					}
-					return (
+				chat.users.findIndex(
+					(user: ChatUser) =>
 						user.id === id &&
 						user.permissions.findIndex((p) => p === permissionsEnum.BLOCKED) !==
-							-1
-					);
-				}) === -1,
+							-1,
+				) === -1,
 		);
 
-		return chats.map((chat) => {
-			const obj = {
-				...chat,
-				users: chat.users,
-			};
-			delete obj.has_users;
-			return obj;
-		});
+		return chats;
 	}
 }

@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
 import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
@@ -54,6 +54,10 @@ export class Chat {
 
 	@OneToMany(() => Message, (message) => message.chat_id)
 	messages: Message[];
+
+	toJSON() {
+		return instanceToPlain(this);
+	}
 }
 
 export class ChatUser {
