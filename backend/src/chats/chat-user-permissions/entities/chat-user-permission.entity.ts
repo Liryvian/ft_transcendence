@@ -1,3 +1,4 @@
+import { IsIn } from 'class-validator';
 import {
 	Column,
 	CreateDateColumn,
@@ -10,7 +11,24 @@ import {
 } from 'typeorm';
 import { User } from '../../../users/user/entities/user.entity';
 import { Chat } from '../../chat/entities/chat.entity';
-import { Permission } from '../../permissions/entities/permission.entity';
+
+export enum permissionsEnum {
+	BLOCKED = 'blocked',
+	EDIT_SETTINGS = 'edit_settings',
+	LEFT = 'left',
+	MANAGE_USERS = 'manage_users',
+	POST = 'post',
+	READ = 'read',
+}
+
+export const permissionsArray = [
+	'blocked',
+	'edit_settings',
+	'left',
+	'manage_users',
+	'post',
+	'read',
+];
 
 @Entity()
 @Index(['chat_id', 'user_id', 'permission_id'], { unique: true })
@@ -39,12 +57,15 @@ export class ChatUserPermission {
 	@Column()
 	permission_id: number;
 
-	@ManyToOne(() => Permission, (permission) => permission.id, {
-		eager: true,
-		onDelete: 'CASCADE',
-	})
-	@JoinColumn({ name: 'permission_id' })
-	permissions: Permission[];
+	// @ManyToOne(() => Permission, (permission) => permission.id, {
+	// 	eager: true,
+	// 	onDelete: 'CASCADE',
+	// })
+	// @JoinColumn({ name: 'permission_id' })
+	// permissions: Permission[];
+	@IsIn(permissionsArray)
+	@Column()
+	permissions: String;
 
 	@CreateDateColumn()
 	created_at: Date;

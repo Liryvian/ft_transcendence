@@ -2,10 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AllTestingModule } from '../../shared/test.module';
 import { UserService } from '../../users/user/user.service';
 import { ChatService } from '../chat/chat.service';
-import { PermissionService } from '../permissions/permission.service';
+// import { PermissionService } from '../permissions/permission.service';
 import * as crypto from 'crypto';
 
-import { ChatUserPermission } from './entities/chat-user-permission.entity';
+import {
+	ChatUserPermission,
+	permissionsEnum,
+} from './entities/chat-user-permission.entity';
 import { ChatUserPermissionService } from './chat-user-permission.service';
 import { User } from '../../users/user/entities/user.entity';
 import { Chat } from '../chat/entities/chat.entity';
@@ -16,12 +19,12 @@ describe('Chat - User - Permission relationship', () => {
 	let service: ChatUserPermissionService;
 
 	let userService: UserService;
-	let permissionService: PermissionService;
+	// let permissionService: PermissionService;
 	let chatService: ChatService;
 
 	const chat_ids: number[] = [];
 	const user_ids: number[] = [];
-	const permission_ids: number[] = [];
+	// const permission_ids: number[] = [];
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
@@ -32,7 +35,7 @@ describe('Chat - User - Permission relationship', () => {
 			ChatUserPermissionService,
 		);
 		userService = testingModule.get<UserService>(UserService);
-		permissionService = testingModule.get<PermissionService>(PermissionService);
+		// permissionService = testingModule.get<PermissionService>(PermissionService);
 		chatService = testingModule.get<ChatService>(ChatService);
 
 		await userService
@@ -44,15 +47,15 @@ describe('Chat - User - Permission relationship', () => {
 			.then((users) => {
 				users.forEach((user) => user_ids.push(user.id));
 			});
-		await permissionService
-			.save([
-				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
-				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
-				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
-			])
-			.then((permissions) => {
-				permissions.forEach((permission) => permission_ids.push(permission.id));
-			});
+		// await permissionService
+		// 	.save([
+		// 		{ name: crypto.pseudoRandomBytes(4).toString('hex') },
+		// 		{ name: crypto.pseudoRandomBytes(4).toString('hex') },
+		// 		{ name: crypto.pseudoRandomBytes(4).toString('hex') },
+		// 	])
+		// 	.then((permissions) => {
+		// 		permissions.forEach((permission) => permission_ids.push(permission.id));
+		// 	});
 		await chatService
 			.save([
 				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
@@ -65,7 +68,7 @@ describe('Chat - User - Permission relationship', () => {
 	});
 
 	afterAll(async () => {
-		await permissionService.remove(permission_ids);
+		// await permissionService.remove(permission_ids);
 		await chatService.remove(chat_ids);
 		await userService.remove(user_ids);
 	});
@@ -78,13 +81,13 @@ describe('Chat - User - Permission relationship', () => {
 		const relation: ChatUserPermission = await service.save({
 			chat_id: chat_ids[0],
 			user_id: user_ids[0],
-			permission_id: permission_ids[0],
+			permission: permissionsEnum.READ,
 		});
 		expect(relation).toMatchObject({
 			id: expect.any(Number),
 			chat_id: chat_ids[0],
 			user_id: user_ids[0],
-			permission_id: permission_ids[0],
+			permission: permissionsEnum.READ,
 		});
 		await service.remove(relation.id);
 	});
@@ -95,12 +98,12 @@ describe('Chat - User - Permission relationship', () => {
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 			]),
 		).rejects.toThrow('UNIQUE');
@@ -111,12 +114,12 @@ describe('Chat - User - Permission relationship', () => {
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[1],
+				permission: permissionsEnum.READ,
 			},
 		]);
 		expect(relations).toHaveLength(2);
@@ -128,12 +131,12 @@ describe('Chat - User - Permission relationship', () => {
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 			{
 				chat_id: chat_ids[1],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 		]);
 		expect(relations).toHaveLength(2);
@@ -145,12 +148,12 @@ describe('Chat - User - Permission relationship', () => {
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[1],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 		]);
 		expect(relations).toHaveLength(2);
@@ -163,42 +166,42 @@ describe('Chat - User - Permission relationship', () => {
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[1],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[1],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[1],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[2],
 					user_id: user_ids[0],
-					permission_id: permission_ids[2],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[2],
 					user_id: user_ids[1],
-					permission_id: permission_ids[2],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[2],
 					user_id: user_ids[2],
-					permission_id: permission_ids[1],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[1],
 					user_id: user_ids[2],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 			]);
 		});
