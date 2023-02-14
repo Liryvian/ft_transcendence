@@ -18,16 +18,18 @@ import { AchievementsModule } from './users/achievements/achievements.module';
 import { UserAchievementsModule } from './users/user-achievements/user-achievements.module';
 import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 import { PermissionModule } from './chats/permissions/permission.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { MeModule } from './me/me.module';
 
 @Module({
 	imports: [
-		// ServeStaticModule.forRoot({
-		// 	rootPath: join(__dirname, '../../', 'public'),
-		// 	serveStaticOptions: {
-		// 		index: false,
-		// 	},
-		// }),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '../../', 'public'),
+			serveStaticOptions: {
+				index: false,
+			},
+		}),
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AuthModule,

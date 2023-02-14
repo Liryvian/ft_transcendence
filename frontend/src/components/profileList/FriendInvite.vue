@@ -33,8 +33,14 @@ export default defineComponent({
             type: Number,
             required: true
         },            
-        isBlocked: Boolean,
-        isFriend: Boolean,
+        isBlocked: {
+           type: Boolean,
+           required: true,
+       },
+       isFriend: {
+           type: Boolean,
+           required: true,
+       },
 	},
 });
 </script>

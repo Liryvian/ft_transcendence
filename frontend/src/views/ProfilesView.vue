@@ -6,7 +6,7 @@
 				<template v-for="user in userStore.allUsers">
 					<ListRow
 						:user=user
-						:relationshipType="getCurrentRelType(user.id)"
+						:relationship="getCurrentRel(user.id)"
 						/>
 				</template>
 			</div>
@@ -33,7 +33,7 @@ export default defineComponent({
 			refreshData,
 			allUsers,
 			isBlocked,
-			getCurrentRelType
+			getCurrentRel
 		} = userStore;
 
 		onMounted(async () => {
@@ -45,7 +45,7 @@ export default defineComponent({
 			refreshData,
 			allUsers,
 			isBlocked,
-			getCurrentRelType
+			getCurrentRel
 		};
 	},
 

@@ -12,21 +12,21 @@ export const useUserStore = defineStore('users', {
 		errors: [],
 	}),
 
-  	// getters == computed values
+	// getters == computed values
 	getters: {
 	},
-  	// actions == methods
-  	actions: {
-    	async login(loginForm: LoginForm) {
-    	  try{
-    	    await postRequest("login", loginForm);
-    	    await this.refreshData();
-    	    await router.push("/")
-    	  }
-    	  catch (e) {
-    	    alert('Invalid user/password combination')
-    	  }
-	  },
+	// actions == methods
+	actions: {
+		async login(loginForm: LoginForm) {
+			try {
+				await postRequest("login", loginForm);
+				await this.refreshData();
+				await router.push("/")
+			}
+			catch (e) {
+				alert('Invalid user/password combination')
+			}
+		},
 
 		async register(registerForm: RegisterForm) {
 			try {
@@ -45,9 +45,12 @@ export const useUserStore = defineStore('users', {
 		},
 
 		async refreshMe() {
+			const queryString = "?relationshipSource=true\
+								&relationshipTarget=true"
 			try {
-				const data = await getRequest('me');
-				this.me = data.data;
+
+				const { data } = await getRequest(`me/${queryString}`);
+				this.me = data;
 			} catch (e) {
 				console.error(e);
 				return [];
@@ -56,8 +59,8 @@ export const useUserStore = defineStore('users', {
 
 		async refreshAllUsers() {
 			try {
-				const data = await getRequest('users');
-				this.allUsers = data.data.filter((user: User) => (user.id !== this.me.id));
+				const {data} = await getRequest('users');
+				this.allUsers = data.filter((user: User) => (user.id !== this.me.id));
 			} catch (e) {
 				console.error(e);
 				return [];
@@ -94,33 +97,28 @@ export const useUserStore = defineStore('users', {
 			const sourceId: number = rel.source_id.id;
 			const targetId: number = rel.target_id.id;
 
-			return (targetId === myId || sourceId === myId) 
+			return (targetId === myId || sourceId === myId)
 				&& (sourceId === userId || targetId === userId)
-    	},
+		},
     
-    	getExistingRelationship(userId: number) : Relationship | null
-    	{
+		getExistingRelationship(userId: number): Relationship {
 			for (let i = 0; i < this.me.relationships.length; i++) {
 				const rel: Relationship = this.me.relationships[i]
 				if (this.isMatchingRelationship(userId, rel)) {
 					return rel;
 				}
 			}
-			return null;
+			return this.me.relationships[0];
 		},
 	
-    	async updateRelationship(userId: number, type: string) {
-    	  const rel: Relationship = await this.getRelationship(userId, this.me.id);
-    	  await patchRequest(`user-relationships/${rel.id}`, { type });
-    	  await this.refreshData();
-    	},
+		async updateRelationship(userId: number, type: string) {
+			const rel: Relationship = await this.getRelationship(userId, this.me.id);
+			await patchRequest(`user-relationships/${rel.id}`, { type });
+			await this.refreshData();
+		},
 		
-		getCurrentRelType(userId: number): string {
-			const rel: Relationship | null = this.getExistingRelationship(userId);
-			if (rel) {
-				return rel.type;
-			}
-			return "none";
+		getCurrentRel(userId: number): Relationship {
+			return this.getExistingRelationship(userId);
 		},
 			
 		isFriend(type: string): boolean {
