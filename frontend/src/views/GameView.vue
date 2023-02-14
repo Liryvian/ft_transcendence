@@ -2,7 +2,7 @@
 	<div >
 
 		<div class="page_box_wrapper">
-			<PlayerNames player_left="Renoster" player_right="Aardwolf" />
+			<PlayerNames player_left="renoster" player_right="aardwolf" />
 
 				<div class="page_box">
 					<div class="gameHeader  space-between">
@@ -137,7 +137,8 @@ export default defineComponent({
 	width: 90%;
 	display: block;
 	margin: auto;
-  	transform: translateY(5%);
+  	transform: translateY(4%);
+	padding-bottom: 0;
 }
 
 .gameHeader{
@@ -154,11 +155,4 @@ export default defineComponent({
 	justify-content: space-between;
 }
 
-.centerLine {
-border-left: 2px solid black;
-  height: 63%;
-  position: absolute;
-  left: 50%;
-  top: 10;
-}
 </style>
