@@ -39,6 +39,7 @@ a {
 	transform: rotate(180deg);
 	writing-mode: vertical-lr;
 	text-orientation: mixed;
+	color: grey;
 }
 
 .c_game__name--right {
