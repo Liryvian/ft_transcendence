@@ -10,7 +10,7 @@
 						<p class="pongHeader">PONG</p>
 						<p class="playerTwoScore"> 3 </p>
 					</div>
-					<div class="centerLine"></div>
+					<!-- <div class="centerLine"></div> -->
 					<canvas ref="GameRef" id="GameCanvas" class="gameBlock">
 					</canvas>
 
@@ -53,6 +53,7 @@ export default defineComponent({
 		}
 		else {
 			console.log("Drawing!");
+			ctx.fillRect(this.width / 2 -+ 1, 0, 1, this.height )
 			// ctx.beginPath();
 			// ctx.moveTo(this.width / 2 + 10, 0)
 			// ctx.lineTo(this.width / 2 + 10, this.height);
@@ -72,6 +73,7 @@ export default defineComponent({
 	height: 70%;
 	width: 95%;
 	display: block;
+	margin: auto;
 }
 
 /* .pongHeader {
