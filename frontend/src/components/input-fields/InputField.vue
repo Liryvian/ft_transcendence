@@ -2,6 +2,7 @@
 	<div class="c_field_group">
 		<label :for="id">{{ label }}:</label>
 		<input
+			:tabindex="tabindex"
 			:id="id"
 			:type="inputType"
 			:value="modelValue"
@@ -25,7 +26,8 @@ export default defineComponent({
 		inputType: {
 			type: String,
 			default: "text"
-		}
+		},
+		tabindex: String
 	},
 	emits: ['update:modelValue'],
 });
