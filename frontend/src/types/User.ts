@@ -2,7 +2,8 @@ import type { Chat } from './Chat';
 import type { Game, GameRequest } from './Game';
 import type { Relationship } from './Relationship';
 
-interface Achievement {
+export interface Achievement {
+	id: number;
 	name: string;
 }
 
@@ -14,9 +15,8 @@ export interface RegisterForm {
 
 export interface LoginForm {
 	name: string;
-    password: string
+	password: string;
 }
-
 
 export interface UserRelationsQuery {
 	matchmaking_request?: boolean;
@@ -45,6 +45,6 @@ export interface User {
 
 	chats: Chat[];
 
-    created_at: Date;
-    updated_at: Date;
+	created_at: Date;
+	updated_at: Date;
 }

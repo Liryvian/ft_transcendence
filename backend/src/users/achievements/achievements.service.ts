@@ -7,7 +7,7 @@ import { UpdateAchievementDto } from './dto/update-achievement.dto';
 import { Achievement } from './entities/achievement.entity';
 
 @Injectable()
-export class AchievementsService extends AbstractService<Achievement>{
+export class AchievementsService extends AbstractService<Achievement> {
 	constructor(
 		@InjectRepository(Achievement)
 		protected readonly repository: Repository<Achievement>,
