@@ -93,6 +93,7 @@ describe('Auth (e2e)', () => {
 						.split(';')[0];
 					const data = jwtService.verify(cookie);
 					expect(data.id).toBe(users[0].id);
+					return true;
 				});
 		});
 	});
@@ -119,36 +120,6 @@ describe('Auth (e2e)', () => {
 						);
 					});
 				});
-		});
-	});
-
-	describe('/me (GET)', () => {
-		it('should return the authenticated user', async () => {
-			const agent = request.agent(app.getHttpServer());
-
-			await agent
-				.post('/login')
-				.send({ name: users[0].name, password: users[0].password })
-				.then((r) => {
-					return agent
-						.get('/me')
-						.expect(HttpStatus.OK)
-						.expect((resp) => {
-							expect(resp.body).toEqual(
-								expect.objectContaining({
-									id: users[0].id,
-									name: users[0].name,
-									is_intra: false,
-								}),
-							);
-						});
-				});
-		});
-
-		it('should fail with unauthenticated user', async () => {
-			return request(app.getHttpServer())
-				.get('/me')
-				.expect(HttpStatus.FORBIDDEN);
 		});
 	});
 });

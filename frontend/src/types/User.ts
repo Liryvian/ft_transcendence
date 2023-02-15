@@ -18,6 +18,17 @@ export interface LoginForm {
 }
 
 
+export interface UserRelationsQuery {
+	matchmaking_request?: boolean;
+	invite?: boolean;
+	games_as_player_one?: boolean;
+	games_as_player_two?: boolean;
+	relationshipTarget?: boolean;
+	relationshipSource?: boolean;
+	achievements?: boolean;
+	in_chats?: boolean;
+}
+
 export interface User {
 	id: number;
 	name: string;
@@ -34,6 +45,6 @@ export interface User {
 
 	chats: Chat[];
 
-	created_at: Date;
-	updated_at: Date;
+    created_at: Date;
+    updated_at: Date;
 }
