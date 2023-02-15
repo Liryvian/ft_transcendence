@@ -28,17 +28,6 @@ export const useUserStore = defineStore('users', {
 				alert('Invalid user/password combination');
 			}
 		},
-
-		// async getUser(id: number){
-		// 	try{
-		// 		await getRequest('/users/${id}');
-		// 		return User[];
-		// 	}
-		// 	catch (e) {
-		// 		alert('Invalid user');
-		// 	}
-		// },
-
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);

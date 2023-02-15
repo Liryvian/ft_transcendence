@@ -16,13 +16,9 @@
 import { defineComponent } from 'vue';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
-import { ref, onMounted, type Ref, defineProps } from 'vue';
 import type { OverviewArray } from '@/types/OverviewArray';
-import { getRequest } from '@/utils/apiRequests';
 import type { User } from '../types/User';
-
-let dataArray: Ref<OverviewArray[]> = ref([]);
-let user: User = {} as User;
+import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ProfileView',
@@ -35,19 +31,21 @@ export default defineComponent({
 	},
 	data() {
 		return {
+			dataArray: [] as OverviewArray[],
 			user: {} as User,
 		};
 	},
 	async created() {
-		this.user = (await getRequest(`users/${this.profile_id}`)).data;
-		// await useUserStore().refreshAllUsers();
-		// this.user = useUserStore().allUsers.filter((user: User) => (Number(user.id) === Number(this.profile_id)))[0];
-		if (!this.profile_id) {
-			dataArray.value = [
+		await useUserStore().refreshAllUsers();
+		this.user = useUserStore().allUsers.filter(
+			(user: User) => Number(user.id) === Number(this.profile_id),
+		)[0];
+		if (!this.user) {
+			this.dataArray = [
 				{ left: 'this profile', right: 'does not exist' },
 			];
 		} else {
-			dataArray.value = [
+			this.dataArray = [
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },
 				{ left: 'wins', right: 1 },
@@ -63,17 +61,6 @@ export default defineComponent({
 			];
 		}
 	},
-
-	setup() {
-		return {
-			dataArray,
-			name: user.name,
-		};
-	},
 });
-
 </script>
 
-// notes: //needs to be connected // { // left: 'achievements', // right: //
-this.user.achievements.map((ach) => { // return ach.name; // }), // }, //
-<!--So maybe for now add a join with a comma after the map? (map().join(', '))-->

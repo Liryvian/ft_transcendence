@@ -37,8 +37,3 @@ export interface User {
 	created_at: Date;
 	updated_at: Date;
 }
-
-export interface UserAchievement {
-	user_id: number;
-	achievement_id: number;
-}
