@@ -1,5 +1,16 @@
 import type { User } from './User';
 
+interface Position {
+	x: number;
+	y: number;
+}
+
+interface Paddle {
+	position: Position;
+	width: number;
+	height: number;
+}
+
 export interface Game {
 	id: number;
 

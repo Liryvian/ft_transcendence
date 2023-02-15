@@ -29,17 +29,6 @@ import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
 
-interface Position {
-	x: number;
-	y: number;
-}
-
-interface Paddle {
-	position: Position;
-	width: number;
-	height: number;
-}
-
 interface DataObject {
 	context: CanvasRenderingContext2D;
 }
