@@ -1,36 +1,75 @@
 <template>
 	<div class="page_box_wrapper">
-		<div class="page_box">
-			<h1>This is a profiles page</h1>
+		<div class="page_box c_profileslist">
+			<h1>Profiles</h1>
+			<div class="c_profileslist__table">
+				<template v-for="user in userStore.allUsers">
+					<ListRow
+						:user=user
+						:relationship="getCurrentRel(user.id)"
+						/>
+				</template>
+			</div>
 		</div>
-		<p class="table table-striped table-sm">
-			All Profiles:
-			<tbody>
-				<tr v-for="user in userStore.allUsers" :key="user.id">
-					<td> Id: {{ user.id }} </td>
-					<td> Username: {{ user.name }} </td>
-				</tr>
-				
-			</tbody>
-
-		</p>
 	</div>
 </template>
 
-<!--  THIS SCRIPT IS ONLY TO SHOW A WORKING GAME STORE SETUP-->
+
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted } from 'vue';
+import ListRow from '@/components/profileList/ListRow.vue';
+import type { User } from '@/types/User';
+import router from '@/router';
 
 export default defineComponent({
-	name: "ProfilesView",
-
-	setup(){
+	name: 'ProfileList',
+	components: {
+		ListRow,
+	},
+	setup() {
 		const userStore = useUserStore();
-		userStore.refreshData();
+		const {
+			refreshData,
+			allUsers,
+			isBlocked,
+			getCurrentRel
+		} = userStore;
+
+		onMounted(async () => {
+			await refreshData();
+		});
+
 		return {
 			userStore,
-		}
-	}
-})
+			refreshData,
+			allUsers,
+			isBlocked,
+			getCurrentRel
+		};
+	},
+
+	methods: {
+		routeToProfile(id: number) {
+			router.push(`/ProfileView/${id}`)
+		},
+		createChat(user: User) {
+			console.log(`Starting chat with ${user.name}`);
+		},
+
+	},
+});
 </script>
+
+<style>
+.avatar {
+	vertical-align: middle;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+}
+
+.grayedOut {
+	color: grey;
+}
+</style>

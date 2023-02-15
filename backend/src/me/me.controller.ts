@@ -7,6 +7,7 @@ import { ChatService } from '../chats/chat/chat.service';
 import { UserService } from '../users/user/user.service';
 import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dto';
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import { User } from '../users/user/entities/user.entity';
 
 @Controller('me')
 export class MeController {
@@ -23,11 +24,15 @@ export class MeController {
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
 	) {
 		const id = await this.authService.userId(request);
-
-		return this.userService.findAll({
-			where: { id },
-			relations: userRelationsQuery ?? {},
-		});
+		try {
+			const me: User = await this.userService.findOne({
+				where: { id },
+				relations: userRelationsQuery ?? {},
+			});
+			return me;
+		} catch (e) {
+			return {};
+		}
 	}
 
 	@UseGuards(AuthGuard)
