@@ -21,7 +21,8 @@ export default defineComponent({
 		id: String,
 		label: String,
 		is_disabled: Boolean,
-		modelValue: String
+		modelValue: String,
+		intra_name: String,
 	},
 	emits: ['update:modelValue'],
 });

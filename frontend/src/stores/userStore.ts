@@ -2,7 +2,7 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm } from '../types/User';
+import type { User, LoginForm, RegisterForm, SetProfileForm } from '../types/User';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -34,6 +34,23 @@ export const useUserStore = defineStore('users', {
 				await postRequest('users', registerForm);
 				await this.refreshData();
 				await router.push('/login');
+			} catch (e: any) {
+				if (typeof e.response.data.message === 'string') {
+					this.errors = [e.response.data.message];
+				} else {
+					this.errors = e.response.data.message.map((msg: String) =>
+						msg.replace('(o) => o.', ''),
+					);
+				}
+				return [];
+			}
+		},
+
+		async setProfile(setProfileForm: SetProfileForm) {
+			try {
+				await postRequest('users', setProfileForm);
+				await this.refreshData();
+				// await router.push('/login');
 			} catch (e: any) {
 				if (typeof e.response.data.message === 'string') {
 					this.errors = [e.response.data.message];

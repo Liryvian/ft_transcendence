@@ -2,20 +2,24 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>SETTINGS</h1>
+			<VerticalAvatarAndUserName
+				profile_picture="/test-profile.png"
+				profile_name="bla"
+			/>
 			<form
 				method="post"
 				action=""
 				class="c_block c_form_group"
-				@submit.prevent="userStore.register(settingForm)"
+				@submit.prevent="userStore.setProfile(setProfileForm)"
 			>
-				<InputField label="intra name" v-model="settingForm.name" is_disabled='true'/>
-				<InputField label="display_name" v-model="settingForm.name"  />
-				<InputField label="new password" v-model="settingForm.password" />
+				<InputField label="intra name" v-model="setProfileForm.intra_login" is_disabled='true'/>
+				<InputField label="display_name" v-model="setProfileForm.name"  />
+				<InputField label="new password" v-model="setProfileForm.password" />
 				<InputField
 					label="confirm password"
-					v-model="settingForm.password_confirm"
+					v-model="setProfileForm.password_confirm"
 				/>
-				<InputField label="old password" v-model="settingForm.old_password" />
+<!--				<InputField label="old password" v-model="setProfileForm.old_password" />-->
 				<div class="c_block c_split">
 					<p><a href="/turn on 2fa">back</a></p>
 					<p>
@@ -38,25 +42,26 @@
 import InputField from '@/components/input-fields/InputField.vue';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
-import type { RegisterForm } from '@/types/User';
+import type { RegisterForm, SetProfileForm } from '@/types/User';
 
 export default defineComponent({
 	name: 'RegisterView',
 	components: {
 		InputField,
 	},
-
 	setup() {
 		const userStore = useUserStore();
-		const settingForm: RegisterForm = reactive({
+		const filteredUsers = useUserStore().me;
+		console.log(filteredUsers.name);
+		const setProfileForm: SetProfileForm = reactive({
+			// intra_login: filteredUsers.name,
 			name: '',
 			password: '',
 			password_confirm: '',
-			old_password: '',
 		});
 		return {
 			userStore,
-			settingForm,
+			setProfileForm,
 		};
 	},
 });
