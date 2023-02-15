@@ -63,3 +63,8 @@ export default defineComponent({
 </script>
 
 <style scoped></style>
+
+
+// await useUserStore().refreshAllUsers();
+// this.user = useUserStore().allUsers.filter((user: User) => (Number(user.id) === Number(this.profile_id)))[0];
+<!--if (!this.profile_id) {-->
