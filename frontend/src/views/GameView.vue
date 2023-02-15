@@ -29,8 +29,19 @@ import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
 
+interface Position {
+	x: number;
+	y: number;
+}
+
+interface Paddle {
+	position: Position;
+	width: number;
+	height: number;
+}
+
 interface DataObject {
-	context: CanvasRenderingContext2D
+	context: CanvasRenderingContext2D;
 }
 
 export default defineComponent({
@@ -41,7 +52,7 @@ export default defineComponent({
 
 	data(): DataObject {
 		return {
-			context: {} as CanvasRenderingContext2D
+			context: {} as CanvasRenderingContext2D,
 		}
 	},
 
@@ -52,7 +63,8 @@ export default defineComponent({
 			gameStore,
 		}
 	},
-	computed: {
+
+ 	computed: {
 		// typescript wants values used from html to have a type
 		width() {
 			return (this.$refs.GameRef as HTMLCanvasElement).width;
@@ -61,13 +73,21 @@ export default defineComponent({
 			return (this.$refs.GameRef as HTMLCanvasElement).height;
 		},
 	},
+
 	methods: {
+		heightPercentage(percent: number): number {
+			return this.height / 100 * percent;
+		},
+		widthPercentage(percent: number) {
+			return this.width / 100 * percent;
+		},
+		
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
 		drawMiddleLine() {
 			const widthStart: number = this.width / 2;
 			const heightStart: number = 0;
 			const lineWidth: number = 4;
-			const lineHeight: number = this.height; 
+			const lineHeight: number = this.height;
 			
 			this.context.fillRect(
 					widthStart,
@@ -79,8 +99,8 @@ export default defineComponent({
 			
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
 		drawBall() {
-			const startingX: number = this.width / 2 - 100;
-			const startingY: number = this.height / 2 - 100;
+			const startingX: number = this.widthPercentage(40);
+			const startingY: number = this.heightPercentage(65)
 			const radius: number = 15;
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
@@ -100,9 +120,10 @@ export default defineComponent({
 		drawPaddles() {
 			let widthStart: number = 0;
 			const lineWidth: number = 15;
-			const lineHeight: number = this.height / 5; 
-			const heightStart: number = this.height / 2 - (lineHeight / 2); // middle of the canvas
-
+			const lineHeight: number = this.heightPercentage(20); 
+			const heightStart: number = this.heightPercentage(50) - (lineHeight / 2); // middle of the canvas
+			
+			// Player 1
 			this.context.fillRect(
 				widthStart,
 				heightStart,
@@ -111,6 +132,7 @@ export default defineComponent({
 			)
 
 			//  opposite side / right side
+			// Player 2
 			widthStart = this.width - lineWidth; 
 			this.context.fillRect(
 				widthStart,
