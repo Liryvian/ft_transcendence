@@ -41,9 +41,7 @@ export default defineComponent({
 		if (filteredUsers.length > 0)
 			this.user = filteredUsers[0]
 		if (filteredUsers.length == 0) {
-			this.dataArray = [
-				{ left: 'this profile', right: 'does not exist' },
-			];
+			this.$router.push('/profiles')
 		} else {
 			this.dataArray = [
 				{ left: 'intra name', right: this.user.name },
