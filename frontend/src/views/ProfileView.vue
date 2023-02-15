@@ -38,11 +38,11 @@ export default defineComponent({
 	},
 	async created() {
 		await useUserStore().refreshAllUsers();
-		const filteredUsers = useUserStore().allUsers.filter((user: User) => Number(user.id) === Number(this.profile_id));
-		if (filteredUsers.length == 0) {
+		const filteredUsers = useUserStore().allUsers.find((user: User) => Number(user.id) === Number(this.profile_id));
+		if (filteredUsers === undefined) {
 			this.$router.push('/profiles')
 		} else {
-			this.user = filteredUsers[0]
+			this.user = filteredUsers
 			this.dataArray = [
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },
