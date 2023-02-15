@@ -1,8 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
 import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
+import { Permission } from '../../permissions/entities/permission.entity';
+import { User } from '../../../users/user/entities/user.entity';
 
 const validVisibility = ['public', 'private'];
 const chatType = ['dm', 'channel'];
@@ -22,10 +24,16 @@ export class Chat {
 	@Expose()
 	get users() {
 		return this.has_users?.reduce((acc, curr) => {
-			let index = acc.findIndex((obj) => obj.user_id == curr.user_id);
+			let index = acc.findIndex((obj) => obj.id == curr.user_id);
 
 			if (index === -1) {
-				index = acc.push({ user_id: curr.user_id, permissions: [] });
+				index = acc.push({
+					id: curr.user_id,
+					name: (curr.users as unknown as User)?.name,
+					avatar: (curr.users as unknown as User)?.avatar,
+					permissions: [],
+				});
+
 				index--;
 			}
 			acc[index].permissions.push(curr.permissions);
@@ -47,4 +55,15 @@ export class Chat {
 
 	@OneToMany(() => Message, (message) => message.chat_id)
 	messages: Message[];
+
+	toJSON() {
+		return instanceToPlain(this);
+	}
+}
+
+export class ChatUser {
+	id: number;
+	name?: string;
+	avatar?: string;
+	permissions: Permission[];
 }

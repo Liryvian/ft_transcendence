@@ -13,6 +13,7 @@
 <style scoped></style>
 
 <script lang="ts">
+
 import { defineComponent } from 'vue';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
@@ -60,4 +61,3 @@ export default defineComponent({
 	},
 });
 </script>
-

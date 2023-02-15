@@ -9,6 +9,7 @@ export class AuthGuard implements CanActivate {
 		context: ExecutionContext,
 	): boolean | Promise<boolean> | Observable<boolean> {
 		// return true;
+
 		const request = context.switchToHttp().getRequest();
 		try {
 			const jwt = request.cookies['jwt'];

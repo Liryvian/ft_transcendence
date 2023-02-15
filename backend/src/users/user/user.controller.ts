@@ -35,6 +35,8 @@ export class UserController {
 	constructor(private userService: UserService) {}
 
 	private readonly defaultRelationships = {
+		relationshipSource: true,
+		relationshipTarget: true,
 		achievements: true,
 	};
 
