@@ -19,13 +19,12 @@ import { UserAchievementsModule } from './users/user-achievements/user-achieveme
 import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 import { PermissionModule } from './chats/permissions/permission.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { MeModule } from './me/me.module';
 
 @Module({
 	imports: [
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '../../', 'public'),
+			rootPath: '/src/app/public',
 			serveStaticOptions: {
 				index: false,
 			},
