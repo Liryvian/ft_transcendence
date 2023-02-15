@@ -1,36 +1,63 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>This is a profile page</h1>
-			<h1>{{user}}</h1>
+			<VerticalAvatarAndUserName
+				profile_picture="/test-profile.png"
+				:profile_name="this.user.name"
+			/>
+			<OverviewWithMidline :data-array="dataArray" />
 		</div>
 	</div>
 </template>
 
+<style scoped></style>
+
 <script lang="ts">
-import { getRequest } from '@/utils/apiRequests';
+
 import { defineComponent } from 'vue';
-import type { User }  from '@/types/User';
+import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
+import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
+import type { OverviewArray } from '@/types/OverviewArray';
+import type { User } from '../types/User';
+import { useUserStore } from '@/stores/userStore';
 
-export default defineComponent({	
+export default defineComponent({
 	name: 'ProfileView',
-
+	components: {
+		OverviewWithMidline,
+		VerticalAvatarAndUserName,
+	},
+	props: {
+		profile_id: String,
+	},
 	data() {
 		return {
-			user: {} as User
-		}
-	},
-
-	computed: {
-		getId: function () {
-			return { id: this.$route.params.id };
-		}
+			dataArray: [] as OverviewArray[],
+			user: {} as User,
+		};
 	},
 	async created() {
-		this.user = (await getRequest(`users/${this.$route.params.id}`)).data
-		console.log("User found with params: ", this.user);
-	}
-
-
-})
+		await useUserStore().refreshAllUsers();
+		const filteredUsers = useUserStore().allUsers.find((user: User) => Number(user.id) === Number(this.profile_id));
+		if (filteredUsers === undefined) {
+			this.$router.push('/profiles')
+		} else {
+			this.user = filteredUsers
+			this.dataArray = [
+				{ left: 'intra name', right: this.user.name },
+				{ left: 'member since', right: this.user.created_at },
+				{ left: 'wins', right: 1 },
+				{ left: 'losses', right: 190 },
+				{
+					left: 'achievements',
+					right: this.user.achievements
+						.map((ach) => {
+							return ach.name;
+						})
+						.join(', '),
+				},
+			];
+		}
+	},
+});
 </script>

@@ -1,6 +1,5 @@
 import { IsNotEmpty } from 'class-validator';
 export class CreateUserAchievementDto {
-
 	@IsNotEmpty()
 	user_id: number;
 
