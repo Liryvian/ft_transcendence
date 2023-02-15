@@ -37,10 +37,10 @@ export default defineComponent({
 	},
 	async created() {
 		await useUserStore().refreshAllUsers();
-		this.user = useUserStore().allUsers.filter(
-			(user: User) => Number(user.id) === Number(this.profile_id),
-		)[0];
-		if (!this.user) {
+		const filteredUsers = useUserStore().allUsers.filter((user: User) => Number(user.id) === Number(this.profile_id));
+		if (filteredUsers.length > 0)
+			this.user = filteredUsers[0]
+		if (filteredUsers.length == 0) {
 			this.dataArray = [
 				{ left: 'this profile', right: 'does not exist' },
 			];
