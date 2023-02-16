@@ -6,6 +6,7 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Position } from './Game.types';
 
 @WebSocketGateway({
 	namespace: '/pong',
@@ -17,46 +18,40 @@ export class PongGateway implements OnGatewayConnection {
 	@WebSocketServer()
 	server: Server;
 
+	playerOnePaddle: Position = {
+		x: 0,
+		y: 50,
+	};
+
+	playerTwoPaddle: Position = {
+		x: 100,
+		y: 50,
+	};
+
+	ball: Position = {
+		x: 40,
+		y: 65,
+	};
+
 	async handleConnection(socket: Socket) {
-		console.log('\n!Pong should be connected!\n');
+		console.log('\n!Socket is connected!\n');
 		this.sendHallo('Hallo frontend!!!');
+		this.sendPaddlePosition(this.playerOnePaddle);
+		this.sendPaddlePosition(this.playerTwoPaddle);
+		this.sendBallPosition(this.ball);
 	}
 
-	@SubscribeMessage('position')
+	@SubscribeMessage('hallo')
 	sendHallo(@MessageBody() data: any) {
 		this.server.emit('hallo', data);
 	}
 
-	// /*
-	// 37 - Left arrow key
-	// 39 - Right arrow key
-	// 38 - Up arrow key
-	// 40 - Down arrow key
-	// */
-	// @SubscribeMessage('move')
-	// move(@MessageBody() direction: string) {
-	// 	console.log('Direction: ' + direction);
-	// 	switch (direction) {
-	// 		case 'ArrowLeft':
-	// 			position.x -= 10;
-	// 			if (position.x < 0) position.x = 800;
-	// 			this.sendPosition(position);
-	// 			break;
-	// 		case 'ArrowRight':
-	// 			position.x += 10;
-	// 			if (position.x > 800) position.x = 0;
-	// 			this.sendPosition(position);
-	// 			break;
-	// 		case 'ArrowUp':
-	// 			position.y -= 10;
-	// 			if (position.y < 0) position.y = 480;
-	// 			this.sendPosition(position);
-	// 			break;
-	// 		case 'ArrowDown':
-	// 			position.y += 10;
-	// 			if (position.y > 480) position.y = 0;
-	// 			this.sendPosition(position);
-	// 			break;
-	// 	}
-	// }
+	@SubscribeMessage('barPosition')
+	sendPaddlePosition(@MessageBody() position: Position) {
+		this.server.emit('barPosition', position);
+	}
+	@SubscribeMessage('ballPosition')
+	sendBallPosition(@MessageBody() position: Position) {
+		this.server.emit('ballPosition', position);
+	}
 }

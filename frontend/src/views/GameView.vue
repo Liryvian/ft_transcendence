@@ -28,6 +28,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
+import type  { Position }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
 
 interface DataObject {
@@ -90,9 +91,9 @@ export default defineComponent({
 			},
 			
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
-		drawBall() {
-			const startingX: number = this.widthPercentage(40);
-			const startingY: number = this.heightPercentage(65)
+		drawBall(position: Position) {
+			const startingX: number = this.widthPercentage(position.x);
+			const startingY: number = this.heightPercentage(position.y)
 			const radius: number = 12;
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
@@ -110,40 +111,45 @@ export default defineComponent({
 			},
 				
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
-		drawPaddles() {
-			let widthStart: number = 0;
+		drawPaddle(position: Position) {
 			const lineWidth: number = 15;
-			const lineHeight: number = this.heightPercentage(12); 
-			const heightStart: number = this.heightPercentage(50) - (lineHeight / 2); // middle of the canvas
-			
-			// Player 1
-			this.context.fillRect(
-				widthStart,
-				heightStart,
-				lineWidth,
-				lineHeight
-			)
+			const lineHeight: number = this.heightPercentage(12);
+			const y: number = this.heightPercentage(position.y) - (lineHeight / 2); // middle of the canvas
 
-			//  opposite side / right side
-			// Player 2
-			widthStart = this.width - lineWidth; 
+			// Player 1
+			let x = 0
+			if (position.x === 100) {
+				// Player 2
+				x = this.width - lineWidth;
+			}
 			this.context.fillRect(
-				widthStart,
-				heightStart,
+				x,
+				y,
 				lineWidth,
 				lineHeight
 			)
+		},
+
+		render() {
+			this.socket.on('hallo', (data) => {
+				console.log('\nReceiving from backend: \n', JSON.stringify(data))
+			});
+		
+			this.socket.on("barPosition", (data: Position) => {
+				this.drawPaddle(data);
+			})
+			this.socket.on("ballPosition", (data: Position) => {
+				this.drawBall(data);
+			})
+			this.drawMiddleLine();
 		}
 	},
 
+
 	mounted() {
+
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		this.socket.on('hallo', (data) => {
-			console.log('\n\nReceiving from backend: \n\n' + JSON.stringify(data))
-		});
-		this.drawMiddleLine();
-		this.drawBall();
-		this.drawPaddles();
+		this.render();
 	},
 })
 </script> 
