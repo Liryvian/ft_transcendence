@@ -2,8 +2,14 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { DoesNotMatch } from '../../../shared/does-not-match.decorator';
 
 export class CreateGameDto {
+	// @IsOptional()
+	// customization?: string;
+
 	@IsOptional()
-	customization?: string;
+	score_to_win?: number;
+
+	@IsOptional()
+	background_color?: string;
 
 	@IsNotEmpty()
 	player_one: number;

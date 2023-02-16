@@ -34,3 +34,11 @@ export interface GameRequest {
 	created_at: Date;
 	updated_at: Date;
 }
+
+export interface newGameForm {
+	score_to_win: number,
+	background_color: String,
+
+	player_one: number,
+	player_two: number,
+}

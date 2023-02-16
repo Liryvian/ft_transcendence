@@ -22,8 +22,14 @@ export class Game {
 	score_player_two: number;
 
 	// for now empty customization on initialization
+	// @Column({ default: null })
+	// customization: string;
+
 	@Column({ default: null })
-	customization: string;
+	score_to_win?: number;
+
+	@Column({ default: null })
+	background_color?: string;
 
 	@Column({ default: true })
 	is_active: boolean;

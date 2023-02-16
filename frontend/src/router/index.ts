@@ -73,6 +73,16 @@ const router = createRouter({
 			component: () => import('../views/RegisterView.vue'),
 		},
 		{
+			path: '/request-game',
+			name: 'request-game',
+			component: () => import('../views/RequestGame.vue'),
+		},
+		{
+			path: '/game-invite',
+			name: 'game-invite',
+			component: () => import('../views/GameInvite.vue'),
+		},
+		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),
