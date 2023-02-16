@@ -2,7 +2,7 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm, SetProfileForm } from '../types/User';
+import type { User, LoginForm, RegisterForm, SetProfileForm, LogoutForm } from '../types/User';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
