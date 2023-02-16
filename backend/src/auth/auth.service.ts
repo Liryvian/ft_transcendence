@@ -118,6 +118,10 @@ export class AuthService {
 		response.cookie('jwt', jwt, { httpOnly: true });
 	}
 
+	async logout(response: Response) {
+		response.clearCookie('jwt');
+	}
+
 	async userId(request: Request): Promise<number> {
 		const cookie = request.cookies['jwt'];
 		const data = this.jwtService.verify(cookie);

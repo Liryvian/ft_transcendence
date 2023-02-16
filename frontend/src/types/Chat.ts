@@ -11,9 +11,7 @@ export interface UserChatPermissions {
 
 	users: User[];
 
-	permission_id: number;
-
-	permissions: string[];
+	permission: string;
 }
 
 export interface Message {
