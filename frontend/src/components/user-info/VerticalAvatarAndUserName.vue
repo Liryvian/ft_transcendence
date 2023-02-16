@@ -1,6 +1,6 @@
 <template>
 	<div class="circle">
-		<img :src="profile_picture" alt="" />
+		<img :src="`/api/avatars/${profile_picture}`" alt="" />
 	</div>
 	<div class="userName">
 		<b>{{ profile_name }}</b>
