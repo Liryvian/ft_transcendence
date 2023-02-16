@@ -1,12 +1,6 @@
 <template>
-	<div class="c_media">
-		<div class="c_media__asset" :class=>
-			<div class="c_asset__circle">
-				<img :src="profile_picture" alt="" />
-			</div>
-		</div>
-		<div class="c_media__content">
-		</div>
+	<div class="circle">
+		<img :src="profile_picture" alt="" />
 	</div>
 </template>
 
@@ -14,13 +8,31 @@
 import {defineComponent} from "vue";
 
 export default defineComponent({
-	name: 'ProfileSettingsAvatar',
+	name: 'ProfileSettingAvatar',
 	props: {
 		profile_picture: String,
 	},
 });
-</script>
+</script >
 
 <style scoped>
+.circle {
+	margin-left: auto;
+	margin-right: auto;
+	width: 9em;
+	height: 9em;
+	border: solid 2px black;
+	border-radius: 50%;
+	overflow: hidden;
+	margin-top: 2.5em;
+}
 
+.userName {
+	text-align: center;
+	margin-top: 0.5em;
+}
+
+img {
+	max-height: 100%;
+}
 </style>

@@ -2,9 +2,8 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>SETTINGS</h1>
-			<VerticalAvatarAndUserName
-				profile_picture="/test-profile.png"
-				profile_name="bla"
+			<ProfileSettingAvatar
+				:profile_picture="this.user.avatar"
 			/>
 			<form
 				method="post"
@@ -12,7 +11,7 @@
 				class="c_block c_form_group"
 				@submit.prevent="userStore.setProfile(setProfileForm)"
 			>
-				<InputField label="intra name" v-model="setProfileForm.intra_login" is_disabled='true'/>
+				<InputField label="intra name" v-model="this.user.name" is_disabled='true'/>
 				<InputField label="display_name" v-model="setProfileForm.name"  />
 				<InputField label="new password" v-model="setProfileForm.password" />
 				<InputField
@@ -21,14 +20,10 @@
 				/>
 <!--				<InputField label="old password" v-model="setProfileForm.old_password" />-->
 				<div class="c_block c_split">
-					<p><a href="/turn on 2fa">back</a></p>
-					<p>
-						<input
-							class="link_button"
-							type="submit"
-							value="setting"
-						/>
-					</p>
+					<p><a href="turnon2fa">/turn on 2fa</a></p>
+				</div>
+				<div class="page_button pb_bottom">
+					<a href="#">save</a>
 				</div>
 				<div v-if="userStore.errors.length">
 					<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
@@ -43,18 +38,39 @@ import InputField from '@/components/input-fields/InputField.vue';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
 import type { RegisterForm, SetProfileForm } from '@/types/User';
+import { User } from '@/types/User';
+import ProfileList from '@/views/ProfilesView.vue';
+import ProfileSettingAvatar from '@/components/user-info/ProfileSettingAvatar.vue';
 
 export default defineComponent({
 	name: 'RegisterView',
 	components: {
+		ProfileSettingAvatar,
+		ProfileList,
 		InputField,
 	},
+	data() {
+		return {
+			user: {} as User,
+		};
+	},
+
+	async created() {
+		await useUserStore().refreshAllUsers();
+		const filteredUsers = useUserStore().me;
+		if (filteredUsers === undefined) {
+			this.$router.push('/profiles')
+		} else {
+			this.user = filteredUsers
+		}
+	},
+
+
 	setup() {
 		const userStore = useUserStore();
 		const filteredUsers = useUserStore().me;
 		console.log(filteredUsers.name);
 		const setProfileForm: SetProfileForm = reactive({
-			// intra_login: filteredUsers.name,
 			name: '',
 			password: '',
 			password_confirm: '',
