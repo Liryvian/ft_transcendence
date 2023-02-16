@@ -18,6 +18,10 @@ export interface LoginForm {
 	password: string;
 }
 
+export interface LogoutForm {
+	id: number;
+}
+
 export interface UserRelationsQuery {
 	matchmaking_request?: boolean;
 	invite?: boolean;

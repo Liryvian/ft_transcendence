@@ -1,8 +1,8 @@
 import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
-import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
+import { deleteRequest, getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm } from '../types/User';
+import type { User, LoginForm, RegisterForm, LogoutForm } from '../types/User';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -39,6 +39,17 @@ export const useUserStore = defineStore('users', {
 			  this.handleFormError(e.response.data);
     	  }
 	  },
+
+		async logout(logoutForm: LogoutForm) {
+			try{
+				await deleteRequest("logout");
+				await this.refreshMe();
+				router.push("/login")
+			}
+			catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
 
 		async register(registerForm: RegisterForm) {
 			try {
