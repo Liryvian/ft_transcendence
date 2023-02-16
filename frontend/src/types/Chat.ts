@@ -38,3 +38,23 @@ export interface Chat {
 
 	messages: Message[];
 }
+
+export interface Chat_Member {
+	name: string;
+	avatar?: string;
+}
+
+export interface Chat_List_Item {
+	id: number;
+	name: string;
+	members: Chat_Member[];
+}
+
+export type Chat_Type = "dm" | "channel";
+
+export interface Chat_List {
+	name: string;
+	type: Chat_Type;
+	items: Chat_List_Item[];
+}
+
