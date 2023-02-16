@@ -90,7 +90,7 @@ export default defineComponent({
 		drawBall() {
 			const startingX: number = this.widthPercentage(40);
 			const startingY: number = this.heightPercentage(65)
-			const radius: number = 15;
+			const radius: number = 12;
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
 
@@ -102,14 +102,15 @@ export default defineComponent({
 					endAngle,
 			)
 				// this fills the above defined arc/circle
-				this.context.fill()
+				this.context.lineWidth = 4;
+				this.context.stroke()
 			},
 				
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
 		drawPaddles() {
 			let widthStart: number = 0;
 			const lineWidth: number = 15;
-			const lineHeight: number = this.heightPercentage(20); 
+			const lineHeight: number = this.heightPercentage(12); 
 			const heightStart: number = this.heightPercentage(50) - (lineHeight / 2); // middle of the canvas
 			
 			// Player 1
@@ -151,11 +152,11 @@ export default defineComponent({
 }
 
 .gameHeader{
-	font-weight: bold;
+	font-weight: bolder;
 	display: flex;
 	/* font size changes on window HEIGHT! */
 	font-size: 2.5vh; 
-	padding-left: 5%;
+	padding-left: 2.5%;
 	padding-right: 5%;
 	padding-top: 4%;
 }
