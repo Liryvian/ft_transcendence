@@ -20,7 +20,7 @@
 				/>
 <!--				<InputField label="old password" v-model="setProfileForm.old_password" />-->
 				<div class="c_block c_split">
-					<p><a href="turnon2fa">/turn on 2fa</a></p>
+					<p><a href="/turnon2fa">turn on 2fa</a></p>
 				</div>
 				<div class="page_button pb_bottom">
 					<a href="#">save</a>
