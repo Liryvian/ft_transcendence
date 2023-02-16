@@ -28,9 +28,11 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
+import { io, Socket } from 'socket.io-client';
 
 interface DataObject {
 	context: CanvasRenderingContext2D;
+	socket: Socket;
 }
 
 export default defineComponent({
@@ -42,6 +44,7 @@ export default defineComponent({
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
+			socket: io('http://localhost:8080/pong'),
 		}
 	},
 
@@ -135,6 +138,9 @@ export default defineComponent({
 
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
+		this.socket.on('hallo', (data) => {
+			console.log('\n\nReceiving from backend: \n\n' + JSON.stringify(data))
+		});
 		this.drawMiddleLine();
 		this.drawBall();
 		this.drawPaddles();

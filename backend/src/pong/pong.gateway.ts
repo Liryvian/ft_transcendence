@@ -1,5 +1,7 @@
 import {
+	MessageBody,
 	OnGatewayConnection,
+	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
@@ -17,16 +19,13 @@ export class PongGateway implements OnGatewayConnection {
 
 	async handleConnection(socket: Socket) {
 		console.log('\n!Pong should be connected!\n');
-		// this.sendPosition({
-		// 	x: 400,
-		// 	y: 235,
-		// });
+		this.sendHallo('Hallo frontend!!!');
 	}
 
-	// @SubscribeMessage('position')
-	// sendPosition(@MessageBody() data: any) {
-	// 	this.server.emit('position', position);
-	// }
+	@SubscribeMessage('position')
+	sendHallo(@MessageBody() data: any) {
+		this.server.emit('hallo', data);
+	}
 
 	// /*
 	// 37 - Left arrow key
