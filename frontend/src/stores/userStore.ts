@@ -23,7 +23,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('login', loginForm);
 				await this.refreshData();
-				await router.push('/');
+				await router.push('/settings');
 			} catch (e) {
 				alert('Invalid user/password combination');
 			}
