@@ -33,7 +33,7 @@ export const useUserStore = defineStore('users', {
     	  try{
     	    await postRequest("login", loginForm);
     	    await this.refreshMe();
-    	    await router.push("/")
+    	    await router.push("/settings")
     	  }
 		  catch (e) {
 			  this.handleFormError(e.response.data);
