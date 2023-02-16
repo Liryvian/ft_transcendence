@@ -2,8 +2,9 @@
 	<div class="c_field_group">
 		<label :for="id">{{ label }}:</label>
 		<input
+			:tabindex="tabindex"
 			:id="id"
-			type="text"
+			:type="inputType"
 			:value="modelValue"
 			@input="$emit('update:modelValue', $event.target.value)"
 			:disabled="is_disabled"
@@ -21,7 +22,12 @@ export default defineComponent({
 		id: String,
 		label: String,
 		is_disabled: Boolean,
-		modelValue: String
+		modelValue: String,
+		inputType: {
+			type: String,
+			default: "text"
+		},
+		tabindex: String
 	},
 	emits: ['update:modelValue'],
 });
