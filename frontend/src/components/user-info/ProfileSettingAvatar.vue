@@ -24,12 +24,7 @@ export default defineComponent({
 	border: solid 2px black;
 	border-radius: 50%;
 	overflow: hidden;
-	margin-top: 1.2em;
-}
-
-.userName {
-	text-align: center;
-	margin-top: 0.5em;
+	margin-top: 1em;
 }
 
 img {
