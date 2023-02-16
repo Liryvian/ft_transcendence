@@ -5,15 +5,14 @@
 			<div class="c_profileslist__table">
 				<template v-for="user in userStore.allUsers">
 					<ListRow
-						:user=user
+						:user="user"
 						:relationship="getCurrentRel(user.id)"
-						/>
+					/>
 				</template>
 			</div>
 		</div>
 	</div>
 </template>
-
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
@@ -29,12 +28,7 @@ export default defineComponent({
 	},
 	setup() {
 		const userStore = useUserStore();
-		const {
-			refreshData,
-			allUsers,
-			isBlocked,
-			getCurrentRel
-		} = userStore;
+		const { refreshData, allUsers, isBlocked, getCurrentRel } = userStore;
 
 		onMounted(async () => {
 			await refreshData();
@@ -45,18 +39,17 @@ export default defineComponent({
 			refreshData,
 			allUsers,
 			isBlocked,
-			getCurrentRel
+			getCurrentRel,
 		};
 	},
 
 	methods: {
 		routeToProfile(id: number) {
-			router.push(`/ProfileView/${id}`)
+			router.push(`/ProfileView/${id}`);
 		},
 		createChat(user: User) {
 			console.log(`Starting chat with ${user.name}`);
 		},
-
 	},
 });
 </script>

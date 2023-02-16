@@ -1,23 +1,38 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-          <!-- Content should be here -->
-		  <h1> HI WANNA PLAY PONG? </h1>
-		  
-		  <div class="c_block c_form_group">
-			  <form 
-			  method="post"
+			<!-- Content should be here -->
+			<h1>HI WANNA PLAY PONG?</h1>
+
+			<div class="c_block c_form_group">
+				<form
+					method="post"
 					action=""
 					class="c_block c_form_group"
 					@submit.prevent="userStore.login(loginForm)"
 					>
 					
-					<InputField tabindex="1" label="Username" placeholder="username" v-model="loginForm.name"/>
-					<InputField inputType="password" label="Password" placeholder="password" v-model="loginForm.password"/>
+					<InputField 
+						tabindex="1" 
+						label="Username"
+						placeholder="username" 
+						v-model="loginForm.name"
+					/>
+
+					<InputField 
+						inputType="password" 
+						label="Password"
+						placeholder="password" 
+						v-model="loginForm.password"
+					/>
 					
 					<div class="c_block c_split">
 						<p>
-							<input class="link_button" type="submit" value="Login" />
+							<input
+								class="link_button"
+								type="submit"
+								value="Login"
+							/>
 							/
 							<a href="/register">Register</a>
 						</p>
@@ -38,13 +53,13 @@
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
 import InputField from '@/components/input-fields/InputField.vue';
-import type { LoginForm } from "@/types/User"
-import {apiUrl} from '@/types/Constants'
+import type { LoginForm } from '@/types/User';
+import { apiUrl } from '@/types/Constants';
 
 export default defineComponent({
-	name: "Login",
+	name: 'Login',
 	components: {
-		InputField
+		InputField,
 	},
 
 	setup() {
@@ -52,15 +67,14 @@ export default defineComponent({
 		const userStore = useUserStore();
 		const loginForm: LoginForm = reactive({
 			name: '',
-			password: ''
-		})
+			password: '',
+		});
 
 		return {
 			userStore,
 			loginForm,
-			redirectUrl
-		}
-	}
-})
+			redirectUrl,
+		};
+	},
+});
 </script>
-

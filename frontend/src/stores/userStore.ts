@@ -2,7 +2,7 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm } from "../types/User";
+import type { User, LoginForm, RegisterForm } from '../types/User';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -43,6 +43,7 @@ export const useUserStore = defineStore('users', {
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);
+				await this.refreshData();
 				await router.push('/login');
 			} catch (e) {
 				this.handleFormError(e.response.data)
@@ -50,10 +51,10 @@ export const useUserStore = defineStore('users', {
 		},
 
 		async refreshMe() {
-			const queryString = "?relationshipSource=true\
-								&relationshipTarget=true"
+			const queryString =
+				'?relationshipSource=true\
+								&relationshipTarget=true';
 			try {
-
 				const { data } = await getRequest(`me/${queryString}`);
 				this.me = data;
 			} catch (e) {
@@ -64,8 +65,10 @@ export const useUserStore = defineStore('users', {
 
 		async refreshAllUsers() {
 			try {
-				const {data} = await getRequest('users');
-				this.allUsers = data.filter((user: User) => (user.id !== this.me.id));
+				const { data } = await getRequest('users');
+				this.allUsers = data.filter(
+					(user: User) => user.id !== this.me.id,
+				);
 			} catch (e) {
 				console.error(e);
 				return [];
@@ -76,9 +79,11 @@ export const useUserStore = defineStore('users', {
 			const createRelationship = {
 				source_id: source,
 				target_id: target,
-				type: "none"
-			}
-			return await (await postRequest("user-relationships/", createRelationship)).data;
+				type: 'none',
+			};
+			return await (
+				await postRequest('user-relationships/', createRelationship)
+			).data;
 		},
 
 		async getRelationship(source: number, target: number) {
@@ -89,7 +94,7 @@ export const useUserStore = defineStore('users', {
 			if (!existingRel) {
 				return this.initializeRelationship(source, target);
 			}
-			return existingRel
+			return existingRel;
 		},
 
 		async refreshData() {
@@ -102,36 +107,41 @@ export const useUserStore = defineStore('users', {
 			const sourceId: number = rel.source_id.id;
 			const targetId: number = rel.target_id.id;
 
-			return (targetId === myId || sourceId === myId)
-				&& (sourceId === userId || targetId === userId)
+			return (
+				(targetId === myId || sourceId === myId) &&
+				(sourceId === userId || targetId === userId)
+			);
 		},
-    
+
 		getExistingRelationship(userId: number): Relationship {
 			for (let i = 0; i < this.me.relationships.length; i++) {
-				const rel: Relationship = this.me.relationships[i]
+				const rel: Relationship = this.me.relationships[i];
 				if (this.isMatchingRelationship(userId, rel)) {
 					return rel;
 				}
 			}
 			return this.me.relationships[0];
 		},
-	
+
 		async updateRelationship(userId: number, type: string) {
-			const rel: Relationship = await this.getRelationship(userId, this.me.id);
+			const rel: Relationship = await this.getRelationship(
+				userId,
+				this.me.id,
+			);
 			await patchRequest(`user-relationships/${rel.id}`, { type });
 			await this.refreshData();
 		},
-		
+
 		getCurrentRel(userId: number): Relationship {
 			return this.getExistingRelationship(userId);
 		},
-			
+
 		isFriend(type: string): boolean {
 			return type === ValidRelationships.FRIEND;
-    	},
-		
+		},
+
 		isBlocked(type: string): boolean {
-			return type === ValidRelationships.BLOCKED;	
+			return type === ValidRelationships.BLOCKED;
 		},
 	},
 });
