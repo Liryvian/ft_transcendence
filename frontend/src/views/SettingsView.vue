@@ -10,7 +10,9 @@
 				method="post"
 				action=""
 				class="c_block c_form_group"
-				@submit.prevent="userStore.updateProfile(user.id, updateProfileForm)"
+				@submit.prevent="
+					userStore.updateProfile(user.id, updateProfileForm)
+				"
 			>
 				<InputField
 					v-if="this.user.intra_login"
@@ -21,7 +23,8 @@
 				<InputField
 					label="display_name"
 					value="this.user.name"
-					v-model="updateProfileForm.name"/>
+					v-model="updateProfileForm.name"
+				/>
 				<InputField
 					v-if="!this.user.intra_login"
 					label="new password"
@@ -43,14 +46,13 @@
 					<p><a href="/turnon2fa">turn on 2fa</a></p>
 				</div>
 				<div class="page_button pb_bottom">
-					<input type="submit" value="save">
+					<input type="submit" value="save" />
 				</div>
 				<div v-if="userStore.errors.length">
 					<p v-for="error in userStore.errors" class="c_form--error">
 						!! {{ error }}
 					</p>
 				</div>
-
 			</form>
 		</div>
 	</div>
@@ -112,8 +114,3 @@ export default defineComponent({
 }
 
 <style scoped></style>
-
-// await useUserStore().refreshAllUsers(); // this.user =
-useUserStore().allUsers.filter((user: User) => (Number(user.id) ===
-Number(this.profile_id)))[0];
-<!--if (!this.profile_id) {-->
