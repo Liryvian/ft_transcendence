@@ -7,140 +7,17 @@
 					@click="toggleFocusTarget('list')"
 					class="toggleHandler"
 				></div>
-				<div class="c_list">
-					<h1>Direct Messages</h1>
-					<div v-for="a in 4">
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--online">
-								<div class="c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--online">
-								<div class="c_asset__circle">
-									<img src="/vaalboskat.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--offline">
-								<div class="c_asset__circle">
-									<img src="/renoster.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="c_list">
-					<h1>Channels</h1>
-					<div v-for="a in 4">
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--multi">
-								<div class="c_asset c_asset__circle">
-									<img src="/vaalboskat.png" alt="" />
-								</div>
-								<div class="c_asset c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-								<div class="c_asset c_asset__circle">
-									<img src="/renoster.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">channel name</div>
-						</div>
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--multi">
-								<div class="c_asset c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-								<div class="c_asset c_asset__circle">
-									<img src="/vaalboskat.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">channel name</div>
-						</div>
-					</div>
-				</div>
+				<ChatList :list="dms" type="dm" title="Direct Messages" />
+				<ChatList :list="channels" type="channel" title="Channels" />
 			</div>
-			<div class="c_chat__conversation">
-				<div
-					v-if="focusTarget == 'c_chat--list'"
-					@click="toggleFocusTarget('msg')"
-					class="toggleHandler"
-				></div>
-				<div class="c_conversation__header">
-					<div>invite for a game</div>
-					<div>
-						<div
-							class="c_media c_media--assetright c_media--clickable"
-						>
-							<div class="c_media__asset c_asset--online">
-								<div class="c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-					</div>
-				</div>
-				<div class="c_messagelist">
-					<div
-						v-for="msg in messages"
-						class="c_message"
-						:class="{ 'c_message--mine': msg.is_mine }"
-					>
-						<div class="c_message__name">{{ msg.name }}</div>
-						<div class="c_message__wrap">
-							<div class="c_message__msg">
-								<div class="c_message__time">
-									{{ msg.time }}
-								</div>
-								<div v-for="msgpart in msg.msg.split('\n')">
-									{{ msgpart }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="c_send_message">
-					<textarea
-						name="new_message"
-						id="new_message"
-						placeholder="type..."
-					></textarea>
-					<input type="submit" value="enter" />
-				</div>
-			</div>
+			<Chat
+				v-if="currentChatId !== ''"
+				:chatId="Number(currentChatId)"
+				:focusTarget="focusTarget"
+				:key="currentChatId"
+				@toggleFocusTarget="toggleFocusTarget"
+			/>
 		</div>
-		<table class="table table-striped table-sm">
-			All Chats:
-			<tbody>
-				<tr v-for="chat in chatStore.allChats" :key="chat.id">
-					<td>Game id: {{ chat.id }}</td>
-					<td> Chat name: {{ chat.name }}</td>
-					<td>Visibility: {{ chat.visibility }}</td>
-				</tr>
-				
-			</tbody>
-		</table>
-		<table class="table table-striped table-sm">
-			My Chats:
-			<tbody>
-				<tr v-for="chat in chatStore.getMyChats" :key="chat.id">
-					<td>Game id: {{ chat.id }}</td>
-					<td> Chat name: {{ chat.name }}</td>
-					<td>Visibility: {{ chat.visibility }}</td>
-				</tr>
-				
-			</tbody>
-			
-		</table>
 	</div>
 </template>
 
@@ -150,10 +27,10 @@ import { useChatStore } from '@/stores/chatStore';
 
 export default defineComponent({
 	name: "ChatView",
-	
+	components: {},
 	setup(){
 		const chatStore = useChatStore();
-		
+
 		chatStore.refreshData();
 		return {
 			chatStore,
