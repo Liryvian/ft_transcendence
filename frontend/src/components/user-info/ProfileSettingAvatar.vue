@@ -19,12 +19,12 @@ export default defineComponent({
 .circle {
 	margin-left: auto;
 	margin-right: auto;
-	width: 9em;
-	height: 9em;
+	width: 10em;
+	height: 10em;
 	border: solid 2px black;
 	border-radius: 50%;
 	overflow: hidden;
-	margin-top: 2.5em;
+	margin-top: 1.2em;
 }
 
 .userName {

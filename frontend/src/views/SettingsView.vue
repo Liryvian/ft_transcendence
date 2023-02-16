@@ -5,6 +5,7 @@
 			<ProfileSettingAvatar
 				:profile_picture="this.user.avatar"
 			/>
+			<ChangeAvatar />
 			<form
 				method="post"
 				action=""
@@ -41,10 +42,12 @@ import type { RegisterForm, SetProfileForm } from '@/types/User';
 import { User } from '@/types/User';
 import ProfileList from '@/views/ProfilesView.vue';
 import ProfileSettingAvatar from '@/components/user-info/ProfileSettingAvatar.vue';
+import ChangeAvatar from '@/components/input-fields/ChangeAvatar.vue';
 
 export default defineComponent({
 	name: 'RegisterView',
 	components: {
+		ChangeAvatar,
 		ProfileSettingAvatar,
 		ProfileList,
 		InputField,
