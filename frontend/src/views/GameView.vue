@@ -28,12 +28,20 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { Position }  from "@/types/Game"
+import type  { Position, ElementPositions }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
+
+interface MovementKeys {
+	ArrowUp: boolean;
+	ArrowDown: boolean;
+	w: boolean;
+	s: boolean;
+}
 
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
+	isPressed: MovementKeys
 }
 
 export default defineComponent({
@@ -46,6 +54,12 @@ export default defineComponent({
 		return {
 			context: {} as CanvasRenderingContext2D,
 			socket: io('http://localhost:8080/pong'),
+			isPressed: {
+				ArrowUp: false,
+				ArrowDown: false,
+				w: false,
+				s: false,
+			},
 		}
 	},
 
@@ -92,12 +106,13 @@ export default defineComponent({
 			
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
 		drawBall(position: Position) {
-			const startingX: number = this.widthPercentage(position.x);
-			const startingY: number = this.heightPercentage(position.y)
-			const radius: number = 12;
+			let startingX: number = this.widthPercentage(position.x);
+			let startingY: number = this.heightPercentage(position.y)
+			const radius: number = this.widthPercentage(1);
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
 
+			this.context.beginPath();
 			this.context.arc(
 					startingX,
 					startingY,
@@ -106,9 +121,10 @@ export default defineComponent({
 					endAngle,
 			)
 				// this fills the above defined arc/circle
-				this.context.lineWidth = 4;
-				this.context.stroke()
-			},
+			this.context.lineWidth = 4;
+			this.context.stroke();
+			this.context.closePath();
+		},
 				
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
 		drawPaddle(position: Position) {
@@ -130,27 +146,56 @@ export default defineComponent({
 			)
 		},
 
-		render() {
-			this.socket.on('hallo', (data) => {
-				console.log('\nReceiving from backend: \n', JSON.stringify(data))
-			});
-		
-			this.socket.on("barPosition", (data: Position) => {
-				this.drawPaddle(data);
-			})
-			this.socket.on("ballPosition", (data: Position) => {
-				this.drawBall(data);
-			})
+		clearCanvas() {
+			this.context.clearRect(0, 0, this.width, this.height)
+		},
+
+		render(elementPositions: ElementPositions) {
+			this.clearCanvas();
 			this.drawMiddleLine();
+			this.drawPaddle(elementPositions.playerOnePaddle);
+			this.drawPaddle(elementPositions.playerTwoPaddle);
+			this.drawBall(elementPositions.ball);
+		},
+		
+		moveBar(keyPress: KeyboardEvent) {
+			this.socket.emit('moveBar', keyPress.key);
+		},
+
+		keyDown(keyPress: KeyboardEvent) {
+			if (this.isPressed[keyPress.key] !== undefined) {
+				this.isPressed[keyPress.key] = true;
+      		}
+		},
+		
+    	keyUp(keyPress: KeyboardEvent) {
+			if (this.isPressed[keyPress.key] !== undefined) {
+				this.isPressed[keyPress.key] = false;
+      		}
+    	},
+	},
+	
+	watch: {
+		isPressed: {
+			deep: true,
+			handler() {
+				this.socket!.emit("moveBar", this.isPressed)
+			}
 		}
 	},
-
-
 	mounted() {
-
+		// window.addEventListener('keyup', this.moveBar)
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		this.render();
+		document.addEventListener("keydown", this.keyDown);
+      	document.addEventListener("keyup", this.keyUp);
+		this.socket.on("updatePosition", this.render);
+		// this.render();
 	},
+	
+	unmouted() {
+		this.socket.off("updatePosition", this.render);
+	},
+
 })
 </script> 
 
