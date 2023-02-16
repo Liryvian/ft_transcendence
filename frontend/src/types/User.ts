@@ -13,10 +13,11 @@ export interface RegisterForm {
 	password_confirm: string;
 }
 
-export interface SetProfileForm {
+export interface UpdateProfileForm {
 	name: string;
-	password: string;
-	password_confirm: string;
+	new_password?: string;
+	new_password_confirm?: string;
+	password?: string;
 }
 
 export interface LoginForm {

@@ -2,7 +2,7 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm, SetProfileForm, LogoutForm } from '../types/User';
+import type { User, LoginForm, RegisterForm, UpdateProfileForm } from '../types/User';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -23,7 +23,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('login', loginForm);
 				await this.refreshData();
-				await router.push('/');
+				await router.push('/settings');
 			} catch (e) {
 				alert('Invalid user/password combination');
 			}
@@ -46,11 +46,16 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-		async setProfile(setProfileForm: SetProfileForm) {
+		async updateProfile(id: number, updateProfileForm: UpdateProfileForm) {
 			try {
-				await postRequest('users', setProfileForm);
+				if (updateProfileForm.new_password === '') {
+					delete updateProfileForm.new_password;
+					delete updateProfileForm.new_password_confirm;
+					delete updateProfileForm.password;
+				}
+				await patchRequest(`users/${id}`, updateProfileForm);
 				await this.refreshData();
-				// await router.push('/login');
+				await router.push('/settings');
 			} catch (e: any) {
 				if (typeof e.response.data.message === 'string') {
 					this.errors = [e.response.data.message];

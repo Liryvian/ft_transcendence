@@ -2,33 +2,61 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>SETTINGS</h1>
-			<ProfileSettingAvatar
-				:profile_picture="this.user.avatar"
-			/>
-			<ChangeAvatar />
+			<ProfileSettingAvatar :profile_picture="this.user.avatar" />
+			<div class="c_block c_form_group tac">
+				<ChangeAvatar />
+			</div>
 			<form
 				method="post"
 				action=""
 				class="c_block c_form_group"
-				@submit.prevent="userStore.setProfile(setProfileForm)"
+				@submit.prevent="userStore.updateProfile(user.id, updateProfileForm)"
 			>
-				<InputField label="intra name" v-model="this.user.name" is_disabled='true'/>
-				<InputField label="display_name" v-model="setProfileForm.name"  />
-				<InputField label="new password" v-model="setProfileForm.password" />
 				<InputField
-					label="confirm password"
-					v-model="setProfileForm.password_confirm"
+					v-if="this.user.intra_login"
+					label="intra name"
+					v-model="this.user.intra_login"
+					is_disabled="true"
 				/>
-<!--				<InputField label="old password" v-model="setProfileForm.old_password" />-->
+				<InputField
+					label="display_name"
+					value="this.user.name"
+					v-model="updateProfileForm.name"/>
+				<InputField
+					v-if="!this.user.intra_login"
+					label="new password"
+					type="password"
+					v-model="updateProfileForm.new_password"
+				/>
+				<InputField
+					v-if="!this.user.intra_login"
+					label="new password confirm"
+					type="password"
+					v-model="updateProfileForm.new_password_confirm"
+				/>
+				<InputField
+					v-if="!this.user.intra_login"
+					label="current password"
+					v-model="updateProfileForm.password"
+				/>
 				<div class="c_block c_split">
 					<p><a href="/turnon2fa">turn on 2fa</a></p>
 				</div>
 				<div class="page_button pb_bottom">
-					<a href="#">save</a>
+					<input type="submit" value="save">
+<!--					<a href="">save</a>-->
+<!--					<input-->
+<!--						class="link_button"-->
+<!--						type="submit"-->
+<!--						value="updateProfile"-->
+<!--					/>-->
 				</div>
 				<div v-if="userStore.errors.length">
-					<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
+					<p v-for="error in userStore.errors" class="c_form--error">
+						!! {{ error }}
+					</p>
 				</div>
+
 			</form>
 		</div>
 	</div>
@@ -38,7 +66,7 @@
 import InputField from '@/components/input-fields/InputField.vue';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
-import type { RegisterForm, SetProfileForm } from '@/types/User';
+import type { RegisterForm, UpdateProfileForm } from '@/types/User';
 import { User } from '@/types/User';
 import ProfileList from '@/views/ProfilesView.vue';
 import ProfileSettingAvatar from '@/components/user-info/ProfileSettingAvatar.vue';
@@ -62,40 +90,36 @@ export default defineComponent({
 		await useUserStore().refreshAllUsers();
 		const filteredUsers = useUserStore().me;
 		if (filteredUsers === undefined) {
-			this.$router.push('/profiles')
+			this.$router.push('/profiles');
 		} else {
-			this.user = filteredUsers
+			this.user = filteredUsers;
 		}
 	},
-
 
 	setup() {
 		const userStore = useUserStore();
 		const filteredUsers = useUserStore().me;
 		console.log(filteredUsers.name);
-		const setProfileForm: SetProfileForm = reactive({
-			name: '',
+		const updateProfileForm: UpdateProfileForm = reactive({
+			name: filteredUsers.name,
+			new_password: '',
+			new_password_confirm: '',
 			password: '',
-			password_confirm: '',
 		});
 		return {
 			userStore,
-			setProfileForm,
+			updateProfileForm,
 		};
 	},
 });
 </script>
 
-.avatar {
-vertical-align: middle;
-width: 50px;
-height: 50px;
-border-radius: 50%;
+.avatar { vertical-align: middle; width: 50px; height: 50px; border-radius: 50%;
 }
 
 <style scoped></style>
 
-
-// await useUserStore().refreshAllUsers();
-// this.user = useUserStore().allUsers.filter((user: User) => (Number(user.id) === Number(this.profile_id)))[0];
+// await useUserStore().refreshAllUsers(); // this.user =
+useUserStore().allUsers.filter((user: User) => (Number(user.id) ===
+Number(this.profile_id)))[0];
 <!--if (!this.profile_id) {-->

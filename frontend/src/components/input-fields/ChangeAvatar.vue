@@ -1,9 +1,9 @@
 <template>
-	<div class="button">
+	<form class="button">
 		<label for="actual-btn">change avatar</label>
 		<input type="file" id="actual-btn" hidden/>
 		<input type="submit" value="submit" />
-	</div>
+	</form>
 </template>
 
 <script lang="ts">
