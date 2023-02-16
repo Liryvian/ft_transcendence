@@ -1,10 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity("achievements")
+@Entity('achievements')
 export class Achievement {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({unique: true})
+	@Column({ unique: true })
 	name: string;
 }
