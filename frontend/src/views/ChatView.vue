@@ -11,10 +11,9 @@
 				<ChatList :info="channels" />
 			</div>
 			<Chat
-				v-if="currentChatId !== ''"
-				:chatId="Number(currentChatId)"
+				v-if="currentChatInfo"
+				:currentChatInfo="currentChatInfo"
 				:focusTarget="focusTarget"
-				:key="currentChatId"
 				@toggleFocusTarget="toggleFocusTarget"
 			/>
 		</div>
@@ -23,7 +22,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-// import { useChatStore } from '@/stores/chatStore';
 
 import Chat from '@/components/chat/Chat.vue';
 import ChatList from '@/components/chat/ChatList.vue';
@@ -36,12 +34,6 @@ export default defineComponent({
 		currentChatId: String,
 	},
 	setup(){
-		// const chatStore = useChatStore();
-
-		// chatStore.refreshData();
-		// return {
-		// 	chatStore,
-		// }
 	},
 	data() {
 		return {
@@ -105,6 +97,14 @@ export default defineComponent({
 			} as Chat_List,
 			focusTarget: 'c_chat--msg',
 		};
+	},
+	computed: {
+		allChats() {
+			return [...this.dms, ...this.channels];
+		},
+		currentChatInfo() {
+			return this.allChats.find((chat) => chat.id === this.currentChatId) ?? false;
+		}
 	},
 	methods: {
 		toggleFocusTarget(target: string) {

@@ -5,20 +5,7 @@
 			@click="$emit('toggleFocusTarget', 'msg')"
 			class="toggleHandler"
 		></div>
-		<div class="c_conversation__header">
-			<div v-if="chatInfo?.type === 'dm'">invite for a game</div>
-			<div v-if="chatInfo?.type === 'channel'">channel settings</div>
-			<div>
-				<div class="c_media c_media--assetright c_media--clickable">
-					<div class="c_media__asset c_asset--online">
-						<div class="c_asset__circle">
-							<img src="/test-profile.png" alt="" />
-						</div>
-					</div>
-					<div class="c_media__content">username</div>
-				</div>
-			</div>
-		</div>
+		<ChatHeader />
 		<div class="c_messagelist">
 			messages
 			<!-- <Message
@@ -39,10 +26,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useChatStore } from '@/stores/chatStore';
+import { defineComponent, type PropType } from 'vue';
 
 import Message from './Message.vue';
+import { type SingleMessage, type Chat_List_Item } from "@/types/Chat";
 
 export default defineComponent({
 	name: 'Chat',
@@ -51,18 +38,30 @@ export default defineComponent({
 	},
 	props: {
 		focusTarget: String,
+		info: {
+			type: Object as PropType<Chat_List_Item>,
+			required: true,
+		},
 		chatId: {
 			type: Number,
-			required: true
+			required: true,
 		},
 	},
-	setup(props) {
-		const chatStore = useChatStore();
-
-		// chatStore.refreshChatInfo(props.chatId);
-		return {
-			chatStore,
-		};
+	setup() {
 	},
+	data() {
+		return {
+			messages: [
+				{
+					id: 0,
+					content: "First message"
+				},
+				{
+					id: 1,
+					content: "second message"
+				},
+			] as SingleMessage[]
+		}
+	}
 });
 </script>

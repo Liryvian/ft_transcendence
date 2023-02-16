@@ -14,7 +14,7 @@ export interface UserChatPermissions {
 	permission: string;
 }
 
-export interface Message {
+export interface SingleMessage {
 	id: number;
 
 	sender_id: User;
