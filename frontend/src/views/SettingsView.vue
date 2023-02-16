@@ -44,12 +44,6 @@
 				</div>
 				<div class="page_button pb_bottom">
 					<input type="submit" value="save">
-<!--					<a href="">save</a>-->
-<!--					<input-->
-<!--						class="link_button"-->
-<!--						type="submit"-->
-<!--						value="updateProfile"-->
-<!--					/>-->
 				</div>
 				<div v-if="userStore.errors.length">
 					<p v-for="error in userStore.errors" class="c_form--error">
