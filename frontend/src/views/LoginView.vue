@@ -10,18 +10,22 @@
 					action=""
 					class="c_block c_form_group"
 					@submit.prevent="userStore.login(loginForm)"
-				>
-					<InputField
+					>
+					
+					<InputField 
+						tabindex="1" 
 						label="Username"
-						placeholder="username"
+						placeholder="username" 
 						v-model="loginForm.name"
 					/>
-					<InputField
+
+					<InputField 
+						inputType="password" 
 						label="Password"
-						placeholder="password"
+						placeholder="password" 
 						v-model="loginForm.password"
 					/>
-
+					
 					<div class="c_block c_split">
 						<p>
 							<input
@@ -35,6 +39,9 @@
 						<p>
 							<a :href="redirectUrl">Sign in with 42</a>
 						</p>
+					</div>
+					<div v-if="userStore.errors.length">
+						<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
 					</div>
 				</form>
 			</div>
