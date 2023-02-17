@@ -17,8 +17,8 @@ export interface UserChatPermissions {
 export interface SingleMessage {
 	id: number;
 
-	sender_id: User;
-	chat_id: Chat;
+	sender: User;
+	chat: Chat;
 
 	content: string;
 
@@ -36,7 +36,7 @@ export interface Chat {
 	visibility: string;
 	password: string;
 
-	messages: Message[];
+	messages: SingleMessage[];
 }
 
 export interface Chat_Member {

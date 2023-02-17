@@ -7,12 +7,11 @@
 		></div>
 		<ChatHeader :chat="info"  />
 		<div class="c_messagelist">
-			messages
-			<!-- <Message
-				v-for="message in messageStore.getActiveMessages(chatId)"
+			<Message
+				v-for="message in messages"
 				:message="message"
 				:key="message.id"
-			/> -->
+			/>
 		</div>
 		<div class="c_send_message">
 			<textarea
@@ -52,10 +51,18 @@ export default defineComponent({
 			messages: [
 				{
 					id: 0,
+					created_at: new Date('02/17/2023 10:09'),
+					sender: {
+						name: 'Hans'
+					},
 					content: "First message"
 				},
 				{
 					id: 1,
+					sender: {
+						name: 'Freek'
+					},
+					created_at: new Date('02/17/2023 10:12'),
 					content: "second message"
 				},
 			] as SingleMessage[]
