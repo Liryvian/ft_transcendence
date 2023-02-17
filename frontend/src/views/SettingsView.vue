@@ -10,15 +10,13 @@
 				method="Post"
 				action=""
 				class="c_block c_form_group"
-				@submit.prevent="
-					updateProfile(me.id, updateProfileForm)
-				"
+				@submit.prevent="updateProfile(me.id, updateProfileForm)"
 			>
 				<InputField
 					v-if="me.is_intra"
 					label="intra name"
 					v-model="me.intra_login"
-					is_disabled="true"
+					:is_disabled="true"
 				/>
 				<InputField
 					label="display_name"
@@ -64,7 +62,7 @@ import type { UpdateProfileForm } from '@/types/User';
 import ProfileList from '@/views/ProfilesView.vue';
 import ProfileSettingAvatar from '@/components/user-info/ProfileSettingAvatar.vue';
 import ChangeAvatar from '@/components/input-fields/ChangeAvatar.vue';
-import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia';
 
 export default defineComponent({
 	name: 'RegisterView',
@@ -82,7 +80,7 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 		useUserStore().refreshMe();
-		const { me, errors,} = storeToRefs(userStore);
+		const { me, errors } = storeToRefs(userStore);
 		const { updateProfile, refreshData } = userStore;
 		let updateProfileForm: UpdateProfileForm = reactive({
 			name: me.value.name,
@@ -91,9 +89,9 @@ export default defineComponent({
 			password: '',
 		});
 		// if (me === undefined) {
-			// this.$router.push('/profiles');
+		// this.$router.push('/profiles');
 		// }
-		console.log(me.value.name)
+		console.log(me.value.name);
 
 		return {
 			me,
@@ -110,6 +108,3 @@ export default defineComponent({
 }
 
 <style scoped></style>
-
-
-
