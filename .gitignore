@@ -187,3 +187,6 @@ GitHub.sublime-settings
 
 # local .vscode settings
 .vscode
+
+# ignore ds store also in main dir..
+.DS_store
