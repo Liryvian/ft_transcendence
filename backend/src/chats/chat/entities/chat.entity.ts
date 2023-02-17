@@ -3,7 +3,6 @@ import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
 import { ChatUserPermission } from '../../chat-user-permissions/entities/chat-user-permission.entity';
-import { Permission } from '../../permissions/entities/permission.entity';
 import { User } from '../../../users/user/entities/user.entity';
 
 const validVisibility = ['public', 'private'];
@@ -36,7 +35,7 @@ export class Chat {
 
 				index--;
 			}
-			acc[index].permissions.push(curr.permissions);
+			acc[index].permissions.push(curr.permission);
 			return acc;
 		}, []);
 	}
@@ -63,7 +62,7 @@ export class Chat {
 
 export class ChatUser {
 	id: number;
-	name?: string;
-	avatar?: string;
-	permissions: Permission[];
+	name?: String;
+	avatar?: String;
+	permissions: String[];
 }

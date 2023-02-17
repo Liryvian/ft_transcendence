@@ -6,6 +6,7 @@ import { Chat, ChatUser } from '../chats/chat/entities/chat.entity';
 import { ChatService } from '../chats/chat/chat.service';
 import { UserService } from '../users/user/user.service';
 import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dto';
+import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { User } from '../users/user/entities/user.entity';
 
 @Controller('me')
@@ -66,6 +67,7 @@ export class MeController {
 		return 'list of users that I friended';
 	}
 
+	// gets chats where "I" am not blocked
 	@UseGuards(AuthGuard)
 	@Get('chats')
 	async chats(@Req() request: Request) {
@@ -93,18 +95,12 @@ export class MeController {
 			(chat: Chat) =>
 				chat.users.findIndex(
 					(user: ChatUser) =>
-						user.id == id &&
-						user.permissions.findIndex((p) => p.name === 'blocked') !== -1,
+						user.id === id &&
+						user.permissions.findIndex((p) => p === permissionsEnum.BLOCKED) !==
+							-1,
 				) === -1,
 		);
 
-		return chats.map((chat) => {
-			const obj = {
-				...chat,
-				users: chat.users,
-			};
-			delete obj.has_users;
-			return obj;
-		});
+		return chats;
 	}
 }

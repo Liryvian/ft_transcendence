@@ -1,4 +1,5 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsIn, IsNotEmpty } from 'class-validator';
+import { permissionsArray } from '../entities/chat-user-permission.entity';
 
 export class CreateChatUserPermissionDto {
 	@IsNotEmpty()
@@ -7,6 +8,7 @@ export class CreateChatUserPermissionDto {
 	@IsNotEmpty()
 	chat_id: number;
 
+	@IsIn(permissionsArray)
 	@IsNotEmpty()
-	permission_id: number;
+	permission: String;
 }
