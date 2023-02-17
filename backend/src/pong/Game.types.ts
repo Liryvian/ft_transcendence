@@ -8,3 +8,8 @@ export class Paddle {
 	width: number;
 	height: number;
 }
+
+export class Ball {
+	position: Position;
+	radius: number;
+}

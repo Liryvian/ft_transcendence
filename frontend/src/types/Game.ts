@@ -11,6 +11,12 @@ export interface Paddle {
 	height: number;
 }
 
+export interface Ball {
+	position: Position;
+	radius: number;
+}
+
+
 export interface Game {
 	id: number;
 

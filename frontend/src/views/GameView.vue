@@ -28,7 +28,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { Position, ElementPositions }  from "@/types/Game"
+import type  { ElementPositions, Ball, Paddle }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
 
 interface MovementKeys {
@@ -91,10 +91,10 @@ export default defineComponent({
 		
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
 		drawMiddleLine() {
-			const widthStart: number = this.width / 2;
 			const heightStart: number = 0;
-			const lineWidth: number = 4;
-			const lineHeight: number = this.height;
+			const lineWidth: number = this.widthPercentage(0.3);
+			const widthStart: number = this.widthPercentage(50 - (lineWidth / 2))
+			const lineHeight: number = this.heightPercentage(100);
 			
 			this.context.fillRect(
 					widthStart,
@@ -105,10 +105,10 @@ export default defineComponent({
 			},
 			
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
-		drawBall(position: Position) {
-			let startingX: number = this.widthPercentage(position.x);
-			let startingY: number = this.heightPercentage(position.y)
-			const radius: number = this.widthPercentage(1);
+		drawBall(ball: Ball) {
+			const startingX: number = this.widthPercentage(ball.position.x);
+			const startingY: number = this.heightPercentage(ball.position.y)
+			const radius: number = this.widthPercentage(ball.radius);
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
 
@@ -120,21 +120,19 @@ export default defineComponent({
 					startAngle,
 					endAngle,
 			)
-				// this fills the above defined arc/circle
-			this.context.lineWidth = 4;
-			this.context.stroke();
-			this.context.closePath();
-		},
+				this.context.lineWidth = this.widthPercentage(0.3);
+				this.context.stroke()
+			},
 				
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
-		drawPaddle(position: Position) {
-			const lineWidth: number = 15;
+		drawPaddle(paddle: Paddle) {
+			const lineWidth: number = this.widthPercentage(1);
 			const lineHeight: number = this.heightPercentage(12);
-			const y: number = this.heightPercentage(position.y) - (lineHeight / 2); // middle of the canvas
+			const y: number = this.heightPercentage(paddle.position.y) - (lineHeight / 2); // middle of the canvas
 
 			// Player 1
 			let x = 0
-			if (position.x === 100) {
+			if (paddle.position.x === 100) {
 				// Player 2
 				x = this.width - lineWidth;
 			}
@@ -152,6 +150,16 @@ export default defineComponent({
 
 		render(elementPositions: ElementPositions) {
 			this.clearCanvas();
+			this.socket.on('hallo', (data) => {
+				console.log('\nReceiving from backend: \n', JSON.stringify(data))
+			});
+		
+			this.socket.on("barPosition", (data: Paddle) => {
+				this.drawPaddle(data);
+			})
+			this.socket.on("ballPosition", (data: Ball) => {
+				this.drawBall(data);
+			})
 			this.drawMiddleLine();
 			this.drawPaddle(elementPositions.playerOnePaddle);
 			this.drawPaddle(elementPositions.playerTwoPaddle);
