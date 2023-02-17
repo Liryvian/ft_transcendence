@@ -44,17 +44,17 @@ export interface Chat_Member {
 	avatar?: string;
 }
 
+export type Chat_Type = 'dm' | 'channel';
+
 export interface Chat_List_Item {
 	id: number;
 	name: string;
+	type: Chat_Type;
 	members: Chat_Member[];
 }
-
-export type Chat_Type = "dm" | "channel";
 
 export interface Chat_List {
 	name: string;
 	type: Chat_Type;
 	items: Chat_List_Item[];
 }
-

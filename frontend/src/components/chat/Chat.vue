@@ -5,7 +5,7 @@
 			@click="$emit('toggleFocusTarget', 'msg')"
 			class="toggleHandler"
 		></div>
-		<ChatHeader />
+		<ChatHeader :chat="info"  />
 		<div class="c_messagelist">
 			messages
 			<!-- <Message
@@ -29,21 +29,19 @@
 import { defineComponent, type PropType } from 'vue';
 
 import Message from './Message.vue';
-import { type SingleMessage, type Chat_List_Item } from "@/types/Chat";
+import ChatHeader from './ChatHeader.vue';
+import type { SingleMessage, Chat_List_Item } from "@/types/Chat";
 
 export default defineComponent({
 	name: 'Chat',
 	components: {
 		Message,
+		ChatHeader,
 	},
 	props: {
 		focusTarget: String,
 		info: {
 			type: Object as PropType<Chat_List_Item>,
-			required: true,
-		},
-		chatId: {
-			type: Number,
 			required: true,
 		},
 	},

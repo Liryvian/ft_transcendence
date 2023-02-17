@@ -10,12 +10,13 @@
 				<ChatList :info="dms" />
 				<ChatList :info="channels" />
 			</div>
-			<Chat
-				v-if="currentChatInfo"
-				:currentChatInfo="currentChatInfo"
-				:focusTarget="focusTarget"
-				@toggleFocusTarget="toggleFocusTarget"
-			/>
+			<template v-if="currentChatInfo">
+				<Chat
+					:info="currentChatInfo"
+					:focusTarget="focusTarget"
+					@toggleFocusTarget="toggleFocusTarget"
+				/>
+			</template>
 		</div>
 	</div>
 </template>
@@ -25,13 +26,13 @@ import { defineComponent } from 'vue';
 
 import Chat from '@/components/chat/Chat.vue';
 import ChatList from '@/components/chat/ChatList.vue';
-import { type Chat_List, type Chat_List_Item, type Chat_Member } from '@/types/Chat';
+import type { Chat_List, Chat_List_Item, Chat_Member } from '@/types/Chat';
 
 export default defineComponent({
 	name: "ChatView",
 	components: { ChatList, Chat },
 	props: {
-		currentChatId: String,
+		currentChat: String,
 	},
 	setup(){
 	},
@@ -44,6 +45,7 @@ export default defineComponent({
 					{
 						id: 1,
 						name: 'a dm conversation',
+						type: "dm",
 						members: [
 							{
 								name: 'vaalboskat',
@@ -58,6 +60,7 @@ export default defineComponent({
 					{
 						id: 2,
 						name: 'vaalboskat - flamink',
+						type: "dm",
 						members: [
 							{
 								name: 'vaalboskat',
@@ -78,6 +81,7 @@ export default defineComponent({
 					{
 						id: 3,
 						name: "A channel",
+						type: "channel",
 						members: [
 							{
 								name: 'vaalboskat',
@@ -100,10 +104,13 @@ export default defineComponent({
 	},
 	computed: {
 		allChats() {
-			return [...this.dms, ...this.channels];
+			return [...this.dms.items, ...this.channels.items];
+		},
+		currentChatId() {
+			return Number(this.currentChat ?? '-1');
 		},
 		currentChatInfo() {
-			return this.allChats.find((chat) => chat.id === this.currentChatId) ?? false;
+			return this.allChats.find((chat) => chat.id === this.currentChatId);
 		}
 	},
 	methods: {
