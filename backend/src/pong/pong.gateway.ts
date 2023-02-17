@@ -54,7 +54,7 @@ export class PongGateway implements OnGatewayConnection {
 	async handleConnection(socket: Socket) {
 		console.log('\n!Socket is connected!\n');
 		this.sendHallo('Hallo frontend!!!');
-		setInterval(this.drawBall, 10, this.gameState, socket);
+		setInterval(this.drawBall, 10, this.gameState, socket, this.hitsWall);
 	}
 
 	printInterValCallback() {
@@ -74,19 +74,17 @@ export class PongGateway implements OnGatewayConnection {
 	// @SubscribeMessage('moveBall')
 	// dx = 0.5;
 	// dy = 0.5;
-	drawBall(gameState: GameState, socket: Socket) {
+	hitsWall(radius: number, pos: number, direction: number): boolean {
+		return pos + direction > 100 - radius || pos + direction < radius;
+	}
+
+	drawBall(gameState: GameState, socket: Socket, hitsWall) {
 		const radius = 1;
 
-		if (
-			gameState.ball.x + dx > 100 - radius ||
-			gameState.ball.x + dx < radius
-		) {
+		if (hitsWall(radius, gameState.ball.x, dx)) {
 			dx = -dx;
 		}
-		if (
-			gameState.ball.y + dy >= 100 - radius ||
-			gameState.ball.y + dy <= radius
-		) {
+		if (hitsWall(radius, gameState.ball.y, dy)) {
 			dy = -dy;
 		}
 		gameState.ball.x += dx;
