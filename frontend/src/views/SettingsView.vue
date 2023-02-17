@@ -101,7 +101,6 @@ export default defineComponent({
 			updateProfile,
 			updateProfileForm,
 			userStore,
-			// refreshMe,
 		};
 	},
 });
