@@ -8,6 +8,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Ball, Paddle } from './Game.types';
 
+const paddleHeight = 12;
+const paddleWidth = 1;
+const ballRadius = 1;
+
 @WebSocketGateway({
 	namespace: '/pong',
 	cors: {
@@ -24,8 +28,8 @@ export class PongGateway implements OnGatewayConnection {
 			x: 0,
 			y: 50,
 		},
-		width: 1,
-		height: 12,
+		width: paddleWidth,
+		height: paddleHeight,
 	};
 
 	playerTwoPaddle: Paddle = {
@@ -33,8 +37,8 @@ export class PongGateway implements OnGatewayConnection {
 			x: 100,
 			y: 50,
 		},
-		width: 1,
-		height: 12,
+		width: paddleWidth,
+		height: paddleHeight,
 	};
 
 	ball: Ball = {
@@ -42,7 +46,7 @@ export class PongGateway implements OnGatewayConnection {
 			x: 40,
 			y: 65,
 		},
-		radius: 1,
+		radius: ballRadius,
 	};
 
 	async handleConnection(socket: Socket) {
