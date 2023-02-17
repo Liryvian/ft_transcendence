@@ -17,7 +17,8 @@ export interface Game {
 	score_player_one: number;
 	score_player_two: number;
 
-	customization: string;
+	score_to_win: number;
+	background_color: string;
 	is_active: boolean;
 
 	created_at: Date;
@@ -35,10 +36,10 @@ export interface GameRequest {
 	updated_at: Date;
 }
 
-export interface newGameForm {
-	score_to_win: number,
-	background_color: String,
-
-	player_one: number,
-	player_two: number,
-}
+// export interface NewGameForm {
+// 	score_to_win: number,
+// 	background_color: string,
+//
+// 	player_one: User,
+// 	player_two: User,
+// }

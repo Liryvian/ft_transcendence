@@ -1,4 +1,4 @@
-import type { Game } from '@/types/Game';
+import type { Game } from '../types/Game';
 import type { User } from '@/types/User';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -32,17 +32,6 @@ export const useGameStore = defineStore("games", {
 		async refreshMyGames() {
 			await useUserStore().refreshMe()
 		},
-
-		async requestGame(){
-			try{
-				await postRequest("request-game", NewGameForm);
-				await this.refreshMyGames();
-				await router.push("/games")
-			}
-			catch (e) {
-				this.handleFormError(e.response.data);
-			}
-		}
 
 		async refreshData() {
 			await this.refreshMyGames();
