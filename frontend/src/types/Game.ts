@@ -34,9 +34,9 @@ export interface Game {
 }
 
 export interface ElementPositions {
-	playerOnePaddle: Position;
-	playerTwoPaddle: Position;
-	ball: Position;
+	playerOnePaddle: Paddle;
+	playerTwoPaddle: Paddle;
+	ball: Ball;
 }
 
 export interface GameRequest {

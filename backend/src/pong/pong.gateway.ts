@@ -21,8 +21,15 @@ interface MovementKeys {
 	s: boolean;
 }
 
-let dx = 0.1;
-let dy = 0.1;
+let dx = 0.4;
+let dy = 0.4;
+
+const paddleWidth = 1;
+const paddleHeight = 12;
+
+const ballRadius = 1;
+
+const offset = 0.05;
 
 @WebSocketGateway({
 	namespace: '/pong',
@@ -36,14 +43,14 @@ export class PongGateway implements OnGatewayConnection {
 
 	// all element values are percentages of width and height in FE
 	//  so 0-100
-	gameState = {
+	gameState: GameState = {
 		playerOnePaddle: {
 			position: {
 				x: 0,
 				y: 50,
 			},
-			width: 1,
-			height: 12,
+			width: paddleWidth,
+			height: paddleHeight,
 		},
 
 		playerTwoPaddle: {
@@ -51,8 +58,8 @@ export class PongGateway implements OnGatewayConnection {
 				x: 100,
 				y: 50,
 			},
-			width: 1,
-			height: 12,
+			width: paddleWidth,
+			height: paddleHeight,
 		},
 
 		ball: {
@@ -60,14 +67,13 @@ export class PongGateway implements OnGatewayConnection {
 				x: 40,
 				y: 65,
 			},
-			radius: 1,
+			radius: ballRadius,
 		},
 	};
 
 	async handleConnection(socket: Socket) {
 		console.log('\n!Socket is connected!\n');
 		this.sendHallo('Hallo frontend!!!');
-		setInterval(this.drawBall, 10, this.gameState, socket, this.hitsWall);
 	}
 
 	printInterValCallback() {
@@ -79,59 +85,65 @@ export class PongGateway implements OnGatewayConnection {
 		this.server.emit('hallo', data);
 	}
 
-	// @SubscribeMessage('updatePosition')
 	sendPositionOfElements(@MessageBody() gameState: GameState) {
-		this.server.emit('updatePosition', gameState);
+		this.server.emit('elementPositions', gameState);
 	}
 
-	// @SubscribeMessage('moveBall')
-	// dx = 0.5;
-	// dy = 0.5;
 	hitsWall(radius: number, pos: number, direction: number): boolean {
-		return pos + direction > 100 - radius || pos + direction < radius;
+		return (
+			pos + direction + offset > 100 - radius ||
+			pos + direction < radius + offset
+		);
 	}
 
-	drawBall(gameState: GameState, socket: Socket, hitsWall) {
+	moveBall() {
 		const radius = 1;
 
-		if (hitsWall(radius, gameState.ball.position.x, dx)) {
+		if (this.hitsWall(radius, this.gameState.ball.position.x, dx)) {
 			dx = -dx;
 		}
-		if (hitsWall(radius, gameState.ball.position.y, dy)) {
+		if (this.hitsWall(radius, this.gameState.ball.position.y, dy)) {
 			dy = -dy;
 		}
-		gameState.ball.position.x += dx;
-		gameState.ball.position.y += dy;
-		socket.emit('updatePosition', gameState);
+		this.gameState.ball.position.x += dx;
+		this.gameState.ball.position.y += dy;
 	}
 
-	@SubscribeMessage('moveBar')
-	moveBar(@MessageBody() keyPress: MovementKeys) {
-		console.log(keyPress, 'pressed!');
-		if (keyPress.ArrowUp) {
-			this.gameState.playerTwoPaddle.position.y -= 5;
-			if (this.gameState.playerTwoPaddle.position.y <= 0) {
+	movePaddles(pressedKey: MovementKeys) {
+		if (pressedKey.ArrowUp) {
+			if (this.gameState.playerTwoPaddle.position.y <= 5) {
 				this.gameState.playerTwoPaddle.position.y = 5;
+			} else {
+				this.gameState.playerTwoPaddle.position.y -= 1;
 			}
 		}
-		if (keyPress.ArrowDown) {
-			this.gameState.playerTwoPaddle.position.y += 5;
-			if (this.gameState.playerTwoPaddle.position.y >= 100) {
+		if (pressedKey.ArrowDown) {
+			if (this.gameState.playerTwoPaddle.position.y >= 95) {
 				this.gameState.playerTwoPaddle.position.y = 95;
+			} else {
+				this.gameState.playerTwoPaddle.position.y += 1;
 			}
 		}
-		if (keyPress.w) {
-			this.gameState.playerOnePaddle.position.y -= 5;
-			if (this.gameState.playerOnePaddle.position.y <= 0) {
+		if (pressedKey.w) {
+			if (this.gameState.playerOnePaddle.position.y <= 5) {
 				this.gameState.playerOnePaddle.position.y = 5;
+			} else {
+				this.gameState.playerOnePaddle.position.y -= 1;
 			}
 		}
-		if (keyPress.s) {
-			this.gameState.playerOnePaddle.position.y += 5;
-			if (this.gameState.playerOnePaddle.position.y >= 100) {
+		if (pressedKey.s) {
+			if (this.gameState.playerOnePaddle.position.y >= 95) {
 				this.gameState.playerOnePaddle.position.y = 95;
+			} else {
+				this.gameState.playerOnePaddle.position.y += 1;
 			}
 		}
+	}
+
+	@SubscribeMessage('updatePositions')
+	updatePositions(@MessageBody() keyPress: MovementKeys) {
+		this.movePaddles(keyPress);
+		this.moveBall();
 		this.sendPositionOfElements(this.gameState);
 	}
 }

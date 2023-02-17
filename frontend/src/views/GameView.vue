@@ -30,6 +30,7 @@ import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
 import type  { ElementPositions, Ball, Paddle }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
+import { onBeforeRouteLeave } from 'vue-router';
 
 interface MovementKeys {
 	ArrowUp: boolean;
@@ -41,7 +42,11 @@ interface MovementKeys {
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
-	isPressed: MovementKeys
+	isPressed: MovementKeys;
+	gameLoopInterval: number;
+	timeStampStart: DOMHighResTimeStamp;
+	previousTimeStamp: DOMHighResTimeStamp;
+	done: boolean;
 }
 
 export default defineComponent({
@@ -50,6 +55,12 @@ export default defineComponent({
 		PlayerNames
 	},
 
+	beforeRouteLeave(to, from, next) {
+		this.done = true;
+		this.socket.off("updatePosition", this.render);
+		next();
+	},
+	
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
@@ -60,6 +71,10 @@ export default defineComponent({
 				w: false,
 				s: false,
 			},
+			gameLoopInterval: 0,
+			timeStampStart: 0,
+			previousTimeStamp: 0,
+			done: false,
 		}
 	},
 
@@ -150,58 +165,61 @@ export default defineComponent({
 
 		render(elementPositions: ElementPositions) {
 			this.clearCanvas();
-			this.socket.on('hallo', (data) => {
-				console.log('\nReceiving from backend: \n', JSON.stringify(data))
-			});
-		
-			this.socket.on("barPosition", (data: Paddle) => {
-				this.drawPaddle(data);
-			})
-			this.socket.on("ballPosition", (data: Ball) => {
-				this.drawBall(data);
-			})
 			this.drawMiddleLine();
 			this.drawPaddle(elementPositions.playerOnePaddle);
 			this.drawPaddle(elementPositions.playerTwoPaddle);
 			this.drawBall(elementPositions.ball);
 		},
 		
-		moveBar(keyPress: KeyboardEvent) {
-			this.socket.emit('moveBar', keyPress.key);
-		},
-
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
 				this.isPressed[keyPress.key] = true;
-      		}
+			}
+			
 		},
 		
     	keyUp(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
 				this.isPressed[keyPress.key] = false;
       		}
-    	},
-	},
-	
-	watch: {
-		isPressed: {
-			deep: true,
-			handler() {
-				this.socket!.emit("moveBar", this.isPressed)
+		},
+
+		getUpdatedPositions(timeStamp: DOMHighResTimeStamp) {
+			if (this.previousTimeStamp === 0) {
+				this.previousTimeStamp = timeStamp;
 			}
+			const elapsedTime = timeStamp - this.previousTimeStamp;
+			if (elapsedTime > 10) {
+				this.previousTimeStamp = timeStamp;
+				this.socket!.emit("updatePositions", this.isPressed)
+			}
+
+			if (!this.done) {
+				window.requestAnimationFrame(this.getUpdatedPositions);
+			}
+			else {
+				console.log("DONE")!
+			}
+		},
+		
+		startGameLoop() {
+			window.requestAnimationFrame(this.getUpdatedPositions);
 		}
 	},
+	
 	mounted() {
-		// window.addEventListener('keyup', this.moveBar)
 		this.context = (this.$refs.GameRef as any).getContext('2d');
 		document.addEventListener("keydown", this.keyDown);
-      	document.addEventListener("keyup", this.keyUp);
-		this.socket.on("updatePosition", this.render);
-		// this.render();
+		document.addEventListener("keyup", this.keyUp);
+		
+		this.socket.on("elementPositions", this.render);
+		this.startGameLoop()
 	},
 	
-	unmouted() {
+	onBeforeUnmount() {
+		console.log("\n\n!!!UNMOUNT BISHES\n\n")
 		this.socket.off("updatePosition", this.render);
+		this.done = true
 	},
 
 })
