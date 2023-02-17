@@ -17,7 +17,8 @@ import { Ball, Paddle } from './Game.types';
 export class PongGateway implements OnGatewayConnection {
 	@WebSocketServer()
 	server: Server;
-
+	// all element values are percentages of width and height in FE
+	//  so 0-100
 	playerOnePaddle: Paddle = {
 		position: {
 			x: 0,
