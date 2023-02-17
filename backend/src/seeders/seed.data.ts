@@ -5,11 +5,11 @@ import { validRelationships } from '../users/user-relationship/entities/user-rel
 import * as bcrypt from 'bcrypt';
 import { CreateChatUserPermissionDto } from '../chats/chat-user-permissions/dto/create-chat-user-permission.dto';
 import { CreateUserAchievementDto } from '../users/user-achievements/dto/create-user-achievement.dto';
-import { CreateMessageDto } from '../chats/message/dto/create-message.dto';
+import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 
 class seedUser {
 	name: string;
-	password: string;
+	password?: string;
 	is_intra: boolean;
 	avatar?: string;
 	created_at?: string;
@@ -39,6 +39,7 @@ const user_dates: string[] = [
 	new Date(date_source.setHours(6, 18, 45)).toISOString(),
 	new Date(date_source.setHours(6, 32, 8)).toISOString(),
 	new Date(date_source.setHours(6, 59, 12)).toISOString(),
+	new Date(date_source.setHours(7, 11, 12)).toISOString(),
 ];
 
 const seedData = {
@@ -85,6 +86,13 @@ const seedData = {
 				created_at: user_dates[3],
 				updated_at: user_dates[3],
 			},
+			{
+				name: 'X the bitch',
+				password: await bcrypt.hash('x', 11),
+				is_intra: false,
+				created_at: user_dates[4],
+				updated_at: user_dates[4],
+			},
 		];
 		return users;
 	},
@@ -99,7 +107,7 @@ const seedData = {
 			{
 				source_id: ids[0],
 				target_id: ids[2],
-				type: validRelationships.BLOCKED,
+				type: validRelationships.FRIEND,
 			},
 			{
 				source_id: ids[0],
@@ -115,6 +123,16 @@ const seedData = {
 				source_id: ids[1],
 				target_id: ids[3],
 				type: validRelationships.FRIEND,
+			},
+			{
+				source_id: ids[0],
+				target_id: ids[4],
+				type: validRelationships.BLOCKED,
+			},
+			{
+				source_id: ids[3],
+				target_id: ids[4],
+				type: validRelationships.BLOCKED,
 			},
 		];
 		return userRelations;
@@ -164,17 +182,6 @@ const seedData = {
 		return chats;
 	},
 
-	permissions: () => {
-		return [
-			{ name: 'blocked' }, //       0
-			{ name: 'edit_settings' }, // 1
-			{ name: 'left' }, //          2
-			{ name: 'manage_users' }, //  3
-			{ name: 'post' }, //          4
-			{ name: 'read' }, //          5
-		];
-	},
-
 	achievements: () => {
 		return [
 			{ name: 'logged in 10 times' },
@@ -192,67 +199,87 @@ const seedData = {
 		return userAchievements;
 	},
 
-	chatUserPermission: (
-		users: number[],
-		chats: number[],
-		permissions: number[],
-	) => {
+	chatUserPermission: (users: number[], chats: number[]) => {
 		const cups: CreateChatUserPermissionDto[] = [];
 
 		// Add flamink and renoster to their DM
-		[permissions[4], permissions[5]].forEach((p) => {
+		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
 			[users[1], users[2]].forEach((u) => {
 				cups.push({
 					chat_id: chats[1],
 					user_id: u,
-					permission_id: p,
+					permission: p,
 				});
 			});
 		});
 
 		// Add vaalboskat and renoster to their DM
-		[permissions[4], permissions[5]].forEach((p) => {
+		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
 			[users[3], users[2]].forEach((u) => {
 				cups.push({
 					chat_id: chats[2],
 					user_id: u,
-					permission_id: p,
+					permission: p,
 				});
 			});
 		});
 
 		// make renoster admin of Desert
-		[permissions[1], permissions[3], permissions[4]].forEach((p) => {
+		[
+			permissionsEnum.EDIT_SETTINGS,
+			permissionsEnum.MANAGE_USERS,
+			permissionsEnum.POST,
+		].forEach((p) => {
 			cups.push({
 				chat_id: chats[0],
 				user_id: users[2],
-				permission_id: p,
+				permission: p,
 			});
 		});
 
-		// add everybody with all permissions to 'Zoo'
-		[permissions[1], permissions[3], permissions[4], permissions[5]].forEach(
-			(p) => {
-				users.forEach((u) => {
-					cups.push({
-						chat_id: chats[3],
-						user_id: u,
-						permission_id: p,
-					});
+		// add almost everybody with all permissions to 'Zoo'
+		[
+			permissionsEnum.EDIT_SETTINGS,
+			permissionsEnum.MANAGE_USERS,
+			permissionsEnum.POST,
+			permissionsEnum.READ,
+		].forEach((p) => {
+			users.slice(0, -1).forEach((u) => {
+				cups.push({
+					chat_id: chats[3],
+					user_id: u,
+					permission: p,
 				});
-			},
-		);
+			});
+		});
 
-		// add everybody to 'Desert' with read permission
+		// add almost everybody to 'Desert' with read permission
 		users
+			.slice(0, -1)
 			.map(
 				(u) =>
 					({
 						chat_id: chats[0],
 						user_id: u,
-						permission_id: permissions[5],
+						permission: permissionsEnum.READ,
 					} as CreateChatUserPermissionDto),
 			)
+			.forEach((cup) => cups.push(cup));
+
+		// add bitch user blocked + left to every chat
+		chats
+			.map((c) => ({
+				chat_id: c,
+				user_id: users[4],
+				permission: permissionsEnum.BLOCKED,
+			}))
+			.forEach((cup) => cups.push(cup));
+		chats
+			.map((c) => ({
+				chat_id: c,
+				user_id: users[4],
+				permission: permissionsEnum.LEFT,
+			}))
 			.forEach((cup) => cups.push(cup));
 		return cups;
 	},

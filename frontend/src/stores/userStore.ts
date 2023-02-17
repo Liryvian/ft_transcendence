@@ -12,37 +12,42 @@ export const useUserStore = defineStore('users', {
 		errors: [],
 	}),
 
-	// getters == computed values
-	getters: {
-		getAllUsers: (state) => state.allUsers,
-		getMe: (state) => state.me,
-	},
-	// actions == methods
+  	// getters == computed values
+  	getters: {
+  	  getAllUsers: (state) => state.allUsers,
+  	  getMe: (state) => state.me
+  	},
+  	// actions == methods
 	actions: {
-		async login(loginForm: LoginForm) {
-			try {
-				await postRequest('login', loginForm);
-				await this.refreshData();
-				await router.push('/settings');
-			} catch (e) {
-				alert('Invalid user/password combination');
+
+		handleFormError(responseData: any) {
+			if (typeof responseData.message === 'string') {
+				this.errors = [responseData.message];
+			} else {
+				this.errors = responseData.message.map((msg: String) =>
+					msg.replace('(o) => o.', ''),
+				);
 			}
 		},
+
+    	async login(loginForm: LoginForm) {
+    	  try{
+    	    await postRequest("login", loginForm);
+    	    await this.refreshMe();
+    	    await router.push("/settings")
+    	  }
+		  catch (e) {
+			  this.handleFormError(e.response.data);
+    	  }
+	  },
 
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);
 				await this.refreshData();
 				await router.push('/login');
-			} catch (e: any) {
-				if (typeof e.response.data.message === 'string') {
-					this.errors = [e.response.data.message];
-				} else {
-					this.errors = e.response.data.message.map((msg: String) =>
-						msg.replace('(o) => o.', ''),
-					);
-				}
-				return [];
+			} catch (e) {
+				this.handleFormError(e.response.data)
 			}
 		},
 

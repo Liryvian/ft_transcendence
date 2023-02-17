@@ -2,10 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AllTestingModule } from '../../shared/test.module';
 import { UserService } from '../../users/user/user.service';
 import { ChatService } from '../chat/chat.service';
-import { PermissionService } from '../permissions/permission.service';
 import * as crypto from 'crypto';
 
-import { ChatUserPermission } from './entities/chat-user-permission.entity';
+import {
+	ChatUserPermission,
+	permissionsEnum,
+} from './entities/chat-user-permission.entity';
 import { ChatUserPermissionService } from './chat-user-permission.service';
 import { User } from '../../users/user/entities/user.entity';
 import { Chat } from '../chat/entities/chat.entity';
@@ -16,12 +18,10 @@ describe('Chat - User - Permission relationship', () => {
 	let service: ChatUserPermissionService;
 
 	let userService: UserService;
-	let permissionService: PermissionService;
 	let chatService: ChatService;
 
 	const chat_ids: number[] = [];
 	const user_ids: number[] = [];
-	const permission_ids: number[] = [];
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
@@ -32,7 +32,6 @@ describe('Chat - User - Permission relationship', () => {
 			ChatUserPermissionService,
 		);
 		userService = testingModule.get<UserService>(UserService);
-		permissionService = testingModule.get<PermissionService>(PermissionService);
 		chatService = testingModule.get<ChatService>(ChatService);
 
 		await userService
@@ -43,15 +42,6 @@ describe('Chat - User - Permission relationship', () => {
 			])
 			.then((users) => {
 				users.forEach((user) => user_ids.push(user.id));
-			});
-		await permissionService
-			.save([
-				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
-				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
-				{ name: crypto.pseudoRandomBytes(4).toString('hex') },
-			])
-			.then((permissions) => {
-				permissions.forEach((permission) => permission_ids.push(permission.id));
 			});
 		await chatService
 			.save([
@@ -65,7 +55,6 @@ describe('Chat - User - Permission relationship', () => {
 	});
 
 	afterAll(async () => {
-		await permissionService.remove(permission_ids);
 		await chatService.remove(chat_ids);
 		await userService.remove(user_ids);
 	});
@@ -78,13 +67,13 @@ describe('Chat - User - Permission relationship', () => {
 		const relation: ChatUserPermission = await service.save({
 			chat_id: chat_ids[0],
 			user_id: user_ids[0],
-			permission_id: permission_ids[0],
+			permission: permissionsEnum.READ,
 		});
 		expect(relation).toMatchObject({
 			id: expect.any(Number),
 			chat_id: chat_ids[0],
 			user_id: user_ids[0],
-			permission_id: permission_ids[0],
+			permission: permissionsEnum.READ,
 		});
 		await service.remove(relation.id);
 	});
@@ -95,12 +84,12 @@ describe('Chat - User - Permission relationship', () => {
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 			]),
 		).rejects.toThrow('UNIQUE');
@@ -111,12 +100,12 @@ describe('Chat - User - Permission relationship', () => {
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[1],
+				permission: permissionsEnum.POST,
 			},
 		]);
 		expect(relations).toHaveLength(2);
@@ -128,12 +117,12 @@ describe('Chat - User - Permission relationship', () => {
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 			{
 				chat_id: chat_ids[1],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 		]);
 		expect(relations).toHaveLength(2);
@@ -145,60 +134,65 @@ describe('Chat - User - Permission relationship', () => {
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[0],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 			{
 				chat_id: chat_ids[0],
 				user_id: user_ids[1],
-				permission_id: permission_ids[0],
+				permission: permissionsEnum.READ,
 			},
 		]);
 		expect(relations).toHaveLength(2);
 		await service.remove(relations.map((rel) => rel.id));
 	});
 
-	describe('Relations to user/chat entities', () => {
+	describe('Testing "get Users" and "get Chats" methods of user/chat entities', () => {
 		beforeAll(async () => {
 			await service.save([
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[0],
-					permission_id: permission_ids[1],
+					permission: permissionsEnum.POST,
 				},
 				{
 					chat_id: chat_ids[0],
 					user_id: user_ids[1],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[1],
 					user_id: user_ids[0],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[2],
 					user_id: user_ids[0],
-					permission_id: permission_ids[2],
+					permission: permissionsEnum.LEFT,
 				},
 				{
 					chat_id: chat_ids[2],
 					user_id: user_ids[1],
-					permission_id: permission_ids[2],
+					permission: permissionsEnum.READ,
 				},
 				{
 					chat_id: chat_ids[2],
 					user_id: user_ids[2],
-					permission_id: permission_ids[1],
+					permission: permissionsEnum.READ,
+				},
+				{
+					chat_id: chat_ids[2],
+					user_id: user_ids[2],
+					permission: permissionsEnum.POST,
 				},
 				{
 					chat_id: chat_ids[1],
 					user_id: user_ids[2],
-					permission_id: permission_ids[0],
+					permission: permissionsEnum.READ,
 				},
 			]);
 		});
@@ -221,22 +215,23 @@ describe('Chat - User - Permission relationship', () => {
 			});
 			// the result of the relationship
 			expect(userOne_chats.in_chats).toHaveLength(4);
+
 			// the result of the grouping on chat_id
 			expect(userOne_chats.chats).toHaveLength(3);
 
-			// will be refactored in other PR
-			// expect(userOne_chats.chats[0].id).toBe(chat_ids[0]);
-			// expect(userOne_chats.chats[0].permissions.map((perm) => perm.id)).toEqual(
-			// 	[permission_ids[0], permission_ids[1]],
-			// );
-			// expect(userOne_chats.chats[1].id).toBe(chat_ids[1]);
-			// expect(userOne_chats.chats[1].permissions.map((perm) => perm.id)).toEqual(
-			// 	[permission_ids[0]],
-			// );
-			// expect(userOne_chats.chats[2].id).toBe(chat_ids[2]);
-			// expect(userOne_chats.chats[2].permissions.map((perm) => perm.id)).toEqual(
-			// 	[permission_ids[2]],
-			// );
+			expect(userOne_chats.chats[0].id).toBe(chat_ids[0]);
+			expect(userOne_chats.chats[0].permissions).toEqual([
+				permissionsEnum.POST,
+				permissionsEnum.READ,
+			]);
+			expect(userOne_chats.chats[1].id).toBe(chat_ids[1]);
+			expect(userOne_chats.chats[1].permissions).toEqual([
+				permissionsEnum.READ,
+			]);
+			expect(userOne_chats.chats[2].id).toBe(chat_ids[2]);
+			expect(userOne_chats.chats[2].permissions).toEqual([
+				permissionsEnum.LEFT,
+			]);
 		});
 
 		it('should have user1 in chat1 with 2 permissions', async () => {
@@ -268,17 +263,16 @@ describe('Chat - User - Permission relationship', () => {
 				relations: { has_users: true },
 			});
 
-			expect(chat.has_users).toHaveLength(3);
+			expect(chat.has_users).toHaveLength(4);
 			expect(chat.users).toHaveLength(3);
 
-			// will be refactored in other PR
-			// expect(chat.users[0].id).toBe(user_ids[0]);
-			// expect(chat.users[1].id).toBe(user_ids[1]);
-			// expect(chat.users[2].id).toBe(user_ids[2]);
+			expect(chat.users[0].id).toBe(user_ids[0]);
+			expect(chat.users[1].id).toBe(user_ids[1]);
+			expect(chat.users[2].id).toBe(user_ids[2]);
 
-			// expect(chat.users[0].permissions).toHaveLength(1);
-			// expect(chat.users[1].permissions).toHaveLength(1);
-			// expect(chat.users[2].permissions).toHaveLength(1);
+			expect(chat.users[0].permissions).toHaveLength(1);
+			expect(chat.users[1].permissions).toHaveLength(1);
+			expect(chat.users[2].permissions).toHaveLength(2);
 		});
 	});
 });

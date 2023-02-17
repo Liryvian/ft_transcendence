@@ -8,7 +8,6 @@ import { ChatService } from '../chats/chat/chat.service';
 import { User } from '../users/user/entities/user.entity';
 import { UserRelationshipService } from '../users/user-relationship/user-relationship.service';
 import { MessageService } from '../chats/message/message.service';
-import { PermissionService } from '../chats/permissions/permission.service';
 import { ChatUserPermissionService } from '../chats/chat-user-permissions/chat-user-permission.service';
 import { AchievementsService } from '../users/achievements/achievements.service';
 import { UserAchievementsService } from '../users/user-achievements/user-achievements.service';
@@ -24,7 +23,6 @@ export class SeederService {
 		private readonly chatService: ChatService,
 		private readonly userRelService: UserRelationshipService,
 		private readonly messageService: MessageService,
-		private readonly permissionService: PermissionService,
 		private readonly chatUserPermissionService: ChatUserPermissionService,
 		private readonly achievementService: AchievementsService,
 		private readonly userAchievementsService: UserAchievementsService,
@@ -59,10 +57,6 @@ export class SeederService {
 		);
 	}
 
-	async seedPermissions() {
-		return await this.permissionService.trySeed(seedData.permissions());
-	}
-
 	async seedChatUserPermissions() {
 		const users: number[] = (
 			await this.userService.findAll({ order: { name: 'asc' } })
@@ -70,12 +64,9 @@ export class SeederService {
 		const chats: number[] = (
 			await this.chatService.findAll({ order: { name: 'asc' } })
 		).map((c) => c.id);
-		const permissions: number[] = (
-			await this.permissionService.findAll({ order: { name: 'asc' } })
-		).map((p) => p.id);
 
 		return this.chatUserPermissionService.trySeed(
-			seedData.chatUserPermission(users, chats, permissions),
+			seedData.chatUserPermission(users, chats),
 		);
 	}
 
@@ -118,14 +109,12 @@ export class SeederService {
 			await this.chatService.removeAll();
 			await this.userService.removeAll();
 
-			await this.permissionService.removeAll();
 			await this.achievementService.removeAll();
 
 			await this.seedUsers();
 			await this.seedGames();
 			await this.seedChats();
 			await this.seedUserRelationships();
-			await this.seedPermissions();
 			await this.seedChatUserPermissions();
 			await this.seedAchievements();
 			await this.seedUserAchievements();
