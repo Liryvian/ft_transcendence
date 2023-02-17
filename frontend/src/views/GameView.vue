@@ -28,7 +28,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { Position }  from "@/types/Game"
+import type  { Position, Ball, Paddle }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
 
 interface DataObject {
@@ -91,10 +91,10 @@ export default defineComponent({
 			},
 			
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
-		drawBall(position: Position) {
-			const startingX: number = this.widthPercentage(position.x);
-			const startingY: number = this.heightPercentage(position.y)
-			const radius: number = 12;
+		drawBall(ball: Ball) {
+			const startingX: number = this.widthPercentage(ball.position.x);
+			const startingY: number = this.heightPercentage(ball.position.y)
+			const radius: number = this.widthPercentage(ball.radius);
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
 
@@ -111,14 +111,14 @@ export default defineComponent({
 			},
 				
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
-		drawPaddle(position: Position) {
+		drawPaddle(paddle: Paddle) {
 			const lineWidth: number = this.widthPercentage(1);
 			const lineHeight: number = this.heightPercentage(12);
-			const y: number = this.heightPercentage(position.y) - (lineHeight / 2); // middle of the canvas
+			const y: number = this.heightPercentage(paddle.position.y) - (lineHeight / 2); // middle of the canvas
 
 			// Player 1
 			let x = 0
-			if (position.x === 100) {
+			if (paddle.position.x === 100) {
 				// Player 2
 				x = this.width - lineWidth;
 			}
@@ -135,10 +135,10 @@ export default defineComponent({
 				console.log('\nReceiving from backend: \n', JSON.stringify(data))
 			});
 		
-			this.socket.on("barPosition", (data: Position) => {
+			this.socket.on("barPosition", (data: Paddle) => {
 				this.drawPaddle(data);
 			})
-			this.socket.on("ballPosition", (data: Position) => {
+			this.socket.on("ballPosition", (data: Ball) => {
 				this.drawBall(data);
 			})
 			this.drawMiddleLine();

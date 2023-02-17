@@ -6,7 +6,7 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Position } from './Game.types';
+import { Ball, Paddle } from './Game.types';
 
 @WebSocketGateway({
 	namespace: '/pong',
@@ -18,19 +18,30 @@ export class PongGateway implements OnGatewayConnection {
 	@WebSocketServer()
 	server: Server;
 
-	playerOnePaddle: Position = {
-		x: 0,
-		y: 50,
+	playerOnePaddle: Paddle = {
+		position: {
+			x: 0,
+			y: 50,
+		},
+		width: 1,
+		height: 12,
 	};
 
-	playerTwoPaddle: Position = {
-		x: 100,
-		y: 50,
+	playerTwoPaddle: Paddle = {
+		position: {
+			x: 100,
+			y: 50,
+		},
+		width: 1,
+		height: 12,
 	};
 
-	ball: Position = {
-		x: 40,
-		y: 65,
+	ball: Ball = {
+		position: {
+			x: 40,
+			y: 65,
+		},
+		radius: 1,
 	};
 
 	async handleConnection(socket: Socket) {
@@ -47,11 +58,11 @@ export class PongGateway implements OnGatewayConnection {
 	}
 
 	@SubscribeMessage('barPosition')
-	sendPaddlePosition(@MessageBody() position: Position) {
-		this.server.emit('barPosition', position);
+	sendPaddlePosition(@MessageBody() paddle: Paddle) {
+		this.server.emit('barPosition', paddle);
 	}
 	@SubscribeMessage('ballPosition')
-	sendBallPosition(@MessageBody() position: Position) {
-		this.server.emit('ballPosition', position);
+	sendBallPosition(@MessageBody() ball: Ball) {
+		this.server.emit('ballPosition', ball);
 	}
 }
