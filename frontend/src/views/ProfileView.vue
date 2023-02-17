@@ -13,7 +13,6 @@
 <style scoped></style>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
@@ -38,13 +37,15 @@ export default defineComponent({
 	},
 	async created() {
 		await useUserStore().refreshAllUsers();
-		const filteredUsers = useUserStore().allUsers.find((user: User) => Number(user.id) === Number(this.profile_id));
+		const filteredUsers = useUserStore().allUsers.find(
+			(user: User) => Number(user.id) === Number(this.profile_id),
+		);
 
 		if (filteredUsers === undefined) {
-			this.$router.push('/profiles')
+			this.$router.push('/profiles');
 		} else {
-			this.user = filteredUsers
-			console.log("avatar", this.user.avatar);
+			this.user = filteredUsers;
+			console.log('avatar', this.user.avatar);
 			this.dataArray = [
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },

@@ -2,7 +2,12 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm, UpdateProfileForm } from '../types/User';
+import type {
+	User,
+	LoginForm,
+	RegisterForm,
+	UpdateProfileForm,
+} from '../types/User';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -19,7 +24,6 @@ export const useUserStore = defineStore('users', {
 	},
 	// actions == methods
 	actions: {
-
 		handleFormError(responseData: any) {
 			if (typeof responseData.message === 'string') {
 				this.errors = [responseData.message];
@@ -30,16 +34,15 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-    	async login(loginForm: LoginForm) {
-    	  try{
-    	    await postRequest("login", loginForm);
-    	    await this.refreshMe();
-    	    await router.push("/settings")
-    	  }
-		  catch (e) {
-			  this.handleFormError(e.response.data);
-    	  }
-	  },
+		async login(loginForm: LoginForm) {
+			try {
+				await postRequest('login', loginForm);
+				await this.refreshMe();
+				await router.push('/settings');
+			} catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
 
 		async register(registerForm: RegisterForm) {
 			try {
@@ -47,7 +50,7 @@ export const useUserStore = defineStore('users', {
 				await this.refreshData();
 				await router.push('/login');
 			} catch (e) {
-				this.handleFormError(e.response.data)
+				this.handleFormError(e.response.data);
 			}
 		},
 
