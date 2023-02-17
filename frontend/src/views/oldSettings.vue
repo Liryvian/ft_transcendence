@@ -2,41 +2,43 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>SETTINGS</h1>
-			<ProfileSettingAvatar :profile_picture="me.avatar" />
+			<ProfileSettingAvatar :profile_picture="this.user.avatar" />
 			<div class="c_block c_form_group tac">
 				<ChangeAvatar />
 			</div>
 			<form
-				method="Post"
+				method="post"
 				action=""
 				class="c_block c_form_group"
 				@submit.prevent="
-					updateProfile(me.id, updateProfileForm)
+					userStore.updateProfile(user.id, updateProfileForm)
 				"
 			>
 				<InputField
-					v-if="me.is_intra"
+					v-if="this.user.intra_login"
 					label="intra name"
-					v-model="me.intra_login"
+					v-model="this.user.intra_login"
 					is_disabled="true"
 				/>
 				<InputField
 					label="display_name"
-					:modelValue="me.name"
+					value="this.user.name"
 					v-model="updateProfileForm.name"
 				/>
 				<InputField
-					v-if="!me.is_intra"
+					v-if="!this.user.intra_login"
 					label="new password"
+					type="password"
 					v-model="updateProfileForm.new_password"
 				/>
 				<InputField
-					v-if="!me.is_intra"
+					v-if="!this.user.intra_login"
 					label="new password confirm"
+					type="password"
 					v-model="updateProfileForm.new_password_confirm"
 				/>
 				<InputField
-					v-if="!me.is_intra"
+					v-if="!this.user.intra_login"
 					label="current password"
 					v-model="updateProfileForm.password"
 				/>
@@ -46,8 +48,8 @@
 				<div class="page_button pb_bottom">
 					<input type="submit" value="save" />
 				</div>
-				<div v-if="errors.length">
-					<p v-for="error in errors" class="c_form--error">
+				<div v-if="userStore.errors.length">
+					<p v-for="error in userStore.errors" class="c_form--error">
 						!! {{ error }}
 					</p>
 				</div>
@@ -60,11 +62,11 @@
 import InputField from '@/components/input-fields/InputField.vue';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
-import type { UpdateProfileForm } from '@/types/User';
+import type { RegisterForm, UpdateProfileForm } from '@/types/User';
+import { User } from '@/types/User';
 import ProfileList from '@/views/ProfilesView.vue';
 import ProfileSettingAvatar from '@/components/user-info/ProfileSettingAvatar.vue';
 import ChangeAvatar from '@/components/input-fields/ChangeAvatar.vue';
-import { storeToRefs } from 'pinia'
 
 export default defineComponent({
 	name: 'RegisterView',
@@ -74,34 +76,35 @@ export default defineComponent({
 		ProfileList,
 		InputField,
 	},
+	data() {
+		return {
+			user: {} as User,
+		};
+	},
 
 	async created() {
-		await useUserStore().refreshMe();
+		await useUserStore().refreshAllUsers();
+		const filteredUsers = useUserStore().me;
+		if (filteredUsers === undefined) {
+			this.$router.push('/profiles');
+		} else {
+			this.user = filteredUsers;
+		}
 	},
 
 	setup() {
 		const userStore = useUserStore();
-		useUserStore().refreshMe();
-		const { me, errors,} = storeToRefs(userStore);
-		const { updateProfile, refreshData } = userStore;
-		let updateProfileForm: UpdateProfileForm = reactive({
-			name: me.value.name,
+		const filteredUsers = useUserStore().me;
+		console.log(filteredUsers.name);
+		const updateProfileForm: UpdateProfileForm = reactive({
+			name: filteredUsers.name,
 			new_password: '',
 			new_password_confirm: '',
 			password: '',
 		});
-		// if (me === undefined) {
-			// this.$router.push('/profiles');
-		// }
-		console.log(me.value.name)
-
 		return {
-			me,
-			errors,
-			updateProfile,
-			updateProfileForm,
 			userStore,
-			// refreshMe,
+			updateProfileForm,
 		};
 	},
 });
@@ -111,6 +114,3 @@ export default defineComponent({
 }
 
 <style scoped></style>
-
-
-

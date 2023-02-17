@@ -14,8 +14,8 @@ export const useUserStore = defineStore('users', {
 
 	// getters == computed values
 	getters: {
-		getAllUsers: (state) => state.allUsers,
-		getMe: (state) => state.me,
+		// getAllUsers: (state) => state.allUsers,
+		// getMe: (state) => state.me,
 	},
 	// actions == methods
 	actions: {

@@ -99,9 +99,14 @@ export class UserController {
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
+			const hashed = await bcrypt.hash(updateUserDto.new_password, 11);
 			const updateResult: UpdateResult = await this.userService.update(
 				id,
-				updateUserDto,
+				{
+					password: hashed,
+					name: updateUserDto.name,
+				},
+				// updateUserDto,
 			);
 			return updateResult;
 		} catch (e) {
