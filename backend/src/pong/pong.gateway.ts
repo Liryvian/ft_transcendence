@@ -29,6 +29,7 @@ export class PongGateway implements OnGatewayConnection {
 	async handleConnection() {
 		console.log('\n!Socket is connected!\n');
 		this.gameState = this.pongService.createNewGameState();
+		console.log(this.gameState);
 		this.sendHallo('Hallo frontend!!!');
 	}
 
@@ -48,7 +49,7 @@ export class PongGateway implements OnGatewayConnection {
 			this.gameState.playerOnePaddle,
 			this.gameState.playerTwoPaddle
 			);
-		this.pongService.moveBall(this.gameState.ball);
+		this.pongService.moveBall(this.gameState);
 		this.sendPositionOfElements(this.gameState);
 	}
 }

@@ -19,6 +19,7 @@ export interface GameState {
 	playerOnePaddle: Paddle;
 	playerTwoPaddle: Paddle;
 	ball: Ball;
+	canvas: Position;
 }
 
 export interface MovementKeys {

@@ -28,7 +28,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { ElementPositions, Ball, Paddle }  from "@/types/Game"
+import type  { ElementPositions, Ball, Paddle, Position }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
 import { onBeforeRouteLeave } from 'vue-router';
 
@@ -58,6 +58,7 @@ export default defineComponent({
 	beforeRouteLeave(to, from, next) {
 		this.done = true;
 		this.socket.off("updatePosition", this.render);
+		console.log("Game disconnected")
 		next();
 	},
 	
