@@ -55,7 +55,7 @@ export default defineComponent({
 		PlayerNames
 	},
 
-	beforeRouteLeave(next) {
+	beforeRouteLeave(to, from, next) {
 		this.done = true;
 		this.socket.off("updatePosition", this.render);
 		console.log("Game disconnected")
