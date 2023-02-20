@@ -11,6 +11,8 @@ import { User } from '../src/users/user/entities/user.entity';
 import { UserController } from '../src/users/user/user.controller';
 import { UserService } from '../src/users/user/user.service';
 import { AllTestingModule } from '../src/shared/test.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('Auth (e2e)', () => {
 	let app: INestApplication;
@@ -19,7 +21,7 @@ describe('Auth (e2e)', () => {
 	let jwtService: JwtService;
 	let configService: ConfigService;
 
-	let users = [
+	const users = [
 		{ name: 'u1', password: 'p1', id: -1 },
 		{ name: 'u2', password: 'p2', id: -1 },
 		{ name: 'u3', password: 'p3', id: -1 },
@@ -28,6 +30,7 @@ describe('Auth (e2e)', () => {
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
+			providers: [{ provide: APP_GUARD, useClass: AuthGuard }],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();

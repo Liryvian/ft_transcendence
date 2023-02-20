@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { AuthGuard } from '../../auth/auth.guard';
 import { AchievementsService } from './achievements.service';
 import { CreateAchievementDto } from './dto/create-achievement.dto';
@@ -13,10 +13,10 @@ export class AchievementsController {
 		return this.achievementsService.insert(createAchievementDto);
 	}
 
-	// @Get()
-	// findAll() {
-	// 	return this.achievementsService.findAll();
-	// }
+	@Get()
+	findAll() {
+		return this.achievementsService.findAll();
+	}
 
 	// @Get(':id')
 	// findOne(@Param('id') id: number) {

@@ -2,8 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AllTestingModule } from '../src/shared/test.module';
-import { AchievementsController } from '../src/users/achievements/achievements.controller';
-import { AchievementsService } from '../src/users/achievements/achievements.service';
 import { AchievementsModule } from '../src/users/achievements/achievements.module';
 
 describe('AppController (e2e)', () => {
