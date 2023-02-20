@@ -89,9 +89,6 @@ export const useUserStore = defineStore('users', {
 			try {
 				const { data } = await getRequest('users');
 				this.allUsers = data;
-					// .filter(
-					// (user: User) => user.id !== this.me.id,
-				// );
 			} catch (e) {
 				console.error(e);
 				return [];
