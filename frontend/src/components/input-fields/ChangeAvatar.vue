@@ -18,6 +18,7 @@ export default defineComponent({
 </script >
 
 <style scoped>
+
 .button {
 	margin-left: auto;
 	margin-right: auto;
