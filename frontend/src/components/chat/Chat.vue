@@ -8,7 +8,7 @@
 		<ChatHeader :chat="info"  />
 		<div class="c_messagelist">
 			<Message
-				v-for="message in messages"
+				v-for="message in activeChatMessages"
 				:message="message"
 				:key="message.id"
 			/>
@@ -29,7 +29,8 @@ import { defineComponent, type PropType } from 'vue';
 
 import Message from './Message.vue';
 import ChatHeader from './ChatHeader.vue';
-import type { SingleMessage, Chat_List_Item } from "@/types/Chat";
+import { useMessageStore } from '@/stores/messageStore';
+import type { Chat_List_Item } from "@/types/Chat";
 
 export default defineComponent({
 	name: 'Chat',
@@ -45,27 +46,15 @@ export default defineComponent({
 		},
 	},
 	setup() {
-	},
-	data() {
+		const messageStore = useMessageStore();
+
 		return {
-			messages: [
-				{
-					id: 0,
-					created_at: new Date('02/17/2023 10:09'),
-					sender: {
-						name: 'Hans'
-					},
-					content: "First message"
-				},
-				{
-					id: 1,
-					sender: {
-						name: 'Freek'
-					},
-					created_at: new Date('02/17/2023 10:12'),
-					content: "second message"
-				},
-			] as SingleMessage[]
+			messageStore
+		}
+	},
+	computed: {
+		activeChatMessages() {
+			return this.messageStore.getActiveChatMessages(this.info.id);
 		}
 	}
 });

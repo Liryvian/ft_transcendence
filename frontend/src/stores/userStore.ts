@@ -33,6 +33,10 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
+		getUserById(id: number) {
+			return this.allUsers.find((user) => user.id === id);
+		},
+
 		async login(loginForm: LoginForm) {
 			try {
 				await postRequest('login', loginForm);

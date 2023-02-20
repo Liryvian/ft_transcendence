@@ -34,8 +34,11 @@ export class Message {
 	user_id: number;
 
 	@ManyToOne(() => Chat, (chat) => chat.id)
-	@JoinColumn({ name: 'chat_id' })
-	chat_id: Chat;
+	@JoinColumn({ name: 'chat' })
+	chat: Chat;
+
+	@RelationId((message: Message) => message.chat)
+	chat_id: number;
 
 	@Column({ nullable: false })
 	content: string;

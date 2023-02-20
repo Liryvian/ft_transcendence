@@ -63,7 +63,7 @@ export class ChatController {
 	@Get(':id/messages')
 	async chatMessages(@Param('id') id: number) {
 		return await this.messageService.findAll({
-			where: { chat_id: { id } },
+			where: { chat: { id } },
 		});
 	}
 

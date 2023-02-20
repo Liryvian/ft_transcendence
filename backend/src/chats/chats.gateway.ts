@@ -12,9 +12,9 @@ import { SocketService } from '../socket/socket.service';
 
 type UpdateType = 'new' | 'update' | 'delete';
 
-interface ListUpdate {
+interface UpdateMessage<T> {
 	action: UpdateType;
-	data: any;
+	data: T | any;
 }
 
 @WebSocketGateway({

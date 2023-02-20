@@ -22,7 +22,7 @@ export class MessageController {
 	@Get()
 	findAll() {
 		return this.messageService.findAll({
-			relations: { chat_id: true, sender_id: true },
+			relations: { chat: true, sender_id: true },
 		});
 	}
 
@@ -30,7 +30,7 @@ export class MessageController {
 	findOne(@Param('id') id: number) {
 		return this.messageService.findOne({
 			where: { id },
-			relations: { chat_id: true, sender_id: true },
+			relations: { chat: true, sender_id: true },
 		});
 	}
 

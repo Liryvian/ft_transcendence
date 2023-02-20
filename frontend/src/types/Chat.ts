@@ -17,13 +17,15 @@ export interface UserChatPermissions {
 export interface SingleMessage {
 	id: number;
 
-	sender: User;
-	chat: Chat;
+	sender?: User;
+	chat?: Chat;
 
+	user_id: number;
+	chat_id: number;
 	content: string;
 
 	created_at: Date;
-	updated_at: Date;
+	updated_at?: Date;
 }
 
 export interface Chat {
@@ -57,4 +59,11 @@ export interface Chat_List {
 	name: string;
 	type: Chat_Type;
 	items: Chat_List_Item[];
+}
+
+export type UpdateType = 'new' | 'update' | 'delete';
+
+export interface UpdateMessage<T> {
+	action: UpdateType;
+	data: T;
 }
