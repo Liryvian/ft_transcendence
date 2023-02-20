@@ -8,6 +8,14 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { SocketService } from '../socket/socket.service';
+
+type UpdateType = 'new' | 'update' | 'delete';
+
+interface ListUpdate {
+	action: UpdateType;
+	data: any;
+}
 
 @WebSocketGateway({
 	namespace: '/chats',
@@ -18,15 +26,18 @@ import { Server, Socket } from 'socket.io';
 export class ChatsGateway
 	implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+	constructor(private socketService: SocketService) {}
+
 	@WebSocketServer()
 	server: Server;
 
 	afterInit(server: Server) {
 		console.log('after init for server');
-		// this.socketService.chatServer = server;
+		this.socketService.chatServer = server;
 	}
 
 	handleDisconnect(socket: Socket) {
+		console.log('socket disconnect: ', socket);
 		// socket.leave('chatlist');
 	}
 
@@ -35,8 +46,8 @@ export class ChatsGateway
 		this.sendHallo('Hallo frontend!!!');
 	}
 
-	@SubscribeMessage('hallo')
+	@SubscribeMessage('listUpdate')
 	sendHallo(@MessageBody() data: any) {
-		this.server.emit('hallo', data);
+		this.server.emit('listUpdate', data);
 	}
 }

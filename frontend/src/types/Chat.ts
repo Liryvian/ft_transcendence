@@ -50,7 +50,7 @@ export interface Chat_List_Item {
 	id: number;
 	name: string;
 	type: Chat_Type;
-	members: Chat_Member[];
+	users: Chat_Member[];
 }
 
 export interface Chat_List {

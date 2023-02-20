@@ -20,6 +20,7 @@ import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-use
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MeModule } from './me/me.module';
 import { ChatsModule } from './chats/chats.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
 	imports: [
@@ -46,6 +47,7 @@ import { ChatsModule } from './chats/chats.module';
 		UserAchievementsModule,
 		MeModule,
 		ChatsModule,
+		SocketModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

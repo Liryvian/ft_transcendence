@@ -9,19 +9,23 @@ export const useUserStore = defineStore('users', {
 	state: () => ({
 		allUsers: [] as User[],
 		me: {} as User,
-		errors: [],
+		errors: [] as String[],
 	}),
 
-  	// getters == computed values
-  	getters: {
-  	  getAllUsers: (state) => state.allUsers,
-  	  getMe: (state) => state.me
-  	},
-  	// actions == methods
+	// getters == computed values
+	getters: {
+		getAllUsers: (state) => state.allUsers,
+		getMe: (state) => state.me,
+	},
+	// actions == methods
 	actions: {
+		// this should be moved out of the userStore
+		// it is not userStore functionality
+		// and it should be typed with something other than any..
 		handleFormError(responseData: any) {
 			if (typeof responseData.message === 'string') {
-				this.errors = [responseData.message];
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
 			} else {
 				this.errors = responseData.message.map((msg: String) =>
 					msg.replace('(o) => o.', ''),
@@ -29,16 +33,15 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-    	async login(loginForm: LoginForm) {
-    	  try{
-    	    await postRequest("login", loginForm);
-    	    await this.refreshMe();
-    	    await router.push("/settings")
-    	  }
-		  catch (e) {
-			  this.handleFormError(e.response.data);
-    	  }
-	  },
+		async login(loginForm: LoginForm) {
+			try {
+				await postRequest('login', loginForm);
+				await this.refreshMe();
+				await router.push('/settings');
+			} catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
 
 		async register(registerForm: RegisterForm) {
 			try {
@@ -46,7 +49,7 @@ export const useUserStore = defineStore('users', {
 				await this.refreshData();
 				await router.push('/login');
 			} catch (e) {
-				this.handleFormError(e.response.data)
+				this.handleFormError(e.response.data);
 			}
 		},
 
