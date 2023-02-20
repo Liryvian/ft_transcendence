@@ -31,7 +31,7 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 		const { refreshData, isBlocked, getCurrentRel } = userStore;
-		const {me , allUsers} = storeToRefs(userStore)
+		const { me, allUsers } = storeToRefs(userStore);
 		onMounted(async () => {
 			await refreshData();
 		});
