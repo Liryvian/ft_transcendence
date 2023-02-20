@@ -24,7 +24,6 @@ export default defineComponent({
 	border: solid 2px black;
 	border-radius: 50%;
 	overflow: hidden;
-	margin-top: 1em;
 }
 
 img {

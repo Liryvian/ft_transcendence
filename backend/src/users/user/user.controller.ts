@@ -99,16 +99,20 @@ export class UserController {
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
-			const hashed = await bcrypt.hash(updateUserDto.new_password, 11);
-			const updateResult: UpdateResult = await this.userService.update(
-				id,
-				{
+			if (updateUserDto.hasOwnProperty('password')) {
+				const hashed = await bcrypt.hash(updateUserDto.new_password, 11);
+				const updateResult: UpdateResult = await this.userService.update(id, {
 					password: hashed,
 					name: updateUserDto.name,
-				},
-				// updateUserDto,
-			);
-			return updateResult;
+				});
+				return updateResult;
+			}
+			if (updateUserDto.hasOwnProperty('name')) {
+				const updateResult: UpdateResult = await this.userService.update(id, {
+					name: updateUserDto.name,
+				});
+				return updateResult;
+			}
 		} catch (e) {
 			if (e instanceof QueryFailedError) {
 				throw new BadRequestException('Please pick a different username');
