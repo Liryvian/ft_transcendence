@@ -21,7 +21,7 @@
 				<InputField
 					label="display_name"
 					:modelValue="me.name"
-					v-model="updateProfileForm.name"
+					@update:modelValue="updateProfileForm.name = $event"
 				/>
 				<InputField
 					v-if="!me.is_intra"
@@ -65,7 +65,7 @@ import ChangeAvatar from '@/components/input-fields/ChangeAvatar.vue';
 import { storeToRefs } from 'pinia';
 
 export default defineComponent({
-	name: 'RegisterView',
+	name: 'SettingsView',
 	components: {
 		ChangeAvatar,
 		ProfileSettingAvatar,
@@ -88,11 +88,6 @@ export default defineComponent({
 			new_password_confirm: '',
 			password: '',
 		});
-		// if (me === undefined) {
-		// this.$router.push('/profiles');
-		// }
-		console.log(me.value.name);
-
 		return {
 			me,
 			errors,

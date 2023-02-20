@@ -99,6 +99,9 @@ export class UserController {
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
+			// if (!(await bcrypt.compare(updateUserDto.password, this.password))){
+			// 	throw new BadRequestException('Invalid current password combination');
+			// }
 			if (updateUserDto.hasOwnProperty('password')) {
 				const hashed = await bcrypt.hash(updateUserDto.new_password, 11);
 				const updateResult: UpdateResult = await this.userService.update(id, {

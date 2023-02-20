@@ -26,7 +26,8 @@ export const useUserStore = defineStore('users', {
 	actions: {
 		handleFormError(responseData: any) {
 			if (typeof responseData.message === 'string') {
-				this.errors = [responseData.message];
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
 			} else {
 				this.errors = responseData.message.map((msg: String) =>
 					msg.replace('(o) => o.', ''),
@@ -63,9 +64,11 @@ export const useUserStore = defineStore('users', {
 				}
 				await patchRequest(`users/${id}`, updateProfileForm);
 				await this.refreshData();
-				await router.push('/settings');
+				this.errors.length = 0;
+				await router.push('/profile/${id}');
 			} catch (e: any) {
 				if (typeof e.response.data.message === 'string') {
+					this.errors.length = 0;
 					this.errors = [e.response.data.message];
 				} else {
 					this.errors = e.response.data.message.map((msg: String) =>

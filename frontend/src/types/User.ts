@@ -42,6 +42,7 @@ export interface User {
 
 	is_intra: boolean;
 	intra_id: number;
+	intra_login: string;
 	avatar: string;
 
 	matchmaking_request: GameRequest[];
