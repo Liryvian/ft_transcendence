@@ -69,7 +69,7 @@ describe('UserAchievementsController', () => {
 
 	describe('user-achievements', () => {
 		it('should create an array of achievements in user', async () => {
-			await controller.create({
+			await service.save({
 				user_id: allUsers[0].id,
 				achievement_id: allAchievements[0].id,
 			});
