@@ -5,9 +5,8 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Ball, GameState, MovementKeys, Paddle } from './Game.types';
-import { GameService } from './game/game.service';
+import { Server } from 'socket.io';
+import { GameState, MovementKeys } from './Game.types';
 import { PongService } from './pong.service';
 
 @WebSocketGateway({
@@ -17,10 +16,7 @@ import { PongService } from './pong.service';
 	},
 })
 export class PongGateway implements OnGatewayConnection {
-	constructor(
-		private readonly gameService: GameService,
-		private readonly pongService: PongService
-		){}
+	constructor(private readonly pongService: PongService) {}
 	@WebSocketServer()
 	server: Server;
 
@@ -47,8 +43,8 @@ export class PongGateway implements OnGatewayConnection {
 		this.pongService.movePaddles(
 			keyPress,
 			this.gameState.playerOnePaddle,
-			this.gameState.playerTwoPaddle
-			);
+			this.gameState.playerTwoPaddle,
+		);
 		this.pongService.moveBall(this.gameState);
 		this.sendPositionOfElements(this.gameState);
 	}

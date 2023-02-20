@@ -47,14 +47,14 @@ export class PongService {
 		return newGameState;
 	}
 
-	hitsWall(radius: number, pos: number, direction: number): boolean {
+	doesHitWall(radius: number, pos: number, direction: number): boolean {
 		const fullHeigthOrWidth = 100;
 		return (
 			pos + direction > fullHeigthOrWidth - radius || pos + direction < radius
 		);
 	}
 
-	Option3collisionDetection(ball: Ball, rect: Paddle, canvas: Position) {
+	doesHitPaddle(ball: Ball, rect: Paddle, canvas: Position) {
 		const paddleY = rect.position.y;
 		const paddleHeight = rect.height;
 		const paddleTop = paddleY - paddleHeight / 2;
@@ -66,7 +66,7 @@ export class PongService {
 		// and ball position is within the paddle top and bottom
 		// console.log(paddleWall);
 		if (
-			this.hitsWall(paddleWall, ball.position.x, this.dx) &&
+			this.doesHitWall(paddleWall, ball.position.x, this.dx) &&
 			ball.position.y > paddleTop &&
 			ball.position.y < paddleBottom
 		) {
@@ -85,9 +85,8 @@ export class PongService {
 		const paddleP1: Paddle = gameState.playerOnePaddle;
 		const paddleP2: Paddle = gameState.playerTwoPaddle;
 
-		if (
-			this.Option3collisionDetection(gameState.ball, paddleP1, gameState.canvas)
-		) {
+		//  check collision for paddle one
+		if (this.doesHitPaddle(gameState.ball, paddleP1, gameState.canvas)) {
 			console.log('Collision Paddle one');
 			const paddleCenter = paddleP1.position.y + paddleP1.height / 2;
 			const d = paddleCenter - ballPos.y;
@@ -95,23 +94,23 @@ export class PongService {
 			this.dx = -(this.dx - 0.02);
 			// change bounce angle
 			this.dy -= d * -0.01;
-		} else if (
-			this.Option3collisionDetection(gameState.ball, paddleP2, gameState.canvas)
-		) {
+			// check collision for paddle two
+			// DRY I know but
+		} else if (this.doesHitPaddle(gameState.ball, paddleP2, gameState.canvas)) {
 			console.log('Collision Paddle two');
-			const paddleCenter = paddleP1.position.y + paddleP1.height / 2;
+			const paddleCenter = paddleP2.position.y + paddleP2.height / 2;
 			const d = paddleCenter - ballPos.y;
 			// speed up ball
 			this.dx = -(this.dx + 0.02);
 			//  change bounce angle
 			this.dy += d * -0.01;
-		} else if (this.hitsWall(radius, ballPos.x, this.dx)) {
+		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
 			console.log('Wall hit');
 			this.dx = -this.dx;
 		}
 
 		// checks wall hit top or bottom
-		if (this.hitsWall(radius, ballPos.y, this.dy)) {
+		if (this.doesHitWall(radius, ballPos.y, this.dy)) {
 			this.dy = -this.dy;
 		}
 		ballPos.x += this.dx;

@@ -28,9 +28,8 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { ElementPositions, Ball, Paddle, Position }  from "@/types/Game"
+import type  { ElementPositions, Ball, Paddle }  from "@/types/Game"
 import { io, Socket } from 'socket.io-client';
-import { onBeforeRouteLeave } from 'vue-router';
 
 interface MovementKeys {
 	ArrowUp: boolean;
@@ -185,12 +184,15 @@ export default defineComponent({
       		}
 		},
 
+		// MAIN GAME LOOP
 		getUpdatedPositions(timeStamp: DOMHighResTimeStamp) {
 			if (this.previousTimeStamp === 0) {
 				this.previousTimeStamp = timeStamp;
 			}
 			const elapsedTime = timeStamp - this.previousTimeStamp;
-			if (elapsedTime > 10) {
+			const intervalMs = 10;
+			// redraws after intervalMs
+			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
 				this.socket!.emit("updatePositions", this.isPressed)
 			}
@@ -214,15 +216,9 @@ export default defineComponent({
 		document.addEventListener("keyup", this.keyUp);
 		
 		this.socket.on("elementPositions", this.render);
+		// MAIN GAME LOOP
 		this.startGameLoop()
 	},
-	
-	onBeforeUnmount() {
-		console.log("\n\n!!!UNMOUNT BISHES\n\n")
-		this.socket.off("updatePosition", this.render);
-		this.done = true
-	},
-
 })
 </script> 
 
