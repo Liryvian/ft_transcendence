@@ -41,6 +41,7 @@ export default defineComponent({
 			(user: User) => Number(user.id) === Number(this.profile_id),
 		);
 		if (filteredUsers === undefined) {
+			// console.log("fusers" ,filteredUsers);
 			this.$router.push('/profiles');
 		} else {
 			this.user = filteredUsers;

@@ -65,7 +65,7 @@ export const useUserStore = defineStore('users', {
 				await patchRequest(`users/${id}`, updateProfileForm);
 				await this.refreshData();
 				this.errors.length = 0;
-				await router.push(`/profile/${id}`);
+				await router.push({name: 'profile', params: {profile_id: id}});
 			} catch (e: any) {
 				if (typeof e.response.data.message === 'string') {
 					this.errors.length = 0;
@@ -95,9 +95,10 @@ export const useUserStore = defineStore('users', {
 		async refreshAllUsers() {
 			try {
 				const { data } = await getRequest('users');
-				this.allUsers = data.filter(
-					(user: User) => user.id !== this.me.id,
-				);
+				this.allUsers = data;
+					// .filter(
+					// (user: User) => user.id !== this.me.id,
+				// );
 			} catch (e) {
 				console.error(e);
 				return [];
