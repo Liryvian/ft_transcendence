@@ -15,7 +15,7 @@ const ballRadius = 1;
 @WebSocketGateway({
 	namespace: '/pong',
 	cors: {
-		origin: '*:*',
+		origin: '*',
 	},
 })
 export class PongGateway implements OnGatewayConnection {
