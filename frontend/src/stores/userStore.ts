@@ -67,14 +67,7 @@ export const useUserStore = defineStore('users', {
 				this.errors.length = 0;
 				await router.push({name: 'profile', params: {profile_id: id}});
 			} catch (e: any) {
-				if (typeof e.response.data.message === 'string') {
-					this.errors.length = 0;
-					this.errors = [e.response.data.message];
-				} else {
-					this.errors = e.response.data.message.map((msg: String) =>
-						msg.replace('(o) => o.', ''),
-					);
-				}
+				this.handleFormError(e);
 				return [];
 			}
 		},
