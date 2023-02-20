@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, SetMetadata } from '@nestjs/common';
 import {
 	DeepPartial,
 	DeleteResult,
@@ -8,10 +8,6 @@ import {
 	Repository,
 	UpdateResult,
 } from 'typeorm';
-
-class hasId {
-	id: number;
-}
 
 @Injectable()
 export abstract class AbstractService<T> {
