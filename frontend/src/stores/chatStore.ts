@@ -6,7 +6,7 @@ import { useUserStore } from './userStore';
 export const useChatStore = defineStore('chats', {
 	//  actions == data definitions
 	state: () => ({
-		allChats: <Chat_List_Item[]>[],
+		allChats: [] as Chat_List_Item[],
 	}),
 	// getters == computed values
 	getters: {

@@ -17,10 +17,14 @@ import * as bcrypt from 'bcrypt';
 import { FindOptionsOrder } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
 import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
+import { MessageService } from '../message/message.service';
 
 @Controller('chats')
 export class ChatController {
-	constructor(private readonly chatService: ChatService) {}
+	constructor(
+		private readonly chatService: ChatService,
+		private readonly messageService: MessageService,
+	) {}
 
 	private readonly defaultRelationships = { has_users: true };
 	private readonly defaultOrder: FindOptionsOrder<Chat> = {
@@ -53,6 +57,13 @@ export class ChatController {
 		return this.chatService.findAll({
 			relations: chatRelationsDto,
 			order: this.defaultOrder,
+		});
+	}
+
+	@Get(':id/messages')
+	async chatMessages(@Param('id') id: number) {
+		return await this.messageService.findAll({
+			where: { chat_id: { id } },
 		});
 	}
 
