@@ -29,7 +29,6 @@ import Chat from '@/components/chat/Chat.vue';
 import ChatList from '@/components/chat/ChatList.vue';
 import type { Chat_List, Chat_List_Item, Chat_Member } from '@/types/Chat';
 import { useSocketStore } from '@/stores/socketStore';
-import { useUserStore } from '@/stores/userStore';
 import { useChatStore } from '@/stores/chatStore';
 
 export default defineComponent({
