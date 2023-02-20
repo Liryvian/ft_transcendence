@@ -40,7 +40,6 @@ export default defineComponent({
 		const filteredUsers = useUserStore().allUsers.find(
 			(user: User) => Number(user.id) === Number(this.profile_id),
 		);
-
 		if (filteredUsers === undefined) {
 			this.$router.push('/profiles');
 		} else {

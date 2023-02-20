@@ -14,7 +14,7 @@ export const useUserStore = defineStore('users', {
 	state: () => ({
 		allUsers: [] as User[],
 		me: {} as User,
-		errors: [],
+		errors: [] as String[],
 	}),
 
 	// getters == computed values
@@ -65,7 +65,7 @@ export const useUserStore = defineStore('users', {
 				await patchRequest(`users/${id}`, updateProfileForm);
 				await this.refreshData();
 				this.errors.length = 0;
-				await router.push('/profile/${id}');
+				await router.push(`/profile/${id}`);
 			} catch (e: any) {
 				if (typeof e.response.data.message === 'string') {
 					this.errors.length = 0;
