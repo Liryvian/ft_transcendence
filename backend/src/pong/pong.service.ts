@@ -59,8 +59,9 @@ export class PongService {
 		const paddleHeight = rect.height;
 		const paddleTop = paddleY - paddleHeight / 2;
 		const paddleBottom = paddleY + paddleHeight / 2;
-		const magicOffset = 0.2;
-		const paddleWall = ball.radius - magicOffset + this.paddleWidth / 2;
+		const ballLineThicknessOffset = 0.2;
+		const paddleWall =
+			ball.radius - ballLineThicknessOffset + this.paddleWidth / 2;
 
 		// if ball will hit the invisible wall that extends from the paddle
 		// and ball position is within the paddle top and bottom
