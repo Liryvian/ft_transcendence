@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { assert } from 'console';
 import { AllTestingModule } from '../../shared/test.module';
 import { AchievementsService } from '../achievements/achievements.service';
-import { CreateAchievementDto } from '../achievements/dto/create-achievement.dto';
 import { Achievement } from '../achievements/entities/achievement.entity';
 import { RegisterUserDto } from '../user/dto/register-user.dto';
 import { User } from '../user/entities/user.entity';
@@ -25,7 +24,7 @@ describe('UserAchievementsController', () => {
 		{ name: 'Renoster', password: 'R', password_confirm: 'R' },
 	];
 
-	const mockAchievements: CreateAchievementDto[] = [
+	const mockAchievements: any[] = [
 		{ name: 'Plep' },
 		{ name: 'BallsToTheWall' },
 		{ name: 'Baas' },
