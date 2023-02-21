@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
@@ -20,8 +19,6 @@ import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-use
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MeModule } from './me/me.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
 
 @Module({
 	imports: [
@@ -49,12 +46,5 @@ import { AuthGuard } from './auth/auth.guard';
 		MeModule,
 	],
 	controllers: [AppController],
-	providers: [
-		AppService,
-		{
-			provide: APP_GUARD,
-			useClass: AuthGuard,
-		},
-	],
 })
 export class AppModule {}

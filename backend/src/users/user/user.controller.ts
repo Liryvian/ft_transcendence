@@ -14,6 +14,7 @@ import {
 	Post,
 	Query,
 	UploadedFile,
+	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -26,7 +27,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserRelationsBodyDto } from './dto/user-relations-body.dto';
 import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
-import { AllowUnauthorizedRequest } from '../../auth/auth.service';
+import { AuthGuard } from '../../auth/auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -39,7 +40,6 @@ export class UserController {
 		achievements: true,
 	};
 
-	@AllowUnauthorizedRequest()
 	@Post()
 	async create(@Body() registerUserDto: RegisterUserDto) {
 		const hashed = await bcrypt.hash(registerUserDto.password, 11);
@@ -58,6 +58,7 @@ export class UserController {
 		}
 	}
 
+	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
@@ -115,6 +116,7 @@ export class UserController {
 		}
 	}
 
+	@UseGuards(AuthGuard)
 	@Post(':id/avatar')
 	@UseInterceptors(FileInterceptor('avatar'))
 	async setAvatar(
@@ -138,6 +140,7 @@ export class UserController {
 			});
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete(':id/avatar')
 	async removeAvatar(@Param('id') id: number) {
 		return this.userService

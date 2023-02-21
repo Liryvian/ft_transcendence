@@ -11,8 +11,6 @@ import { User } from '../src/users/user/entities/user.entity';
 import { UserController } from '../src/users/user/user.controller';
 import { UserService } from '../src/users/user/user.service';
 import { AllTestingModule } from '../src/shared/test.module';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('Auth (e2e)', () => {
 	let app: INestApplication;
@@ -30,7 +28,6 @@ describe('Auth (e2e)', () => {
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-			providers: [{ provide: APP_GUARD, useClass: AuthGuard }],
 		}).compile();
 
 		app = moduleFixture.createNestApplication();
