@@ -2,8 +2,8 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<VerticalAvatarAndUserName
-				profile_picture="/test-profile.png"
-				:profile_name="this.user.name"
+				:profile_picture="user.avatar"
+				:profile_name="user.name"
 			/>
 			<OverviewWithMidline :data-array="dataArray" />
 		</div>
@@ -13,7 +13,6 @@
 <style scoped></style>
 
 <script lang="ts">
-
 import { defineComponent } from 'vue';
 import VerticalAvatarAndUserName from '@/components/user-info/VerticalAvatarAndUserName.vue';
 import OverviewWithMidline from '@/components/overviews/OverviewWithMidline.vue';
@@ -38,11 +37,13 @@ export default defineComponent({
 	},
 	async created() {
 		await useUserStore().refreshAllUsers();
-		const filteredUsers = useUserStore().allUsers.find((user: User) => Number(user.id) === Number(this.profile_id));
+		const filteredUsers = useUserStore().allUsers.find(
+			(user: User) => Number(user.id) === Number(this.profile_id),
+		);
 		if (filteredUsers === undefined) {
-			this.$router.push('/profiles')
+			this.$router.push('/profiles');
 		} else {
-			this.user = filteredUsers
+			this.user = filteredUsers;
 			this.dataArray = [
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },

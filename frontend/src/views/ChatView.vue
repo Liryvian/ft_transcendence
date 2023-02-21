@@ -7,195 +7,115 @@
 					@click="toggleFocusTarget('list')"
 					class="toggleHandler"
 				></div>
-				<div class="c_list">
-					<h1>Direct Messages</h1>
-					<div v-for="a in 4">
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--online">
-								<div class="c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--online">
-								<div class="c_asset__circle">
-									<img src="/vaalboskat.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--offline">
-								<div class="c_asset__circle">
-									<img src="/renoster.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="c_list">
-					<h1>Channels</h1>
-					<div v-for="a in 4">
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--multi">
-								<div class="c_asset c_asset__circle">
-									<img src="/vaalboskat.png" alt="" />
-								</div>
-								<div class="c_asset c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-								<div class="c_asset c_asset__circle">
-									<img src="/renoster.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">channel name</div>
-						</div>
-						<div class="c_media c_media--clickable">
-							<div class="c_media__asset c_asset--multi">
-								<div class="c_asset c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-								<div class="c_asset c_asset__circle">
-									<img src="/vaalboskat.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">channel name</div>
-						</div>
-					</div>
-				</div>
+				<ChatList :info="dms" />
+				<ChatList :info="channels" />
 			</div>
-			<div class="c_chat__conversation">
-				<div
-					v-if="focusTarget == 'c_chat--list'"
-					@click="toggleFocusTarget('msg')"
-					class="toggleHandler"
-				></div>
-				<div class="c_conversation__header">
-					<div>invite for a game</div>
-					<div>
-						<div
-							class="c_media c_media--assetright c_media--clickable"
-						>
-							<div class="c_media__asset c_asset--online">
-								<div class="c_asset__circle">
-									<img src="/test-profile.png" alt="" />
-								</div>
-							</div>
-							<div class="c_media__content">username</div>
-						</div>
-					</div>
-				</div>
-				<div class="c_messagelist">
-					<div
-						v-for="msg in messages"
-						class="c_message"
-						:class="{ 'c_message--mine': msg.is_mine }"
-					>
-						<div class="c_message__name">{{ msg.name }}</div>
-						<div class="c_message__wrap">
-							<div class="c_message__msg">
-								<div class="c_message__time">
-									{{ msg.time }}
-								</div>
-								<div v-for="msgpart in msg.msg.split('\n')">
-									{{ msgpart }}
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="c_send_message">
-					<textarea
-						name="new_message"
-						id="new_message"
-						placeholder="type..."
-					></textarea>
-					<input type="submit" value="enter" />
-				</div>
-			</div>
+			<template v-if="currentChatInfo">
+				<Chat
+					:info="currentChatInfo"
+					:focusTarget="focusTarget"
+					@toggleFocusTarget="toggleFocusTarget"
+				/>
+			</template>
 		</div>
-		<table class="table table-striped table-sm">
-			All Chats:
-			<tbody>
-				<tr v-for="chat in chatStore.allChats" :key="chat.id">
-					<td>Game id: {{ chat.id }}</td>
-					<td> Chat name: {{ chat.name }}</td>
-					<td>Visibility: {{ chat.visibility }}</td>
-				</tr>
-				
-			</tbody>
-		</table>
-		<table class="table table-striped table-sm">
-			My Chats:
-			<tbody>
-				<tr v-for="chat in chatStore.getMyChats" :key="chat.id">
-					<td>Game id: {{ chat.id }}</td>
-					<td> Chat name: {{ chat.name }}</td>
-					<td>Visibility: {{ chat.visibility }}</td>
-				</tr>
-				
-			</tbody>
-			
-		</table>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useChatStore } from '@/stores/chatStore';
+
+import Chat from '@/components/chat/Chat.vue';
+import ChatList from '@/components/chat/ChatList.vue';
+import type { Chat_List, Chat_List_Item, Chat_Member } from '@/types/Chat';
 
 export default defineComponent({
 	name: "ChatView",
-	
-	setup(){
-		const chatStore = useChatStore();
-		
-		chatStore.refreshData();
-		return {
-			chatStore,
-		}
+	components: { ChatList, Chat },
+	props: {
+		currentChat: String,
 	},
-	// type inference enabled
+	setup(){
+	},
 	data() {
 		return {
+			dms: {
+				name: "Direct Messages",
+				type: "dm",
+				items: [
+					{
+						id: 1,
+						name: 'a dm conversation',
+						type: "dm",
+						members: [
+							{
+								name: 'vaalboskat',
+								avatar: '/api/avatars/seeded_profile_vaalboskat.png'
+							} as Chat_Member,
+							{
+								name: 'renoster',
+								avatar: '/api/avatars/seeded_profile_renoster.png'
+							} as Chat_Member
+						] as Chat_Member[]
+					} as Chat_List_Item,
+					{
+						id: 2,
+						name: 'vaalboskat - flamink',
+						type: "dm",
+						members: [
+							{
+								name: 'vaalboskat',
+								avatar: '/api/avatars/seeded_profile_vaalboskat.png'
+							} as Chat_Member,
+							{
+								name: 'flamink',
+								avatar: '/api/avatars/seeded_profile_flamink.png'
+							} as Chat_Member
+						] as Chat_Member[]
+					} as Chat_List_Item
+				] as Chat_List_Item[]
+			} as Chat_List,
+			channels: {
+				name: "Channels",
+				type: "channel",
+				items: [
+					{
+						id: 3,
+						name: "A channel",
+						type: "channel",
+						members: [
+							{
+								name: 'vaalboskat',
+								avatar: '/api/avatars/seeded_profile_vaalboskat.png'
+							} as Chat_Member,
+							{
+								name: 'flamink',
+								avatar: '/api/avatars/seeded_profile_flamink.png'
+							} as Chat_Member,
+							{
+								name: 'renoster',
+								avatar: '/api/avatars/seeded_profile_renoster.png'
+							} as Chat_Member
+						]
+					}
+				] as Chat_List_Item[]
+			} as Chat_List,
 			focusTarget: 'c_chat--msg',
-			messages: [
-				{
-					time: '14:55',
-					is_mine: false,
-					name: 'renoster',
-					msg: 'hey!',
-				},
-				{
-					time: '14:56',
-					is_mine: false,
-					name: 'renoster',
-					msg: 'What are your plans for today?',
-				},
-				{
-					time: '14:58',
-					is_mine: true,
-					name: 'vaalboskat',
-					msg: "I'm going to work hard and fail harder!!",
-				},
-				{ time: '14:58', is_mine: true, name: 'vaalboskat', msg: 'jk' },
-				{
-					time: '14:58',
-					is_mine: true,
-					name: 'vaalboskat',
-					msg: 'How about wo go to the forest for a nice and cozy walk with the whole team? That would be great right?\nIt would make a lot of sense to do something like that in regards to the teambuilding converstation we had earlier this month.\nLet me know what you think!\nps. this message was composed without using chatgpt',
-				},
-			],
 		};
+	},
+	computed: {
+		allChats() {
+			return [...this.dms.items, ...this.channels.items];
+		},
+		currentChatId() {
+			return Number(this.currentChat ?? '-1');
+		},
+		currentChatInfo() {
+			return this.allChats.find((chat) => chat.id === this.currentChatId);
+		}
 	},
 	methods: {
 		toggleFocusTarget(target: string) {
 			this.focusTarget = 'c_chat--' + target;
-			console.log(this.focusTarget);
 		},
 	},
 });
