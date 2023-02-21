@@ -7,6 +7,7 @@ import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/mat
 import { UserService } from '../src/users/user/user.service';
 import { CreateUserDto } from '../src/users/user/dto/create-user.dto';
 import { AllTestingModule } from '../src/shared/test.module';
+import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;
@@ -25,7 +26,10 @@ describe('GameInvite (e2e)', () => {
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-		}).compile();
+		})
+			.overrideGuard(AuthGuard)
+			.useValue({ validated: true })
+			.compile();
 
 		app = moduleFixture.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe());
