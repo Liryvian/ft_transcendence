@@ -48,7 +48,6 @@ export const useUserStore = defineStore('users', {
 		async logout() {
 			try{
 				await getRequest('logout');
-				router.push('login');
 				this.errors.length = 0;
 			}
 			catch (e) {
