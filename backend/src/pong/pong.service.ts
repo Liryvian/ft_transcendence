@@ -106,7 +106,7 @@ export class PongService {
 			//  change bounce angle
 			this.dy += d * -0.01;
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
-			console.log('Wall hit');
+			console.log('Point is over');
 			this.dx = -this.dx;
 		}
 
@@ -118,6 +118,16 @@ export class PongService {
 		ballPos.y += this.dy;
 	}
 
+	moveUp(paddlePosY: number) {
+		const topMax = this.paddleHeight / 2;
+		return Math.max(paddlePosY - 1, topMax);
+	}
+
+	moveDown(paddlePosY: number) {
+		const bottomMax = 100 - this.paddleHeight / 2;
+		return Math.min(paddlePosY + 1, bottomMax);
+	}
+
 	// checks if paddle is at max x/y otherwise move it 1% up/down
 	movePaddles(
 		pressedKey: MovementKeys,
@@ -125,32 +135,16 @@ export class PongService {
 		playerTwoPaddle: Paddle,
 	) {
 		if (pressedKey.ArrowUp) {
-			if (playerTwoPaddle.position.y <= 5) {
-				playerTwoPaddle.position.y = 5;
-			} else {
-				playerTwoPaddle.position.y -= 1;
-			}
+			playerTwoPaddle.position.y = this.moveUp(playerTwoPaddle.position.y);
 		}
 		if (pressedKey.ArrowDown) {
-			if (playerTwoPaddle.position.y >= 95) {
-				playerTwoPaddle.position.y = 95;
-			} else {
-				playerTwoPaddle.position.y += 1;
-			}
+			playerTwoPaddle.position.y = this.moveDown(playerTwoPaddle.position.y);
 		}
 		if (pressedKey.w) {
-			if (playerOnePaddle.position.y <= 5) {
-				playerOnePaddle.position.y = 5;
-			} else {
-				playerOnePaddle.position.y -= 1;
-			}
+			playerOnePaddle.position.y = this.moveUp(playerOnePaddle.position.y);
 		}
 		if (pressedKey.s) {
-			if (playerOnePaddle.position.y >= 95) {
-				playerOnePaddle.position.y = 95;
-			} else {
-				playerOnePaddle.position.y += 1;
-			}
+			playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
 		}
 	}
 }

@@ -118,7 +118,7 @@ export default defineComponent({
 					lineHeight
 				);
 			},
-			
+
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
 		drawBall(ball: Ball) {
 			const startingX: number = this.widthPercentage(ball.position.x);
@@ -238,7 +238,7 @@ export default defineComponent({
 	font-size: 2.5vh; 
 	padding-left: 2.5%;
 	padding-right: 5%;
-	padding-top: 4%;
+	padding-top: 2.4%;
 }
 
 .gameHeader.space-between {

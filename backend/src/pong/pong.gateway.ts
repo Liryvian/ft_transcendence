@@ -25,13 +25,6 @@ export class PongGateway implements OnGatewayConnection {
 	async handleConnection() {
 		console.log('\n!Socket is connected!\n');
 		this.gameState = this.pongService.createNewGameState();
-		console.log(this.gameState);
-		this.sendHallo('Hallo frontend!!!');
-	}
-
-	@SubscribeMessage('hallo')
-	sendHallo(@MessageBody() data: any) {
-		this.server.emit('hallo', data);
 	}
 
 	sendPositionOfElements(@MessageBody() gameState: GameState) {
