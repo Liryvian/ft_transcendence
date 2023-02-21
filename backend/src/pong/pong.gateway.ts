@@ -12,7 +12,7 @@ import { PongService } from './pong.service';
 @WebSocketGateway({
 	namespace: '/pong',
 	cors: {
-		origin: '*:*',
+		origin: '*',
 	},
 })
 export class PongGateway implements OnGatewayConnection {
