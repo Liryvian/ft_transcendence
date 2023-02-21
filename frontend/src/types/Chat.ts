@@ -14,11 +14,11 @@ export interface UserChatPermissions {
 	permission: string;
 }
 
-export interface Message {
+export interface SingleMessage {
 	id: number;
 
-	sender_id: User;
-	chat_id: Chat;
+	sender: User;
+	chat: Chat;
 
 	content: string;
 
@@ -36,5 +36,25 @@ export interface Chat {
 	visibility: string;
 	password: string;
 
-	messages: Message[];
+	messages: SingleMessage[];
+}
+
+export interface Chat_Member {
+	name: string;
+	avatar?: string;
+}
+
+export type Chat_Type = 'dm' | 'channel';
+
+export interface Chat_List_Item {
+	id: number;
+	name: string;
+	type: Chat_Type;
+	members: Chat_Member[];
+}
+
+export interface Chat_List {
+	name: string;
+	type: Chat_Type;
+	items: Chat_List_Item[];
 }

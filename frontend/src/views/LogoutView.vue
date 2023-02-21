@@ -1,7 +1,9 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>This is a logout page</h1>
+			<h1>GOODBYE!</h1>
 		</div>
 	</div>
 </template>
+
+<script lang="ts"></script>
