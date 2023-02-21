@@ -28,6 +28,12 @@ export interface SingleMessage {
 	updated_at?: Date;
 }
 
+export interface NewMessage {
+	sender_id: number;
+	chat: number;
+	content: string;
+}
+
 export interface Chat {
 	id: number;
 	name: string;

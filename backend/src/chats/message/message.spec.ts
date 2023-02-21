@@ -28,8 +28,8 @@ describe('MessageController', () => {
 	];
 
 	const testMessages: CreateMessageDto[] = [
-		{ sender_id: 1, chat_id: 1, content: 'hello' },
-		{ sender_id: 2, chat_id: 2, content: 'world!' },
+		{ sender_id: 1, chat: 1, content: 'hello' },
+		{ sender_id: 2, chat: 2, content: 'world!' },
 	];
 
 	let seedUsers = [
@@ -98,8 +98,8 @@ describe('MessageController', () => {
 				expect.arrayContaining([
 					expect.objectContaining({
 						id: expect.any(Number),
-						chat_id: expect.objectContaining({
-							id: testMessages[index].chat_id,
+						chat: expect.objectContaining({
+							id: testMessages[index].chat,
 						}),
 						sender_id: expect.objectContaining({
 							id: testMessages[index].sender_id,

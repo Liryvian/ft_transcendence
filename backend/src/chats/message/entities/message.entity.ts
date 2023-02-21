@@ -26,14 +26,14 @@ export class Message {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => User, (user) => user.id)
+	@ManyToOne(() => User, (user) => user.id, { nullable: false })
 	@JoinColumn({ name: 'sender_id' })
 	sender_id: User;
 
 	@RelationId((message: Message) => message.sender_id)
 	user_id: number;
 
-	@ManyToOne(() => Chat, (chat) => chat.id)
+	@ManyToOne(() => Chat, (chat) => chat.id, { nullable: false })
 	@JoinColumn({ name: 'chat' })
 	chat: Chat;
 

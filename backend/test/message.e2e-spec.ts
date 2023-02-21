@@ -73,8 +73,8 @@ describe('message e2e', () => {
 		}
 
 		const testMessages: CreateMessageDto[] = [
-			{ sender_id: userIds[0], chat_id: chatIds[0], content: 'hello' },
-			{ sender_id: userIds[1], chat_id: chatIds[1], content: 'world!' },
+			{ sender_id: userIds[0], chat: chatIds[0], content: 'hello' },
+			{ sender_id: userIds[1], chat: chatIds[1], content: 'world!' },
 		];
 
 		for (const message in testMessages) {
