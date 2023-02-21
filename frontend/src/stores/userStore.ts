@@ -42,11 +42,11 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-		async logout(logoutForm: LogoutForm) {
+		async logout() {
 			try{
-				await deleteRequest("logout");
-				await this.refreshMe();
-				router.push("/login")
+				await getRequest('logout');
+				router.push('login');
+				this.errors.length = 0;
 			}
 			catch (e) {
 				this.handleFormError(e.response.data);

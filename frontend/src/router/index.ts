@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useUserStore } from '@/stores/userStore';
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,11 +32,6 @@ const router = createRouter({
 			path: '/profiles',
 			name: 'profiles',
 			component: () => import('../views/ProfilesView.vue'),
-		},
-		{
-			path: '/logout',
-			name: 'logout',
-			component: () => import('../views/LogoutView.vue'),
 		},
 		{
 			path: '/login',

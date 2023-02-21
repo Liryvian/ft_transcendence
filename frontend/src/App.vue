@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import {useUserStore} from '@/stores/userStore';
 </script>
 
 <template>
@@ -41,7 +42,7 @@ import { RouterLink, RouterView } from 'vue-router';
 				<div class="nav_ball"></div>
 				Profiles
 			</RouterLink>
-			<RouterLink to="/logout">
+			<RouterLink v-on:click='useUserStore().logout()' to="/logout">
 				<div class="nav_ball"></div>
 				Logout
 			</RouterLink>
