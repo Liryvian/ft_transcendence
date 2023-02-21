@@ -36,6 +36,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import { useUserStore } from '@/stores/userStore';
 import type { Chat_List_Item, SingleMessage, NewMessage } from '@/types/Chat';
 import { postRequest } from '@/utils/apiRequests';
+import { storeToRefs } from 'pinia';
 
 export default defineComponent({
 	name: 'Chat',
@@ -53,15 +54,22 @@ export default defineComponent({
 	setup() {
 		const messageStore = useMessageStore();
 		const userStore = useUserStore();
+		const { messages } = storeToRefs(messageStore);
 
 		return {
 			messageStore,
 			userStore,
+			messages,
 		};
 	},
+	beforeMount() {},
 	computed: {
 		activeChatMessages(): SingleMessage[] {
-			return this.messageStore.getActiveChatMessages(this.info.id);
+			if (!this.messages[this.info.id]) {
+				this.messageStore.getActiveChatMessages(this.info.id);
+				return [];
+			}
+			return this.messages[this.info.id];
 		},
 	},
 	methods: {

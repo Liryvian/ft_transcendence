@@ -1,12 +1,17 @@
-import io, { type Socket } from 'socket.io-client';
+import io from 'socket.io-client';
 import { defineStore } from 'pinia';
 import type { SocketStore } from '@/types/Sockets';
 import { useChatStore } from './chatStore';
 import { useMessageStore } from './messageStore';
 
+// it's always only one user..
+
 export const useSocketStore = defineStore('sockets', {
 	state: (): SocketStore => ({
-		chats: null,
+		chats: {
+			socket: null,
+			in_rooms: [],
+		},
 	}),
 	actions: {
 		initialize() {
@@ -17,28 +22,28 @@ export const useSocketStore = defineStore('sockets', {
 		async initializeChats() {
 			console.log('Init chats');
 			// get initial data in chat store
-			await useChatStore().refreshAllChats();
-			this.chats = io('/chats');
-			this.chats.on('connection', (conn) => {
+			await useChatStore().init(false);
+			this.chats.socket = io('/chats');
+			this.chats.socket.on('connection', (conn) => {
 				console.log('Connected: ', conn);
 			});
-			this.chats.on('listUpdate', (update) => {
+			this.chats.socket.on('listUpdate', (update) => {
 				console.log('listUpdate: ', update);
 				// call other store method
 			});
-			this.chats.on('newMessage', (update) => {
+			this.chats.socket.on('newMessage', (update) => {
 				console.log('new message: ', update);
 				useMessageStore().socketAction(update);
 			});
 		},
 		disconnect() {
-			this.chats?.disconnect();
+			this.chats.socket?.disconnect();
 		},
 		async subscribeToChatroom(room: String) {
-			if (this.chats === null) {
+			if (this.chats.socket === null) {
 				await this.initializeChats();
 			}
-			this.chats!.emit('join', { roomName: room });
+			// this.chats.socket!.emit('join', { roomName: room });
 		},
 	},
 });

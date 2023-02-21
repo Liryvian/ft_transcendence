@@ -7,8 +7,8 @@
 					@click="toggleFocusTarget('list')"
 					class="toggleHandler"
 				></div>
-				<ChatList v-if="dms.items.length" :info="dms" />
-				<ChatList v-if="channels.items.length" :info="channels" />
+				<ChatList v-if="dmList.items.length" :info="dmList" />
+				<ChatList v-if="channelList.items.length" :info="channelList" />
 			</div>
 			<template v-if="currentChatInfo">
 				<Chat
@@ -27,29 +27,31 @@ import { storeToRefs } from 'pinia';
 
 import Chat from '@/components/chat/Chat.vue';
 import ChatList from '@/components/chat/ChatList.vue';
-import type { Chat_List, Chat_List_Item, Chat_Member } from '@/types/Chat';
+import type { Chat_List } from '@/types/Chat';
 import { useSocketStore } from '@/stores/socketStore';
 import { useChatStore } from '@/stores/chatStore';
 
 export default defineComponent({
-	name: "ChatView",
+	name: 'ChatView',
 	components: { ChatList, Chat },
 	props: {
 		currentChat: String,
 	},
-	setup(){
+	setup() {
 		const socketStore = useSocketStore();
 
 		const chatStore = useChatStore();
-		const { getDms, getChannels } = storeToRefs(chatStore);
+		chatStore.init(false);
+		const { dms, channels, getAllChats } = storeToRefs(chatStore);
 
 		socketStore.initialize();
 		return {
 			socketStore,
 			chatStore,
-			getDms,
-			getChannels,
-		}
+			dms,
+			channels,
+			getAllChats,
+		};
 	},
 	data() {
 		return {
@@ -57,29 +59,28 @@ export default defineComponent({
 		};
 	},
 	computed: {
-		dms(): Chat_List {
+		dmList(): Chat_List {
 			return {
-				name: "Direct Messages",
-				type: "dm",
-				items: this.getDms
-			}
+				name: 'Direct Messages',
+				type: 'dm',
+				items: this.dms,
+			};
 		},
-		channels(): Chat_List {
+		channelList(): Chat_List {
 			return {
-				name: "Channels",
-				type: "channel",
-				items: this.getChannels
-			}
-		},
-		allChats() {
-			return [...this.dms.items, ...this.channels.items];
+				name: 'Channels',
+				type: 'channel',
+				items: this.channels,
+			};
 		},
 		currentChatId() {
 			return Number(this.currentChat ?? '-1');
 		},
 		currentChatInfo() {
-			return this.allChats.find((chat) => chat.id === this.currentChatId);
-		}
+			return this.getAllChats.find(
+				(chat) => chat.id === this.currentChatId,
+			);
+		},
 	},
 	methods: {
 		toggleFocusTarget(target: string) {

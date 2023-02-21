@@ -48,6 +48,7 @@ export class ChatsGateway
 
 	async handleConnection(socket: Socket) {
 		console.log('\n!Socket is connected!\n');
+		// this.socketService.join
 		this.sendHallo('Hallo frontend!!!');
 	}
 

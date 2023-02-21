@@ -1,43 +1,37 @@
 import type { Chat_List_Item } from '@/types/Chat';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import { useUserStore } from './userStore';
+import { useSocketStore } from './socketStore';
 
 export const useChatStore = defineStore('chats', {
 	//  actions == data definitions
 	state: () => ({
-		allChats: [] as Chat_List_Item[],
+		dms: [] as Chat_List_Item[],
+		channels: [] as Chat_List_Item[],
+		subscribed: false,
 	}),
 	// getters == computed values
 	getters: {
-		getDms: (state) =>
-			state.allChats.filter((chat: Chat_List_Item) => chat.type === 'dm'),
-		getChannels: (state) =>
-			state.allChats.filter(
-				(chat: Chat_List_Item) => chat.type === 'channel',
-			),
-
-		getMyChats: () => useUserStore().getMe.chats,
-		getAllChats: (state) => state.allChats,
+		getAllChats: (state) =>
+			[...state.dms, ...state.channels].sort((a, b) => a.id - b.id),
 	},
 	// actions == methods
 	actions: {
-		async refreshAllChats() {
-			try {
-				const data = await getRequest('me/chats');
-				this.allChats = data.data;
-			} catch (e) {
-				console.error(e);
-				return [];
+		async init(force: boolean) {
+			if (this.getAllChats.length === 0 || force) {
+				try {
+					const all = (await getRequest('me/chats')).data;
+					this.dms = all.filter(
+						(chat: Chat_List_Item) => chat.type === 'dm',
+					);
+					this.channels = all.filter(
+						(chat: Chat_List_Item) => chat.type === 'channel',
+					);
+				} catch (e) {
+					console.error('error on getting me/chats', e);
+					return [];
+				}
 			}
-		},
-		async refreshMyChats() {
-			await useUserStore().refreshMe();
-		},
-
-		async refreshData() {
-			await this.refreshAllChats();
-			await this.refreshMyChats();
 		},
 	},
 });
