@@ -3,8 +3,9 @@
 		<div class="page_box c_profileslist">
 			<h1>Profiles</h1>
 			<div class="c_profileslist__table">
-				<template v-for="user in userStore.allUsers">
+				<template v-for="user in allUsers">
 					<ListRow
+						v-if="user.id !== me.id"
 						:user="user"
 						:relationship="getCurrentRel(user.id)"
 					/>
@@ -20,6 +21,7 @@ import { defineComponent, onMounted } from 'vue';
 import ListRow from '@/components/profileList/ListRow.vue';
 import type { User } from '@/types/User';
 import router from '@/router';
+import { storeToRefs } from 'pinia';
 
 export default defineComponent({
 	name: 'ProfileList',
@@ -28,8 +30,8 @@ export default defineComponent({
 	},
 	setup() {
 		const userStore = useUserStore();
-		const { refreshData, allUsers, isBlocked, getCurrentRel } = userStore;
-
+		const { refreshData, isBlocked, getCurrentRel } = userStore;
+		const { me, allUsers } = storeToRefs(userStore);
 		onMounted(async () => {
 			await refreshData();
 		});
@@ -40,6 +42,7 @@ export default defineComponent({
 			allUsers,
 			isBlocked,
 			getCurrentRel,
+			me,
 		};
 	},
 
