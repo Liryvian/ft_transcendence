@@ -24,9 +24,7 @@ export const useChatStore = defineStore('chats', {
 	actions: {
 		async refreshAllChats() {
 			try {
-				console.log('Refreshing all chats');
 				const data = await getRequest('me/chats');
-				console.log('Refreshed all chats');
 				this.allChats = data.data;
 			} catch (e) {
 				console.error(e);
