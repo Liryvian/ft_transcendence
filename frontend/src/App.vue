@@ -42,7 +42,7 @@ import {useUserStore} from '@/stores/userStore';
 				<div class="nav_ball"></div>
 				Profiles
 			</RouterLink>
-			<RouterLink v-on:click='useUserStore().logout()' to="/logout">
+			<RouterLink v-on:click='useUserStore().logout()' to="#">
 				<div class="nav_ball"></div>
 				Logout
 			</RouterLink>
