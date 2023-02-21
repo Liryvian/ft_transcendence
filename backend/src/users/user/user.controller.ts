@@ -97,16 +97,32 @@ export class UserController {
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
-			const updateResult: UpdateResult = await this.userService.update(
-				id,
-				updateUserDto,
-			);
-			return updateResult;
+			if (updateUserDto.hasOwnProperty('password')) {
+				const user = await this.userService.findOne({ where: { id: id } });
+				if (!(await bcrypt.compare(updateUserDto.password, user.password))) {
+					throw new BadRequestException('Invalid current password');
+				}
+				const hashed = await bcrypt.hash(updateUserDto.new_password, 11);
+				const updateResult: UpdateResult = await this.userService.update(id, {
+					password: hashed,
+					name: updateUserDto.name,
+				});
+				return updateResult;
+			}
+			if (updateUserDto.hasOwnProperty('name')) {
+				const updateResult: UpdateResult = await this.userService.update(id, {
+					name: updateUserDto.name,
+				});
+				return updateResult;
+			}
 		} catch (e) {
 			if (e instanceof QueryFailedError) {
 				throw new BadRequestException('Please pick a different username');
 			}
 			if (e instanceof NotFoundException) {
+				throw e;
+			}
+			if (e instanceof BadRequestException){
 				throw e;
 			}
 			console.log('An unknown error occurred, please check!', { e });

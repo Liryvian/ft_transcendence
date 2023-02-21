@@ -62,7 +62,8 @@ a {
 	transform: translate(20%, 70%);
 }
 
-.page_button a {
+.page_button a,
+.page_button input[type="submit"]{
 	padding: 1.4em;
 	border: var(--border-width) solid var(--color-border);
 	border-radius: 50%;
@@ -151,6 +152,10 @@ h1 {
 	font-size: 1.2em;
 	text-transform: uppercase;
 	font-weight: bold;
+}
+
+.tac {
+	text-align: center;
 }
 
 .c_media {
@@ -305,10 +310,10 @@ h1 {
 }
 
 .c_chat__conversation {
+	--message-list-height: 65%;
+	--conversation-header-height: 4.5em;
 	left: 10vw;
 	flex-grow: 1;
-	display: flex;
-	flex-direction: column;
 	background-color: var(--c-white);
 	border-left: var(--border-width) solid var(--color-border);
 	box-shadow: -8px 0 20px 0px rgba(20, 20, 20, 0.2);
@@ -343,6 +348,7 @@ h1 {
 	align-items: center;
 	padding: var(--single-spacing) var(--double-spacing);
 	border-bottom: var(--border-width) solid var(--color-border);
+	height: var(--conversation-header-height);
 }
 
 .c_conversation__header .c_media {
@@ -354,6 +360,7 @@ h1 {
 	background-color: var(--c-white-mute);
 	padding: var(--double-spacing) var(--single-spacing);
 	overflow: scroll;
+	height: var(--message-list-height);
 }
 
 .c_message {
@@ -435,6 +442,24 @@ h1 {
 	background-color: var(--c-white);
 	border: 0px;
 	padding: var(--single-spacing) var(--double-spacing);
+}
+
+@media (min-height: 600px) {
+	.c_chat__conversation {
+		--message-list-height: 70%;
+	}
+}
+
+@media (min-height: 760px) {
+	.c_chat__conversation {
+		--message-list-height: 75%;
+	}
+}
+
+@media (min-height: 900px) {
+	.c_chat__conversation {
+		--message-list-height: 80%;
+	}
 }
 
 @media (hover: hover) {
