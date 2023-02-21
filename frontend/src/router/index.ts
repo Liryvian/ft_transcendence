@@ -1,4 +1,3 @@
-import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -83,9 +82,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-	const isLoggedIn = useUserStore().getIsLoggedIn;
-	if (!isLoggedIn && to.name !== "login") {
+	if (!document.cookie.startsWith("jwt=") && to.name !== "login") {
 		return {name: "login"}
+	}
+	else if (to.name === "login" && document.cookie.startsWith("jwt=")) {
+		return {name: "settings"}
 	}
 });
 

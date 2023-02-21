@@ -15,7 +15,7 @@ export const useUserStore = defineStore('users', {
 		allUsers: [] as User[],
 		me: {} as User,
 		errors: [] as String[],
-		isLoggedIn: false,
+		// isLoggedIn: false,
 	}),
 
 	// getters == computed values
@@ -40,7 +40,6 @@ export const useUserStore = defineStore('users', {
 		async login(loginForm: LoginForm) {
 			try {
 				await postRequest('login', loginForm);
-				this.isLoggedIn = true;
 				await this.refreshMe();
 				await router.push('/settings');
 				this.errors.length = 0;

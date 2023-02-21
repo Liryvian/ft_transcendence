@@ -115,7 +115,7 @@ export class AuthService {
 
 	async login(id: number, response: Response) {
 		const jwt = await this.jwtService.signAsync({ id: id });
-		response.cookie('jwt', jwt, { httpOnly: true });
+		response.cookie('jwt', jwt, { httpOnly: false });
 	}
 
 	async logout(response: Response) {
