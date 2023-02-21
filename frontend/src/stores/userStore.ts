@@ -20,9 +20,6 @@ export const useUserStore = defineStore('users', {
 
 	// getters == computed values
 	getters: {
-		// getAllUsers: (state) => state.allUsers,
-		// getMe: (state) => state.me,
-		getIsLoggedIn: (state) => state.isLoggedIn
 	},
 	// actions == methods
 	actions: {
@@ -47,7 +44,18 @@ export const useUserStore = defineStore('users', {
 				this.handleFormError(e.response.data);
 			}
 		},
-		
+
+		async logout() {
+			try{
+				await getRequest('logout');
+				router.push('login');
+				this.errors.length = 0;
+			}
+			catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
+
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);
