@@ -28,7 +28,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { ElementPositions, Ball, Paddle }  from "@/types/Game"
+import type  { ElementPositions, Ball, Paddle }  from "@/types/game.fe"
 import { io, Socket } from 'socket.io-client';
 
 interface MovementKeys {

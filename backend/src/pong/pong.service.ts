@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Ball, GameState, MovementKeys, Paddle, Position } from './Game.types';
+import {
+	Ball,
+	GameState,
+	MovementKeys,
+	Paddle,
+	Position,
+} from './game.types.be';
 
 @Injectable()
 export class PongService {

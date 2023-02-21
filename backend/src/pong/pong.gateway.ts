@@ -6,7 +6,7 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { GameState, MovementKeys } from './Game.types';
+import { GameState, MovementKeys } from './game.types.be';
 import { PongService } from './pong.service';
 
 @WebSocketGateway({
