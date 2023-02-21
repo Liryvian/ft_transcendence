@@ -48,6 +48,7 @@ export interface Chat {
 }
 
 export interface Chat_Member {
+	id: number;
 	name: string;
 	avatar?: string;
 }

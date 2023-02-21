@@ -30,6 +30,7 @@ import ChatList from '@/components/chat/ChatList.vue';
 import type { Chat_List } from '@/types/Chat';
 import { useSocketStore } from '@/stores/socketStore';
 import { useChatStore } from '@/stores/chatStore';
+import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ChatView',
@@ -38,7 +39,11 @@ export default defineComponent({
 		currentChat: String,
 	},
 	setup() {
+		const userStore = useUserStore();
+		userStore.refreshMe();
+
 		const socketStore = useSocketStore();
+		socketStore.initialize();
 
 		const chatStore = useChatStore();
 		chatStore.init(false);

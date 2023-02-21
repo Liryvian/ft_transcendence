@@ -40,9 +40,7 @@ export class MessageController {
 		console.log('trying to emit socket message');
 		// socket service should have a method that looks in it's own map
 		// and send message to those users..
-		const ret = this.socketService.chatServer
-			.to('/chats')
-			.emit('newMessage', socketMessage);
+		const ret = this.socketService.chatServer.emit('newMessage', socketMessage);
 		console.log('return value of socket emit: ', ret);
 		return newMessage;
 	}

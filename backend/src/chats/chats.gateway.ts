@@ -37,24 +37,30 @@ export class ChatsGateway
 	server: Server;
 
 	afterInit(server: Server) {
-		console.log('after init for server');
 		this.socketService.chatServer = server;
 	}
 
 	handleDisconnect(socket: Socket) {
-		console.log('socket disconnect: ', socket);
-		// socket.leave('chatlist');
+		console.log('----- disconnect');
+		// console.log('socket disconnect: ', socket);
+		socket.leave('chatlist');
 	}
 
-	async handleConnection(socket: Socket) {
+	handleConnection(socket: Socket) {
 		console.log('\n!Socket is connected!\n');
-		// this.socketService.join
-		this.sendHallo('Hallo frontend!!!');
+		socket.join('chatlist');
+		this.listUpdate({
+			name: 'new list item',
+			type: 'dm',
+			id: 2342,
+			users: [],
+		});
 	}
 
-	@SubscribeMessage('listUpdate')
-	sendHallo(@MessageBody() data: any) {
-		this.server.emit('listUpdate', data);
+	// @SubscribeMessage('listUpdate')
+	listUpdate(@MessageBody() data: any) {
+		console.log('try updading list');
+		this.server.to('chatlist').emit('listUpdate', data);
 	}
 
 	@SubscribeMessage('join')

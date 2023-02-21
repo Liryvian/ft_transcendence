@@ -33,5 +33,13 @@ export const useChatStore = defineStore('chats', {
 				}
 			}
 		},
+		updateList(data: Chat_List_Item) {
+			console.log('chat store update list method: ', data);
+			if (data.type === 'dm') {
+				this.dms.push(data);
+			} else if (data.type === 'channel') {
+				this.channels.push(data);
+			}
+		},
 	},
 });
