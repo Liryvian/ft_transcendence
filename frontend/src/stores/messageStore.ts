@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import type { SingleMessage, UpdateMessage } from '@/types/Chat';
 import { getRequest } from '@/utils/apiRequests';
+import { useSocketStore } from './socketStore';
 
 type ChatId = number;
 type MessageList = Record<ChatId, SingleMessage[]>;
@@ -13,6 +14,7 @@ export const useMessageStore = defineStore('messages', {
 	actions: {
 		getActiveChatMessages(chatId: ChatId) {
 			if (!this.messages[chatId]) {
+				useSocketStore().subscribeToChatroom(`${chatId}`);
 				// fetch messages for chat
 				// make sure user is subscribed to socket
 				getRequest(`chats/${chatId}/messages`).then((data) => {
@@ -27,6 +29,7 @@ export const useMessageStore = defineStore('messages', {
 
 		// should be typed
 		socketAction(update: UpdateMessage<SingleMessage>) {
+			console.log('recieved socket action!', update);
 			// if chat is does not exist, fuck it and ignore
 			if (!this.messages[update.data.chat_id]) {
 				console.log('Chat does not exist, no update needed');

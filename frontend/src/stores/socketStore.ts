@@ -1,4 +1,4 @@
-import io from 'socket.io-client';
+import io, { type Socket } from 'socket.io-client';
 import { defineStore } from 'pinia';
 import type { SocketStore } from '@/types/Sockets';
 import { useChatStore } from './chatStore';
@@ -10,7 +10,6 @@ export const useSocketStore = defineStore('sockets', {
 	}),
 	actions: {
 		initialize() {
-			console.log('Socket store init function');
 			if (this.chats === null) {
 				this.initializeChats();
 			}
@@ -34,6 +33,12 @@ export const useSocketStore = defineStore('sockets', {
 		},
 		disconnect() {
 			this.chats?.disconnect();
+		},
+		async subscribeToChatroom(room: String) {
+			if (this.chats === null) {
+				await this.initializeChats();
+			}
+			this.chats!.emit('join', { roomName: room });
 		},
 	},
 });

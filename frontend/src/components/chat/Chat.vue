@@ -5,7 +5,7 @@
 			@click="$emit('toggleFocusTarget', 'msg')"
 			class="toggleHandler"
 		></div>
-		<ChatHeader :chat="info"  />
+		<ChatHeader :chat="info" />
 		<div class="c_messagelist">
 			<Message
 				v-for="message in activeChatMessages"
@@ -20,6 +20,7 @@
 				placeholder="type..."
 				v-model="new_message"
 				:disabled="is_sending"
+				@keypress.enter.exact.prevent="postNewMessage()"
 			></textarea>
 			<input type="submit" value="enter" />
 		</form>
@@ -33,7 +34,7 @@ import Message from './Message.vue';
 import ChatHeader from './ChatHeader.vue';
 import { useMessageStore } from '@/stores/messageStore';
 import { useUserStore } from '@/stores/userStore';
-import type { Chat_List_Item, SingleMessage, NewMessage } from "@/types/Chat";
+import type { Chat_List_Item, SingleMessage, NewMessage } from '@/types/Chat';
 import { postRequest } from '@/utils/apiRequests';
 
 export default defineComponent({
@@ -55,13 +56,13 @@ export default defineComponent({
 
 		return {
 			messageStore,
-			userStore
-		}
+			userStore,
+		};
 	},
 	computed: {
 		activeChatMessages(): SingleMessage[] {
 			return this.messageStore.getActiveChatMessages(this.info.id);
-		}
+		},
 	},
 	methods: {
 		async postNewMessage() {
@@ -73,24 +74,24 @@ export default defineComponent({
 			const newMessage: NewMessage = {
 				sender_id: this.userStore.getMe.id,
 				chat: this.info.id,
-				content: this.new_message
+				content: this.new_message,
 			};
 			try {
 				const response = await postRequest('messages', newMessage);
-				console.log("response: ", response);
-				this.new_message = "";
+				console.log('response: ', response);
+				this.new_message = '';
 				this.is_sending = false;
 			} catch (e) {
 				console.error(e);
 				this.is_sending = false;
 			}
-		}
+		},
 	},
 	data() {
 		return {
-			new_message: "",
-			is_sending: false
-		}
-	}
+			new_message: '',
+			is_sending: false,
+		};
+	},
 });
 </script>

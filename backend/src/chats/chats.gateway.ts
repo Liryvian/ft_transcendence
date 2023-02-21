@@ -6,6 +6,7 @@ import {
 	OnGatewayInit,
 	WebSocketGateway,
 	WebSocketServer,
+	ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SocketService } from '../socket/socket.service';
@@ -17,10 +18,14 @@ interface UpdateMessage<T> {
 	data: T | any;
 }
 
+class JoinRoom {
+	name: String;
+}
+
 @WebSocketGateway({
 	namespace: '/chats',
 	cors: {
-		origin: '*:*',
+		origin: '*',
 	},
 })
 export class ChatsGateway
@@ -49,5 +54,14 @@ export class ChatsGateway
 	@SubscribeMessage('listUpdate')
 	sendHallo(@MessageBody() data: any) {
 		this.server.emit('listUpdate', data);
+	}
+
+	@SubscribeMessage('join')
+	subscribeToRoom(
+		@MessageBody() data: JoinRoom,
+		@ConnectedSocket() client: Socket,
+	) {
+		console.log('joining ', data);
+		client.join(`${data.name}`);
 	}
 }
