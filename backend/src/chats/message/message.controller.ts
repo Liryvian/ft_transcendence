@@ -9,14 +9,40 @@ import {
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { Message } from './entities/message.entity';
+import { SocketService } from '../../socket/socket.service';
+
+// should be imported!
+type UpdateType = 'new' | 'update' | 'delete';
+
+interface UpdateMessage<T> {
+	action: UpdateType;
+	data: T | any;
+}
 
 @Controller('messages')
 export class MessageController {
-	constructor(private readonly messageService: MessageService) {}
+	constructor(
+		private readonly messageService: MessageService,
+		private socketService: SocketService,
+	) {}
 
 	@Post()
-	create(@Body() createMessageDto: CreateMessageDto) {
-		return this.messageService.save(createMessageDto);
+	async create(@Body() createMessageDto: CreateMessageDto) {
+		const newMessage: Message = await this.messageService.save(
+			createMessageDto,
+		);
+
+		const socketMessage: UpdateMessage<Message> = {
+			action: 'new',
+			data: newMessage,
+		};
+		console.log('trying to emit socket message');
+		const ret = this.socketService.chatServer
+			.to('/chats')
+			.emit('newMessage', socketMessage);
+		console.log('return value of socket emit: ', ret);
+		return newMessage;
 	}
 
 	@Get()

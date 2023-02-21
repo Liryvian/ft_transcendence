@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import { defineStore } from 'pinia';
 import type { SocketStore } from '@/types/Sockets';
 import { useChatStore } from './chatStore';
+import { useMessageStore } from './messageStore';
 
 export const useSocketStore = defineStore('sockets', {
 	state: (): SocketStore => ({
@@ -25,6 +26,10 @@ export const useSocketStore = defineStore('sockets', {
 			this.chats.on('listUpdate', (update) => {
 				console.log('listUpdate: ', update);
 				// call other store method
+			});
+			this.chats.on('newMessage', (update) => {
+				console.log('new message: ', update);
+				useMessageStore().socketAction(update);
 			});
 		},
 		disconnect() {
