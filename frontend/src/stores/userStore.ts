@@ -15,12 +15,14 @@ export const useUserStore = defineStore('users', {
 		allUsers: [] as User[],
 		me: {} as User,
 		errors: [] as String[],
+		isLoggedIn: false,
 	}),
 
 	// getters == computed values
 	getters: {
 		// getAllUsers: (state) => state.allUsers,
 		// getMe: (state) => state.me,
+		getIsLoggedIn: (state) => state.isLoggedIn
 	},
 	// actions == methods
 	actions: {
@@ -38,6 +40,7 @@ export const useUserStore = defineStore('users', {
 		async login(loginForm: LoginForm) {
 			try {
 				await postRequest('login', loginForm);
+				this.isLoggedIn = true;
 				await this.refreshMe();
 				await router.push('/settings');
 				this.errors.length = 0;
@@ -45,7 +48,7 @@ export const useUserStore = defineStore('users', {
 				this.handleFormError(e.response.data);
 			}
 		},
-
+		
 		async register(registerForm: RegisterForm) {
 			try {
 				await postRequest('users', registerForm);

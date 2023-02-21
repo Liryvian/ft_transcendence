@@ -1,3 +1,4 @@
+import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -79,6 +80,13 @@ const router = createRouter({
 			component: () => import('../views/ComponentTest.vue'),
 		},
 	],
+});
+
+router.beforeEach((to) => {
+	const isLoggedIn = useUserStore().getIsLoggedIn;
+	if (!isLoggedIn && to.name !== "login") {
+		return {name: "login"}
+	}
 });
 
 export default router;
