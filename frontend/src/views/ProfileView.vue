@@ -2,8 +2,8 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<VerticalAvatarAndUserName
-				:profile_picture="this.user.avatar"
-				:profile_name="this.user.name"
+				:profile_picture="user.avatar"
+				:profile_name="user.name"
 			/>
 			<OverviewWithMidline :data-array="dataArray" />
 		</div>
@@ -41,11 +41,9 @@ export default defineComponent({
 			(user: User) => Number(user.id) === Number(this.profile_id),
 		);
 		if (filteredUsers === undefined) {
-			// console.log("fusers" ,filteredUsers);
 			this.$router.push('/profiles');
 		} else {
 			this.user = filteredUsers;
-			console.log('avatar', this.user.avatar);
 			this.dataArray = [
 				{ left: 'intra name', right: this.user.name },
 				{ left: 'member since', right: this.user.created_at },

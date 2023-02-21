@@ -40,6 +40,7 @@ export const useUserStore = defineStore('users', {
 				await postRequest('login', loginForm);
 				await this.refreshMe();
 				await router.push('/settings');
+				this.errors.length = 0;
 			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
@@ -50,6 +51,7 @@ export const useUserStore = defineStore('users', {
 				await postRequest('users', registerForm);
 				await this.refreshData();
 				await router.push('/login');
+				this.errors.length = 0;
 			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
