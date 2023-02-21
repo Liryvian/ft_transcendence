@@ -2,26 +2,28 @@ import router from '@/router';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { deleteRequest, getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import type { User, LoginForm, RegisterForm, LogoutForm } from '../types/User';
+import type { User, LoginForm, RegisterForm, LogoutForm, UpdateProfileForm, } from '../types/User';
+
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
 	state: () => ({
 		allUsers: [] as User[],
 		me: {} as User,
-		errors: [],
+		errors: [] as String[],
 	}),
 
-  	// getters == computed values
-  	getters: {
-  	  getAllUsers: (state) => state.allUsers,
-  	  getMe: (state) => state.me
-  	},
-  	// actions == methods
+	// getters == computed values
+	getters: {
+		// getAllUsers: (state) => state.allUsers,
+		// getMe: (state) => state.me,
+	},
+	// actions == methods
 	actions: {
 		handleFormError(responseData: any) {
 			if (typeof responseData.message === 'string') {
-				this.errors = [responseData.message];
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
 			} else {
 				this.errors = responseData.message.map((msg: String) =>
 					msg.replace('(o) => o.', ''),
@@ -29,16 +31,16 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-    	async login(loginForm: LoginForm) {
-    	  try{
-    	    await postRequest("login", loginForm);
-    	    await this.refreshMe();
-    	    await router.push("/settings")
-    	  }
-		  catch (e) {
-			  this.handleFormError(e.response.data);
-    	  }
-	  },
+		async login(loginForm: LoginForm) {
+			try {
+				await postRequest('login', loginForm);
+				await this.refreshMe();
+				await router.push('/settings');
+				this.errors.length = 0;
+			} catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
 
 		async logout(logoutForm: LogoutForm) {
 			try{
@@ -56,8 +58,26 @@ export const useUserStore = defineStore('users', {
 				await postRequest('users', registerForm);
 				await this.refreshData();
 				await router.push('/login');
+				this.errors.length = 0;
 			} catch (e) {
-				this.handleFormError(e.response.data)
+				this.handleFormError(e.response.data);
+			}
+		},
+
+		async updateProfile(id: number, updateProfileForm: UpdateProfileForm) {
+			try {
+				if (updateProfileForm.new_password === '') {
+					delete updateProfileForm.new_password;
+					delete updateProfileForm.new_password_confirm;
+					delete updateProfileForm.password;
+				}
+				await patchRequest(`users/${id}`, updateProfileForm);
+				await this.refreshData();
+				this.errors.length = 0;
+				await router.push({name: 'profile', params: {profile_id: id}});
+			} catch (e: any) {
+				this.handleFormError(e);
+				return [];
 			}
 		},
 
@@ -77,9 +97,7 @@ export const useUserStore = defineStore('users', {
 		async refreshAllUsers() {
 			try {
 				const { data } = await getRequest('users');
-				this.allUsers = data.filter(
-					(user: User) => user.id !== this.me.id,
-				);
+				this.allUsers = data;
 			} catch (e) {
 				console.error(e);
 				return [];

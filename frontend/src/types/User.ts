@@ -13,6 +13,13 @@ export interface RegisterForm {
 	password_confirm: string;
 }
 
+export interface UpdateProfileForm {
+	name: string;
+	new_password?: string;
+	new_password_confirm?: string;
+	password?: string;
+}
+
 export interface LoginForm {
 	name: string;
 	password: string;
@@ -39,6 +46,7 @@ export interface User {
 
 	is_intra: boolean;
 	intra_id: number;
+	intra_login: string;
 	avatar: string;
 
 	matchmaking_request: GameRequest[];
