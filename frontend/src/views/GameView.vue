@@ -28,9 +28,12 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
+import type  { Position, Ball, Paddle }  from "@/types/Game"
+import { io, Socket } from 'socket.io-client';
 
 interface DataObject {
 	context: CanvasRenderingContext2D;
+	socket: Socket;
 }
 
 export default defineComponent({
@@ -42,6 +45,7 @@ export default defineComponent({
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
+			socket: io('http://localhost:8080/pong'),
 		}
 	},
 
@@ -73,10 +77,10 @@ export default defineComponent({
 		
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
 		drawMiddleLine() {
-			const widthStart: number = this.width / 2;
 			const heightStart: number = 0;
-			const lineWidth: number = 4;
-			const lineHeight: number = this.height;
+			const lineWidth: number = this.widthPercentage(0.3);
+			const widthStart: number = this.widthPercentage(50 - (lineWidth / 2))
+			const lineHeight: number = this.heightPercentage(100);
 			
 			this.context.fillRect(
 					widthStart,
@@ -87,10 +91,10 @@ export default defineComponent({
 			},
 			
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
-		drawBall() {
-			const startingX: number = this.widthPercentage(40);
-			const startingY: number = this.heightPercentage(65)
-			const radius: number = 12;
+		drawBall(ball: Ball) {
+			const startingX: number = this.widthPercentage(ball.position.x);
+			const startingY: number = this.heightPercentage(ball.position.y)
+			const radius: number = this.widthPercentage(ball.radius);
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
 
@@ -102,42 +106,50 @@ export default defineComponent({
 					endAngle,
 			)
 				// this fills the above defined arc/circle
-				this.context.lineWidth = 4;
+				this.context.lineWidth = this.widthPercentage(0.3);
 				this.context.stroke()
 			},
 				
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillRect
-		drawPaddles() {
-			let widthStart: number = 0;
-			const lineWidth: number = 15;
-			const lineHeight: number = this.heightPercentage(12); 
-			const heightStart: number = this.heightPercentage(50) - (lineHeight / 2); // middle of the canvas
-			
-			// Player 1
-			this.context.fillRect(
-				widthStart,
-				heightStart,
-				lineWidth,
-				lineHeight
-			)
+		drawPaddle(paddle: Paddle) {
+			const lineWidth: number = this.widthPercentage(1);
+			const lineHeight: number = this.heightPercentage(12);
+			const y: number = this.heightPercentage(paddle.position.y) - (lineHeight / 2); // middle of the canvas
 
-			//  opposite side / right side
-			// Player 2
-			widthStart = this.width - lineWidth; 
+			// Player 1
+			let x = 0
+			if (paddle.position.x === 100) {
+				// Player 2
+				x = this.width - lineWidth;
+			}
 			this.context.fillRect(
-				widthStart,
-				heightStart,
+				x,
+				y,
 				lineWidth,
 				lineHeight
 			)
+		},
+
+		render() {
+			this.socket.on('hallo', (data) => {
+				console.log('\nReceiving from backend: \n', JSON.stringify(data))
+			});
+		
+			this.socket.on("barPosition", (data: Paddle) => {
+				this.drawPaddle(data);
+			})
+			this.socket.on("ballPosition", (data: Ball) => {
+				this.drawBall(data);
+			})
+			this.drawMiddleLine();
 		}
 	},
 
+
 	mounted() {
+
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		this.drawMiddleLine();
-		this.drawBall();
-		this.drawPaddles();
+		this.render();
 	},
 })
 </script> 

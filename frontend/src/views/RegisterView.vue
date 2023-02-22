@@ -8,8 +8,16 @@
 				class="c_block c_form_group"
 				@submit.prevent="userStore.register(registerForm)"
 			>
-				<InputField tabindex="1" label="username" v-model="registerForm.name" />
-				<InputField inputType="password"  label="password" v-model="registerForm.password" />
+				<InputField
+					tabindex="1"
+					label="username"
+					v-model="registerForm.name"
+				/>
+				<InputField
+					inputType="password"
+					label="password"
+					v-model="registerForm.password"
+				/>
 				<InputField
 					inputType="password"
 					label="confirm password"
@@ -26,7 +34,9 @@
 					</p>
 				</div>
 				<div v-if="userStore.errors.length">
-					<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
+					<p v-for="error in userStore.errors" class="c_form--error">
+						!! {{ error }}
+					</p>
 				</div>
 			</form>
 		</div>

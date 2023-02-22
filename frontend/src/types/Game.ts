@@ -1,15 +1,21 @@
 import type { User } from './User';
 
-interface Position {
+export interface Position {
 	x: number;
 	y: number;
 }
 
-interface Paddle {
+export interface Paddle {
 	position: Position;
 	width: number;
 	height: number;
 }
+
+export interface Ball {
+	position: Position;
+	radius: number;
+}
+
 
 export interface Game {
 	id: number;
