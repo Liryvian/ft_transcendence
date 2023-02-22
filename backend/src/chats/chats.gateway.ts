@@ -11,16 +11,16 @@ import {
 import { Server, Socket } from 'socket.io';
 import { SocketService } from '../socket/socket.service';
 
-type UpdateType = 'new' | 'update' | 'delete';
+// type UpdateType = 'new' | 'update' | 'delete';
 
-interface UpdateMessage<T> {
-	action: UpdateType;
-	data: T | any;
-}
+// interface UpdateMessage<T> {
+// 	action: UpdateType;
+// 	data: T | any;
+// }
 
-class JoinRoom {
-	name: String;
-}
+// class JoinRoom {
+// 	name: String;
+// }
 
 @WebSocketGateway({
 	namespace: '/chats',
@@ -50,18 +50,12 @@ export class ChatsGateway
 		this.socketService.chatList_subscribe(socket);
 	}
 
-	// @SubscribeMessage('listUpdate')
-	listUpdate(@MessageBody() data: any) {
-		console.log('try updading list');
-		this.server.to('chatlist').emit('listUpdate', data);
-	}
-
-	@SubscribeMessage('join')
-	subscribeToRoom(
-		@MessageBody() data: JoinRoom,
-		@ConnectedSocket() client: Socket,
-	) {
-		console.log('joining ', data);
-		client.join(`${data.name}`);
-	}
+	// @SubscribeMessage('join')
+	// subscribeToRoom(
+	// 	@MessageBody() data: JoinRoom,
+	// 	@ConnectedSocket() client: Socket,
+	// ) {
+	// 	console.log('joining ', data);
+	// 	client.join(`${data.name}`);
+	// }
 }

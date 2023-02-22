@@ -18,12 +18,14 @@ import { FindOptionsOrder } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
 import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
 import { MessageService } from '../message/message.service';
+import { SocketService } from '../../socket/socket.service';
 
 @Controller('chats')
 export class ChatController {
 	constructor(
 		private readonly chatService: ChatService,
 		private readonly messageService: MessageService,
+		private readonly socketService: SocketService,
 	) {}
 
 	private readonly defaultRelationships = { has_users: true };
@@ -40,7 +42,9 @@ export class ChatController {
 			const hashed = await bcrypt.hash(createChatDto.password, 11);
 			createChatDto.password = hashed;
 		}
-		return this.chatService.insert(createChatDto);
+		const chat: Chat = await this.chatService.save(createChatDto);
+		this.socketService.chatlist_emit([-1], chat);
+		return chat;
 	}
 
 	@Get()

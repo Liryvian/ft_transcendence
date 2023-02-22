@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Message } from '../chats/message/entities/message.entity';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../users/user/user.service';
+import { Chat } from '../chats/chat/entities/chat.entity';
 
 type ChatId = number;
 type UserId = number;
@@ -24,6 +25,14 @@ export class SocketService {
 			.split(' ')
 			.find((cookie) => cookie.startsWith('jwt='))
 			?.slice(4);
+	}
+
+	chatlist_emit(userIds: number[], chat: Chat) {
+		console.log('emit to userIds or all users that there is a new chat');
+		if (userIds.length === 1 && userIds[0] === -1) {
+			// emit to all
+			// this.chatListSubscribers
+		}
 	}
 
 	async chatList_subscribe(socket: Socket) {
