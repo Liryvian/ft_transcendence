@@ -19,6 +19,7 @@ import { UserAchievementsModule } from './users/user-achievements/user-achieveme
 import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MeModule } from './me/me.module';
+import { PongModule } from './pong/pong.module';
 
 @Module({
 	imports: [
@@ -44,6 +45,7 @@ import { MeModule } from './me/me.module';
 		AchievementsModule,
 		UserAchievementsModule,
 		MeModule,
+		PongModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
