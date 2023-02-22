@@ -24,6 +24,8 @@ import {
 	Chat_Type,
 	SocketMessage,
 } from '../../socket/socket.types';
+import { UserInChat } from '../../users/user/entities/user.entity';
+import { ChatUserPermission } from '../chat-user-permissions/entities/chat-user-permission.entity';
 
 @Controller('chats')
 export class ChatController {
@@ -46,6 +48,15 @@ export class ChatController {
 		if (createChatDto.hasOwnProperty('password')) {
 			const hashed = await bcrypt.hash(createChatDto.password, 11);
 			createChatDto.password = hashed;
+		}
+		let hasUsers = false;
+		if (createChatDto.hasOwnProperty('users')) {
+			const users: UserInChat[] = createChatDto.users;
+			hasUsers = true;
+			delete createChatDto.users;
+			// createChatDto['has_users'] = [] as ChatUserPermission[];
+			console.log(users);
+			return false;
 		}
 		const chat: Chat = await this.chatService.save(createChatDto);
 

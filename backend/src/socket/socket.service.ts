@@ -2,7 +2,6 @@ import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../users/user/user.service';
-import { Chat } from '../chats/chat/entities/chat.entity';
 import { Chat_List_Item, SocketMessage } from './socket.types';
 
 type ChatId = number;
