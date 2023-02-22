@@ -7,28 +7,6 @@ import { UserService } from '../users/user/user.service';
 type ChatId = number;
 type UserId = number;
 
-export interface Chat_Member {
-	id: number;
-	name: string;
-	avatar?: string;
-	permissions?: string[];
-}
-
-export type Chat_Type = 'dm' | 'channel';
-export interface ChatInfo {
-	id: number;
-	name: string;
-	type: Chat_Type;
-	users: Chat_Member[];
-}
-
-export interface ChatSocket extends Socket {
-	name: String;
-	info: ChatInfo;
-	messages: Message[];
-}
-type ChatroomMap = Record<ChatId, ChatSocket>;
-
 export type ChatList = Record<UserId, Socket[]>;
 
 @Injectable()
@@ -38,9 +16,6 @@ export class SocketService {
 		private readonly userService: UserService,
 	) {}
 	public chatServer: Server = null;
-
-	// list of key=ChatId with subscribed userIds[]
-	public chatrooms: ChatroomMap = {};
 
 	public chatListSubscribers: ChatList = {};
 
