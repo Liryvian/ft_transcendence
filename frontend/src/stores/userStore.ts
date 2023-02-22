@@ -15,7 +15,7 @@ export const useUserStore = defineStore('users', {
 		allUsers: [] as User[],
 		me: {} as User,
 		errors: [] as String[],
-		// isLoggedIn: false,
+		isLoggedIn: false,
 	}),
 
 	// getters == computed values
@@ -38,6 +38,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('login', loginForm);
 				await this.refreshMe();
+				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
 			} catch (e) {
@@ -48,6 +49,7 @@ export const useUserStore = defineStore('users', {
 		async logout() {
 			try{
 				await getRequest('logout');
+				this.isLoggedIn = false;
 				this.errors.length = 0;
 			}
 			catch (e) {
@@ -59,6 +61,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('users', registerForm);
 				await this.refreshData();
+				// this.me.is_logged_in = true;
 				await router.push('/login');
 				this.errors.length = 0;
 			} catch (e) {

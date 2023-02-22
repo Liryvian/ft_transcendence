@@ -1,3 +1,5 @@
+import { useUserStore } from '@/stores/userStore';
+import { getRequest } from '@/utils/apiRequests';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -81,12 +83,28 @@ const router = createRouter({
 	],
 });
 
-router.beforeEach((to) => {
-	if (!document.cookie.startsWith("jwt=") && to.name !== "login") {
-		return {name: "login"}
+async function isLoggedIn() {
+	try {
+		let user = await useUserStore().me
+		console.log("IsloggedIn; ", useUserStore().isLoggedIn)
+		return true;
 	}
-	else if (to.name === "login" && document.cookie.startsWith("jwt=")) {
-		return {name: "settings"}
+	catch (e) {
+		console.log("Fucked it")
+		return false;
+	}
+}
+
+router.beforeEach(async (to) => {
+	const hasJWT =
+		document.cookie
+			.split(';')
+			.find((cookie) => cookie.trim().startsWith('jwt=')) ?? false;
+	await isLoggedIn()
+	if (!hasJWT && to.name !== 'login') {
+		return { name: 'login' };
+	} else if (to.name === 'login' && hasJWT) {
+		return { name: 'settings' };
 	}
 });
 
