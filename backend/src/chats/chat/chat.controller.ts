@@ -26,6 +26,7 @@ import {
 } from '../../socket/socket.types';
 import { UserInChat } from '../../users/user/entities/user.entity';
 import { ChatUserPermission } from '../chat-user-permissions/entities/chat-user-permission.entity';
+import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
 
 @Controller('chats')
 export class ChatController {
@@ -33,6 +34,7 @@ export class ChatController {
 		private readonly chatService: ChatService,
 		private readonly messageService: MessageService,
 		private readonly socketService: SocketService,
+		private readonly chatUserPermissionService: ChatUserPermissionService,
 	) {}
 
 	private readonly defaultRelationships = { has_users: true };
@@ -49,16 +51,32 @@ export class ChatController {
 			const hashed = await bcrypt.hash(createChatDto.password, 11);
 			createChatDto.password = hashed;
 		}
-		let hasUsers = false;
+
+		const users: UserInChat[] = [];
 		if (createChatDto.hasOwnProperty('users')) {
-			const users: UserInChat[] = createChatDto.users;
-			hasUsers = true;
+			createChatDto.users.forEach((user) => users.push(user));
 			delete createChatDto.users;
-			// createChatDto['has_users'] = [] as ChatUserPermission[];
-			console.log(users);
-			return false;
 		}
-		const chat: Chat = await this.chatService.save(createChatDto);
+
+		let chat: Chat = await this.chatService.save(createChatDto);
+		if (users.length) {
+			const relations: Partial<ChatUserPermission>[] = [];
+			users.forEach((user: UserInChat) => {
+				user.permissions.forEach((permission: string) => {
+					relations.push({
+						user_id: user.id,
+						chat_id: chat.id,
+						permission: permission,
+					});
+				});
+			});
+			const rels = await this.chatUserPermissionService.save(relations);
+
+			chat = await this.chatService.findOne({
+				where: { id: chat.id },
+				relations: { has_users: { users: true } },
+			});
+		}
 
 		const socketMessage: SocketMessage<Chat_List_Item> = {
 			action: 'new',
@@ -66,9 +84,13 @@ export class ChatController {
 				id: chat.id,
 				name: chat.name,
 				type: chat.type as Chat_Type,
+				users: chat.users.map((user) => ({
+					id: user.id,
+					name: user.name,
+					avatar: user.avatar,
+				})),
 			},
 		};
-		console.log('Before emit to backend');
 		this.socketService.chatlist_emit('all', socketMessage);
 		return chat;
 	}
