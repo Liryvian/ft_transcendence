@@ -94,6 +94,7 @@ export class UserController {
 		});
 	}
 
+	@UseGuards(AuthGuard)
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
