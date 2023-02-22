@@ -42,19 +42,12 @@ export class ChatsGateway
 
 	handleDisconnect(socket: Socket) {
 		console.log('----- disconnect');
-		// console.log('socket disconnect: ', socket);
-		socket.leave('chatlist');
+		this.socketService.chatList_unsubscribe(socket);
 	}
 
 	handleConnection(socket: Socket) {
 		console.log('\n!Socket is connected!\n');
-		socket.join('chatlist');
-		this.listUpdate({
-			name: 'new list item',
-			type: 'dm',
-			id: 2342,
-			users: [],
-		});
+		this.socketService.chatList_subscribe(socket);
 	}
 
 	// @SubscribeMessage('listUpdate')

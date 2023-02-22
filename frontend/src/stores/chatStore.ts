@@ -9,6 +9,7 @@ export const useChatStore = defineStore('chats', {
 		dms: [] as Chat_List_Item[],
 		channels: [] as Chat_List_Item[],
 		subscribed: false,
+		initialized: false,
 	}),
 	// getters == computed values
 	getters: {
@@ -18,7 +19,8 @@ export const useChatStore = defineStore('chats', {
 	// actions == methods
 	actions: {
 		async init(force: boolean) {
-			if (this.getAllChats.length === 0 || force) {
+			if (this.initialized === false || force) {
+				this.initialized = true;
 				try {
 					const all = (await getRequest('me/chats')).data;
 					this.dms = all.filter(
@@ -28,6 +30,7 @@ export const useChatStore = defineStore('chats', {
 						(chat: Chat_List_Item) => chat.type === 'channel',
 					);
 				} catch (e) {
+					this.initialized = false;
 					console.error('error on getting me/chats', e);
 					return [];
 				}

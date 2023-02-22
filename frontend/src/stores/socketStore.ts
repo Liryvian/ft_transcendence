@@ -11,20 +11,23 @@ export const useSocketStore = defineStore('sockets', {
 	state: (): SocketStore => ({
 		chats: {
 			socket: null,
+			initialized: false,
 			in_rooms: [],
 		},
 	}),
 	actions: {
 		initialize() {
-			if (this.chats === null) {
+			if (this.chats.initialized === false) {
 				this.initializeChats();
+				this.chats.initialized = true;
 			}
 		},
 		async initializeChats() {
 			console.log('Init chats');
 			// get initial data in chat store
 			await useChatStore().init(false);
-			this.chats.socket = io('/chats');
+			// create socket
+			this.chats.socket = io('/chats', { withCredentials: true });
 			this.chats.socket.on('connection', (conn) => {
 				console.log('Connected: ', conn);
 			});
@@ -42,7 +45,7 @@ export const useSocketStore = defineStore('sockets', {
 			this.chats.socket?.disconnect();
 		},
 		async subscribeToChatroom(room: String) {
-			if (this.chats.socket === null) {
+			if (this.chats.initialized === false) {
 				await this.initializeChats();
 			}
 			// this.chats.socket!.emit('join', { roomName: room });

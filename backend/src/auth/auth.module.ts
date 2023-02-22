@@ -8,6 +8,6 @@ import { SharedModule } from '../shared/shared.module';
 	imports: [forwardRef(() => UserModule), SharedModule],
 	controllers: [AuthController],
 	providers: [AuthService],
-	exports: [AuthModule],
+	exports: [AuthService],
 })
 export class AuthModule {}
