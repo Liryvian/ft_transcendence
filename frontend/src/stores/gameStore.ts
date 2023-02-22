@@ -3,6 +3,7 @@ import type { User } from '@/types/User';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
+import type { 	RequestGameForm,} from '../types/Game';
 import router from '@/router';
 
 export const useGameStore = defineStore("games", {
@@ -48,5 +49,23 @@ export const useGameStore = defineStore("games", {
 			})
 			return true;
 		},
+
+		// async createGame(id: number, requestGameForm: RequestGameForm) {
+		// 	try {
+		// 		// if (updateProfileForm.new_password === '') {
+		// 		// 	delete updateProfileForm.new_password;
+		// 		// 	delete updateProfileForm.new_password_confirm;
+		// 		// 	delete updateProfileForm.password;
+		// 		// }
+		// 		// await patchRequest(`users/${id}`, gameRequestForm);
+		// 		// await this.refreshData();
+		// 		this.errors.length = 0;
+		// 		// await router.push({name: 'profile', params: {profile_id: id}});
+		// 	} catch (e: any) {
+		// 		this.handleFormError(e);
+		// 		return [];
+		// 	}
+		// },
 	}
+
 })

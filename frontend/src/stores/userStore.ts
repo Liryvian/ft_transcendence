@@ -67,7 +67,10 @@ export const useUserStore = defineStore('users', {
 				await patchRequest(`users/${id}`, updateProfileForm);
 				await this.refreshData();
 				this.errors.length = 0;
-				await router.push({name: 'profile', params: {profile_id: id}});
+				await router.push({
+					name: 'profile',
+					params: { profile_id: id },
+				});
 			} catch (e: any) {
 				this.handleFormError(e);
 				return [];
