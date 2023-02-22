@@ -14,11 +14,16 @@ import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat } from './entities/chat.entity';
 import * as bcrypt from 'bcrypt';
-import { FindOptionsOrder } from 'typeorm';
+import { DeleteResult, FindOptionsOrder } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
 import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
 import { MessageService } from '../message/message.service';
 import { SocketService } from '../../socket/socket.service';
+import {
+	Chat_List_Item,
+	Chat_Type,
+	SocketMessage,
+} from '../../socket/socket.types';
 
 @Controller('chats')
 export class ChatController {
@@ -43,7 +48,17 @@ export class ChatController {
 			createChatDto.password = hashed;
 		}
 		const chat: Chat = await this.chatService.save(createChatDto);
-		this.socketService.chatlist_emit([-1], chat);
+
+		const socketMessage: SocketMessage<Chat_List_Item> = {
+			action: 'new',
+			data: {
+				id: chat.id,
+				name: chat.name,
+				type: chat.type as Chat_Type,
+			},
+		};
+		console.log('Before emit to backend');
+		this.socketService.chatlist_emit('all', socketMessage);
 		return chat;
 	}
 
@@ -104,12 +119,34 @@ export class ChatController {
 			}
 			updateChatDto.password = updateChatDto.new_password;
 		}
+		const chat = await this.chatService.save({
+			id,
+			...updateChatDto,
+		});
 
-		return this.chatService.update(id, updateChatDto);
+		const socketMessage: SocketMessage<Chat_List_Item> = {
+			action: 'update',
+			data: {
+				id: chat.id,
+				name: chat.name,
+				type: chat.type as Chat_Type,
+			},
+		};
+		this.socketService.chatlist_emit('all', socketMessage);
+		return chat;
 	}
 
 	@Delete(':id')
 	async remove(@Param('id') id: number) {
-		return this.chatService.remove(id);
+		const deleteResult: DeleteResult = await this.chatService.remove(id);
+
+		const socketMessage: SocketMessage<Chat_List_Item> = {
+			action: 'delete',
+			data: {
+				id: id,
+			},
+		};
+		this.socketService.chatlist_emit('all', socketMessage);
+		return deleteResult;
 	}
 }

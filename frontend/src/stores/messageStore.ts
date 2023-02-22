@@ -27,29 +27,44 @@ export const useMessageStore = defineStore('messages', {
 			return this.messages[chatId];
 		},
 
-		// should be typed
-		socketAction(update: UpdateMessage<SingleMessage>) {
-			console.log('recieved socket action!', update);
+		newMessage(message: SingleMessage) {
 			// if chat is does not exist, fuck it and ignore
-			if (!this.messages[update.data.chat_id]) {
-				console.log('Chat does not exist, no update needed');
-				return;
-			}
 			// temp store timestamp of last message
-			const prev_timestamp = this.messages[update.data.chat_id]
+			const prev_timestamp = this.messages[message.chat_id]
 				.slice(-1)[0]
 				.created_at.valueOf();
 
-			// append new message to the end
-			this.messages[update.data.chat_id].push(update.data);
+			// add message
+			this.messages[message.chat_id].push(message);
 
 			// check if we need to sort
-			if (update.data.created_at.valueOf() < prev_timestamp) {
+			if (message.created_at.valueOf() < prev_timestamp) {
 				// sort if needed
-				this.messages[update.data.chat_id].sort(
+				this.messages[message.chat_id].sort(
 					(a: SingleMessage, b: SingleMessage) =>
 						a.created_at.valueOf() - b.created_at.valueOf(),
 				);
+			}
+		},
+		updateMessage(message: SingleMessage) {},
+		deleteMessage(message: SingleMessage) {},
+
+		// should be typed
+		socketAction(socketMessage: UpdateMessage<SingleMessage>) {
+			console.log('message store recieved socket action!', socketMessage);
+
+			if (!this.messages[socketMessage.data.chat_id]) {
+				return;
+			}
+
+			if (socketMessage.action === 'new') {
+				return this.newMessage(socketMessage.data);
+			}
+			if (socketMessage.action === 'delete') {
+				return this.deleteMessage(socketMessage.data);
+			}
+			if (socketMessage.action === 'update') {
+				return this.updateMessage(socketMessage.data);
 			}
 		},
 	},

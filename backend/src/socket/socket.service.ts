@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { Message } from '../chats/message/entities/message.entity';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../users/user/user.service';
 import { Chat } from '../chats/chat/entities/chat.entity';
+import { Chat_List_Item, SocketMessage } from './socket.types';
 
 type ChatId = number;
 type UserId = number;
@@ -27,11 +27,22 @@ export class SocketService {
 			?.slice(4);
 	}
 
-	chatlist_emit(userIds: number[], chat: Chat) {
-		console.log('emit to userIds or all users that there is a new chat');
-		if (userIds.length === 1 && userIds[0] === -1) {
-			// emit to all
-			// this.chatListSubscribers
+	chatlist_emit(to: string | number[], message: SocketMessage<Chat_List_Item>) {
+		console.log('to emit: ', message);
+		if (to === 'all') {
+			for (const userId in this.chatListSubscribers) {
+				this.chatListSubscribers[userId].forEach((socket) => {
+					socket.emit('chatListUpdate', message);
+				});
+			}
+		} else if (to instanceof Array && to.length > 0) {
+			to.forEach((userId: number) => {
+				if (this.chatListSubscribers[userId]) {
+					this.chatListSubscribers[userId].forEach((socket) => {
+						socket.emit('chatListUpdate', message);
+					});
+				}
+			});
 		}
 	}
 
@@ -53,6 +64,7 @@ export class SocketService {
 			});
 		} catch (e) {
 			console.log('Error on subscribing to chatlist');
+			console.log(e);
 		}
 	}
 

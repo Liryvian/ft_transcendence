@@ -1,4 +1,4 @@
-import type { Chat_List_Item } from '@/types/Chat';
+import type { Chat_List_Item, UpdateMessage } from '@/types/Chat';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useSocketStore } from './socketStore';
@@ -36,12 +36,64 @@ export const useChatStore = defineStore('chats', {
 				}
 			}
 		},
-		updateList(data: Chat_List_Item) {
-			console.log('chat store update list method: ', data);
-			if (data.type === 'dm') {
-				this.dms.push(data);
-			} else if (data.type === 'channel') {
-				this.channels.push(data);
+
+		newChat(chat: Chat_List_Item) {
+			if (chat.type === 'dm') {
+				this.$patch((state) => {
+					state.dms.push(chat);
+				});
+			} else if (chat.type === 'channel') {
+				this.$patch((state) => {
+					state.channels.push(chat);
+				});
+			}
+		},
+
+		updateChat(chat: Chat_List_Item) {
+			if (chat.type === 'dm') {
+				this.$patch((state) => {
+					state.dms = state.dms.map((dm) => {
+						if (dm.id !== chat.id) return dm;
+						return chat;
+					});
+				});
+			} else if (chat.type === 'channel') {
+				this.$patch((state) => {
+					state.channels = state.channels.map((channel) => {
+						if (channel.id !== chat.id) return channel;
+						return chat;
+					});
+				});
+			}
+		},
+
+		deleteChat(chat: Chat_List_Item) {
+			if (chat.type === 'dm') {
+				this.$patch((state) => {
+					this.dms = this.dms.filter((dm) => {
+						return dm.id !== chat.id;
+					});
+				});
+			} else if (chat.type === 'channel') {
+				this.$patch((state) => {
+					this.channels = this.channels.filter((channel) => {
+						return channel.id !== chat.id;
+					});
+				});
+			}
+		},
+
+		socketAction(socketMessage: UpdateMessage<Chat_List_Item>) {
+			console.log('chat store update list method: ', socketMessage);
+
+			if (socketMessage.action === 'new') {
+				return this.newChat(socketMessage.data);
+			}
+			if (socketMessage.action === 'delete') {
+				return this.deleteChat(socketMessage.data);
+			}
+			if (socketMessage.action === 'update') {
+				return this.updateChat(socketMessage.data);
 			}
 		},
 	},
