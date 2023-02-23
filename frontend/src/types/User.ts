@@ -1,5 +1,5 @@
 import type { Chat } from './Chat';
-import type { Game, GameRequest } from './Game';
+import type { Game, GameRequest } from './game.fe';
 import type { Relationship } from './Relationship';
 
 export interface Achievement {

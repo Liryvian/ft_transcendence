@@ -1,10 +1,10 @@
-import type { Game } from '@/types/Game';
+import type { Game } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 
-export const useGameStore = defineStore("games", {
+export const useGameStore = defineStore('games', {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
@@ -18,18 +18,17 @@ export const useGameStore = defineStore("games", {
 	actions: {
 		async refreshAllGames() {
 			try {
-				const data = await getRequest("games");
+				const data = await getRequest('games');
 				this.allGames = data.data;
 				await useUserStore().refreshAllUsers();
-			}
-			catch (e) {
+			} catch (e) {
 				console.error(e);
 				return [];
 			}
 		},
 
 		async refreshMyGames() {
-			await useUserStore().refreshMe()
+			await useUserStore().refreshMe();
 		},
 
 		async refreshData() {
@@ -40,12 +39,11 @@ export const useGameStore = defineStore("games", {
 		isAvailable(): boolean {
 			const me: User = useUserStore().getMe;
 			// if (!me.isOnline)
-				// retunr false;
+			// retunr false;
 			me.games.forEach((game: Game) => {
-				if (game.is_active === true)
-					return false;
-			})
+				if (game.is_active === true) return false;
+			});
 			return true;
 		},
-	}
-})
+	},
+});

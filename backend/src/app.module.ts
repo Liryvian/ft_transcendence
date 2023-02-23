@@ -21,6 +21,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { MeModule } from './me/me.module';
 import { ChatsModule } from './chats/chats.module';
 import { SocketModule } from './socket/socket.module';
+import { PongModule } from './pong/pong.module';
 
 @Module({
 	imports: [
@@ -48,6 +49,7 @@ import { SocketModule } from './socket/socket.module';
 		MeModule,
 		ChatsModule,
 		SocketModule,
+		PongModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
