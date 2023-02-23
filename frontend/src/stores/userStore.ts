@@ -50,11 +50,9 @@ export const useUserStore = defineStore('users', {
 
 		async logout() {
 			try {
-				// doing this before the request,
-				// the request to backend takes too long, so by the time it's finished
-				// the routing already happened :)
-				this.isLoggedIn = false;
 				await getRequest('logout');
+				this.isLoggedIn = false;
+				router.push({name: "login"})
 				this.errors.length = 0;
 			}
 			catch (e) {
