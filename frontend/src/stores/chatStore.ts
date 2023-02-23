@@ -76,11 +76,9 @@ export const useChatStore = defineStore('chats', {
 				item.hasOwnProperty('type') &&
 				item.type !== this.getAllChats[currentIndex].type
 			) {
-				// move from one list to the other...
+				// @TODO
+				// move from one list to the other... (use array.splice)
 			}
-			// this cannot switch between types..
-			// so find item in all chats, update name/users
-			// if type needs to update, remove from one, add to other?
 			if (item.type === 'dm') {
 				this.$patch((state) => {
 					state.dms = state.dms.map((dm) => {
@@ -115,8 +113,6 @@ export const useChatStore = defineStore('chats', {
 		},
 
 		socketAction(socketMessage: UpdateMessage<Chat_List_Item>) {
-			console.log('chat store update list method: ', socketMessage);
-
 			if (socketMessage.action === 'new') {
 				return this.newChat(socketMessage.data);
 			}
