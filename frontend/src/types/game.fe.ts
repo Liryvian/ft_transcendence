@@ -33,6 +33,12 @@ export interface Game {
 	player_two: User;
 }
 
+export interface ElementPositions {
+	playerOnePaddle: Paddle;
+	playerTwoPaddle: Paddle;
+	ball: Ball;
+}
+
 export interface GameRequest {
 	id: number;
 	user: User;
