@@ -2,7 +2,6 @@ import type { Chat_List_Item } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import { useSocketStore } from './socketStore';
 
 export const useChatStore = defineStore('chats', {
 	//  actions == data definitions
