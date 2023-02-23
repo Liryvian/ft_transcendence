@@ -8,6 +8,7 @@ import type {
 	RegisterForm,
 	UpdateProfileForm,
 } from '../types/User';
+import { useStorage } from "@vueuse/core";
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -15,7 +16,8 @@ export const useUserStore = defineStore('users', {
 		allUsers: [] as User[],
 		me: {} as User,
 		errors: [] as String[],
-		isLoggedIn: false,
+		// persists data accross refreshes
+		isLoggedIn: useStorage("isLoggedIn", false, sessionStorage),
 	}),
 
 	// getters == computed values
@@ -47,9 +49,12 @@ export const useUserStore = defineStore('users', {
 		},
 
 		async logout() {
-			try{
-				await getRequest('logout');
+			try {
+				// doing this before the request,
+				// the request to backend takes too long, so by the time it's finished
+				// the routing already happened :)
 				this.isLoggedIn = false;
+				await getRequest('logout');
 				this.errors.length = 0;
 			}
 			catch (e) {
