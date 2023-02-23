@@ -33,8 +33,6 @@ import { UserModule } from '../users/user/user.module';
 import { UserRelationship } from '../users/user-relationship/entities/user-relationship.entity';
 import { UserRelationshipModule } from '../users/user-relationship/user-relationship.module';
 import { MeModule } from '../me/me.module';
-import { SocketModule } from '../socket/socket.module';
-import { ChatsModule } from '../chats/chats.module';
 
 @Module({
 	imports: [
@@ -55,8 +53,6 @@ import { ChatsModule } from '../chats/chats.module';
 		SharedModule,
 		AuthModule,
 		MeModule,
-		ChatsModule,
-		SocketModule,
 
 		GameModule,
 		GameInvitesModule,
