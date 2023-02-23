@@ -56,6 +56,7 @@
 					/>
 				</div>
 
+
 				<div class="c_field_group c_field_group--radio">
 					<div class="c_radio_group">
 						<label for="example_radio2">public</label>
@@ -75,6 +76,9 @@
 							type="radio"
 							value="on"
 						/>
+					</div>
+					<div class="page_button pb_bottom">
+						<a href="#">create</a>
 					</div>
 				</div>
 			</div>
