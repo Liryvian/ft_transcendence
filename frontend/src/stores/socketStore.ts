@@ -23,12 +23,11 @@ export const useSocketStore = defineStore('sockets', {
 		initialize() {
 			if (this.chats.initialized === false) {
 				this.initializeChats();
-				this.chats.initialized = true;
 			}
 		},
 		async initializeChats() {
-			console.log('Init chats');
-			// get initial data in chat store
+			this.chats.initialized = true;
+			// get initial data in chat store if it is not there
 			await useChatStore().init(false);
 			// create socket
 			this.chats.socket = io('/chats', { withCredentials: true });
@@ -38,25 +37,30 @@ export const useSocketStore = defineStore('sockets', {
 			this.chats.socket.on(
 				'chatListUpdate',
 				(update: UpdateMessage<Chat_List_Item>) => {
-					console.log('recieved update', update);
 					useChatStore().socketAction(update);
 				},
 			);
 			this.chats.socket.on(
-				'newMessage',
+				'messageListUpdate',
 				(update: UpdateMessage<SingleMessage>) => {
 					useMessageStore().socketAction(update);
 				},
 			);
 		},
 		disconnect() {
+			this.chats.socket?.off('newMessage');
+			this.chats.socket?.off('chatListUpdate');
 			this.chats.socket?.disconnect();
 		},
-		async subscribeToChatroom(room: String) {
+		async subscribeToChatroom(chatId: number) {
 			if (this.chats.initialized === false) {
 				await this.initializeChats();
 			}
-			// this.chats.socket!.emit('join', { roomName: room });
+			console.log('emit join');
+			if (this.chats.socket !== null) {
+				console.log('actually emit join');
+				this.chats.socket!.emit('join', chatId);
+			}
 		},
 	},
 });

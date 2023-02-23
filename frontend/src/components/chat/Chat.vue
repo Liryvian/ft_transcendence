@@ -86,8 +86,9 @@ export default defineComponent({
 			};
 			try {
 				const response = await postRequest('messages', newMessage);
-				console.log('response: ', response);
-				this.new_message = '';
+				if (response.status >= 200 && response.status < 300) {
+					this.new_message = '';
+				}
 				this.is_sending = false;
 			} catch (e) {
 				console.error(e);

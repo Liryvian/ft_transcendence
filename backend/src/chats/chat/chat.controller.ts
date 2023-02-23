@@ -52,6 +52,8 @@ export class ChatController {
 			createChatDto.password = hashed;
 		}
 
+		// post can contain minimal data:
+		// users: [{"id":7,"permissions":["read","post"]}]
 		const users: UserInChat[] = [];
 		if (createChatDto.hasOwnProperty('users')) {
 			createChatDto.users.forEach((user) => users.push(user));

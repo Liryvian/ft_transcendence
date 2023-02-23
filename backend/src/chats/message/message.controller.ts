@@ -11,6 +11,8 @@ import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { Message } from './entities/message.entity';
 import { SocketService } from '../../socket/socket.service';
+import { SingleMessage } from '../../socket/socket.types';
+import { DeleteResult } from 'typeorm';
 
 // should be imported!
 type UpdateType = 'new' | 'update' | 'delete';
@@ -33,15 +35,17 @@ export class MessageController {
 			createMessageDto,
 		);
 
-		// const socketMessage: UpdateMessage<Message> = {
-		// 	action: 'new',
-		// 	data: newMessage,
-		// };
-		// console.log('trying to emit socket message');
-		// socket service should have a method that looks in it's own map
-		// and send message to those users..
-		// const ret = this.socketService.chatServer.emit('newMessage', socketMessage);
-		// console.log('return value of socket emit: ', ret);
+		const socketMessage: UpdateMessage<SingleMessage> = {
+			action: 'new',
+			data: {
+				id: newMessage.id,
+				user_id: createMessageDto.sender_id,
+				chat_id: createMessageDto.chat,
+				content: newMessage.content,
+				created_at: newMessage.created_at,
+			},
+		};
+		this.socketService.chatServer.emit('messageListUpdate', socketMessage);
 		return newMessage;
 	}
 
@@ -61,7 +65,27 @@ export class MessageController {
 	}
 
 	@Delete(':id')
-	remove(@Param('id') id: number) {
-		return this.messageService.remove(id);
+	async remove(@Param('id') id: number) {
+		const found: Message = await this.messageService.findOne({
+			where: { id: id },
+			relations: { chat: true },
+		});
+		console.log('if you see this it is found', found);
+		const deleteResult: DeleteResult = await this.messageService.remove(id);
+
+		const socketMessage: UpdateMessage<SingleMessage> = {
+			action: 'delete',
+			data: {
+				id: id,
+				chat_id: found.chat_id,
+			},
+		};
+		console.log('trying to delete message ', {
+			found,
+			socketMessage,
+			deleteResult,
+		});
+		this.socketService.chatServer.emit('messageListUpdate', socketMessage);
+		return deleteResult;
 	}
 }

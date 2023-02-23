@@ -10,17 +10,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { SocketService } from '../socket/socket.service';
-
-// type UpdateType = 'new' | 'update' | 'delete';
-
-// interface UpdateMessage<T> {
-// 	action: UpdateType;
-// 	data: T | any;
-// }
-
-// class JoinRoom {
-// 	name: String;
-// }
+import { ChatId } from '../socket/socket.types';
 
 @WebSocketGateway({
 	namespace: '/chats',
@@ -50,12 +40,11 @@ export class ChatsGateway
 		this.socketService.chatList_subscribe(socket);
 	}
 
-	// @SubscribeMessage('join')
-	// subscribeToRoom(
-	// 	@MessageBody() data: JoinRoom,
-	// 	@ConnectedSocket() client: Socket,
-	// ) {
-	// 	console.log('joining ', data);
-	// 	client.join(`${data.name}`);
-	// }
+	@SubscribeMessage('join')
+	subscribeToRoom(
+		@MessageBody() chatId: ChatId,
+		@ConnectedSocket() client: Socket,
+	) {
+		this.socketService.joinRoom(chatId, client);
+	}
 }

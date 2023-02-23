@@ -2,12 +2,14 @@ import { Server, Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from '../users/user/user.service';
-import { Chat_List_Item, SocketMessage } from './socket.types';
-
-type ChatId = number;
-type UserId = number;
-
-export type ChatList = Record<UserId, Socket[]>;
+import {
+	ChatId,
+	ChatList,
+	Chat_List_Item,
+	MessageList,
+	SingleMessage,
+	SocketMessage,
+} from './socket.types';
 
 @Injectable()
 export class SocketService {
@@ -18,6 +20,44 @@ export class SocketService {
 	public chatServer: Server = null;
 
 	public chatListSubscribers: ChatList = {};
+	public messageLists: MessageList = {};
+
+	chatIdToRoomName(chatId: ChatId): string {
+		return `room_${chatId}`;
+	}
+
+	async joinRoom(chatId: ChatId, socket: Socket) {
+		const cookie: string = this.jwtCookieFromHandshakeString(
+			socket.handshake.headers.cookie,
+		);
+		try {
+			const userId: number = this.authService.userIdFromCookieString(cookie);
+			await this.userService.findOne({ where: { id: userId } });
+			const roomName = this.chatIdToRoomName(chatId);
+			if (!this.messageLists[chatId]) {
+				this.messageLists[chatId] = {
+					chatId: chatId,
+					roomName: roomName,
+					subscribers: [],
+				};
+			}
+			this.messageLists[chatId].subscribers.push(userId);
+			socket.join(roomName);
+		} catch (e) {
+			console.log('somthing went wrong in joining a room');
+		}
+	}
+
+	emit_to_room(chatId: ChatId, message: SocketMessage<SingleMessage>) {
+		// if this works...
+		this.chatServer
+			.to(this.chatIdToRoomName(chatId))
+			.emit('newMessage', message);
+	}
+
+	leaveRoom(chatId: ChatId, socket: Socket) {
+		// leave a room...
+	}
 
 	jwtCookieFromHandshakeString(string: string) {
 		return string

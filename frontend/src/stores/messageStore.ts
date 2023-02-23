@@ -14,7 +14,8 @@ export const useMessageStore = defineStore('messages', {
 	actions: {
 		getActiveChatMessages(chatId: ChatId) {
 			if (!this.messages[chatId]) {
-				useSocketStore().subscribeToChatroom(`${chatId}`);
+				this.messages[chatId] = [];
+				useSocketStore().subscribeToChatroom(chatId);
 				// fetch messages for chat
 				// make sure user is subscribed to socket
 				getRequest(`chats/${chatId}/messages`).then((data) => {
@@ -46,17 +47,24 @@ export const useMessageStore = defineStore('messages', {
 				);
 			}
 		},
-		updateMessage(message: SingleMessage) {},
-		deleteMessage(message: SingleMessage) {},
+		updateMessage(message: SingleMessage) {
+			console.log('updating messages is not implemented');
+		},
+		deleteMessage(message: SingleMessage) {
+			if (this.messages[message.chat_id]) {
+				this.$patch((state) => {
+					state.messages[message.chat_id] = state.messages[
+						message.chat_id
+					].filter((msg) => msg.id !== message.id);
+				});
+			}
+		},
 
 		// should be typed
 		socketAction(socketMessage: UpdateMessage<SingleMessage>) {
-			console.log('message store recieved socket action!', socketMessage);
-
 			if (!this.messages[socketMessage.data.chat_id]) {
 				return;
 			}
-
 			if (socketMessage.action === 'new') {
 				return this.newMessage(socketMessage.data);
 			}

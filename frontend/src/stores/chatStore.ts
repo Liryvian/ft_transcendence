@@ -70,13 +70,13 @@ export const useChatStore = defineStore('chats', {
 		deleteChat(chat: Chat_List_Item) {
 			if (chat.type === 'dm') {
 				this.$patch((state) => {
-					this.dms = this.dms.filter((dm) => {
+					state.dms = state.dms.filter((dm) => {
 						return dm.id !== chat.id;
 					});
 				});
 			} else if (chat.type === 'channel') {
 				this.$patch((state) => {
-					this.channels = this.channels.filter((channel) => {
+					state.channels = state.channels.filter((channel) => {
 						return channel.id !== chat.id;
 					});
 				});
