@@ -3,9 +3,9 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
 	Param,
 	Delete,
+	UseGuards,
 } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -13,7 +13,9 @@ import { Message } from './entities/message.entity';
 import { SocketService } from '../../socket/socket.service';
 import { SocketMessage, SingleMessage } from '../../socket/socket.types';
 import { DeleteResult } from 'typeorm';
+import { AuthGuard } from '../../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('messages')
 export class MessageController {
 	constructor(

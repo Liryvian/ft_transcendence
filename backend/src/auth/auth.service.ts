@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Injectable,
 	NotFoundException,
+	SetMetadata,
 	ValidationPipe,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -14,6 +15,9 @@ import { UserService } from '../users/user/user.service';
 import { globalValidationPipeOptions } from '../main.validationpipe';
 import { ConfigService } from '@nestjs/config';
 import { ProcessedUserDto } from './dto/processedUser.dto';
+
+export const AllowUnauthorizedRequest = () =>
+	SetMetadata('allowUnauthorizedRequest', true);
 
 @Injectable()
 export class AuthService {

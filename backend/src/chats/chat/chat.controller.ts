@@ -8,6 +8,7 @@ import {
 	Delete,
 	BadRequestException,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -27,7 +28,9 @@ import {
 import { UserInChat } from '../../users/user/entities/user.entity';
 import { ChatUserPermission } from '../chat-user-permissions/entities/chat-user-permission.entity';
 import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
+import { AuthGuard } from '../../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatController {
 	constructor(

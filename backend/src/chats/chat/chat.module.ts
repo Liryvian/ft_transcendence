@@ -6,6 +6,7 @@ import { Chat } from './entities/chat.entity';
 import { MessageModule } from '../message/message.module';
 import { SocketModule } from '../../socket/socket.module';
 import { ChatUserPermissionModule } from '../chat-user-permissions/chat-user-permission.module';
+import { AuthModule } from '../../auth/auth.module';
 
 @Module({
 	imports: [
@@ -13,6 +14,7 @@ import { ChatUserPermissionModule } from '../chat-user-permissions/chat-user-per
 		ChatUserPermissionModule,
 		MessageModule,
 		SocketModule,
+		AuthModule,
 	],
 	controllers: [ChatController],
 	providers: [ChatService],

@@ -9,6 +9,7 @@ import { GameController } from '../src/pong/game/game.controller';
 import { AllTestingModule } from '../src/shared/test.module';
 import { CreateUserDto } from '../src/users/user/dto/create-user.dto';
 import { UserService } from '../src/users/user/user.service';
+import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;
@@ -25,7 +26,10 @@ describe('Game (e2e)', () => {
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-		}).compile();
+		})
+			.overrideGuard(AuthGuard)
+			.useValue({ validated: true })
+			.compile();
 
 		app = moduleFixture.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions()));
