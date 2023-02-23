@@ -211,6 +211,7 @@ export default defineComponent({
 	},
 	
 	mounted() {
+
 		this.context = (this.$refs.GameRef as any).getContext('2d');
 		document.addEventListener("keydown", this.keyDown);
 		document.addEventListener("keyup", this.keyUp);

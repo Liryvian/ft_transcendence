@@ -4,7 +4,7 @@ import { PongGateway } from './pong.gateway';
 import { PongService } from './pong.service';
 
 @Module({
-	imports: [GameModule], 
+	imports: [GameModule],
 	providers: [PongGateway, PongService],
 	exports: [PongGateway, PongService],
 })
