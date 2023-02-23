@@ -69,8 +69,8 @@ export const useChatStore = defineStore('chats', {
 			const currentInfo: Chat_List_Item = this.getAllChats.find(
 				(current) => current.id === item.id,
 			);
+			// move
 			if (item.hasOwnProperty('type') && item.type !== currentInfo.type) {
-				// move
 			}
 			// this cannot switch between types..
 			// so find item in all chats, update name/users
