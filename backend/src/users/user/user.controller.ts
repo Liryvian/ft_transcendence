@@ -74,6 +74,7 @@ export class UserController {
 		return users;
 	}
 
+	@UseGuards(AuthGuard)
 	@Get(':id')
 	async findOne(
 		@Param('id') id: number,
@@ -123,7 +124,7 @@ export class UserController {
 			if (e instanceof NotFoundException) {
 				throw e;
 			}
-			if (e instanceof BadRequestException){
+			if (e instanceof BadRequestException) {
 				throw e;
 			}
 			console.log('An unknown error occurred, please check!', { e });
