@@ -70,7 +70,6 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('users', registerForm);
 				await this.refreshData();
-				// this.me.is_logged_in = true;
 				await router.push('/login');
 				this.errors.length = 0;
 			} catch (e) {
