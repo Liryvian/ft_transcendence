@@ -5,12 +5,9 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Ball, Paddle } from './Game.types';
-
-const paddleHeight = 12;
-const paddleWidth = 1;
-const ballRadius = 1;
+import { Server } from 'socket.io';
+import { GameState, MovementKeys } from './game.types.be';
+import { PongService } from './pong.service';
 
 @WebSocketGateway({
 	namespace: '/pong',
@@ -19,55 +16,29 @@ const ballRadius = 1;
 	},
 })
 export class PongGateway implements OnGatewayConnection {
+	constructor(private readonly pongService: PongService) {}
 	@WebSocketServer()
 	server: Server;
-	// all element values are percentages of width and height in FE
-	//  so 0-100
-	playerOnePaddle: Paddle = {
-		position: {
-			x: 0,
-			y: 50,
-		},
-		width: paddleWidth,
-		height: paddleHeight,
-	};
 
-	playerTwoPaddle: Paddle = {
-		position: {
-			x: 100,
-			y: 50,
-		},
-		width: paddleWidth,
-		height: paddleHeight,
-	};
+	private gameState: GameState;
 
-	ball: Ball = {
-		position: {
-			x: 40,
-			y: 65,
-		},
-		radius: ballRadius,
-	};
-
-	async handleConnection(socket: Socket) {
+	async handleConnection() {
 		console.log('\n!Socket is connected!\n');
-		this.sendHallo('Hallo frontend!!!');
-		this.sendPaddlePosition(this.playerOnePaddle);
-		this.sendPaddlePosition(this.playerTwoPaddle);
-		this.sendBallPosition(this.ball);
+		this.gameState = this.pongService.createNewGameState();
 	}
 
-	@SubscribeMessage('hallo')
-	sendHallo(@MessageBody() data: any) {
-		this.server.emit('hallo', data);
+	sendPositionOfElements(@MessageBody() gameState: GameState) {
+		this.server.emit('elementPositions', gameState);
 	}
 
-	@SubscribeMessage('barPosition')
-	sendPaddlePosition(@MessageBody() paddle: Paddle) {
-		this.server.emit('barPosition', paddle);
-	}
-	@SubscribeMessage('ballPosition')
-	sendBallPosition(@MessageBody() ball: Ball) {
-		this.server.emit('ballPosition', ball);
+	@SubscribeMessage('updatePositions')
+	updatePositions(@MessageBody() keyPress: MovementKeys) {
+		this.pongService.movePaddles(
+			keyPress,
+			this.gameState.playerOnePaddle,
+			this.gameState.playerTwoPaddle,
+		);
+		this.pongService.moveBall(this.gameState);
+		this.sendPositionOfElements(this.gameState);
 	}
 }

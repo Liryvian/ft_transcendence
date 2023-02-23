@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './typeorm/typeorm.service';
@@ -19,6 +18,7 @@ import { UserAchievementsModule } from './users/user-achievements/user-achieveme
 import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MeModule } from './me/me.module';
+import { AppService } from './app.service';
 import { PongModule } from './pong/pong.module';
 
 @Module({
@@ -47,7 +47,7 @@ import { PongModule } from './pong/pong.module';
 		MeModule,
 		PongModule,
 	],
-	controllers: [AppController],
 	providers: [AppService],
+	controllers: [AppController],
 })
 export class AppModule {}

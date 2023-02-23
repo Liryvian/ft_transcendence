@@ -19,7 +19,7 @@ describe('Auth (e2e)', () => {
 	let jwtService: JwtService;
 	let configService: ConfigService;
 
-	let users = [
+	const users = [
 		{ name: 'u1', password: 'p1', id: -1 },
 		{ name: 'u2', password: 'p2', id: -1 },
 		{ name: 'u3', password: 'p3', id: -1 },
