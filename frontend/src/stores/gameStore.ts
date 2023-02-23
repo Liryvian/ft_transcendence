@@ -1,9 +1,8 @@
-import type { Game } from '../types/Game';
+import type { Game, RequestGameForm } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
-import type { 	RequestGameForm,} from '../types/Game';
 import router from '@/router';
 
 export const useGameStore = defineStore("games", {
@@ -13,7 +12,7 @@ export const useGameStore = defineStore("games", {
 	}),
 	// getters == computed values
 	getters: {
-		getMyGames: () => useUserStore().getMe.games,
+		// getMyGames: () => useUserStore().getMe.games,
 		getAllGames: (state) => state.allGames,
 	},
 	// actions == methods

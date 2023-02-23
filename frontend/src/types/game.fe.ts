@@ -34,14 +34,6 @@ export interface Game {
 	player_two: User;
 }
 
-// export interface GameRequest {
-// 	id: number;
-// 	user: User;
-//
-// 	created_at: Date;
-// 	updated_at: Date;
-// }
-
 export interface RequestGameForm {
 	score_to_win: number,
 	background_color: string,
@@ -49,3 +41,18 @@ export interface RequestGameForm {
 	player_one: User,
 	player_two: User,
 }
+
+export interface ElementPositions {
+	playerOnePaddle: Paddle;
+	playerTwoPaddle: Paddle;
+	ball: Ball;
+}
+
+export interface GameRequest {
+	id: number;
+	user: User;
+
+	created_at: Date;
+	updated_at: Date;
+}
+
