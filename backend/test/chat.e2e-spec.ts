@@ -5,6 +5,7 @@ import { ChatController } from '../src/chats/chat/chat.controller';
 import * as request from 'supertest';
 import { Chat } from '../src/chats/chat/entities/chat.entity';
 import { AllTestingModule } from '../src/shared/test.module';
+import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('chat e2e', () => {
 	let app: INestApplication;
@@ -18,7 +19,10 @@ describe('chat e2e', () => {
 	beforeAll(async () => {
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-		}).compile();
+		})
+			.overrideGuard(AuthGuard)
+			.useValue({ validated: true })
+			.compile();
 
 		app = moduleFixture.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe());

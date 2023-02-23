@@ -9,10 +9,6 @@ import {
 	UpdateResult,
 } from 'typeorm';
 
-class hasId {
-	id: number;
-}
-
 @Injectable()
 export abstract class AbstractService<T> {
 	protected constructor(protected readonly repository: Repository<T>) {}

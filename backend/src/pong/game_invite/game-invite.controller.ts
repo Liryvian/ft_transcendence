@@ -3,13 +3,15 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
 	Param,
 	Delete,
+	UseGuards,
 } from '@nestjs/common';
 import { GameInvitesService } from './game-invite.service';
 import { CreateGameInviteDto } from './dto/create-game-invite.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('game-invites')
 export class GameInvitesController {
 	constructor(private readonly gameInvitesService: GameInvitesService) {}
