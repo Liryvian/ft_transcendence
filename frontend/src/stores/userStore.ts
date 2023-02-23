@@ -9,6 +9,7 @@ import type {
 	UpdateProfileForm,
 } from '../types/User';
 import { useStorage } from "@vueuse/core";
+import { apiUrl } from '@/types/Constants';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -36,9 +37,14 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-		async login(loginForm: LoginForm) {
+		async login(loginType: string, loginForm?: LoginForm) {
 			try {
-				await postRequest('login', loginForm);
+				if (loginType === 'intra'){
+					location.href = `${apiUrl}/auth/authenticate`;
+				}
+				else {
+					await postRequest('login', loginForm);
+				}
 				await this.refreshMe();
 				this.isLoggedIn = true;
 				await router.push('/settings');
