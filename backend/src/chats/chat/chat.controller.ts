@@ -80,20 +80,23 @@ export class ChatController {
 			});
 		}
 
-		const socketMessage: SocketMessage<Chat_List_Item> = {
-			action: 'new',
-			data: {
-				id: chat.id,
-				name: chat.name,
-				type: chat.type as Chat_Type,
-				users: chat.users.map((user) => ({
-					id: user.id,
-					name: user.name,
-					avatar: user.avatar,
-				})),
-			},
-		};
-		this.socketService.chatlist_emit('all', socketMessage);
+		if (this.socketService.chatServer !== null) {
+			const socketMessage: SocketMessage<Chat_List_Item> = {
+				action: 'new',
+				data: {
+					id: chat.id,
+					name: chat.name,
+					type: chat.type as Chat_Type,
+					users:
+						chat.users?.map((user) => ({
+							id: user.id,
+							name: user.name,
+							avatar: user.avatar,
+						})) ?? [],
+				},
+			};
+			this.socketService.chatlist_emit('all', socketMessage);
+		}
 		return chat;
 	}
 
@@ -162,15 +165,17 @@ export class ChatController {
 			where: { id },
 		});
 
-		const socketMessage: SocketMessage<Chat_List_Item> = {
-			action: 'update',
-			data: {
-				id: current_Chat.id,
-				name: current_Chat.name,
-				type: current_Chat.type as Chat_Type,
-			},
-		};
-		this.socketService.chatlist_emit('all', socketMessage);
+		if (this.socketService.chatServer !== null) {
+			const socketMessage: SocketMessage<Chat_List_Item> = {
+				action: 'update',
+				data: {
+					id: current_Chat.id,
+					name: current_Chat.name,
+					type: current_Chat.type as Chat_Type,
+				},
+			};
+			this.socketService.chatlist_emit('all', socketMessage);
+		}
 		return chat;
 	}
 
@@ -178,13 +183,15 @@ export class ChatController {
 	async remove(@Param('id') id: number) {
 		const deleteResult: DeleteResult = await this.chatService.remove(id);
 
-		const socketMessage: SocketMessage<Chat_List_Item> = {
-			action: 'delete',
-			data: {
-				id: id,
-			},
-		};
-		this.socketService.chatlist_emit('all', socketMessage);
+		if (this.socketService.chatServer !== null) {
+			const socketMessage: SocketMessage<Chat_List_Item> = {
+				action: 'delete',
+				data: {
+					id: id,
+				},
+			};
+			this.socketService.chatlist_emit('all', socketMessage);
+		}
 		return deleteResult;
 	}
 }

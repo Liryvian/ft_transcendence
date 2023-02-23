@@ -18,11 +18,11 @@ export type ActionType = 'new' | 'update' | 'delete';
 export interface SingleMessage {
 	id: number;
 
-	user_id: number;
+	user_id?: number;
 	chat_id: number;
-	content: string;
+	content?: string;
 
-	created_at: Date;
+	created_at?: Date;
 }
 
 export interface Chat_Member {

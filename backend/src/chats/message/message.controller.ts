@@ -27,17 +27,19 @@ export class MessageController {
 			createMessageDto,
 		);
 
-		const socketMessage: SocketMessage<SingleMessage> = {
-			action: 'new',
-			data: {
-				id: newMessage.id,
-				user_id: createMessageDto.sender_id,
-				chat_id: createMessageDto.chat,
-				content: newMessage.content,
-				created_at: newMessage.created_at,
-			},
-		};
-		this.socketService.chatServer.emit('messageListUpdate', socketMessage);
+		if (this.socketService.chatServer !== null) {
+			const socketMessage: SocketMessage<SingleMessage> = {
+				action: 'new',
+				data: {
+					id: newMessage.id,
+					user_id: createMessageDto.sender_id,
+					chat_id: createMessageDto.chat,
+					content: newMessage.content,
+					created_at: newMessage.created_at,
+				},
+			};
+			this.socketService.chatServer.emit('messageListUpdate', socketMessage);
+		}
 		return newMessage;
 	}
 
@@ -66,14 +68,16 @@ export class MessageController {
 			found.id,
 		);
 
-		const socketMessage: SocketMessage<SingleMessage> = {
-			action: 'delete',
-			data: {
-				id: found.id,
-				chat_id: found.chat_id,
-			},
-		};
-		this.socketService.chatServer.emit('messageListUpdate', socketMessage);
+		if (this.socketService.chatServer !== null) {
+			const socketMessage: SocketMessage<SingleMessage> = {
+				action: 'delete',
+				data: {
+					id: found.id,
+					chat_id: found.chat_id,
+				},
+			};
+			this.socketService.chatServer.emit('messageListUpdate', socketMessage);
+		}
 		return deleteResult;
 	}
 }
