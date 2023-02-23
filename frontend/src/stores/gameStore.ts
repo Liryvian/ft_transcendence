@@ -9,6 +9,7 @@ export const useGameStore = defineStore("games", {
 	state: () => ({
 		allGames: <Game[]>[],
 	}),
+
 	// getters == computed values
 	getters: {
 		getMyGames: () => useUserStore().getMe.games,
@@ -20,7 +21,7 @@ export const useGameStore = defineStore("games", {
 			try {
 				const data = await getRequest("games");
 				this.allGames = data.data;
-				await useUserStore().refreshAllUsers();
+				// await useUserStore().refreshAllUsers();
 			}
 			catch (e) {
 				console.error(e);

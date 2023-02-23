@@ -23,10 +23,21 @@
 
 				<div class="c_field_group">
 					<label for="example_field">add member:</label>
-					<input
-						id="example_field"
-						type="text"
-					/>
+						<template v-for="user in allUsers">
+							<ListRow
+								v-if="user.id !== me.id"
+								:user="user"
+								:relationship="getCurrentRel(user.id)"
+							/>
+						</template>
+					<div>
+						<input type="checkbox" id="coding" name="interest" value="coding" checked />
+						<label for="coding">Coding</label>
+					</div>
+<!--					<input-->
+<!--						id="example_field"-->
+<!--						type="text"-->
+<!--					/>-->
 				</div>
 
 				<div class="c_field_group">
