@@ -1,9 +1,15 @@
 <template>
-	<div class="page_box_wrapper">
-		<div class="page_box">
-			<h1>GOODBYE!</h1>
-		</div>
-	</div>
 </template>
 
-<script lang="ts"></script>
+<script lang="ts">
+import { useUserStore } from '@/stores/userStore';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+	name: 'Logout',
+
+	setup() {
+		useUserStore().logout();
+	},
+});
+</script>

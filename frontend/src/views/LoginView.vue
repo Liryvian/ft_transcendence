@@ -9,7 +9,7 @@
 					method="post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="userStore.login(loginForm)"
+					@submit.prevent="userStore.login('local', loginForm)"
 					>
 					
 					<InputField 
@@ -37,7 +37,7 @@
 							<a href="/register">Register</a>
 						</p>
 						<p>
-							<a :href="redirectUrl">Sign in with 42</a>
+							<a href="#" v-on:click.prevent="userStore.login('intra')">Sign in with 42</a>
 						</p>
 					</div>
 					<div v-if="userStore.errors.length">
