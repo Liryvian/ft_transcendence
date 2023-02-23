@@ -16,11 +16,11 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user/user.service';
-import { AuthGuard } from './auth.guard';
-import { AuthService } from './auth.service';
+import { AllowUnauthorizedRequest, AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
+import { AuthGuard } from './auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -32,6 +32,7 @@ export class AuthController {
 	) {}
 
 	@Get('/auth/authenticate')
+	@AllowUnauthorizedRequest()
 	redirectToIntraApi(@Res() response: Response) {
 		const client_id = this.configService.get('API_UID');
 		const redirect_uri = this.configService.get('API_REDIR_URI');

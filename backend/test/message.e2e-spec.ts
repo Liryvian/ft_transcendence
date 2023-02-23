@@ -6,16 +6,13 @@ import { MessageController } from '../src/chats/message/message.controller';
 import { Message } from '../src/chats/message/entities/message.entity';
 import { CreateChatDto } from '../src/chats/chat/dto/create-chat.dto';
 import { ChatController } from '../src/chats/chat/chat.controller';
-import { MessageService } from '../src/chats/message/message.service';
-import { ChatService } from '../src/chats/chat/chat.service';
 import { UserController } from '../src/users/user/user.controller';
 import { AllTestingModule } from '../src/shared/test.module';
+import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('message e2e', () => {
 	let chatController: ChatController;
 	let userController: UserController;
-	let messageService: MessageService;
-	let chatService: ChatService;
 	let testingModule: TestingModule;
 	let app: INestApplication;
 	let messageController: MessageController;
@@ -44,12 +41,15 @@ describe('message e2e', () => {
 		},
 	];
 
-	let userIds = [];
+	const userIds = [];
 
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-		}).compile();
+		})
+			.overrideGuard(AuthGuard)
+			.useValue({ validated: true })
+			.compile();
 
 		app = testingModule.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe());
@@ -58,8 +58,6 @@ describe('message e2e', () => {
 		messageController = testingModule.get<MessageController>(MessageController);
 		chatController = testingModule.get<ChatController>(ChatController);
 		userController = testingModule.get<UserController>(UserController);
-		messageService = testingModule.get<MessageService>(MessageService);
-		chatService = testingModule.get<ChatService>(ChatService);
 		// seed db with animals for each testcase
 		for (const chat in testChats) {
 			await chatController

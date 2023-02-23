@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AllTestingModule } from '../src/shared/test.module';
+import { AuthGuard } from '../src/auth/auth.guard';
 
 describe('user-achievements e2e', () => {
 	let testingModule: TestingModule;
@@ -10,7 +11,10 @@ describe('user-achievements e2e', () => {
 	beforeAll(async () => {
 		testingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-		}).compile();
+		})
+			.overrideGuard(AuthGuard)
+			.useValue({ validated: true })
+			.compile();
 
 		app = testingModule.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe());
