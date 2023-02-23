@@ -174,7 +174,6 @@ export class ChatController {
 				data: {
 					id: current_Chat.id,
 					name: current_Chat.name,
-					type: current_Chat.type as Chat_Type,
 				},
 			};
 			this.socketService.chatlist_emit('all', socketMessage);

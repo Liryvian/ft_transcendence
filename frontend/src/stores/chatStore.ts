@@ -66,47 +66,44 @@ export const useChatStore = defineStore('chats', {
 		},
 
 		updateChat(item: Chat_List_Item) {
-			const currentIndex: number = this.getAllChats.findIndex(
-				(current) => current.id === item.id,
-			);
-			if (currentIndex == -1) {
+			const currentItem: Chat_List_Item | undefined =
+				this.getAllChats.find((current) => current.id === item.id);
+			if (currentItem === undefined) {
 				return false;
 			}
-			if (
-				item.hasOwnProperty('type') &&
-				item.type !== this.getAllChats[currentIndex].type
-			) {
-				// @TODO
-				// move from one list to the other... (use array.splice)
-			}
-			if (item.type === 'dm') {
-				this.$patch((state) => {
-					state.dms = state.dms.map((dm) => {
-						if (dm.id !== item.id) return dm;
-						return this.updateChatListItemProperties(dm, item);
-					});
-				});
-			} else if (item.type === 'channel') {
+			if (currentItem.type === 'channel') {
 				this.$patch((state) => {
 					state.channels = state.channels.map((channel) => {
 						if (channel.id !== item.id) return channel;
 						return this.updateChatListItemProperties(channel, item);
 					});
 				});
+			} else if (currentItem.type === 'dm') {
+				this.$patch((state) => {
+					state.dms = state.dms.map((dm) => {
+						if (dm.id !== item.id) return dm;
+						return this.updateChatListItemProperties(dm, item);
+					});
+				});
 			}
 		},
 
 		deleteChat(item: Chat_List_Item) {
-			if (item.type === 'dm') {
-				this.$patch((state) => {
-					state.dms = state.dms.filter((dm) => {
-						return dm.id !== item.id;
-					});
-				});
-			} else if (item.type === 'channel') {
+			const currentItem: Chat_List_Item | undefined =
+				this.getAllChats.find((current) => current.id === item.id);
+			if (currentItem === undefined) {
+				return false;
+			}
+			if (currentItem.type === 'channel') {
 				this.$patch((state) => {
 					state.channels = state.channels.filter((channel) => {
 						return channel.id !== item.id;
+					});
+				});
+			} else if (currentItem.type === 'dm') {
+				this.$patch((state) => {
+					state.dms = state.dms.filter((dm) => {
+						return dm.id !== item.id;
 					});
 				});
 			}
