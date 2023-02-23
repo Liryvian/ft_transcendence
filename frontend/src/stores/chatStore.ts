@@ -1,4 +1,4 @@
-import type { Chat_List_Item, UpdateMessage } from '@/types/Chat';
+import type { Chat_List, Chat_List_Item, UpdateMessage } from '@/types/Chat';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useSocketStore } from './socketStore';
@@ -49,19 +49,38 @@ export const useChatStore = defineStore('chats', {
 			}
 		},
 
+		updateChatListItemProperties(
+			item: Chat_List_Item,
+			newProps: Chat_List_Item,
+		) {
+			if (newProps.hasOwnProperty('name')) {
+				item.name = newProps.name;
+			}
+			if (newProps.hasOwnProperty('users')) {
+				item.users = newProps.users;
+			}
+			if (newProps.hasOwnProperty('type')) {
+				item.type = newProps.type;
+			}
+			return item;
+		},
+
 		updateChat(chat: Chat_List_Item) {
+			// this cannot switch between types..
+			// so find item in all chats, update name/users
+			// if type needs to update, remove from one, add to other?
 			if (chat.type === 'dm') {
 				this.$patch((state) => {
 					state.dms = state.dms.map((dm) => {
 						if (dm.id !== chat.id) return dm;
-						return chat;
+						return this.updateChatListItemProperties(dm, chat);
 					});
 				});
 			} else if (chat.type === 'channel') {
 				this.$patch((state) => {
 					state.channels = state.channels.map((channel) => {
 						if (channel.id !== chat.id) return channel;
-						return chat;
+						return this.updateChatListItemProperties(channel, chat);
 					});
 				});
 			}

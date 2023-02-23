@@ -158,13 +158,16 @@ export class ChatController {
 			id,
 			...updateChatDto,
 		});
+		const current_Chat: Chat = await this.chatService.findOne({
+			where: { id },
+		});
 
 		const socketMessage: SocketMessage<Chat_List_Item> = {
 			action: 'update',
 			data: {
-				id: chat.id,
-				name: chat.name,
-				type: chat.type as Chat_Type,
+				id: current_Chat.id,
+				name: current_Chat.name,
+				type: current_Chat.type as Chat_Type,
 			},
 		};
 		this.socketService.chatlist_emit('all', socketMessage);
