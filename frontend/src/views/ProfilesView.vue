@@ -7,7 +7,7 @@
 					<ListRow
 						v-if="user.id !== me.id"
 						:user="user"
-						:relationship="getCurrentRel(user.id)"
+						:relationship="getCurRel(user.id)"
 					/>
 				</template>
 			</div>
@@ -17,12 +17,14 @@
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import ListRow from '@/components/profileList/ListRow.vue';
 import type { User } from '@/types/User';
 import router from '@/router';
 import { storeToRefs } from 'pinia';
+import type { Relationship } from '@/types/Relationship';
 
+let curRel = ref({} as Relationship)
 export default defineComponent({
 	name: 'ProfileList',
 	components: {
@@ -30,7 +32,7 @@ export default defineComponent({
 	},
 	setup() {
 		const userStore = useUserStore();
-		const { refreshData, isBlocked, getCurrentRel } = userStore;
+		const { refreshData, isBlocked, getCurrentRel, initializeRelationship } = userStore;
 		const { me, allUsers } = storeToRefs(userStore);
 		onMounted(async () => {
 			await refreshData();
@@ -43,6 +45,8 @@ export default defineComponent({
 			isBlocked,
 			getCurrentRel,
 			me,
+			curRel,
+			initializeRelationship
 		};
 	},
 
@@ -52,6 +56,15 @@ export default defineComponent({
 		},
 		createChat(user: User) {
 			console.log(`Starting chat with ${user.name}`);
+		},
+
+		async getCurRel(userId: number) {
+			console.log("curRel: ", this.getCurrentRel(userId))
+			const existingRel = this.getCurrentRel(userId);
+			if (existingRel === undefined)
+				return await this.initializeRelationship(useUserStore().me.id, userId);
+			return existingRel;
+			
 		},
 	},
 });

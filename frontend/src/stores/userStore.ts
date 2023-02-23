@@ -182,7 +182,8 @@ export const useUserStore = defineStore('users', {
 			return type === ValidRelationships.FRIEND;
 		},
 
-		isBlocked(type: string): boolean {
+		isBlocked(type?: string): boolean {
+			console.log("type:" ,type);
 			return type === ValidRelationships.BLOCKED;
 		},
 	},
