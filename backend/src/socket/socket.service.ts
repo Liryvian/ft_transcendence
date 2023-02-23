@@ -22,7 +22,9 @@ export class SocketService {
 	public chatListSubscribers: ChatList = {};
 	public messageLists: MessageList = {};
 
-	chatIdToRoomName(chatId: ChatId): string {
+	chatIdToRoomName(chatId: string): string;
+	chatIdToRoomName(chatId: ChatId): string;
+	chatIdToRoomName(chatId: ChatId | string): string {
 		return `room_${chatId}`;
 	}
 
@@ -56,7 +58,30 @@ export class SocketService {
 	}
 
 	leaveRoom(chatId: ChatId, socket: Socket) {
+		const cookie: string = this.jwtCookieFromHandshakeString(
+			socket.handshake.headers.cookie,
+		);
 		// leave a room...
+	}
+
+	async leaveRooms(socket: Socket) {
+		const cookie: string = this.jwtCookieFromHandshakeString(
+			socket.handshake.headers.cookie,
+		);
+		try {
+			const userId: number = this.authService.userIdFromCookieString(cookie);
+			await this.userService.findOne({ where: { id: userId } });
+
+			for (const chatId in this.messageLists) {
+				const index = this.messageLists[chatId].subscribers.indexOf(userId);
+				if (index != -1) {
+					this.messageLists[chatId].subscribers.splice(index, 1);
+					socket.leave(this.chatIdToRoomName(chatId));
+				}
+			}
+		} catch (e) {
+			console.log('something went wrong on leaving rooms');
+		}
 	}
 
 	jwtCookieFromHandshakeString(string: string) {
@@ -67,7 +92,6 @@ export class SocketService {
 	}
 
 	chatlist_emit(to: string | number[], message: SocketMessage<Chat_List_Item>) {
-		console.log('to emit: ', message);
 		if (to === 'all') {
 			for (const userId in this.chatListSubscribers) {
 				this.chatListSubscribers[userId].forEach((socket) => {

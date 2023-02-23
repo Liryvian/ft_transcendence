@@ -70,21 +70,17 @@ export class MessageController {
 			where: { id: id },
 			relations: { chat: true },
 		});
-		console.log('if you see this it is found', found);
-		const deleteResult: DeleteResult = await this.messageService.remove(id);
+		const deleteResult: DeleteResult = await this.messageService.remove(
+			found.id,
+		);
 
 		const socketMessage: UpdateMessage<SingleMessage> = {
 			action: 'delete',
 			data: {
-				id: id,
+				id: found.id,
 				chat_id: found.chat_id,
 			},
 		};
-		console.log('trying to delete message ', {
-			found,
-			socketMessage,
-			deleteResult,
-		});
 		this.socketService.chatServer.emit('messageListUpdate', socketMessage);
 		return deleteResult;
 	}

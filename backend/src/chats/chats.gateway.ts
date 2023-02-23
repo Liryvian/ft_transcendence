@@ -33,6 +33,7 @@ export class ChatsGateway
 	handleDisconnect(socket: Socket) {
 		console.log('----- disconnect');
 		this.socketService.chatList_unsubscribe(socket);
+		this.socketService.leaveRooms(socket);
 	}
 
 	handleConnection(socket: Socket) {
