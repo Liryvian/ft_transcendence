@@ -1,7 +1,7 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>YOU'VE BEEN INVITED </h1>
+			<h1>YOU'VE BEEN INVITED</h1>
 			<h1>BY</h1>
 			<h1>PLAYER_02</h1>
 			<div class="c_block c_form_group">
@@ -29,7 +29,6 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 </template>
@@ -40,6 +39,4 @@ export default {
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
