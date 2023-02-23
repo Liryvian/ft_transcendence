@@ -9,3 +9,10 @@ export interface SocketChat {
 export interface SocketStore {
 	chats: SocketChat;
 }
+
+export type ActionType = 'new' | 'update' | 'delete';
+
+export interface SocketMessage<T> {
+	action: ActionType;
+	data: T;
+}

@@ -1,4 +1,5 @@
-import type { Chat_List, Chat_List_Item, UpdateMessage } from '@/types/Chat';
+import type { Chat_List_Item } from '@/types/Chat';
+import type { SocketMessage } from '@/types/Sockets';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useSocketStore } from './socketStore';
@@ -112,7 +113,7 @@ export const useChatStore = defineStore('chats', {
 			}
 		},
 
-		socketAction(socketMessage: UpdateMessage<Chat_List_Item>) {
+		socketAction(socketMessage: SocketMessage<Chat_List_Item>) {
 			if (socketMessage.action === 'new') {
 				return this.newChat(socketMessage.data);
 			}

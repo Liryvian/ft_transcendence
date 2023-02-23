@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import type { SingleMessage, UpdateMessage } from '@/types/Chat';
+import type { SingleMessage } from '@/types/Chat';
+import type { SocketMessage } from '@/types/Sockets';
 import { getRequest } from '@/utils/apiRequests';
 import { useSocketStore } from './socketStore';
 
@@ -61,7 +62,7 @@ export const useMessageStore = defineStore('messages', {
 		},
 
 		// should be typed
-		socketAction(socketMessage: UpdateMessage<SingleMessage>) {
+		socketAction(socketMessage: SocketMessage<SingleMessage>) {
 			if (!this.messages[socketMessage.data.chat_id]) {
 				return;
 			}

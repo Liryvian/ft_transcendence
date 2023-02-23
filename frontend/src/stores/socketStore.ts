@@ -3,11 +3,8 @@ import { defineStore } from 'pinia';
 import type { SocketStore } from '@/types/Sockets';
 import { useChatStore } from './chatStore';
 import { useMessageStore } from './messageStore';
-import type {
-	Chat_List_Item,
-	SingleMessage,
-	UpdateMessage,
-} from '@/types/Chat';
+import type { Chat_List_Item, SingleMessage } from '@/types/Chat';
+import type { SocketMessage } from '@/types/Sockets';
 
 // it's always only one user..
 
@@ -36,13 +33,13 @@ export const useSocketStore = defineStore('sockets', {
 			});
 			this.chats.socket.on(
 				'chatListUpdate',
-				(update: UpdateMessage<Chat_List_Item>) => {
+				(update: SocketMessage<Chat_List_Item>) => {
 					useChatStore().socketAction(update);
 				},
 			);
 			this.chats.socket.on(
 				'messageListUpdate',
-				(update: UpdateMessage<SingleMessage>) => {
+				(update: SocketMessage<SingleMessage>) => {
 					useMessageStore().socketAction(update);
 				},
 			);

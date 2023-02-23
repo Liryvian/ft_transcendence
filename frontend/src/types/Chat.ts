@@ -67,10 +67,3 @@ export interface Chat_List {
 	type: Chat_Type;
 	items: Chat_List_Item[];
 }
-
-export type UpdateType = 'new' | 'update' | 'delete';
-
-export interface UpdateMessage<T> {
-	action: UpdateType;
-	data: T;
-}
