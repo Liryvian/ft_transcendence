@@ -11,16 +11,8 @@ import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { Message } from './entities/message.entity';
 import { SocketService } from '../../socket/socket.service';
-import { SingleMessage } from '../../socket/socket.types';
+import { SocketMessage, SingleMessage } from '../../socket/socket.types';
 import { DeleteResult } from 'typeorm';
-
-// should be imported!
-type UpdateType = 'new' | 'update' | 'delete';
-
-interface UpdateMessage<T> {
-	action: UpdateType;
-	data: T | any;
-}
 
 @Controller('messages')
 export class MessageController {
@@ -35,7 +27,7 @@ export class MessageController {
 			createMessageDto,
 		);
 
-		const socketMessage: UpdateMessage<SingleMessage> = {
+		const socketMessage: SocketMessage<SingleMessage> = {
 			action: 'new',
 			data: {
 				id: newMessage.id,
@@ -74,7 +66,7 @@ export class MessageController {
 			found.id,
 		);
 
-		const socketMessage: UpdateMessage<SingleMessage> = {
+		const socketMessage: SocketMessage<SingleMessage> = {
 			action: 'delete',
 			data: {
 				id: found.id,
