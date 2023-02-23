@@ -1,6 +1,5 @@
 <template>
 	<div class="page_box_wrapper">
-		<h1>logged in as {{ userStore.me.name }}</h1>
 		<div class="page_box c_chat" :class="focusTarget">
 			<div class="c_chat__userlist">
 				<div
