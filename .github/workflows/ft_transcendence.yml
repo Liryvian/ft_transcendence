@@ -8,23 +8,6 @@ on: [push]
 # Define jobs with a name, they run in parallel
 # I think every jobs is it's own container
 jobs:
-
-  prettier:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          # Make sure the actual branch is checked out when running on pull requests
-          ref: ${{ github.head_ref }}
-
-      - name: Prettify code
-        uses: creyD/prettier_action@v4.2
-        with:
-          # This part is also where you can pass other options, for example:
-          prettier_options: --write **/*.{vue, ts}
-
   Backend-End-Tests:
   # OS image for the github actions(GA) env
     runs-on: ubuntu-latest
