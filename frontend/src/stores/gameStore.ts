@@ -46,6 +46,7 @@ export const useGameStore = defineStore("games", {
 				if (game.is_active === true)
 					return false;
 			})
+
 			return true;
 		},
 
