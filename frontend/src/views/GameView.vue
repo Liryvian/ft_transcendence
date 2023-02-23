@@ -28,12 +28,24 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue'
-import type  { Position, Ball, Paddle }  from "@/types/Game"
+import type  { ElementPositions, Ball, Paddle }  from "@/types/game.fe"
 import { io, Socket } from 'socket.io-client';
+
+interface MovementKeys {
+	ArrowUp: boolean;
+	ArrowDown: boolean;
+	w: boolean;
+	s: boolean;
+}
 
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
+	isPressed: MovementKeys;
+	gameLoopInterval: number;
+	timeStampStart: DOMHighResTimeStamp;
+	previousTimeStamp: DOMHighResTimeStamp;
+	done: boolean;
 }
 
 export default defineComponent({
@@ -42,10 +54,27 @@ export default defineComponent({
 		PlayerNames
 	},
 
+	beforeRouteLeave(to, from, next) {
+		this.done = true;
+		this.socket.off("updatePosition", this.render);
+		console.log("Game disconnected")
+		next();
+	},
+	
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
 			socket: io('http://localhost:8080/pong'),
+			isPressed: {
+				ArrowUp: false,
+				ArrowDown: false,
+				w: false,
+				s: false,
+			},
+			gameLoopInterval: 0,
+			timeStampStart: 0,
+			previousTimeStamp: 0,
+			done: false,
 		}
 	},
 
@@ -89,7 +118,7 @@ export default defineComponent({
 					lineHeight
 				);
 			},
-			
+
 		//  https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
 		drawBall(ball: Ball) {
 			const startingX: number = this.widthPercentage(ball.position.x);
@@ -98,6 +127,7 @@ export default defineComponent({
 			const startAngle: number = 0;
 			const endAngle: number = Math.PI * 2; // full circle
 
+			this.context.beginPath();
 			this.context.arc(
 					startingX,
 					startingY,
@@ -105,7 +135,6 @@ export default defineComponent({
 					startAngle,
 					endAngle,
 			)
-				// this fills the above defined arc/circle
 				this.context.lineWidth = this.widthPercentage(0.3);
 				this.context.stroke()
 			},
@@ -130,26 +159,66 @@ export default defineComponent({
 			)
 		},
 
-		render() {
-			this.socket.on('hallo', (data) => {
-				console.log('\nReceiving from backend: \n', JSON.stringify(data))
-			});
-		
-			this.socket.on("barPosition", (data: Paddle) => {
-				this.drawPaddle(data);
-			})
-			this.socket.on("ballPosition", (data: Ball) => {
-				this.drawBall(data);
-			})
+		clearCanvas() {
+			this.context.clearRect(0, 0, this.width, this.height)
+		},
+
+		render(elementPositions: ElementPositions) {
+			this.clearCanvas();
 			this.drawMiddleLine();
+			this.drawPaddle(elementPositions.playerOnePaddle);
+			this.drawPaddle(elementPositions.playerTwoPaddle);
+			this.drawBall(elementPositions.ball);
+		},
+		
+		keyDown(keyPress: KeyboardEvent) {
+			if (this.isPressed[keyPress.key] !== undefined) {
+				this.isPressed[keyPress.key] = true;
+			}
+			
+		},
+		
+    	keyUp(keyPress: KeyboardEvent) {
+			if (this.isPressed[keyPress.key] !== undefined) {
+				this.isPressed[keyPress.key] = false;
+      		}
+		},
+
+		// MAIN GAME LOOP
+		getUpdatedPositions(timeStamp: DOMHighResTimeStamp) {
+			if (this.previousTimeStamp === 0) {
+				this.previousTimeStamp = timeStamp;
+			}
+			const elapsedTime = timeStamp - this.previousTimeStamp;
+			const intervalMs = 10;
+			// redraws after intervalMs
+			if (elapsedTime > intervalMs) {
+				this.previousTimeStamp = timeStamp;
+				this.socket!.emit("updatePositions", this.isPressed)
+			}
+
+			if (!this.done) {
+				window.requestAnimationFrame(this.getUpdatedPositions);
+			}
+			else {
+				console.log("DONE")!
+			}
+		},
+		
+		startGameLoop() {
+			window.requestAnimationFrame(this.getUpdatedPositions);
 		}
 	},
-
-
+	
 	mounted() {
 
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		this.render();
+		document.addEventListener("keydown", this.keyDown);
+		document.addEventListener("keyup", this.keyUp);
+		
+		this.socket.on("elementPositions", this.render);
+		// MAIN GAME LOOP
+		this.startGameLoop()
 	},
 })
 </script> 
@@ -170,7 +239,7 @@ export default defineComponent({
 	font-size: 2.5vh; 
 	padding-left: 2.5%;
 	padding-right: 5%;
-	padding-top: 4%;
+	padding-top: 2.4%;
 }
 
 .gameHeader.space-between {
