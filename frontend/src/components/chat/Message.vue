@@ -35,15 +35,17 @@ export default defineComponent({
 		userStore.refreshData();
 		return {
 			userStore,
-		}
+		};
 	},
 	computed: {
 		getName() {
 			if (this.message.user_id) {
-				if (this.message.user_id === this.userStore.getMe.id) {
-					return this.userStore.getMe.name;
+				if (this.message.user_id === this.userStore.me.id) {
+					return this.userStore.me.name;
 				}
-				return this.userStore.getUserById(this.message.user_id)?.name ?? '';
+				return (
+					this.userStore.getUserById(this.message.user_id)?.name ?? ''
+				);
 			}
 			if (this.message.sender && this.message.sender.name) {
 				return this.message.sender.name;
@@ -51,15 +53,15 @@ export default defineComponent({
 			return '...';
 		},
 		isMessageMine() {
-			return (this.message.user_id === this.userStore.getMe.id);
+			return this.message.user_id === this.userStore.me.id;
 		},
 		formattedTime() {
 			const date = new Date(this.message.created_at);
-			const hours: String = "0" + date.getHours();
-			const minutes: String = "0" + date.getMinutes();
+			const hours: String = '0' + date.getHours();
+			const minutes: String = '0' + date.getMinutes();
 
-			return `${hours.slice(-2)}:${minutes.slice(-2)}`
-		}
-	}
+			return `${hours.slice(-2)}:${minutes.slice(-2)}`;
+		},
+	},
 });
 </script>

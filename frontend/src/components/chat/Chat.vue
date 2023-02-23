@@ -80,7 +80,7 @@ export default defineComponent({
 			// set field to disabled
 			this.is_sending = true;
 			const newMessage: NewMessage = {
-				sender_id: this.userStore.getMe.id,
+				sender_id: this.userStore.me.id,
 				chat: this.info.id,
 				content: this.new_message,
 			};
