@@ -45,6 +45,9 @@ export class MessageController {
 		return newMessage;
 	}
 
+	// @NOTE
+	// maybe we also should not have this..
+	// i think it is never used anyway, and this makes it so that any logged in user can always get _all_ messages (also of other people..)
 	@Get()
 	findAll() {
 		return this.messageService.findAll({
