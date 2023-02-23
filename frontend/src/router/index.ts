@@ -1,3 +1,4 @@
+import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -9,7 +10,7 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/LoginView.vue'),
+			component: () => import('../views/SettingsView.vue'),
 		},
 		{
 			path: '/settings',
@@ -79,6 +80,17 @@ const router = createRouter({
 			component: () => import('../views/ComponentTest.vue'),
 		},
 	],
+});
+
+router.beforeEach(async (to) => {
+	const isLoggedIn: boolean = useUserStore().isLoggedIn;
+	console.log('isLogged in router?: ', isLoggedIn);
+	console.log('Path: ', to.name);
+	if (!isLoggedIn && to.name !== 'login') {
+		return { name: 'login' };
+	} else if (to.name === 'login' && isLoggedIn) {
+		return { name: 'home' };
+	}
 });
 
 export default router;

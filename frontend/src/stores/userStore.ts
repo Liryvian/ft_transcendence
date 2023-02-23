@@ -8,6 +8,8 @@ import type {
 	RegisterForm,
 	UpdateProfileForm,
 } from '../types/User';
+import { useStorage } from '@vueuse/core';
+import { apiUrl } from '@/types/Constants';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -15,13 +17,12 @@ export const useUserStore = defineStore('users', {
 		allUsers: [] as User[],
 		me: {} as User,
 		errors: [] as String[],
+		// persists data accross refreshes
+		isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
 	}),
 
 	// getters == computed values
-	getters: {
-		getAllUsers: (state) => state.allUsers,
-		getMe: (state) => state.me,
-	},
+	getters: {},
 	// actions == methods
 	actions: {
 		// this should be moved out of the userStore
@@ -42,11 +43,27 @@ export const useUserStore = defineStore('users', {
 			return this.allUsers.find((user) => user.id === id);
 		},
 
-		async login(loginForm: LoginForm) {
+		async login(loginType: string, loginForm?: LoginForm) {
 			try {
-				await postRequest('login', loginForm);
+				if (loginType === 'intra') {
+					location.href = `${apiUrl}/auth/authenticate`;
+				} else {
+					await postRequest('login', loginForm);
+				}
 				await this.refreshMe();
+				this.isLoggedIn = true;
 				await router.push('/settings');
+				this.errors.length = 0;
+			} catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
+
+		async logout() {
+			try {
+				await getRequest('logout');
+				this.isLoggedIn = false;
+				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {
 				this.handleFormError(e.response.data);

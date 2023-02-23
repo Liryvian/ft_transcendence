@@ -9,23 +9,22 @@
 					method="post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="userStore.login(loginForm)"
-					>
-					
-					<InputField 
-						tabindex="1" 
+					@submit.prevent="userStore.login('local', loginForm)"
+				>
+					<InputField
+						tabindex="1"
 						label="Username"
-						placeholder="username" 
+						placeholder="username"
 						v-model="loginForm.name"
 					/>
 
-					<InputField 
-						inputType="password" 
+					<InputField
+						inputType="password"
 						label="Password"
-						placeholder="password" 
+						placeholder="password"
 						v-model="loginForm.password"
 					/>
-					
+
 					<div class="c_block c_split">
 						<p>
 							<input
@@ -37,11 +36,20 @@
 							<a href="/register">Register</a>
 						</p>
 						<p>
-							<a :href="redirectUrl">Sign in with 42</a>
+							<a
+								href="#"
+								v-on:click.prevent="userStore.login('intra')"
+								>Sign in with 42</a
+							>
 						</p>
 					</div>
 					<div v-if="userStore.errors.length">
-						<p v-for="error in userStore.errors" class="c_form--error">!! {{ error }}</p>
+						<p
+							v-for="error in userStore.errors"
+							class="c_form--error"
+						>
+							!! {{ error }}
+						</p>
 					</div>
 				</form>
 			</div>
