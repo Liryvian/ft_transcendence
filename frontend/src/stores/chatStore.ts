@@ -65,38 +65,44 @@ export const useChatStore = defineStore('chats', {
 			return item;
 		},
 
-		updateChat(chat: Chat_List_Item) {
+		updateChat(item: Chat_List_Item) {
+			const currentInfo: Chat_List_Item = this.getAllChats.find(
+				(current) => current.id === item.id,
+			);
+			if (item.hasOwnProperty('type') && item.type !== currentInfo.type) {
+				// move
+			}
 			// this cannot switch between types..
 			// so find item in all chats, update name/users
 			// if type needs to update, remove from one, add to other?
-			if (chat.type === 'dm') {
+			if (item.type === 'dm') {
 				this.$patch((state) => {
 					state.dms = state.dms.map((dm) => {
-						if (dm.id !== chat.id) return dm;
-						return this.updateChatListItemProperties(dm, chat);
+						if (dm.id !== item.id) return dm;
+						return this.updateChatListItemProperties(dm, item);
 					});
 				});
-			} else if (chat.type === 'channel') {
+			} else if (item.type === 'channel') {
 				this.$patch((state) => {
 					state.channels = state.channels.map((channel) => {
-						if (channel.id !== chat.id) return channel;
-						return this.updateChatListItemProperties(channel, chat);
+						if (channel.id !== item.id) return channel;
+						return this.updateChatListItemProperties(channel, item);
 					});
 				});
 			}
 		},
 
-		deleteChat(chat: Chat_List_Item) {
-			if (chat.type === 'dm') {
+		deleteChat(item: Chat_List_Item) {
+			if (item.type === 'dm') {
 				this.$patch((state) => {
 					state.dms = state.dms.filter((dm) => {
-						return dm.id !== chat.id;
+						return dm.id !== item.id;
 					});
 				});
-			} else if (chat.type === 'channel') {
+			} else if (item.type === 'channel') {
 				this.$patch((state) => {
 					state.channels = state.channels.filter((channel) => {
-						return channel.id !== chat.id;
+						return channel.id !== item.id;
 					});
 				});
 			}
