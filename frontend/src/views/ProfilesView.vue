@@ -20,12 +20,10 @@ import { useUserStore } from '@/stores/userStore';
 import { useRelationshipStore } from '@/stores/relationshipStore';
 import { defineComponent, onMounted } from 'vue';
 import ListRow from '@/components/profileList/ListRow.vue';
-import type { User } from '@/types/User';
-import router from '@/router';
 import { storeToRefs } from 'pinia';
 
 export default defineComponent({
-	name: 'ProfileList',
+	name: 'ProfilesView',
 	components: {
 		ListRow,
 	},
@@ -37,9 +35,8 @@ export default defineComponent({
 		const userStore = useUserStore();
 		const { refreshData } = userStore;
 		const { me, allUsers } = storeToRefs(userStore);
+		refreshData();
 		onMounted(async () => {
-			await refreshData();
-			await relationshipStore.initialize();
 		});
 
 		return {
@@ -50,27 +47,5 @@ export default defineComponent({
 			me,
 		};
 	},
-
-	methods: {
-		routeToProfile(id: number) {
-			router.push(`/ProfileView/${id}`);
-		},
-		createChat(user: User) {
-			console.log(`Starting chat with ${user.name}`);
-		},
-	},
 });
 </script>
-
-<style>
-.avatar {
-	vertical-align: middle;
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-}
-
-.grayedOut {
-	color: grey;
-}
-</style>

@@ -80,6 +80,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				await postRequest('user-relationships/', createRelationship)
 			).data;
 		},
+
 		async getRelationship(source: number, target: number) {
 			const existingRel: Relationship = await (
 				await getRequest(`user-relationships/${source}/${target}`)
@@ -96,11 +97,11 @@ export const useRelationshipStore = defineStore('relationship', {
 				userId,
 				this.me.id,
 			);
-
 			const updateRelationshipDto = {
 				type,
 				specifier_id: this.me.id,
 			};
+
 			await patchRequest(
 				`user-relationships/${rel.id}`,
 				updateRelationshipDto,

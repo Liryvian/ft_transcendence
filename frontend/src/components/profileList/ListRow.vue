@@ -40,7 +40,7 @@
 	<BlockUser
 		:userId="user.id"
 		:isBlocked="isBlocked(relationship.type)"
-		:specifierId="relationship.specifier_id"
+		:relationship="relationship"
 	/>
 </template>
 
@@ -60,11 +60,16 @@ export default defineComponent({
 	setup() {
 		const relationshipStore = useRelationshipStore();
 		const { isFriend, isBlocked } = relationshipStore;
-		relationshipStore.initialize();
 		return {
 			isFriend,
 			isBlocked,
 		};
+	},
+	computed: {
+		getSpecifierId() {
+			return this.$props.relationship.specifier_id
+
+		}
 	},
 
 	components: {
