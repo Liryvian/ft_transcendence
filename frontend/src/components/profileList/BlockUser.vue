@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isBlocked && relationshipSourceId !== me.id">
+	<div v-if="isBlocked && specifierId === me.id">
 		<a href="#" class="grayedOut"> Unblock </a>
 	</div>
 	<div v-else-if="isBlocked">
@@ -53,7 +53,7 @@ export default defineComponent({
 			type: Number,
 			required: true,
 		},
-		relationshipSourceId: {
+		specifierId: {
 			type: Number,
 			required: true,
 		},

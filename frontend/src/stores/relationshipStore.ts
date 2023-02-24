@@ -56,6 +56,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				source: this.me.id,
 				target: userId,
 				type: 'none',
+				specifier_id: this.me.id,
 			};
 
 			// check if the relationship already exists
@@ -73,6 +74,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				source,
 				target,
 				type: 'none',
+				specifier_id: source,
 			};
 			return await (
 				await postRequest('user-relationships/', createRelationship)
@@ -94,8 +96,15 @@ export const useRelationshipStore = defineStore('relationship', {
 				userId,
 				this.me.id,
 			);
-			console.log('Updating: ', rel);
-			await patchRequest(`user-relationships/${rel.id}`, { type });
+
+			const updateRelationshipDto = {
+				type,
+				specifier_id: this.me.id,
+			};
+			await patchRequest(
+				`user-relationships/${rel.id}`,
+				updateRelationshipDto,
+			);
 			await this.refreshRelationships();
 		},
 

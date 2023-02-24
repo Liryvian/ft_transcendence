@@ -103,36 +103,43 @@ const seedData = {
 				source: ids[0],
 				target: ids[1],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
 				source: ids[0],
 				target: ids[2],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
 				source: ids[0],
 				target: ids[3],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
 				source: ids[1],
 				target: ids[2],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
 				source: ids[1],
 				target: ids[3],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
 				source: ids[0],
 				target: ids[4],
 				type: validRelationships.BLOCKED,
+				specifier_id: ids[0],
 			},
 			{
 				source: ids[3],
 				target: ids[4],
 				type: validRelationships.BLOCKED,
+				specifier_id: ids[0],
 			},
 		];
 		return userRelations;

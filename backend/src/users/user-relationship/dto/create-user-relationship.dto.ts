@@ -10,7 +10,8 @@ export class CreateUserRelationshipDto {
 	@DoesNotMatch(CreateUserRelationshipDto, (o) => o.source)
 	target: number;
 
-	// specifier_id: number;
+	@IsNumber()
+	specifier_id: number;
 
 	@IsEnum(validRelationships)
 	@IsNotEmpty()

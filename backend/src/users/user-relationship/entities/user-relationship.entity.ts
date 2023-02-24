@@ -32,6 +32,9 @@ export class UserRelationship {
 	@JoinColumn({ name: 'target' })
 	target: User;
 
+	@Column()
+	specifier_id: number;
+
 	@Column({ default: validRelationships.NONE })
 	type: string;
 }

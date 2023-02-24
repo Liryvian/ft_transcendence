@@ -40,7 +40,7 @@
 	<BlockUser
 		:userId="user.id"
 		:isBlocked="isBlocked(relationship.type)"
-		:relationshipSourceId="relationship.source"
+		:specifierId="relationship.specifier_id"
 	/>
 </template>
 
