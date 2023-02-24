@@ -87,8 +87,8 @@ const seedData = {
 				updated_at: user_dates[3],
 			},
 			{
-				name: 'X the bitch',
-				password: await bcrypt.hash('x', 11),
+				name: 'wildsbok',
+				password: await bcrypt.hash('w', 11),
 				is_intra: false,
 				created_at: user_dates[4],
 				updated_at: user_dates[4],
