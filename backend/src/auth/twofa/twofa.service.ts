@@ -20,6 +20,7 @@ export class TwoFaService {
 	) {}
 
 	generateSecret() {
-		console.log({ secret: crypto.pseudoRandomBytes(6).toString('hex') });
+		const secret = crypto.pseudoRandomBytes(6).toString('hex');
+		return secret;
 	}
 }
