@@ -5,9 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GameInvite } from './entities/game-invite.entity';
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([GameInvite]),
-	],
+	imports: [TypeOrmModule.forFeature([GameInvite])],
 	controllers: [GameInvitesController],
 	providers: [GameInvitesService],
 	exports: [GameInvitesService],
