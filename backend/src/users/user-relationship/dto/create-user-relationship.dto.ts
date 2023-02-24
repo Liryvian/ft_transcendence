@@ -4,11 +4,11 @@ import { validRelationships } from '../entities/user-relationship.entity';
 
 export class CreateUserRelationshipDto {
 	@IsNumber()
-	source_id: number;
+	source: number;
 
 	@IsNumber()
-	@DoesNotMatch(CreateUserRelationshipDto, (o) => o.source_id)
-	target_id: number;
+	@DoesNotMatch(CreateUserRelationshipDto, (o) => o.source)
+	target: number;
 
 	// specifier_id: number;
 

@@ -1,10 +1,9 @@
-import type { User } from './User';
 
 export interface Relationship {
 	id: number;
 
-	source_id: User;
-	target_id: User;
+	source: number;
+	target: number;
 
 	type: string;
 }

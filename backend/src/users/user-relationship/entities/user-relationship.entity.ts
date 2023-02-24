@@ -15,7 +15,7 @@ export enum validRelationships {
 }
 
 @Entity('user_relationships')
-@Check(`"source_id" <> "target_id"`) // 				makes [2,2] impossible
+@Check(`"source" <> "target"`) // 				makes [2,2] impossible
 export class UserRelationship {
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -23,17 +23,14 @@ export class UserRelationship {
 	@ManyToOne(() => User, (user: User) => user.relationshipSource, {
 		eager: true,
 	})
-	@JoinColumn({ name: 'source_id' })
-	source_id: User;
+	@JoinColumn({ name: 'source' })
+	source: User;
 
 	@ManyToOne(() => User, (user: User) => user.relationshipTarget, {
 		eager: true,
 	})
-	@JoinColumn({ name: 'target_id' })
-	target_id: User;
-
-	// @Column()
-	// specifier_id: number;
+	@JoinColumn({ name: 'target' })
+	target: User;
 
 	@Column({ default: validRelationships.NONE })
 	type: string;

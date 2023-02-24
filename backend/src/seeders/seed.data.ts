@@ -100,38 +100,38 @@ const seedData = {
 	userRelations: (ids: number[]) => {
 		const userRelations: CreateUserRelationshipDto[] = [
 			{
-				source_id: ids[0],
-				target_id: ids[1],
+				source: ids[0],
+				target: ids[1],
 				type: validRelationships.FRIEND,
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[2],
+				source: ids[0],
+				target: ids[2],
 				type: validRelationships.FRIEND,
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[3],
+				source: ids[0],
+				target: ids[3],
 				type: validRelationships.FRIEND,
 			},
 			{
-				source_id: ids[1],
-				target_id: ids[2],
+				source: ids[1],
+				target: ids[2],
 				type: validRelationships.FRIEND,
 			},
 			{
-				source_id: ids[1],
-				target_id: ids[3],
+				source: ids[1],
+				target: ids[3],
 				type: validRelationships.FRIEND,
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[4],
+				source: ids[0],
+				target: ids[4],
 				type: validRelationships.BLOCKED,
 			},
 			{
-				source_id: ids[3],
-				target_id: ids[4],
+				source: ids[3],
+				target: ids[4],
 				type: validRelationships.BLOCKED,
 			},
 		];
