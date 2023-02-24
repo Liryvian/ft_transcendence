@@ -122,7 +122,9 @@ export class ChatController {
 
 	@Get(':id/messages')
 	async chatMessages(@Param('id') id: number) {
-		return await this.messageService.findAll({
+		// @TODO
+		// get user from JWT token and verify if user has read permissions for this chatId
+		return this.messageService.findAll({
 			where: { chat: { id } },
 		});
 	}
