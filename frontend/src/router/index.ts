@@ -84,13 +84,12 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	const isLoggedIn: boolean = useUserStore().isLoggedIn;
-	console.log("isLogged in router?: ", isLoggedIn)
-	console.log("Path: ", to.name)
+
 	if (!isLoggedIn && to.name !== 'login') {
 		return { name: 'login' };
 	} else if (to.name === 'login' && isLoggedIn) {
 		return { name: 'home' };
 	}
-})
+});
 
 export default router;

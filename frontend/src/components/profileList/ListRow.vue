@@ -1,6 +1,6 @@
 <template>
 	<!-- Route to profile via avatar link -->
-	<div v-if="!isBlocked(rel.type)">
+	<div v-if="!isBlocked(relationship.type)">
 		<Avatar
 			:avatar="user.avatar"
 			:is-online="true"
@@ -12,7 +12,7 @@
 	</div>
 
 	<!-- Route to profile via username link -->
-	<div v-if="!isBlocked(rel.type)">
+	<div v-if="!isBlocked(relationship.type)">
 		<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{
 			user.name
 		}}</a>
@@ -22,7 +22,7 @@
 	</div>
 
 	<!-- Route to chat -->
-	<div v-if="!isBlocked(rel.type)">
+	<div v-if="!isBlocked(relationship.type)">
 		<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
 	</div>
 	<div v-else>
@@ -31,16 +31,16 @@
 
 	<!-- Update friend status -->
 	<FriendInvite
-		:user-id="user.id"
-		:isBlocked="isBlocked(rel.type)"
-		:isFriend="isFriend(rel.type)"
+		:userId="user.id"
+		:isBlocked="isBlocked(relationship.type)"
+		:isFriend="isFriend(relationship.type)"
 	/>
 
 	<!-- Update blocked status -->
 	<BlockUser
-		:user-id="user.id"
-		:isBlocked="isBlocked(rel.type)"
-		:relationshipSourceId="rel.source_id.id"
+		:userId="user.id"
+		:isBlocked="isBlocked(relationship.type)"
+		:relationshipSourceId="relationship.source"
 	/>
 </template>
 
@@ -48,29 +48,20 @@
 import { defineComponent, type PropType, ref } from 'vue';
 import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
 import type { User } from '@/types/User';
-import { useUserStore } from '@/stores/userStore';
+import { useRelationshipStore } from '@/stores/relationshipStore';
 import Avatar from '@/components/profileList/Avatar.vue';
 import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
 import router from '@/router';
 import type { Relationship } from '@/types/Relationship';
 
-let rel = ref({} as Relationship);
 export default defineComponent({
 	name: 'ListRow',
-	data() {
-		return {rel}
-	},
-	async created() {
-		this.rel = await this.relationship;
-	},
 	setup() {
-		const userStore = useUserStore();
-		const { isFriend, isBlocked } = useUserStore();
-		// userStore.refreshData();
-
+		const relationshipStore = useRelationshipStore();
+		const { isFriend, isBlocked } = relationshipStore;
+		relationshipStore.initialize();
 		return {
-			userStore,
 			isFriend,
 			isBlocked,
 		};
@@ -90,10 +81,11 @@ export default defineComponent({
 		},
 		online: Boolean,
 		relationship: {
-			type: Object as PropType<Promise<Relationship>>,
+			type: Object as PropType<Relationship>,
 			required: true,
 		},
 	},
+
 	methods: {
 		async routeToChat(userId: number) {
 			console.log(`Starting chat with ${userId}`);
