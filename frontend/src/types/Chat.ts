@@ -18,7 +18,6 @@ export interface SingleMessage {
 	id: number;
 
 	sender?: User;
-	chat?: Chat;
 
 	user_id: number;
 	chat_id: number;
