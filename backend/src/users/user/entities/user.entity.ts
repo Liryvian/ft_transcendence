@@ -143,6 +143,9 @@ export class User {
 		}, []);
 	}
 
+	@Column({ nullable: true })
+	two_factor_secret: string;
+
 	@CreateDateColumn()
 	created_at: Date;
 
