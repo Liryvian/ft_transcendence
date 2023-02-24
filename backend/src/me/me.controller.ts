@@ -9,6 +9,7 @@ import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dt
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { User } from '../users/user/entities/user.entity';
 
+@UseGuards(AuthGuard)
 @Controller('me')
 export class MeController {
 	constructor(
@@ -17,7 +18,6 @@ export class MeController {
 		private readonly chatService: ChatService,
 	) {}
 
-	@UseGuards(AuthGuard)
 	@Get()
 	async me(
 		@Req() request: Request,
@@ -35,7 +35,6 @@ export class MeController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
 	@Get('achievements')
 	async achievements(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
@@ -43,7 +42,6 @@ export class MeController {
 		return 'achievements';
 	}
 
-	@UseGuards(AuthGuard)
 	@Get('users')
 	async users_visible_to_me(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
@@ -51,7 +49,6 @@ export class MeController {
 		return 'users visible to me';
 	}
 
-	@UseGuards(AuthGuard)
 	@Get('blocked')
 	async blocked(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
@@ -59,7 +56,6 @@ export class MeController {
 		return 'list of users that I blocked';
 	}
 
-	@UseGuards(AuthGuard)
 	@Get('friends')
 	async friends(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
@@ -68,7 +64,7 @@ export class MeController {
 	}
 
 	// gets chats where "I" am not blocked
-	@UseGuards(AuthGuard)
+
 	@Get('chats')
 	async chats(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);

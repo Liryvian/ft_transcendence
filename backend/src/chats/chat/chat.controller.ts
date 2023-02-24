@@ -8,6 +8,7 @@ import {
 	Delete,
 	BadRequestException,
 	Query,
+	UseGuards,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
@@ -17,7 +18,9 @@ import * as bcrypt from 'bcrypt';
 import { FindOptionsOrder } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
 import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatController {
 	constructor(private readonly chatService: ChatService) {}

@@ -20,7 +20,6 @@ import {
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
-import { AuthGuard } from '../../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,6 +27,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserRelationsBodyDto } from './dto/user-relations-body.dto';
 import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -58,7 +58,7 @@ export class UserController {
 		}
 	}
 
-	// @UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Get()
 	async findAll(
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
@@ -74,7 +74,7 @@ export class UserController {
 		return users;
 	}
 
-	// @UseGuards(AuthGuard)
+	@UseGuards(AuthGuard)
 	@Get(':id')
 	async findOne(
 		@Param('id') id: number,
@@ -124,7 +124,7 @@ export class UserController {
 			if (e instanceof NotFoundException) {
 				throw e;
 			}
-			if (e instanceof BadRequestException){
+			if (e instanceof BadRequestException) {
 				throw e;
 			}
 			console.log('An unknown error occurred, please check!', { e });
