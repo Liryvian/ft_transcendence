@@ -45,24 +45,6 @@ export class MessageController {
 		return newMessage;
 	}
 
-	// @NOTE
-	// maybe we also should not have this..
-	// i think it is never used anyway, and this makes it so that any logged in user can always get _all_ messages (also of other people..)
-	@Get()
-	findAll() {
-		return this.messageService.findAll({
-			relations: { chat: true, sender_id: true },
-		});
-	}
-
-	@Get(':id')
-	findOne(@Param('id') id: number) {
-		return this.messageService.findOne({
-			where: { id },
-			relations: { chat: true, sender_id: true },
-		});
-	}
-
 	@Delete(':id')
 	async remove(@Param('id') id: number) {
 		const found: Message = await this.messageService.findOne({
