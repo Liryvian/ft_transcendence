@@ -6,27 +6,9 @@
 			<h1>PLAYER_02</h1>
 			<div class="c_block c_form_group">
 				<div class="c_field_group">
-					<div class="c_field_group">
-						<label for="disabled_field">score to win:</label>
-						<input
-							id="disabled_field"
-							type="text"
-							placeholder="5"
-							disabled
-						/>
-					</div>
-					<div class="c_field_group">
-						<label for="disabled_field">background color:</label>
-						<input
-							id="disabled_field"
-							type="text"
-							placeholder="#FFC0CB"
-							disabled
-						/>
-					</div>
-					<div class="page_button pb_bottom">
-						<a href="#">play</a>
-					</div>
+					<InputField label="score_to_win" id="disabled" v-model="score_to_win"/>
+					<InputField label="background_colo" v-model="background_color"/>
+					<corner-button link_text="request" link_target="/" position="pb_bottom"/>
 				</div>
 			</div>
 		</div>
@@ -34,9 +16,17 @@
 </template>
 
 <script>
+import InputField from '@/components/input-fields/InputField.vue';
+import CornerButton from '@/components/buttons/CornerButton.vue';
+
 export default {
 	name: 'GameInvite',
+	components: {
+		InputField,
+		CornerButton
+	},
 };
 </script>
 
 <style scoped></style>
+

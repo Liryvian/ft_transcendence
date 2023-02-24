@@ -21,14 +21,10 @@ export class Game {
 	@Column({ default: 0 })
 	score_player_two: number;
 
-	// for now empty customization on initialization
-	// @Column({ default: null })
-	// customization: string;
-
-	@Column({ default: null })
+	@Column({ default: 0 })
 	score_to_win?: number;
 
-	@Column({ default: null })
+	@Column({ default: null }) // '#FFC0CB'
 	background_color?: string;
 
 	@Column({ default: true })

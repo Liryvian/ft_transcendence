@@ -109,7 +109,6 @@ describe('Game unit tests', () => {
 					id: expect.any(Number),
 					score_player_one: 0,
 					score_player_two: 0,
-					// customization: expect.any(Object),
 					score_to_win: 5,
 					background_color: 0,
 					is_active: true,
