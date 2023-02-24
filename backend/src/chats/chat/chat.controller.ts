@@ -9,11 +9,13 @@ import {
 	BadRequestException,
 	Query,
 	UseGuards,
+	Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
-import { Chat } from './entities/chat.entity';
+import { Chat, ChatType, ChatVisibility } from './entities/chat.entity';
 import * as bcrypt from 'bcrypt';
 import { DeleteResult, FindOptionsOrder } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
@@ -26,15 +28,20 @@ import {
 	SocketMessage,
 } from '../../socket/socket.types';
 import { UserInChat } from '../../users/user/entities/user.entity';
-import { ChatUserPermission } from '../chat-user-permissions/entities/chat-user-permission.entity';
+import {
+	ChatUserPermission,
+	permissionsEnum,
+} from '../chat-user-permissions/entities/chat-user-permission.entity';
 import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
 import { AuthGuard } from '../../auth/auth.guard';
+import { AuthService } from '../../auth/auth.service';
 
 @UseGuards(AuthGuard)
 @Controller('chats')
 export class ChatController {
 	constructor(
 		private readonly chatService: ChatService,
+		private readonly authService: AuthService,
 		private readonly messageService: MessageService,
 		private readonly socketService: SocketService,
 		private readonly chatUserPermissionService: ChatUserPermissionService,
@@ -73,7 +80,7 @@ export class ChatController {
 					relations.push({
 						user_id: user.id,
 						chat_id: chat.id,
-						permission: permission,
+						permission: permission as permissionsEnum,
 					});
 				});
 			});
@@ -123,11 +130,36 @@ export class ChatController {
 	}
 
 	@Get(':id/messages')
-	async chatMessages(@Param('id') id: number) {
+	async chatMessages(@Param('id') chatId: number, @Req() request: Request) {
+		try {
+			// verify that we have a valid and existing user from the request
+			const userId: number = await this.authService.validUserId(request);
+			// verify that we have a valid chat id from the parameter
+			const chat: Chat = await this.chatService.findOne({
+				where: { id: chatId },
+			});
+
+			// get users permssions from the chat
+			const userPermissions: ChatUserPermission[] =
+				await this.chatUserPermissionService.findAll({
+					where: {
+						user_id: userId,
+						chat_id: chat.id,
+					},
+				});
+
+			if (chat.visibility === ChatVisibility.PUBLIC) {
+			}
+			// if user is not blocked, and chat is public, it's ok
+			//
+		} catch (e) {
+			return [];
+		}
+
 		// @TODO
 		// get user from JWT token and verify if user has read permissions for this chatId
 		return this.messageService.findAll({
-			where: { chat: { id } },
+			where: { chat: { id: chatId } },
 		});
 	}
 

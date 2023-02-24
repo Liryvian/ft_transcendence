@@ -132,6 +132,13 @@ export class AuthService {
 		return this.userIdFromCookieString(cookie);
 	}
 
+	async validUserId(request: Request): Promise<number> {
+		const userId = await this.userId(request);
+		await this.userService.findOne({ where: { id: userId } });
+
+		return userId;
+	}
+
 	userIdFromCookieString(cookie: string) {
 		try {
 			const data = this.jwtService.verify(cookie);
