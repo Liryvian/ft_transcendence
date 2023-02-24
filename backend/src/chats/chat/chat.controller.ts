@@ -57,13 +57,15 @@ export class ChatController {
 
 		// post can contain minimal data:
 		// users: [{"id":7,"permissions":["read","post"]}]
+		// Unpack userInChat from Dto, to save with relations, after creating chat
 		const users: UserInChat[] = [];
 		if (createChatDto.hasOwnProperty('users')) {
 			createChatDto.users.forEach((user) => users.push(user));
 			delete createChatDto.users;
 		}
-
 		let chat: Chat = await this.chatService.save(createChatDto);
+
+		// Now add userInChat after unpacking it's permissions array
 		if (users.length) {
 			const relations: Partial<ChatUserPermission>[] = [];
 			users.forEach((user: UserInChat) => {
@@ -75,15 +77,15 @@ export class ChatController {
 					});
 				});
 			});
-			const rels = await this.chatUserPermissionService.save(relations);
+			await this.chatUserPermissionService.save(relations);
+		}
 
+		// If socket connection exists, emit message with up-to-date chat
+		if (this.socketService.chatServer !== null) {
 			chat = await this.chatService.findOne({
 				where: { id: chat.id },
 				relations: { has_users: { users: true } },
 			});
-		}
-
-		if (this.socketService.chatServer !== null) {
 			const socketMessage: SocketMessage<Chat_List_Item> = {
 				action: 'new',
 				data: {
