@@ -24,6 +24,9 @@ export const useUserStore = defineStore('users', {
 	getters: {},
 	// actions == methods
 	actions: {
+		// this should be moved out of the userStore
+		// it is not userStore functionality
+		// and it should be typed with something other than any..
 		handleFormError(responseData: any) {
 			if (typeof responseData.message === 'string') {
 				this.errors.length = 0;
@@ -33,6 +36,10 @@ export const useUserStore = defineStore('users', {
 					msg.replace('(o) => o.', ''),
 				);
 			}
+		},
+
+		getUserById(id: number) {
+			return this.allUsers.find((user) => user.id === id);
 		},
 
 		async login(loginType: string, loginForm?: LoginForm) {

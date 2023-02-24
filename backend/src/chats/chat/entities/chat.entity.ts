@@ -52,7 +52,7 @@ export class Chat {
 	@Exclude()
 	password: string;
 
-	@OneToMany(() => Message, (message) => message.chat_id)
+	@OneToMany(() => Message, (message) => message.chat)
 	messages: Message[];
 
 	toJSON() {

@@ -5,22 +5,25 @@
 			@click="$emit('toggleFocusTarget', 'msg')"
 			class="toggleHandler"
 		></div>
-		<ChatHeader :chat="info"  />
+		<ChatHeader :chat="info" />
 		<div class="c_messagelist">
 			<Message
-				v-for="message in messages"
+				v-for="message in activeChatMessages"
 				:message="message"
 				:key="message.id"
 			/>
 		</div>
-		<div class="c_send_message">
+		<form @submit.prevent="postNewMessage()" class="c_send_message">
 			<textarea
 				name="new_message"
 				id="new_message"
 				placeholder="type..."
+				v-model="new_message"
+				:disabled="is_sending"
+				@keypress.enter.exact.prevent="postNewMessage()"
 			></textarea>
 			<input type="submit" value="enter" />
-		</div>
+		</form>
 	</div>
 </template>
 
@@ -29,7 +32,11 @@ import { defineComponent, type PropType } from 'vue';
 
 import Message from './Message.vue';
 import ChatHeader from './ChatHeader.vue';
-import type { SingleMessage, Chat_List_Item } from "@/types/Chat";
+import { useMessageStore } from '@/stores/messageStore';
+import { useUserStore } from '@/stores/userStore';
+import type { Chat_List_Item, SingleMessage, NewMessage } from '@/types/Chat';
+import { postRequest } from '@/utils/apiRequests';
+import { storeToRefs } from 'pinia';
 
 export default defineComponent({
 	name: 'Chat',
@@ -45,28 +52,55 @@ export default defineComponent({
 		},
 	},
 	setup() {
+		const messageStore = useMessageStore();
+		const userStore = useUserStore();
+		const { messages } = storeToRefs(messageStore);
+
+		return {
+			messageStore,
+			userStore,
+			messages,
+		};
+	},
+	beforeMount() {},
+	computed: {
+		activeChatMessages(): SingleMessage[] {
+			if (!this.messages[this.info.id]) {
+				this.messageStore.getActiveChatMessages(this.info.id);
+				return [];
+			}
+			return this.messages[this.info.id];
+		},
+	},
+	methods: {
+		async postNewMessage() {
+			if (this.is_sending) return;
+			if (this.new_message.length === 0) return;
+
+			// set field to disabled
+			this.is_sending = true;
+			const newMessage: NewMessage = {
+				sender_id: this.userStore.me.id,
+				chat: this.info.id,
+				content: this.new_message,
+			};
+			try {
+				const response = await postRequest('messages', newMessage);
+				if (response.status >= 200 && response.status < 300) {
+					this.new_message = '';
+				}
+				this.is_sending = false;
+			} catch (e) {
+				console.error(e);
+				this.is_sending = false;
+			}
+		},
 	},
 	data() {
 		return {
-			messages: [
-				{
-					id: 0,
-					created_at: new Date('02/17/2023 10:09'),
-					sender: {
-						name: 'Hans'
-					},
-					content: "First message"
-				},
-				{
-					id: 1,
-					sender: {
-						name: 'Freek'
-					},
-					created_at: new Date('02/17/2023 10:12'),
-					content: "second message"
-				},
-			] as SingleMessage[]
-		}
-	}
+			new_message: '',
+			is_sending: false,
+		};
+	},
 });
 </script>

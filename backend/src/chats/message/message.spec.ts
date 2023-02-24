@@ -28,8 +28,8 @@ describe('MessageController', () => {
 	];
 
 	const testMessages: CreateMessageDto[] = [
-		{ sender_id: 1, chat_id: 1, content: 'hello' },
-		{ sender_id: 2, chat_id: 2, content: 'world!' },
+		{ sender_id: 1, chat: 1, content: 'hello' },
+		{ sender_id: 2, chat: 2, content: 'world!' },
 	];
 
 	let seedUsers = [
@@ -69,7 +69,9 @@ describe('MessageController', () => {
 	});
 
 	afterAll(async () => {
-		const repoOfMessages: Message[] = await messageController.findAll();
+		const repoOfMessages: Message[] = await messageService.findAll({
+			relations: { chat: true, sender_id: true },
+		});
 		for (let i = 0; i < repoOfMessages.length; i++) {
 			await messageController.remove(repoOfMessages[i].id);
 		}
@@ -91,15 +93,17 @@ describe('MessageController', () => {
 	});
 
 	it('Check if chat_id and other columns exists in messages', async () => {
-		const allMessages: Message[] = await messageController.findAll();
+		const allMessages: Message[] = await messageService.findAll({
+			relations: { chat: true, sender_id: true },
+		});
 		expect(allMessages).toHaveLength(2);
 		for (let index = 0; index < allMessages.length; index++) {
 			expect(allMessages).toEqual(
 				expect.arrayContaining([
 					expect.objectContaining({
 						id: expect.any(Number),
-						chat_id: expect.objectContaining({
-							id: testMessages[index].chat_id,
+						chat: expect.objectContaining({
+							id: testMessages[index].chat,
 						}),
 						sender_id: expect.objectContaining({
 							id: testMessages[index].sender_id,
@@ -115,7 +119,10 @@ describe('MessageController', () => {
 
 	it('Get a specific message', async () => {
 		const specificMessage = 1;
-		const message: Message = await messageController.findOne(specificMessage);
+		const message: Message = await messageService.findOne({
+			where: { id: specificMessage },
+			relations: { chat: true, sender_id: true },
+		});
 		expect(message.id).toBe(specificMessage);
 	});
 });

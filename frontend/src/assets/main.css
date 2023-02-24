@@ -314,6 +314,7 @@ h1 {
 	--conversation-header-height: 4.5em;
 	left: 10vw;
 	flex-grow: 1;
+	flex-basis: 75%;
 	background-color: var(--c-white);
 	border-left: var(--border-width) solid var(--color-border);
 	box-shadow: -8px 0 20px 0px rgba(20, 20, 20, 0.2);
@@ -531,6 +532,7 @@ h1 {
 
 	.c_chat__userlist {
 		flex-basis: 25%;
+		flex-grow: 1;
 		height: 100%;
 		max-height: none;
 		border-right: var(--border-width) solid var(--color-border);

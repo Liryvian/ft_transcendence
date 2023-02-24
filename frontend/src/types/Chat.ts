@@ -17,13 +17,20 @@ export interface UserChatPermissions {
 export interface SingleMessage {
 	id: number;
 
-	sender: User;
-	chat: Chat;
+	sender?: User;
 
+	user_id: number;
+	chat_id: number;
 	content: string;
 
 	created_at: Date;
-	updated_at: Date;
+	updated_at?: Date;
+}
+
+export interface NewMessage {
+	sender_id: number;
+	chat: number;
+	content: string;
 }
 
 export interface Chat {
@@ -40,6 +47,7 @@ export interface Chat {
 }
 
 export interface Chat_Member {
+	id: number;
 	name: string;
 	avatar?: string;
 }
@@ -50,7 +58,7 @@ export interface Chat_List_Item {
 	id: number;
 	name: string;
 	type: Chat_Type;
-	members: Chat_Member[];
+	users: Chat_Member[];
 }
 
 export interface Chat_List {

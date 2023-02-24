@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
+import { UserInChat } from '../../../users/user/entities/user.entity';
 
 export class CreateChatDto {
 	@IsNotEmpty()
@@ -12,4 +13,7 @@ export class CreateChatDto {
 
 	@IsOptional()
 	type?: string;
+
+	@IsOptional()
+	users?: UserInChat[];
 }
