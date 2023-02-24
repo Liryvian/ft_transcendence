@@ -7,14 +7,6 @@ import { User } from '../../../users/user/entities/user.entity';
 
 const validVisibility = ['public', 'private'];
 const chatType = ['dm', 'channel'];
-// export enum ChatType {
-// 	DM = 'dm',
-// 	CHANNEL = 'channel',
-// }
-// export enum ChatVisibility {
-// 	PUBLIC = 'public',
-// 	PRIVATE = 'private',
-// }
 export type ChatType = 'dm' | 'channel';
 export type ChatVisibility = 'public' | 'private';
 

@@ -98,7 +98,7 @@ export class ChatController {
 				data: {
 					id: chat.id,
 					name: chat.name,
-					type: chat.type as Chat_Type,
+					type: chat.type,
 					users:
 						chat.users?.map((user) => ({
 							id: user.id,
@@ -148,16 +148,42 @@ export class ChatController {
 					},
 				});
 
-			if (chat.visibility === ChatVisibility.PUBLIC) {
+			// reject if there are no permisisons at all for chat_id<->user_id
+			// or if user has a BLOCKED permission
+			if (
+				userPermissions.length === 0 ||
+				userPermissions.findIndex(
+					(permission) => permission.permission === permissionsEnum.BLOCKED,
+				) !== -1
+			) {
+				return [];
 			}
-			// if user is not blocked, and chat is public, it's ok
+
+			// there are 2 cases where you need explicit READ permissions to download
+			// the message list:
 			//
+			// 1. if it's a DM
+			// 2. if it's a private channel
+			if (
+				chat.type === 'dm' ||
+				(chat.type === 'channel' && chat.visibility === 'private')
+			) {
+				if (
+					userPermissions.findIndex(
+						(permission) => permission.permission === permissionsEnum.READ,
+					) === -1
+				) {
+					return [];
+				}
+			}
 		} catch (e) {
+			// catching:
+			// - invalid JWT token
+			// - invalid user id
+			// - invalid chat id
 			return [];
 		}
 
-		// @TODO
-		// get user from JWT token and verify if user has read permissions for this chatId
 		return this.messageService.findAll({
 			where: { chat: { id: chatId } },
 		});
