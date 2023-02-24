@@ -43,9 +43,12 @@ export default defineComponent({
 				if (this.message.user_id === this.userStore.me.id) {
 					return this.userStore.me.name;
 				}
-				return (
-					this.userStore.getUserById(this.message.user_id)?.name ?? ''
-				);
+				const userName: string | undefined = this.userStore.getUserById(
+					this.message.user_id,
+				)?.name;
+				if (userName !== undefined) {
+					return userName;
+				}
 			}
 			if (this.message.sender && this.message.sender.name) {
 				return this.message.sender.name;
