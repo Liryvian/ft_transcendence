@@ -43,10 +43,21 @@ export class UserRelationshipGateway
 	}
 
 	buildUniqueRoomId(roomInfo: RelationshipRoom): string {
-		return `${roomInfo.id}${Math.min(
-			roomInfo.source,
-			roomInfo.target,
-		)}${Math.max(roomInfo.source, roomInfo.target)}`;
+		return `
+			${roomInfo.id}
+			${Math.min(roomInfo.source, roomInfo.target)}
+			${Math.max(roomInfo.source, roomInfo.target)}`;
+	}
+
+	//  this is only to be able to leave rooms when disconnecting
+	saveRoomObservedByUser(userId: number, roomName: string) {
+		if (!this.relationshipObservers[userId]) {
+			this.relationshipObservers[userId] = {
+				rooms: [],
+			};
+		}
+		if (!this.relationshipObservers[userId].rooms.includes(roomName))
+			this.relationshipObservers[userId].rooms.push(roomName);
 	}
 
 	async handleConnection(client: Socket) {
@@ -58,13 +69,7 @@ export class UserRelationshipGateway
 			await this.userService.findOne({ where: { id: userId } });
 			client.on('joinRoom', (roomInfo: RelationshipRoom) => {
 				const roomName = this.buildUniqueRoomId(roomInfo);
-				if (!this.relationshipObservers[userId]) {
-					this.relationshipObservers[userId] = {
-						rooms: [],
-					};
-				}
-				if (!this.relationshipObservers[userId].rooms.includes(roomName))
-					this.relationshipObservers[userId].rooms.push(roomName);
+				this.saveRoomObservedByUser(userId, roomName);
 				client.join(roomName);
 			});
 		} catch (e) {
