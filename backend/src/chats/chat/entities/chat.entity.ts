@@ -7,6 +7,8 @@ import { User } from '../../../users/user/entities/user.entity';
 
 const validVisibility = ['public', 'private'];
 const chatType = ['dm', 'channel'];
+export type ChatType = 'dm' | 'channel';
+export type ChatVisibility = 'public' | 'private';
 
 @Entity('chats')
 export class Chat {
@@ -42,11 +44,11 @@ export class Chat {
 
 	@IsIn(validVisibility)
 	@Column({ default: 'public' })
-	visibility: string;
+	visibility: ChatVisibility;
 
 	@IsIn(chatType)
 	@Column({ default: 'channel' })
-	type: string;
+	type: ChatType;
 
 	@Column({ nullable: true })
 	@Exclude()

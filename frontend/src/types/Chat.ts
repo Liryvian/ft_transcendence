@@ -33,6 +33,8 @@ export interface NewMessage {
 	content: string;
 }
 
+export type ChatVisibility = 'public' | 'private';
+
 export interface Chat {
 	id: number;
 	name: string;
@@ -40,7 +42,7 @@ export interface Chat {
 	has_users: UserChatPermissions[];
 	users: User;
 
-	visibility: string;
+	visibility: ChatVisibility;
 	password: string;
 
 	messages: SingleMessage[];
