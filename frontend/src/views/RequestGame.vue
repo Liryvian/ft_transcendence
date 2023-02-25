@@ -18,7 +18,7 @@
 					/>
 					<corner-button
 						link_text="request"
-						link_target="/"
+						link_target="/chats"
 						position="pb_bottom"
 					/>
 				</div>

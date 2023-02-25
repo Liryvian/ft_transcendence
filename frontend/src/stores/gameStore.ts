@@ -53,6 +53,10 @@ export const useGameStore = defineStore("games", {
 		async createGame(createdGameForm: CreateGameForm){
 			try{
 				const newGame: Game = await postRequest('game', createdGameForm);
+				await router.push({
+					name: 'chat',
+					// params: { profile_id: createdGameForm.player_two},
+				});
 				// this.errors.length = 0;
 				return newGame;
 				} catch (e: any) {
