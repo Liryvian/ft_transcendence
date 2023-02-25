@@ -16,6 +16,7 @@ export const useRelationshipStore = defineStore('relationship', {
 	actions: {
 		async initialize() {
 			if (this.isInitialized === false) {
+				// for when sockets are setup
 				this.isInitialized = false;
 				await this.refreshRelationships();
 				await this.refreshMe();
