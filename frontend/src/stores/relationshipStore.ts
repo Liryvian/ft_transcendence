@@ -70,43 +70,40 @@ export const useRelationshipStore = defineStore('relationship', {
 			return placeHolderRelationship;
 		},
 
-		async initializeRelationship(source: number, target: number) {
+		async initializeRelationship(source: number, target: number, type: string) {
 			const createRelationship = {
 				source,
 				target,
-				type: 'none',
+				type,
 				specifier_id: source,
 			};
-			return await (
-				await postRequest('user-relationships/', createRelationship)
-			).data;
+			await postRequest('user-relationships/', createRelationship);
 		},
 
-		async getRelationship(source: number, target: number) {
-			const existingRel: Relationship = await (
-				await getRequest(`user-relationships/${source}/${target}`)
-			).data;
-
-			if (!existingRel) {
-				return this.initializeRelationship(source, target);
-			}
-			return existingRel;
-		},
-
-		async updateRelationship(userId: number, type: string) {
-			const rel: Relationship = await this.getRelationship(
-				userId,
-				this.me.id,
-			);
+		async updateExistingRelationship(relationshipId: number, sourceId: number,  type: string,) {
 			const updateRelationshipDto = {
 				type,
-				specifier_id: this.me.id,
+				specifier_id: sourceId,
 			};
-
 			await patchRequest(
-				`user-relationships/${rel.id}`,
-				updateRelationshipDto,
-			);
+					`user-relationships/${relationshipId}`,
+					updateRelationshipDto,
+				);
+		},
+		// check if relationship already exists
+		// else initialize it with specific type required
+		async updateRelationship(targetId: number, type: string) {
+			const sourceId: number = this.me.id;
+			const existingRelationship: Relationship = await (
+				await getRequest(`user-relationships/${sourceId}/${targetId}`)
+			).data;
+
+			if (existingRelationship) {
+				this.updateExistingRelationship(existingRelationship.id, sourceId, type)
+			}
+			else {
+				await this.initializeRelationship(sourceId, targetId, type);
+			}
 			await this.refreshRelationships();
 		},
 
