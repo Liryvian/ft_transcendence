@@ -1,4 +1,4 @@
-import type { Game, RequestGameForm } from '@/types/game.fe';
+import type { CreateGameForm, Game, RequestGameForm } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -49,6 +49,17 @@ export const useGameStore = defineStore("games", {
 
 			return true;
 		},
+
+		async createGame(createdGameForm: CreateGameForm){
+			try{
+				const newGame: Game = await postRequest('game', createdGameForm);
+				// this.errors.length = 0;
+				return newGame;
+				} catch (e: any) {
+					// this.handleFormError(e);
+					return [];
+				}
+		}
 
 		// async createGame(id: number, requestGameForm: RequestGameForm) {
 		// 	try {

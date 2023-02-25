@@ -27,7 +27,7 @@ export class Game {
 	@Column({ default: null }) // '#FFC0CB'
 	background_color?: string;
 
-	@Column({ default: true })
+	@Column({ default: false })
 	is_active: boolean;
 
 	@CreateDateColumn()

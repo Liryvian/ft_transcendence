@@ -34,12 +34,12 @@ export interface Game {
 	player_two: User;
 }
 
-export interface RequestGameForm {
+export interface CreateGameForm {
 	score_to_win: number,
 	background_color: string,
 
-	player_one: User,
-	player_two: User,
+	player_one: number,
+	player_two: number,
 }
 
 export interface ElementPositions {
@@ -48,11 +48,11 @@ export interface ElementPositions {
 	ball: Ball;
 }
 
-export interface GameRequest {
-	id: number;
-	user: User;
-
-	created_at: Date;
-	updated_at: Date;
-}
+// export interface GameRequest {
+// 	id: number;
+// 	user: User;
+//
+// 	created_at: Date;
+// 	updated_at: Date;
+// }
 
