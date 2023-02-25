@@ -128,8 +128,17 @@ export class AuthService {
 
 	async userId(request: Request): Promise<number> {
 		const cookie = request.cookies['jwt'];
-		const data = this.jwtService.verify(cookie);
 
-		return data['id'];
+		return this.userIdFromCookieString(cookie);
+	}
+
+	userIdFromCookieString(cookie: string) {
+		try {
+			const data = this.jwtService.verify(cookie);
+
+			return data['id'];
+		} catch (e) {
+			throw new BadRequestException('Invalid Authentication');
+		}
 	}
 }

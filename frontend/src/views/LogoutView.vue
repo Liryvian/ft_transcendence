@@ -1,5 +1,4 @@
-<template>
-</template>
+<template></template>
 
 <script lang="ts">
 import { useChatStore } from '@/stores/chatStore';

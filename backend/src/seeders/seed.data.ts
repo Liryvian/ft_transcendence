@@ -26,7 +26,7 @@ class seedGame {
 
 class seedMessage {
 	sender_id: number;
-	chat_id: number;
+	chat: number;
 	content: string;
 	created_at?: string;
 	updated_at?: string;
@@ -301,7 +301,7 @@ const seedData = {
 		].forEach((msg, index) => {
 			messages.push({
 				sender_id: users[2],
-				chat_id: chats[3],
+				chat: chats[3],
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(8, 12 + index, 0),
@@ -323,7 +323,7 @@ const seedData = {
 		].forEach((msg, index) => {
 			messages.push({
 				sender_id: users[index % 2 === 0 ? 2 : 3],
-				chat_id: chats[2],
+				chat: chats[2],
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(9, 2 + index, 0),
@@ -353,7 +353,7 @@ const seedData = {
 		].forEach((msg, index) => {
 			messages.push({
 				sender_id: users[index % users.length],
-				chat_id: chats[0],
+				chat: chats[0],
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(10, 25 + index * 2, 0),
@@ -367,7 +367,7 @@ const seedData = {
 		['hi', 'hi', 'hi!', 'hi!'].forEach((msg, index) => {
 			messages.push({
 				sender_id: users[index % 2 === 0 ? 2 : 1],
-				chat_id: chats[1],
+				chat: chats[1],
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(11, 48 + index, 0),

@@ -14,7 +14,6 @@ export class Ball {
 	radius: number;
 }
 
-
 export interface GameState {
 	playerOnePaddle: Paddle;
 	playerTwoPaddle: Paddle;
