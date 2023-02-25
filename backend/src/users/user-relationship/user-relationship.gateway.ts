@@ -42,6 +42,12 @@ export class UserRelationshipGateway
 			?.slice(4);
 	}
 
+	//  create a unique name for the room by:
+	//  taking the id of the relationship and appending
+	//  the smallest number between the source/target and then
+	//  the biggestnumber from source/target
+	//  this way the room name will always be the same no matter which of the two
+	//  users, target or source, is acceessing the room.
 	buildUniqueRoomId(roomInfo: RelationshipRoom): string {
 		return `
 			${roomInfo.id}
