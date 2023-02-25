@@ -77,7 +77,7 @@ export default defineComponent({
 	},
 	mounted() {
 		// this.socke
-		this.joinRoomOnConnect(this.relationship.id);
+		this.joinRoomOnConnect(this.relationship);
 	},
 
 	unmounted() {

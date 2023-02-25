@@ -7,7 +7,16 @@ import {
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
+import { AuthService } from '../../auth/auth.service';
+import { UserService } from '../user/user.service';
+
+type RelationshipObservers = Record<number, { rooms: string[] }>;
+
+type RelationshipRoom = {
+	source: number;
+	target: number;
+	id: number;
+};
 
 @WebSocketGateway({
 	namespace: '/user/relationship',
@@ -18,36 +27,65 @@ import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
 export class UserRelationshipGateway
 	implements OnGatewayConnection, OnGatewayDisconnect
 {
-	// constructor(private readonly socketService: UserRelationshipSocketService) {}
+	constructor(
+		private readonly authService: AuthService,
+		private userService: UserService,
+	) {}
 	@WebSocketServer()
 	server: Server;
-	public roomIds: string[] = [];
+	public relationshipObservers: RelationshipObservers = {};
 
-	handleConnection(client: Socket) {
-		client.on('joinRoom', (roomUID: number) => {
-			this.roomIds.push(`room_${roomUID}`);
-			console.log(`Connected to: room_${roomUID}`);
-			client.join(`room_${roomUID}`);
-		});
+	jwtCookieFromHandshakeString(string: string) {
+		return string
+			.split(' ')
+			.find((cookie) => cookie.startsWith('jwt='))
+			?.slice(4);
 	}
 
-	handleDisconnect(client: any) {
-		// leave all roomids, spread.value returns only unique values
-		this.roomIds.forEach((roomId) => {
-			console.log('leaving UID: ', roomId);
+	buildUniqueRoomId(roomInfo: RelationshipRoom): string {
+		return `${roomInfo.id}${Math.min(
+			roomInfo.source,
+			roomInfo.target,
+		)}${Math.max(roomInfo.source, roomInfo.target)}`;
+	}
+
+	async handleConnection(client: Socket) {
+		const cookie: string = this.jwtCookieFromHandshakeString(
+			client.handshake.headers.cookie,
+		);
+		try {
+			const userId: number = this.authService.userIdFromCookieString(cookie);
+			await this.userService.findOne({ where: { id: userId } });
+			client.on('joinRoom', (roomInfo: RelationshipRoom) => {
+				const roomName = this.buildUniqueRoomId(roomInfo);
+				if (!this.relationshipObservers[userId]) {
+					this.relationshipObservers[userId] = {
+						rooms: [],
+					};
+				}
+				if (!this.relationshipObservers[userId].rooms.includes(roomName))
+					this.relationshipObservers[userId].rooms.push(roomName);
+				client.join(roomName);
+			});
+		} catch (e) {
+			console.log();
+		}
+	}
+
+	handleDisconnect(client: Socket) {
+		const cookie: string = this.jwtCookieFromHandshakeString(
+			client.handshake.headers.cookie,
+		);
+		const userId: number = this.authService.userIdFromCookieString(cookie);
+		this.relationshipObservers[userId].rooms.forEach((roomId) => {
 			client.leave(roomId);
-			this.roomIds = [];
 		});
+		this.relationshipObservers[userId].rooms = [];
 	}
-
-	// sendupdatedRelationship(@MessageBody() body) {}
 
 	@SubscribeMessage('updateRelationship')
-	updateRelationship(@MessageBody() updateData: UpdateUserRelationshipDto) {
-		console.log('updating rel via sockets');
-		this.roomIds.forEach((roomid) => {
-			this.server.in(roomid).emit('updateHasHappened');
-		});
-		// this.server.in(this.roomIds[4]).emit('updateHasHappened');
+	updateRelationship(@MessageBody() roomInfo: RelationshipRoom) {
+		const roomName = this.buildUniqueRoomId(roomInfo);
+		this.server.in(roomName).emit('updateHasHappened');
 	}
 }

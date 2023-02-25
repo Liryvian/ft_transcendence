@@ -84,7 +84,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				type,
 				specifier_id: source,
 			};
-			await postRequest('user-relationships/', createRelationship);
+			return await postRequest('user-relationships/', createRelationship);
 		},
 
 		async updateExistingRelationship(
@@ -109,17 +109,25 @@ export const useRelationshipStore = defineStore('relationship', {
 			const existingRelationship: Relationship = await (
 				await getRequest(`user-relationships/${sourceId}/${targetId}`)
 			).data;
-
+			let updatedRelId: number = 0;
 			if (existingRelationship) {
 				this.updateExistingRelationship(
 					existingRelationship.id,
 					sourceId,
 					type,
 				);
+				updatedRelId = existingRelationship.id;
 			} else {
-				await this.initializeRelationship(sourceId, targetId, type);
+				updatedRelId = await (
+					await this.initializeRelationship(sourceId, targetId, type)
+				).data.id;
 			}
-			this.socket.emit('updateRelationship');
+			const relation = {
+				source: sourceId,
+				target: targetId,
+				id: updatedRelId,
+			};
+			this.socket.emit('updateRelationship', relation);
 		},
 
 		isFriend(type: string): boolean {
@@ -130,22 +138,25 @@ export const useRelationshipStore = defineStore('relationship', {
 			return type === ValidRelationships.BLOCKED;
 		},
 
-		joinRoomOnConnect(relationshipId: number) {
+		joinRoomOnConnect(relationship: Relationship) {
+			const relation = {
+				source: relationship.source,
+				target: relationship.target,
+				id: relationship.id,
+			};
 			this.socket.connect();
 			this.socket.on('connect', async () => {
-				if (relationshipId > 0) {
-					console.log('Connecting booooy');
-					this.socket.emit('joinRoom', relationshipId);
+				if (relationship.id > 0) {
+					this.socket.emit('joinRoom', relation);
 				}
 			});
 			this.socket.on('updateHasHappened', () => {
-				console.log('refreshing relationships');
 				this.refreshRelationships();
 			});
 		},
 
-		// disconnectSocket() {
-		// 	this.socket.disconnect();
-		// }
+		disconnectSocket() {
+			this.socket.disconnect();
+		},
 	},
 });
