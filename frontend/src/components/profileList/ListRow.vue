@@ -59,29 +59,29 @@ export default defineComponent({
 	name: 'ListRow',
 
 	created() {
-		console.log("rel in listrow", this.relationship);
-		
+		console.log('rel in listrow', this.relationship);
 	},
-		setup(props) {
+
+	setup(props) {
 		const relationshipStore = useRelationshipStore();
 		relationshipStore.initialize();
-		console.log("props: ", props)
-		const { isFriend, isBlocked, joinRoomOnConnect,  disconnectSocket } = relationshipStore;
+		console.log('props: ', props);
+		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
+			relationshipStore;
 		return {
 			isFriend,
 			isBlocked,
 			joinRoomOnConnect,
-			disconnectSocket
+			disconnectSocket,
 		};
 	},
 	mounted() {
 		// this.socke
 		this.joinRoomOnConnect(this.relationship.id);
-
 	},
 
 	unmounted() {
-		// this.disconnectSocket();
+		this.disconnectSocket();
 	},
 
 	components: {

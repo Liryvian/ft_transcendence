@@ -66,7 +66,6 @@ export const useRelationshipStore = defineStore('relationship', {
 			// check if the relationship already exists
 			for (let i = 0; i < this.relationships.length; i++) {
 				const rel: Relationship = this.relationships[i];
-				console.log()
 				if (this.isMatchingRelationship(userId, rel)) {
 					return rel;
 				}
@@ -74,7 +73,11 @@ export const useRelationshipStore = defineStore('relationship', {
 			return placeHolderRelationship;
 		},
 
-		async initializeRelationship(source: number, target: number, type: string) {
+		async initializeRelationship(
+			source: number,
+			target: number,
+			type: string,
+		) {
 			const createRelationship = {
 				source,
 				target,
@@ -84,16 +87,20 @@ export const useRelationshipStore = defineStore('relationship', {
 			await postRequest('user-relationships/', createRelationship);
 		},
 
-		async updateExistingRelationship(relationshipId: number, sourceId: number,  type: string,) {
+		async updateExistingRelationship(
+			relationshipId: number,
+			sourceId: number,
+			type: string,
+		) {
 			const updateRelationshipDto = {
 				type,
 				specifier_id: sourceId,
 			};
-			console.log("setting specifierId to me: ", sourceId === this.me.id);
+			console.log('setting specifierId to me: ', sourceId === this.me.id);
 			await patchRequest(
-					`user-relationships/${relationshipId}`,
-					updateRelationshipDto,
-				);
+				`user-relationships/${relationshipId}`,
+				updateRelationshipDto,
+			);
 		},
 		// check if relationship already exists
 		// else initialize it with specific type required
@@ -104,13 +111,15 @@ export const useRelationshipStore = defineStore('relationship', {
 			).data;
 
 			if (existingRelationship) {
-				this.updateExistingRelationship(existingRelationship.id, sourceId, type)
-			}
-			else {
+				this.updateExistingRelationship(
+					existingRelationship.id,
+					sourceId,
+					type,
+				);
+			} else {
 				await this.initializeRelationship(sourceId, targetId, type);
 			}
-			this.socket.emit("updateRelationship");
-			// await this.refreshRelationships();
+			this.socket.emit('updateRelationship');
 		},
 
 		isFriend(type: string): boolean {
@@ -121,24 +130,22 @@ export const useRelationshipStore = defineStore('relationship', {
 			return type === ValidRelationships.BLOCKED;
 		},
 
-		
-
 		joinRoomOnConnect(relationshipId: number) {
-			this.socket.connect()
-			this.socket.on("connect", async () => {
+			this.socket.connect();
+			this.socket.on('connect', async () => {
 				if (relationshipId > 0) {
-					console.log("Connecting booooy")
-					this.socket.emit("joinRoom", relationshipId)
+					console.log('Connecting booooy');
+					this.socket.emit('joinRoom', relationshipId);
 				}
-			})
-			this.socket.on("updateHasHappened", () => {
-				console.log("refreshing relationships");
+			});
+			this.socket.on('updateHasHappened', () => {
+				console.log('refreshing relationships');
 				this.refreshRelationships();
-			})
+			});
 		},
 
-		disconnectSocket() {
-			this.socket.disconnect();
-		}
+		// disconnectSocket() {
+		// 	this.socket.disconnect();
+		// }
 	},
 });
