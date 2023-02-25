@@ -5,30 +5,38 @@
 			<h1>VS</h1>
 			<h1>PLAYER_02</h1>
 			<div class="c_block c_form_group">
-				<div class="c_field_group">
+				<form
+					method="Post"
+					action=""
+					class="c_block c_form_group"
+					@submit.prevent="createGame(createGameForm)"
+				>
 					<InputField
 						label="score_to_win"
-						:modelValue="createGameForm.score_to_win"
+						:modelValue=String(createGameForm.score_to_win)
 						@update:modelValue="createGameForm.score_to_win = $event"
 					/>
 					<InputField
 						label="background_color"
-						v-model="createGameForm.background_color"
+						:modelValue=String(createGameForm.background_color)
 						@update:modelValue="createGameForm.background_color = $event"
 					/>
-					<corner-button
-						link_text="request"
-						link_target="/chats"
-						position="pb_bottom"
-					/>
-				</div>
+					<div class="page_button pb_bottom">
+						<input type="submit" value="request" />
+					</div>
+					<div v-if="errors.length">
+						<p v-for="error in errors" class="c_form--error">
+							!! {{ error }}
+						</p>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, onMounted } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import InputField from '@/components/input-fields/InputField.vue';
 import CornerButton from '@/components/buttons/CornerButton.vue';
 import { useGameStore } from '@/stores/gameStore';
@@ -45,43 +53,54 @@ export default defineComponent({
 	props: {
 		profile_id: { type: String, required: true },
 	},
-	data() {
-		let createGameForm: CreateGameForm = reactive({
-			score_to_win: 0,
-			background_color: '',
-			player_one: 0,
-			player_two: 0,
-		});
-		return { createGameForm };
-	},
+	// data() {
+	// 	let createGameForm: CreateGameForm = reactive({
+	// 		score_to_win: 0,
+	// 		background_color: '',
+	// 		player_one: 0,
+	// 		player_two: 0,
+	// 	});
+	// 	return { createGameForm };
+	// },
+	//
+	// async created() {
+	// 	const userStore = useUserStore();
+	// 	await useUserStore().refreshMe();
+	// 	const { me } = storeToRefs(userStore);
+	// 	this.createGameForm = {
+	// 		score_to_win: 10,
+	// 		background_color: 'fff',
+	// 		player_one: me.value.id,
+	// 		player_two: Number(this.profile_id),
+	// 	};
+	// 	// console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
+	// },
 
 	async created() {
-		const userStore = useUserStore();
 		await useUserStore().refreshMe();
+	},
+
+	setup(props) {
+		const userStore = useUserStore();
+		userStore.refreshData();
+		const gameStore = useGameStore();
+		useGameStore().refreshMyGames();
+		const { errors } = storeToRefs(gameStore);
 		const { me } = storeToRefs(userStore);
-		this.createGameForm = {
+		console.log("ME", me.value.id);
+		const {createGame } = gameStore;
+		let createGameForm: CreateGameForm = reactive({
 			score_to_win: 10,
 			background_color: 'fff',
 			player_one: me.value.id,
-			player_two: Number(this.profile_id),
-		};
-		// console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
-	},
-
-	setup() {
-		const gameStore = useGameStore();
-		useGameStore().refreshMyGames();
-		// let createGameForm: CreateGameForm = reactive({
-		// 	score_to_win: 0,
-		// 	background_color: '',
-		// 	player_one: 0,
-		// 	player_two: 0,
-		// });
-
+			player_two: Number(props.profile_id),
+		});
 		return {
 			gameStore,
-			// errors,
-			// profile_id,
+			errors,
+			createGameForm,
+			createGame,
+			me,
 		};
 	},
 });

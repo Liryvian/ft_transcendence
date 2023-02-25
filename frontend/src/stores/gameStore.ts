@@ -9,6 +9,7 @@ export const useGameStore = defineStore("games", {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
+		errors: [] as String[],
 	}),
 	// getters == computed values
 	getters: {
@@ -17,6 +18,17 @@ export const useGameStore = defineStore("games", {
 	},
 	// actions == methods
 	actions: {
+		handleFormError(responseData: any) {
+			if (typeof responseData.message === 'string') {
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
+			} else {
+				this.errors = responseData.message.map((msg: String) =>
+					msg.replace('(o) => o.', ''),
+				);
+			}
+		},
+
 		async refreshAllGames() {
 			try {
 				const data = await getRequest("games");
@@ -52,35 +64,20 @@ export const useGameStore = defineStore("games", {
 
 		async createGame(createdGameForm: CreateGameForm){
 			try{
-				const newGame: Game = await postRequest('game', createdGameForm);
+				console.log(createdGameForm)
+				await postRequest('games', createdGameForm);
 				await router.push({
 					name: 'chat',
 					// params: { profile_id: createdGameForm.player_two},
 				});
+				console.log("GEEN ERROR HIER! 1")
 				// this.errors.length = 0;
-				return newGame;
 				} catch (e: any) {
+				console.log("ERROR", e)
 					// this.handleFormError(e);
 					return [];
 				}
 		}
-
-		// async createGame(id: number, requestGameForm: RequestGameForm) {
-		// 	try {
-		// 		// if (updateProfileForm.new_password === '') {
-		// 		// 	delete updateProfileForm.new_password;
-		// 		// 	delete updateProfileForm.new_password_confirm;
-		// 		// 	delete updateProfileForm.password;
-		// 		// }
-		// 		// await patchRequest(`users/${id}`, gameRequestForm);
-		// 		// await this.refreshData();
-		// 		this.errors.length = 0;
-		// 		// await router.push({name: 'profile', params: {profile_id: id}});
-		// 	} catch (e: any) {
-		// 		this.handleFormError(e);
-		// 		return [];
-		// 	}
-		// },
 	}
 
-})
+});

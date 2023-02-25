@@ -24,6 +24,7 @@ export class GameController {
 	async create(@Body() createGameDto: CreateGameDto) {
 		try {
 			const newGame: Game = await this.gameService.save(createGameDto);
+			console.log(newGame);
 			return newGame;
 		} catch (e) {
 			throw new BadRequestException();
