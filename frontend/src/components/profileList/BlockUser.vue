@@ -34,7 +34,7 @@ export default defineComponent({
 	name: 'BlockUser',
 
 	created() {
-		console.log(this.me.id, this.relationship);
+		console.log("me:", this.me.id, "Specifier:", this.relationship.specifier_id, "rel:", this.relationship);
 	}, 
 	setup() {
 		const relationshipStore = useRelationshipStore();

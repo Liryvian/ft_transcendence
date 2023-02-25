@@ -58,9 +58,13 @@ import type { Relationship } from '@/types/Relationship';
 export default defineComponent({
 	name: 'ListRow',
 
-	setup() {
+	created() {
+		console.log("rel in listrow", this.relationship);
+		
+	},
+		setup() {
 		const relationshipStore = useRelationshipStore();
-		relationshipStore.initialize();
+		// relationshipStore.initialize();
 		const { isFriend, isBlocked, joinRoomOnConnect,  disconnectSocket} = relationshipStore;
 		return {
 			isFriend,
@@ -72,6 +76,7 @@ export default defineComponent({
 	mounted() {
 		// this.socke
 		this.joinRoomOnConnect(this.relationship.id);
+
 	},
 
 	unmounted() {

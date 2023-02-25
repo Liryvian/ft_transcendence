@@ -33,6 +33,7 @@ describe('GameInvite unit tests', () => {
 		source: null,
 		target: null,
 		type: validRelationships.FRIEND,
+		specifier_id: -1,
 	};
 
 	beforeAll(async () => {
@@ -50,6 +51,7 @@ describe('GameInvite unit tests', () => {
 		allUsers = await userService.findAll();
 		mockConnection.source = allUsers[0].id;
 		mockConnection.target = allUsers[1].id;
+		mockConnection.specifier_id = allUsers[0].id;
 	});
 
 	it('should be defined, service and controller', () => {
@@ -75,11 +77,13 @@ describe('GameInvite unit tests', () => {
 					source: allUsers[0].id,
 					target: allUsers[2].id,
 					type: validRelationships.FRIEND,
+					specifier_id: allUsers[0].id,
 				},
 				{
 					source: allUsers[2].id,
 					target: allUsers[1].id,
 					type: validRelationships.FRIEND,
+					specifier_id: allUsers[2].id,
 				},
 			];
 			await service.save(arrayOfRelationship);
@@ -109,6 +113,7 @@ describe('GameInvite unit tests', () => {
 				source: 1,
 				target: 2,
 				type: 'friend',
+				specifier_id: 1,
 			};
 			expect(await service.hasExistingRelationship(testObject)).toBe(true);
 		});
@@ -125,12 +130,14 @@ describe('GameInvite unit tests', () => {
 				source: user_id,
 				target: allUsers[0].id,
 				type: 'blocked',
+				specifier_id: user_id,
 			});
 
 			const testObject: CreateUserRelationshipDto = {
 				source: allUsers[0].id,
 				target: user_id,
 				type: 'friend',
+				specifier_id: allUsers[0].id,
 			};
 			// check that new relationship request cannot be mae even if ids are switched around
 			expect(await service.hasExistingRelationship(testObject)).toBe(true);
@@ -143,6 +150,7 @@ describe('GameInvite unit tests', () => {
 			source: 1,
 			target: 2,
 			type: 'invalidType',
+			specifier_id: 1,
 		};
 
 		const meta: ArgumentMetadata = {

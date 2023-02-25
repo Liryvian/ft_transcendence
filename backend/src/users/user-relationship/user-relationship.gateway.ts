@@ -45,6 +45,9 @@ export class UserRelationshipGateway
 	@SubscribeMessage('updateRelationship')
 	updateRelationship(@MessageBody() updateData: UpdateUserRelationshipDto) {
 		console.log('updating rel via sockets');
-		this.server.in(this.roomIds[0]).emit('updateHasHappened');
+		this.roomIds.forEach((roomid) => {
+			this.server.in(roomid).emit('updateHasHappened');
+		});
+		// this.server.in(this.roomIds[4]).emit('updateHasHappened');
 	}
 }

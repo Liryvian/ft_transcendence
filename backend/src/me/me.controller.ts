@@ -73,6 +73,7 @@ export class MeController {
 				source: rel.source.id,
 				target: rel.target.id,
 				type: rel.type,
+				specifier_id: rel.specifier_id,
 			};
 		});
 		return relationships;

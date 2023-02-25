@@ -121,13 +121,13 @@ const seedData = {
 				source: ids[1],
 				target: ids[2],
 				type: validRelationships.FRIEND,
-				specifier_id: ids[0],
+				specifier_id: ids[1],
 			},
 			{
 				source: ids[1],
 				target: ids[3],
 				type: validRelationships.FRIEND,
-				specifier_id: ids[0],
+				specifier_id: ids[1],
 			},
 			{
 				source: ids[0],
@@ -139,7 +139,7 @@ const seedData = {
 				source: ids[3],
 				target: ids[4],
 				type: validRelationships.BLOCKED,
-				specifier_id: ids[0],
+				specifier_id: ids[3],
 			},
 		];
 		return userRelations;

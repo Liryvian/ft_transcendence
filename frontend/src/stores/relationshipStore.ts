@@ -18,6 +18,7 @@ export const useRelationshipStore = defineStore('relationship', {
 	actions: {
 		async initialize() {
 			if (this.isInitialized === false) {
+				// for when sockets are setup
 				this.isInitialized = false;
 				this.socket = io('http://localhost:8080/user/relationship');
 				await this.refreshRelationships();
@@ -27,7 +28,7 @@ export const useRelationshipStore = defineStore('relationship', {
 
 		async refreshRelationships() {
 			this.relationships = await (
-				await getRequest('/me/relationships')
+				await getRequest('me/relationships')
 			).data;
 		},
 
@@ -65,6 +66,7 @@ export const useRelationshipStore = defineStore('relationship', {
 			// check if the relationship already exists
 			for (let i = 0; i < this.relationships.length; i++) {
 				const rel: Relationship = this.relationships[i];
+				console.log()
 				if (this.isMatchingRelationship(userId, rel)) {
 					return rel;
 				}
@@ -72,44 +74,43 @@ export const useRelationshipStore = defineStore('relationship', {
 			return placeHolderRelationship;
 		},
 
-		async initializeRelationship(source: number, target: number) {
+		async initializeRelationship(source: number, target: number, type: string) {
 			const createRelationship = {
 				source,
 				target,
-				type: 'none',
+				type,
 				specifier_id: source,
 			};
-			return await (
-				await postRequest('user-relationships/', createRelationship)
-			).data;
+			await postRequest('user-relationships/', createRelationship);
 		},
 
-		async getRelationship(source: number, target: number) {
-			const existingRel: Relationship = await (
-				await getRequest(`user-relationships/${source}/${target}`)
-			).data;
-
-			if (!existingRel) {
-				return this.initializeRelationship(source, target);
-			}
-			return existingRel;
-		},
-
-		async updateRelationship(userId: number, type: string) {
-			const rel: Relationship = await this.getRelationship(
-				userId,
-				this.me.id,
-			);
+		async updateExistingRelationship(relationshipId: number, sourceId: number,  type: string,) {
 			const updateRelationshipDto = {
 				type,
-				specifier_id: this.me.id,
+				specifier_id: sourceId,
 			};
-			this.socket.emit("updateRelationship");
+			console.log("setting specifierId to me: ", sourceId === this.me.id);
 			await patchRequest(
-				`user-relationships/${rel.id}`,
-				updateRelationshipDto,
-			);
-			await this.refreshRelationships();
+					`user-relationships/${relationshipId}`,
+					updateRelationshipDto,
+				);
+		},
+		// check if relationship already exists
+		// else initialize it with specific type required
+		async updateRelationship(targetId: number, type: string) {
+			const sourceId: number = this.me.id;
+			const existingRelationship: Relationship = await (
+				await getRequest(`user-relationships/${sourceId}/${targetId}`)
+			).data;
+
+			if (existingRelationship) {
+				this.updateExistingRelationship(existingRelationship.id, sourceId, type)
+			}
+			else {
+				await this.initializeRelationship(sourceId, targetId, type);
+			}
+			this.socket.emit("updateRelationship");
+			// await this.refreshRelationships();
 		},
 
 		isFriend(type: string): boolean {
@@ -117,7 +118,6 @@ export const useRelationshipStore = defineStore('relationship', {
 		},
 
 		isBlocked(type?: string): boolean {
-			// console.log("type:" ,type);
 			return type === ValidRelationships.BLOCKED;
 		},
 
@@ -131,9 +131,9 @@ export const useRelationshipStore = defineStore('relationship', {
 					this.socket.emit("joinRoom", relationshipId)
 				}
 			})
-			this.socket.on("updateHasHappened", async () => {
+			this.socket.on("updateHasHappened", () => {
 				console.log("refreshing relationships");
-				await this.refreshRelationships();
+				this.refreshRelationships();
 			})
 		},
 
