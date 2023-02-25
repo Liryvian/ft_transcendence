@@ -8,12 +8,13 @@
 				<div class="c_field_group">
 					<InputField
 						label="score_to_win"
-						:modelValue="score_to_win"
-						@update:modelValue="updateProfileForm.name = $event"
+						:modelValue="createGameForm.score_to_win"
+						@update:modelValue="createGameForm.score_to_win = $event"
 					/>
 					<InputField
 						label="background_color"
-						v-model="background_color"
+						v-model="createGameForm.background_color"
+						@update:modelValue="createGameForm.background_color = $event"
 					/>
 					<corner-button
 						link_text="request"
@@ -44,65 +45,45 @@ export default defineComponent({
 	props: {
 		profile_id: { type: String, required: true },
 	},
-	// computed: {
-	// 	getprofileId(){
-	// 		return this.profile_id;
-	// 	}
-	// },
-	data(){
+	data() {
 		let createGameForm: CreateGameForm = reactive({
 			score_to_win: 0,
 			background_color: '',
-
 			player_one: 0,
 			player_two: 0,
 		});
-		return { createGameForm }
+		return { createGameForm };
 	},
 
-	created(){
-	 this.createGameForm = {
-		 score_to_win: 0,
-		 background_color: '',
-
-		 player_one: 0,
-		 player_two: Number(this.profile_id),
-	 };
-	 console.log("THIS IS PLAYER TWO:", Number(this.profile_id));
+	async created() {
+		const userStore = useUserStore();
+		await useUserStore().refreshMe();
+		const { me } = storeToRefs(userStore);
+		this.createGameForm = {
+			score_to_win: 10,
+			background_color: 'fff',
+			player_one: me.value.id,
+			player_two: Number(this.profile_id),
+		};
+		// console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
 	},
 
 	setup() {
-		const userStore = useUserStore();
-		const {me} = storeToRefs(userStore);
 		const gameStore = useGameStore();
-		useUserStore().refreshMe();
 		useGameStore().refreshMyGames();
 		// let createGameForm: CreateGameForm = reactive({
 		// 	score_to_win: 0,
 		// 	background_color: '',
-		//
 		// 	player_one: 0,
 		// 	player_two: 0,
 		// });
-		// onMounted(() => {
-		// 	createGameForm = {
-		// 		score_to_win: 10,
-		// 		background_color: 'fff',
-		//
-		// 		player_one: me.value.id,
-		// 		player_two: Number(this.$props.profile_id),
-		// 	}
-		// 	})
-
 
 		return {
 			gameStore,
-			me,
 			// errors,
 			// profile_id,
 		};
-	}
-
+	},
 });
 </script>
 <style scoped></style>
