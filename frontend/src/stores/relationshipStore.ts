@@ -2,6 +2,7 @@ import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import type { User } from '@/types/User';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
+import { io, type Socket } from 'socket.io-client';
 
 export const useRelationshipStore = defineStore('relationship', {
 	//  actions == data definitions
@@ -9,6 +10,7 @@ export const useRelationshipStore = defineStore('relationship', {
 		relationships: <Relationship[]>[],
 		me: {} as User,
 		isInitialized: false,
+		socket: {} as Socket,
 	}),
 	// getters == computed values
 	getters: {},
@@ -17,6 +19,7 @@ export const useRelationshipStore = defineStore('relationship', {
 		async initialize() {
 			if (this.isInitialized === false) {
 				this.isInitialized = false;
+				this.socket = io('http://localhost:8080/user/relationship');
 				await this.refreshRelationships();
 				await this.refreshMe();
 			}
@@ -101,7 +104,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				type,
 				specifier_id: this.me.id,
 			};
-
+			this.socket.emit("updateRelationship");
 			await patchRequest(
 				`user-relationships/${rel.id}`,
 				updateRelationshipDto,
@@ -117,5 +120,25 @@ export const useRelationshipStore = defineStore('relationship', {
 			// console.log("type:" ,type);
 			return type === ValidRelationships.BLOCKED;
 		},
+
+		
+
+		joinRoomOnConnect(relationshipId: number) {
+			this.socket.connect()
+			this.socket.on("connect", async () => {
+				if (relationshipId > 0) {
+					console.log("Connecting booooy")
+					this.socket.emit("joinRoom", relationshipId)
+				}
+			})
+			this.socket.on("updateHasHappened", async () => {
+				console.log("refreshing relationships");
+				await this.refreshRelationships();
+			})
+		},
+
+		disconnectSocket() {
+			this.socket.disconnect();
+		}
 	},
 });

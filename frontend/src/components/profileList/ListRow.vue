@@ -54,35 +54,28 @@ import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
 import router from '@/router';
 import type { Relationship } from '@/types/Relationship';
-import { io } from 'socket.io-client';
 
 export default defineComponent({
 	name: 'ListRow',
-	data() {
-		return {
-			socket: io('http://localhost:8080/user/relationship')
-		}
-	},
 
 	setup() {
 		const relationshipStore = useRelationshipStore();
-		const { isFriend, isBlocked } = relationshipStore;
+		relationshipStore.initialize();
+		const { isFriend, isBlocked, joinRoomOnConnect,  disconnectSocket} = relationshipStore;
 		return {
 			isFriend,
 			isBlocked,
+			joinRoomOnConnect,
+			disconnectSocket
 		};
 	},
 	mounted() {
-		this.socket.connect()
-		this.socket.on("connect", async () => {
-			if (this.relationship.id > 0) {
-				console.log("Connecting booooy")
-				this.socket.emit("joinRoom", this.relationship.id)
-			}
-		})
+		// this.socke
+		this.joinRoomOnConnect(this.relationship.id);
 	},
+
 	unmounted() {
-		this.socket.close()	
+		this.disconnectSocket();
 	},
 
 	components: {

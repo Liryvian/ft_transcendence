@@ -1,10 +1,13 @@
 import {
+	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
+	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
 
 @WebSocketGateway({
 	namespace: '/user/relationship',
@@ -22,8 +25,8 @@ export class UserRelationshipGateway
 
 	handleConnection(client: Socket) {
 		client.on('joinRoom', (roomUID: number) => {
-			this.roomIds.push(`${roomUID}`);
-			console.log('Connected to rom: ', roomUID);
+			this.roomIds.push(`room_${roomUID}`);
+			console.log(`Connected to: room_${roomUID}`);
 			client.join(`room_${roomUID}`);
 		});
 	}
@@ -39,6 +42,9 @@ export class UserRelationshipGateway
 
 	// sendupdatedRelationship(@MessageBody() body) {}
 
-	// @SubscribeMessage('updateRelationship')
-	// updatePositions(@MessageBody() data) {}
+	@SubscribeMessage('updateRelationship')
+	updateRelationship(@MessageBody() updateData: UpdateUserRelationshipDto) {
+		console.log('updating rel via sockets');
+		this.server.in(this.roomIds[0]).emit('updateHasHappened');
+	}
 }

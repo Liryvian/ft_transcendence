@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isBlocked && relationship.specifier_id === me.id">
+	<div v-if="isBlocked && relationship.specifier_id !== me.id">
 		<a href="#" class="grayedOut"> Unblock </a>
 	</div>
 	<div v-else-if="isBlocked">
@@ -32,11 +32,15 @@ import { defineComponent, type PropType } from 'vue';
 
 export default defineComponent({
 	name: 'BlockUser',
+
+	created() {
+		console.log(this.me.id, this.relationship);
+	}, 
 	setup() {
 		const relationshipStore = useRelationshipStore();
+		relationshipStore.refreshMe()
 		const { updateRelationship } = relationshipStore;
 		const { me } = storeToRefs(relationshipStore);
-
 		return {
 			updateRelationship,
 			ValidRelationships,
