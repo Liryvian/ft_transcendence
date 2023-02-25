@@ -33,7 +33,10 @@ export class Message {
 	@RelationId((message: Message) => message.sender_id)
 	user_id: number;
 
-	@ManyToOne(() => Chat, (chat) => chat.id, { nullable: false })
+	@ManyToOne(() => Chat, (chat) => chat.id, {
+		nullable: false,
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn({ name: 'chat' })
 	chat: Chat;
 

@@ -56,7 +56,7 @@ export class ChatUserPermission {
 
 	@IsIn(permissionsArray)
 	@Column()
-	permission: String;
+	permission: permissionsEnum;
 
 	@CreateDateColumn()
 	created_at: Date;
