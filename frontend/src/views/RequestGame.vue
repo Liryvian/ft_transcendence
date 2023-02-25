@@ -52,6 +52,7 @@ export default defineComponent({
 	},
 	props: {
 		profile_id: { type: String, required: true },
+		id: { type: String, required: true },
 	},
 	// data() {
 	// 	let createGameForm: CreateGameForm = reactive({
@@ -76,12 +77,13 @@ export default defineComponent({
 	// 	// console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
 	// },
 
-	async created() {
-		await useUserStore().refreshMe();
-	},
+	// async created() {
+	// 	await useUserStore().refreshMe();
+	// },
 
 	setup(props) {
 		const userStore = useUserStore();
+		useUserStore().refreshMe();
 		userStore.refreshData();
 		const gameStore = useGameStore();
 		useGameStore().refreshMyGames();
