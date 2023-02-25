@@ -62,10 +62,11 @@ export default defineComponent({
 		console.log("rel in listrow", this.relationship);
 		
 	},
-		setup() {
+		setup(props) {
 		const relationshipStore = useRelationshipStore();
-		// relationshipStore.initialize();
-		const { isFriend, isBlocked, joinRoomOnConnect,  disconnectSocket} = relationshipStore;
+		relationshipStore.initialize();
+		console.log("props: ", props)
+		const { isFriend, isBlocked, joinRoomOnConnect,  disconnectSocket } = relationshipStore;
 		return {
 			isFriend,
 			isBlocked,
@@ -80,7 +81,7 @@ export default defineComponent({
 	},
 
 	unmounted() {
-		this.disconnectSocket();
+		// this.disconnectSocket();
 	},
 
 	components: {
