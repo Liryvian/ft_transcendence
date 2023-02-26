@@ -268,8 +268,27 @@ export class ChatController {
 				},
 			]);
 
-			// @TODO
-			// emit socket message!
+			if (this.socketService.chatServer !== null) {
+				const updatedChat = await this.chatService.findOne({
+					where: { id: chat.id },
+					relations: { has_users: { users: true } },
+				});
+				const socketMessage: SocketMessage<Chat_List_Item> = {
+					action: 'update',
+					data: {
+						id: chat.id,
+						users:
+							updatedChat.users?.map((user) => ({
+								id: user.id,
+								name: user.name,
+								avatar: user.avatar,
+							})) ?? [],
+					},
+				};
+				// @TODO
+				// emit only to users that are in chat?
+				this.socketService.chatlist_emit('all', socketMessage);
+			}
 		} catch (e) {
 			console.log(e);
 			return false;
