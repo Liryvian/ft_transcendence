@@ -266,8 +266,9 @@ const seedData = {
 			)
 			.forEach((cup) => cups.push(cup));
 
-		// add bitch user blocked + left to every chat
+		// add wildkat user blocked + left to every chat
 		chats
+			.filter((_, index) => index !== 1 && index !== 2)
 			.map((c) => ({
 				chat_id: c,
 				user_id: users[4],
