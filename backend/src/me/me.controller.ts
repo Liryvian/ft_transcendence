@@ -72,11 +72,16 @@ export class MeController {
 		// if you add the relationship here it only returns relations where you are the user, not all users in the chat
 		const chatIds: Chat[] = await this.chatService.findAll({
 			select: { id: true },
-			where: {
-				has_users: {
-					user_id: id,
+			where: [
+				{
+					has_users: {
+						user_id: id,
+					},
 				},
-			},
+				{
+					visibility: 'public',
+				},
+			],
 		});
 
 		const chats: Chat[] = (

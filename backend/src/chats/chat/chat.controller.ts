@@ -10,6 +10,7 @@ import {
 	Query,
 	UseGuards,
 	Req,
+	HttpCode,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ChatService } from './chat.service';
@@ -241,6 +242,38 @@ export class ChatController {
 			this.socketService.chatlist_emit('all', socketMessage);
 		}
 		return chat;
+	}
+
+	@Post(':id/join')
+	@HttpCode(200)
+	async joinChat(@Param('id') chatId: number, @Req() request: Request) {
+		try {
+			// verify that we have a valid and existing user from the request
+			const userId: number = await this.authService.validUserId(request);
+			// verify that we have a valid chat id from the parameter
+			const chat: Chat = await this.chatService.findOne({
+				where: { id: chatId },
+			});
+
+			await this.chatUserPermissionService.save([
+				{
+					chat_id: chat.id,
+					user_id: userId,
+					permission: permissionsEnum.READ,
+				},
+				{
+					chat_id: chat.id,
+					user_id: userId,
+					permission: permissionsEnum.POST,
+				},
+			]);
+
+			// @TODO
+			// emit socket message!
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	}
 
 	@Delete(':id')
