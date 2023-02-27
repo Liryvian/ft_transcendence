@@ -110,7 +110,7 @@ describe('Game unit tests', () => {
 					score_player_one: 0,
 					score_player_two: 0,
 					customization: expect.any(Object),
-					state: gameStates.ACTIVE,
+					state: gameStates.PENDING,
 					created_at: expect.any(Date),
 					updated_at: expect.any(Date),
 					player_one: relationTestUsersIds[0],

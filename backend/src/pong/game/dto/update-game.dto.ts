@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional } from 'class-validator';
-import { gameStates, gameStateType } from '../entities/game.entity';
+import { gameStates } from '../entities/game.entity';
 
 export class UpdateGameDto {
 	@IsOptional()
@@ -10,5 +10,5 @@ export class UpdateGameDto {
 
 	@IsOptional()
 	@IsEnum(gameStates)
-	state?: gameStateType;
+	state?: gameStates;
 }

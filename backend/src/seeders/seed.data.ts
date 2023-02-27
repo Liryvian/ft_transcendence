@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateChatUserPermissionDto } from '../chats/chat-user-permissions/dto/create-chat-user-permission.dto';
 import { CreateUserAchievementDto } from '../users/user-achievements/dto/create-user-achievement.dto';
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
-import { gameStates, gameStateType } from '../pong/game/entities/game.entity';
+import { gameStates } from '../pong/game/entities/game.entity';
 
 class seedUser {
 	name: string;
@@ -22,7 +22,7 @@ class seedGame {
 	player_two: number;
 	score_player_one: number;
 	score_player_two: number;
-	state: gameStateType;
+	state: gameStates;
 }
 
 class seedMessage {

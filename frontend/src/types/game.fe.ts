@@ -5,7 +5,6 @@ export enum gameStates {
 	DONE = 'done',
 	PENDING = 'pending',
 }
-export type gameStateType = 'active' | 'done' | 'pending';
 
 export interface Position {
 	x: number;
@@ -30,7 +29,7 @@ export interface Game {
 	score_player_two: number;
 
 	customization: string;
-	state: gameStateType;
+	state: gameStates;
 
 	created_at: Date;
 	updated_at: Date;

@@ -16,7 +16,6 @@ export enum gameStates {
 	DONE = 'done',
 	PENDING = 'pending',
 }
-export type gameStateType = 'active' | 'done' | 'pending';
 
 @Entity('games')
 export class Game {
@@ -35,7 +34,7 @@ export class Game {
 
 	@IsEnum(gameStates)
 	@Column({ default: gameStates.PENDING })
-	state: gameStateType;
+	state: gameStates;
 
 	@CreateDateColumn()
 	created_at: Date;

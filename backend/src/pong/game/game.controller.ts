@@ -12,7 +12,7 @@ import {
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { Game, gameStateType } from './entities/game.entity';
+import { Game } from './entities/game.entity';
 import { AuthGuard } from '../../auth/auth.guard';
 
 @UseGuards(AuthGuard)
