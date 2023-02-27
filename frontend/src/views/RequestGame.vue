@@ -52,57 +52,56 @@ export default defineComponent({
 	},
 	props: {
 		profile_id: { type: String, required: true },
-		id: { type: String, required: true },
 	},
-	// data() {
-	// 	let createGameForm: CreateGameForm = reactive({
-	// 		score_to_win: 0,
-	// 		background_color: '',
-	// 		player_one: 0,
-	// 		player_two: 0,
-	// 	});
-	// 	return { createGameForm };
-	// },
-	//
-	// async created() {
-	// 	const userStore = useUserStore();
-	// 	await useUserStore().refreshMe();
-	// 	const { me } = storeToRefs(userStore);
-	// 	this.createGameForm = {
-	// 		score_to_win: 10,
-	// 		background_color: 'fff',
-	// 		player_one: me.value.id,
-	// 		player_two: Number(this.profile_id),
-	// 	};
-	// 	// console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
-	// },
+	data() {
+		let createGameForm: CreateGameForm = reactive({
+			score_to_win: 0,
+			background_color: '',
+			player_one: 0,
+			player_two: 0,
+		});
+		return { createGameForm };
+	},
+
+	async created() {
+		const userStore = useUserStore();
+		await useUserStore().refreshMe();
+		const { me } = storeToRefs(userStore);
+		this.createGameForm = {
+			score_to_win: 10,
+			background_color: 'fff',
+			player_one: me.value.id,
+			player_two: Number(this.profile_id),
+		};
+		console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
+	},
 
 	// async created() {
 	// 	await useUserStore().refreshMe();
 	// },
 
 	setup(props) {
-		const userStore = useUserStore();
-		useUserStore().refreshMe();
-		userStore.refreshData();
+		// const userStore = useUserStore();
+		// useUserStore().refreshMe();
+		// userStore.refreshData();
 		const gameStore = useGameStore();
 		useGameStore().refreshMyGames();
 		const { errors } = storeToRefs(gameStore);
-		const { me } = storeToRefs(userStore);
-		console.log("ME", me.value.id);
+		// const { me } = storeToRefs(userStore);
+		// console.log("ME", me.value.id);
 		const {createGame } = gameStore;
-		let createGameForm: CreateGameForm = reactive({
-			score_to_win: 10,
-			background_color: 'fff',
-			player_one: me.value.id,
-			player_two: Number(props.profile_id),
-		});
+		// let createGameForm: CreateGameForm = reactive({
+		// 	score_to_win: 10,
+		// 	background_color: 'fff',
+		// 	player_one: me.value.id,
+		// 	player_two: Number(props.profile_id),
+		// });
 		return {
 			gameStore,
 			errors,
-			createGameForm,
+			// createGameForm,
 			createGame,
-			me,
+			// me,
 		};
 	},
 });
