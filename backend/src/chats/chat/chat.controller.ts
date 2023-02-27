@@ -205,7 +205,7 @@ export class ChatController {
 		return this.chatService.findOne({
 			where: { id },
 			relations: chatRelationsDto,
-			order: this.defaultOrder,
+			order: { created_at: 'asc' },
 		});
 	}
 
