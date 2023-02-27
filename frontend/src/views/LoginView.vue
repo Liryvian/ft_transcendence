@@ -19,6 +19,7 @@
 					/>
 
 					<InputField
+						tabindex="2"
 						inputType="password"
 						label="Password"
 						placeholder="password"
