@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AbstractService } from '../../shared/abstract.service';
-import { Repository } from 'typeorm';
-import { Game } from './entities/game.entity';
+import { In, Repository } from 'typeorm';
+import { Game, gameStates } from './entities/game.entity';
 import { CreateGameDto } from './dto/create-game.dto';
 
 @Injectable()
@@ -14,29 +14,32 @@ export class GameService extends AbstractService<Game> {
 		super(repository);
 	}
 
-	// async getExistingGames(p1: number, p2: number): Promise<Game[]> | null {
-	// 	try {
-	// 		const game: Game[] = await this.findAll({
-	// 			relations: {
-	// 				player_one: true,
-	// 				player_two: true,
-	// 			},
-	// 			where: {
-	// 				player_one: {
-	// 					id: In([p1, p2]),
-	// 				},
-	// 				player_two: {
-	// 					id: In([p1, p2]),
-	// 				},
-	// 			},
-	// 		});
-	// 		return game;
-	// 	} catch (e) {
-	// 		return null;
-	// 	}
-	// }
+	// if a game exists where both players
+	async getGamesContainingBothUserss(p1: number, p2: number) {
+		try {
+			const confilcitingGame: Game = await this.findOne({
+				relations: {
+					player_one: true,
+					player_two: true,
+				},
+				where: {
+					player_one: {
+						id: In([p1, p2]),
+					},
 
-	async getgamesForOneUser(userId: number) {
+					player_two: {
+						id: In([p1, p2]),
+					},
+				},
+			});
+			return confilcitingGame;
+		} catch (e) {
+			return null;
+		}
+	}
+
+	// check if a user has any active games
+	async hasActiveGame(userId: number) {
 		try {
 			const gameForPlayer: Game = await this.findOne({
 				relations: {
@@ -45,14 +48,13 @@ export class GameService extends AbstractService<Game> {
 				},
 				where: [
 					{
-						is_active: true,
+						state: gameStates.ACTIVE,
 						player_one: {
 							id: userId,
 						},
 					},
-
 					{
-						is_active: true,
+						state: gameStates.ACTIVE,
 						player_two: {
 							id: userId,
 						},
@@ -65,16 +67,30 @@ export class GameService extends AbstractService<Game> {
 		}
 	}
 
-	async canInitGame(gameData: CreateGameDto): Promise<boolean> {
-		const gamePlayerOne: Game = await this.getgamesForOneUser(
-			gameData.player_one,
-		);
-		console.log('GP!', gamePlayerOne);
-		const gamePlayerTwo: Game = await this.getgamesForOneUser(
-			gameData.player_two,
-		);
-		console.log('GP2:', gamePlayerTwo);
+	//  checks first if users already have an
+	async checkInitOrThrow(gameData: CreateGameDto): Promise<boolean> {
+		const playerOneId: number = gameData.player_one;
+		const playerTwoId: number = gameData.player_two;
 
-		return !gamePlayerOne && !gamePlayerTwo;
+		const confilcitingGame: Game = await this.getGamesContainingBothUserss(
+			playerOneId,
+			playerTwoId,
+		);
+
+		if (confilcitingGame) {
+			throw new BadRequestException('Game exists between the two users');
+		}
+
+		const playerOneHasActiveGames: boolean =
+			(await this.hasActiveGame(playerOneId)) !== null;
+
+		const playerTwoHasActiveGames: boolean =
+			(await this.hasActiveGame(playerTwoId)) !== null;
+
+		if (playerOneHasActiveGames || playerTwoHasActiveGames) {
+			throw new BadRequestException('A player already has an active game');
+		}
+
+		return true;
 	}
 }

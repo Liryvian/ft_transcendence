@@ -1,5 +1,12 @@
 import type { User } from './User';
 
+export enum gameStates {
+	ACTIVE = 'active',
+	DONE = 'done',
+	PENDING = 'pending',
+}
+export type gameStateType = 'active' | 'done' | 'pending';
+
 export interface Position {
 	x: number;
 	y: number;
@@ -23,7 +30,7 @@ export interface Game {
 	score_player_two: number;
 
 	customization: string;
-	is_active: boolean;
+	state: gameStateType;
 
 	created_at: Date;
 	updated_at: Date;

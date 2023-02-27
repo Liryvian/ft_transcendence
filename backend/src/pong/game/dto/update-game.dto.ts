@@ -1,4 +1,5 @@
-import { IsOptional } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
+import { gameStates, gameStateType } from '../entities/game.entity';
 
 export class UpdateGameDto {
 	@IsOptional()
@@ -8,5 +9,6 @@ export class UpdateGameDto {
 	score_player_two?: number;
 
 	@IsOptional()
-	is_active?: boolean;
+	@IsEnum(gameStates)
+	state?: gameStateType;
 }

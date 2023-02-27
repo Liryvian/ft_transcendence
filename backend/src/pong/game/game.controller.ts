@@ -12,7 +12,7 @@ import {
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
-import { Game } from './entities/game.entity';
+import { Game, gameStateType } from './entities/game.entity';
 import { AuthGuard } from '../../auth/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -22,11 +22,7 @@ export class GameController {
 
 	@Post()
 	async create(@Body() createGameDto: CreateGameDto) {
-		if (!this.gameService.canInitGame(createGameDto)) {
-			throw new BadRequestException(
-				'The user you are challenging is already busy with a game',
-			);
-		}
+		await this.gameService.checkInitOrThrow(createGameDto);
 		try {
 			const newGame: Game = await this.gameService.save(createGameDto);
 			return newGame;
