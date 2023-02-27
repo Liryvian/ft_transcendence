@@ -50,12 +50,6 @@ export class ChatController {
 	) {}
 
 	private readonly defaultRelationships = { has_users: true };
-	private readonly defaultOrder: FindOptionsOrder<Chat> = {
-		name: 'ASC',
-		messages: {
-			created_at: 'ASC',
-		},
-	};
 
 	@Post()
 	async create(@Body() createChatDto: CreateChatDto) {
@@ -127,7 +121,9 @@ export class ChatController {
 
 		return this.chatService.findAll({
 			relations: chatRelationsDto,
-			order: this.defaultOrder,
+			order: {
+				created_at: 'asc',
+			},
 		});
 	}
 

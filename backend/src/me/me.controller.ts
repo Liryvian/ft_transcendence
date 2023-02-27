@@ -90,6 +90,9 @@ export class MeController {
 					id: c.id,
 				})),
 				relations: { has_users: { users: true } },
+				order: {
+					created_at: 'asc',
+				},
 			})
 		).filter(
 			// removes chats where "I" am blocked
