@@ -20,7 +20,7 @@ import { AllowUnauthorizedRequest, AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
-import { AuthGuard } from './auth.guard';
+import AuthGuard from './auth.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -99,7 +99,7 @@ export class AuthController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
 	async logout(@Res({ passthrough: true }) response: Response) {
@@ -109,7 +109,7 @@ export class AuthController {
 		};
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Get('logout')
 	@HttpCode(HttpStatus.OK)
 	async logoutGet(@Res({ passthrough: true }) response: Response) {

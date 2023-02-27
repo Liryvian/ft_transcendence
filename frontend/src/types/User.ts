@@ -53,6 +53,8 @@ export interface User {
 
 	chats: Chat[];
 
+	has_2fa: boolean;
+
 	created_at: Date;
 	updated_at: Date;
 }

@@ -5,7 +5,7 @@ import { CreateGameInviteDto } from '../src/pong/game_invite/dto/create-game-inv
 import { GameInvitesController } from '../src/pong/game_invite/game-invite.controller';
 import { GameInvite } from '../src/pong/game_invite/entities/game-invite.entity';
 import { AllTestingModule } from '../src/shared/test.module';
-import { AuthGuard } from '../src/auth/auth.guard';
+import AuthGuard from '../src/auth/auth.guard';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;

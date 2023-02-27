@@ -9,7 +9,7 @@ import { GameController } from '../src/pong/game/game.controller';
 import { AllTestingModule } from '../src/shared/test.module';
 import { CreateUserDto } from '../src/users/user/dto/create-user.dto';
 import { UserService } from '../src/users/user/user.service';
-import { AuthGuard } from '../src/auth/auth.guard';
+import AuthGuard from '../src/auth/auth.guard';
 
 describe('Game (e2e)', () => {
 	let app: INestApplication;

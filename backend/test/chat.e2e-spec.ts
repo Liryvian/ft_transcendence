@@ -5,7 +5,7 @@ import { ChatController } from '../src/chats/chat/chat.controller';
 import * as request from 'supertest';
 import { Chat } from '../src/chats/chat/entities/chat.entity';
 import { AllTestingModule } from '../src/shared/test.module';
-import { AuthGuard } from '../src/auth/auth.guard';
+import AuthGuard from '../src/auth/auth.guard';
 
 describe('chat e2e', () => {
 	let app: INestApplication;

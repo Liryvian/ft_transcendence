@@ -1,6 +1,6 @@
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
-import { AuthGuard } from '../auth/auth.guard';
+import AuthGuard from '../auth/auth.guard';
 import { AuthService } from '../auth/auth.service';
 import { Chat, ChatUser } from '../chats/chat/entities/chat.entity';
 import { ChatService } from '../chats/chat/chat.service';
@@ -9,7 +9,7 @@ import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dt
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { User } from '../users/user/entities/user.entity';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('me')
 export class MeController {
 	constructor(

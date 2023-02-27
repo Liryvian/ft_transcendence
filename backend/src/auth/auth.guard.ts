@@ -1,22 +1,45 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+	CanActivate,
+	ExecutionContext,
+	Inject,
+	Type,
+	mixin,
+} from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
+import { User } from '../users/user/entities/user.entity';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-	constructor(private jwtService: JwtService) {}
-	canActivate(
-		context: ExecutionContext,
-	): boolean | Promise<boolean> | Observable<boolean> {
-		// return true;
+const AuthGuard = (): Type<CanActivate> => {
+	class AuthGuardMixin {
+		constructor(
+			private jwtService: JwtService,
+			@Inject(DataSource) private readonly dataSource: DataSource,
+		) {}
 
-		const request = context.switchToHttp().getRequest();
-		try {
-			const jwt = request.cookies['jwt'];
-			const validated = this.jwtService.verify(jwt);
-			return validated;
-		} catch (e) {
-			return false;
+		async canActivate(context: ExecutionContext): Promise<boolean> {
+			const request = context.switchToHttp().getRequest<Request>();
+			try {
+				const jwt = request.cookies['jwt'];
+				const validated = this.jwtService.verify(jwt);
+
+				const user = await this.dataSource.getRepository(User).findOneBy({
+					id: validated.id,
+				});
+				if (user.has_2fa) {
+					if (
+						!validated.hasOwnProperty('has2fa') ||
+						validated.has2fa === false
+					) {
+						return false;
+					}
+				}
+				return validated;
+			} catch (e) {
+				return false;
+			}
 		}
 	}
-}
+	return mixin(AuthGuardMixin);
+};
+export default AuthGuard;

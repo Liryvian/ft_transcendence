@@ -39,7 +39,9 @@
 					v-model="updateProfileForm.password"
 				/>
 				<div class="c_block c_split">
-					<p><a href="/turnon2fa">turn on 2fa</a></p>
+					<p>
+						<RouterLink :to="{ name: 'turn-on-2fa' }">turn on 2fa</RouterLink>
+					</p>
 				</div>
 				<div class="page_button pb_bottom">
 					<input type="submit" value="save" />

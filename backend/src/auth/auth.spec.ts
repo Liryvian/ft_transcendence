@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { AuthGuard } from './auth.guard';
+import AuthGuard from './auth.guard';
 
 import { AllTestingModule } from '../shared/test.module';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';

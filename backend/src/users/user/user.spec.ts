@@ -7,7 +7,7 @@ import {
 import { InsertResult } from 'typeorm';
 import { globalValidationPipeOptions } from '../../main.validationpipe';
 
-import { AuthGuard } from '../../auth/auth.guard';
+import AuthGuard from '../../auth/auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Game } from '../../pong/game/entities/game.entity';
 import { GameService } from '../../pong/game/game.service';

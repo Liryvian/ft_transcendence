@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
 import { User } from '../src/users/user/entities/user.entity';
 import { UserService } from '../src/users/user/user.service';
-import { AuthGuard } from '../src/auth/auth.guard';
+import AuthGuard from '../src/auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { AllTestingModule } from '../src/shared/test.module';
 

@@ -7,7 +7,7 @@ import { MatchmakingRequest } from '../src/pong/matchmaking-request/entities/mat
 import { UserService } from '../src/users/user/user.service';
 import { CreateUserDto } from '../src/users/user/dto/create-user.dto';
 import { AllTestingModule } from '../src/shared/test.module';
-import { AuthGuard } from '../src/auth/auth.guard';
+import AuthGuard from '../src/auth/auth.guard';
 
 describe('GameInvite (e2e)', () => {
 	let app: INestApplication;

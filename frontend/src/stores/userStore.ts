@@ -51,8 +51,11 @@ export const useUserStore = defineStore('users', {
 			try {
 				if (loginType === 'intra') {
 					location.href = `${apiUrl}/auth/authenticate`;
-				} else {
-					await postRequest('login', loginForm);
+					return ;
+				}
+				const loginResult = await (await postRequest('login', loginForm)).data;
+				if (loginResult === '2fa') {
+					// handle it
 				}
 				await this.refreshMe();
 				this.isLoggedIn = true;

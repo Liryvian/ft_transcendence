@@ -75,6 +75,11 @@ const router = createRouter({
 			component: () => import('../views/RegisterView.vue'),
 		},
 		{
+			path: '/turn-on-2fa',
+			name: 'turn-on-2fa',
+			component: () => import('../views/Settings2fa.vue'),
+		},
+		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),

@@ -33,10 +33,10 @@ import {
 	permissionsEnum,
 } from '../chat-user-permissions/entities/chat-user-permission.entity';
 import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
-import { AuthGuard } from '../../auth/auth.guard';
+import AuthGuard from '../../auth/auth.guard';
 import { AuthService } from '../../auth/auth.service';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('chats')
 export class ChatController {
 	constructor(

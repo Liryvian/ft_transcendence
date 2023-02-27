@@ -13,9 +13,9 @@ import { UserRelationshipService } from './user-relationship.service';
 import { CreateUserRelationshipDto } from './dto/create-user-relationship.dto';
 import { UpdateUserRelationshipDto } from './dto/update-user-relationship.dto';
 import { UserRelationship } from './entities/user-relationship.entity';
-import { AuthGuard } from '../../auth/auth.guard';
+import AuthGuard from '../../auth/auth.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('user-relationships')
 export class UserRelationshipController {
 	constructor(private readonly service: UserRelationshipService) {}
