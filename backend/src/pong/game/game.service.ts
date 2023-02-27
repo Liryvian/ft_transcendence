@@ -41,7 +41,7 @@ export class GameService extends AbstractService<Game> {
 	// check if a user has any active games
 	async getActiveGame(userId: number) {
 		try {
-			const gameForPlayer: Game = await this.findOne({
+			const activeGame: Game = await this.findOne({
 				relations: {
 					player_one: true,
 					player_two: true,
@@ -61,7 +61,7 @@ export class GameService extends AbstractService<Game> {
 					},
 				],
 			});
-			return gameForPlayer;
+			return activeGame;
 		} catch (e) {
 			return null;
 		}
@@ -70,7 +70,7 @@ export class GameService extends AbstractService<Game> {
 	//  check and get pending game between two users
 	async getPendingGame(p1: number, p2: number) {
 		try {
-			const confilcitingGame: Game = await this.findOne({
+			const pendingGame: Game = await this.findOne({
 				relations: {
 					player_one: true,
 					player_two: true,
@@ -87,7 +87,7 @@ export class GameService extends AbstractService<Game> {
 					},
 				},
 			});
-			return confilcitingGame;
+			return pendingGame;
 		} catch (e) {
 			return null;
 		}
