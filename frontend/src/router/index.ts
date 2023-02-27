@@ -7,9 +7,6 @@ const router = createRouter({
 		{
 			path: '/',
 			name: 'home',
-			// route level code-splitting
-			// this generates a separate chunk (About.[hash].js) for this route
-			// which is lazy-loaded when the route is visited.
 			component: () => import('../views/SettingsView.vue'),
 		},
 		{
@@ -84,8 +81,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	const isLoggedIn: boolean = useUserStore().isLoggedIn;
-	console.log('isLogged in router?: ', isLoggedIn);
-	console.log('Path: ', to.name);
+
 	if (!isLoggedIn && to.name !== 'login' && to.name !== 'register') {
 		return { name: 'login' };
 	} else if ((to.name === 'login' || to.name === 'register') && isLoggedIn) {

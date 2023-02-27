@@ -49,7 +49,6 @@ export default defineComponent({
 		chatStore.init(false);
 		const { dms, channels, getAllChats } = storeToRefs(chatStore);
 
-		socketStore.initialize();
 		return {
 			socketStore,
 			userStore,

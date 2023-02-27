@@ -16,3 +16,10 @@ export interface SocketMessage<T> {
 	action: ActionType;
 	data: T;
 }
+
+export interface StatusUpdate {
+	user_id: string;
+	status: boolean;
+}
+
+export type StatusList = Record<string, boolean>;

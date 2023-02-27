@@ -86,7 +86,7 @@ export class SocketService {
 
 	jwtCookieFromHandshakeString(string: string) {
 		return string
-			.split(' ')
+			?.split(' ')
 			.find((cookie) => cookie.startsWith('jwt='))
 			?.slice(4);
 	}

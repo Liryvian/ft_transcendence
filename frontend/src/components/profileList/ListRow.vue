@@ -8,7 +8,11 @@
 		/>
 	</div>
 	<div v-else>
-		<Avatar :avatar="user.avatar" :is-online="false" class="grayedOut" />
+		<Avatar
+			:avatar="user.avatar"
+			:is-online="userStore.getOnlineStatus(user.id)"
+			class="grayedOut"
+		/>
 	</div>
 
 	<!-- Route to profile via username link -->
