@@ -22,6 +22,11 @@ export class GameController {
 
 	@Post()
 	async create(@Body() createGameDto: CreateGameDto) {
+		if (!this.gameService.canInitGame(createGameDto)) {
+			throw new BadRequestException(
+				'The user you are challenging is already busy with a game',
+			);
+		}
 		try {
 			const newGame: Game = await this.gameService.save(createGameDto);
 			return newGame;
