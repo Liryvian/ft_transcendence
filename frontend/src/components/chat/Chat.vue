@@ -102,7 +102,7 @@ export default defineComponent({
 				this.info.users.find(
 					(user) =>
 						user.id === this.userStore.me.id &&
-						user.permissions.indexOf(permissionsEnum.READ) !== -1 &&
+						user.permissions.indexOf(permissionsEnum.POST) !== -1 &&
 						user.permissions.indexOf(permissionsEnum.BLOCKED) ===
 							-1 &&
 						user.permissions.indexOf(permissionsEnum.LEFT) === -1,
