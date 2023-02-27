@@ -73,18 +73,12 @@ export default defineComponent({
 			player_one: me.value.id,
 			player_two: Number(this.profile_id),
 		};
-		console.log('THIS IS PLAYER TWO:', Number(this.profile_id));
 	},
-
-	// async created() {
-	// 	await useUserStore().refreshMe();
-	// },
 
 	setup(props) {
 		const gameStore = useGameStore();
 		useGameStore().refreshMyGames();
 		const { errors } = storeToRefs(gameStore);
-		// console.log("ME", me.value.id);
 		const {createGame } = gameStore;;
 		return {
 			gameStore,
