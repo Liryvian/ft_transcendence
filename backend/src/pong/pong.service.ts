@@ -7,6 +7,16 @@ import {
 	Position,
 } from './game.types.be';
 
+// expects integers
+// for this case using -3 and 3
+function randomDirection(min, max) {
+	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
+	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
+		directionAndSpeed *= min;
+	}
+	return directionAndSpeed / 10;
+}
+
 @Injectable()
 export class PongService {
 	private readonly paddleWidth = 1;
@@ -14,9 +24,8 @@ export class PongService {
 
 	private readonly ballRadius = 1;
 
-	// ball direction and speed %
-	private dx = -0.4;
-	private dy = 0.4;
+	private dy = randomDirection(-3, 3) || 0.3;
+	private dx = randomDirection(-3, 3) || 0.3;
 
 	createNewGameState(): GameState {
 		const newGameState: GameState = {

@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<div class="page_box_wrapper">
-			<PlayerNames player_left="renoster" player_right="aardwolf" />
+			<PlayerNames :player_left="player_one.name" :player_right="player_two.name" />
 
 			<div class="page_box">
 				<div class="gameHeader space-between">
-					<p class="playerOneSore">5</p>
+					<p class="playerOneSore">{{ player_one.score }} </p>
 					<p class="pongHeader">PONG</p>
-					<p class="playerTwoScore">3</p>
+					<p class="playerTwoScore">{{ player_two.score }}</p>
 				</div>
 
 				<canvas
@@ -37,6 +37,11 @@ interface MovementKeys {
 	s: boolean;
 }
 
+interface Player {
+	score: number;
+	name: string;
+}
+
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
@@ -45,6 +50,9 @@ interface DataObject {
 	timeStampStart: DOMHighResTimeStamp;
 	previousTimeStamp: DOMHighResTimeStamp;
 	done: boolean;
+	player_one: Player;
+	player_two: Player;
+
 }
 
 export default defineComponent({
@@ -69,6 +77,14 @@ export default defineComponent({
 				ArrowDown: false,
 				w: false,
 				s: false,
+			},
+			player_one: {
+				score: 0,
+				name: ""
+			},
+			player_two: {
+				score: 0,
+				name: ""
 			},
 			gameLoopInterval: 0,
 			timeStampStart: 0,
