@@ -29,13 +29,17 @@ export const useUserStore = defineStore('users', {
 		// it is not userStore functionality
 		// and it should be typed with something other than any..
 		handleFormError(responseData: any) {
-			if (typeof responseData.message === 'string') {
-				this.errors.length = 0;
-				this.errors.push(responseData.message);
+			if (responseData.hasOwnProperty('message')) {
+				if (typeof responseData.message === 'string') {
+					this.errors.length = 0;
+					this.errors.push(responseData.message);
+				} else {
+					this.errors = responseData.message.map((msg: String) =>
+						msg.replace('(o) => o.', ''),
+					);
+				}
 			} else {
-				this.errors = responseData.message.map((msg: String) =>
-					msg.replace('(o) => o.', ''),
-				);
+				this.errors.length = 0;
 			}
 		},
 
