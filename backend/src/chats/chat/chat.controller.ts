@@ -11,6 +11,7 @@ import {
 	UseGuards,
 	Req,
 	HttpCode,
+	ForbiddenException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ChatService } from './chat.service';
@@ -152,7 +153,6 @@ export class ChatController {
 			// reject if there are no permisisons at all for chat_id<->user_id
 			// or if user has a BLOCKED permission
 			if (
-				userPermissions.length === 0 ||
 				userPermissions.findIndex(
 					(permission) => permission.permission === permissionsEnum.BLOCKED,
 				) !== -1
@@ -245,7 +245,6 @@ export class ChatController {
 	}
 
 	@Post(':id/join')
-	@HttpCode(200)
 	async joinChat(@Param('id') chatId: number, @Req() request: Request) {
 		try {
 			// verify that we have a valid and existing user from the request
@@ -255,44 +254,86 @@ export class ChatController {
 				where: { id: chatId },
 			});
 
-			await this.chatUserPermissionService.save([
-				{
+			// get existing permisisons for user
+			const existingPermissions = await this.chatUserPermissionService.findAll({
+				where: { chat_id: chat.id, user_id: userId },
+			});
+
+			const permissionsToAdd: Partial<ChatUserPermission>[] = [];
+
+			if (
+				existingPermissions.find(
+					(perm) => perm.permission === permissionsEnum.BLOCKED,
+				)
+			) {
+				throw new ForbiddenException('User can not join chat');
+			}
+
+			// if no read permissions, add them
+			if (
+				existingPermissions.find(
+					(perm) => perm.permission === permissionsEnum.READ,
+				) === undefined
+			) {
+				permissionsToAdd.push({
 					chat_id: chat.id,
 					user_id: userId,
 					permission: permissionsEnum.READ,
-				},
-				{
+				});
+			}
+
+			// if no post permisisons, add them
+			if (
+				existingPermissions.find(
+					(perm) => perm.permission === permissionsEnum.POST,
+				) === undefined
+			) {
+				permissionsToAdd.push({
 					chat_id: chat.id,
 					user_id: userId,
 					permission: permissionsEnum.POST,
-				},
-			]);
+				});
+			}
+
+			// if user had left before, remove left state
+			const LEFT_permission = existingPermissions.find(
+				(perm) => perm.permission === permissionsEnum.LEFT,
+			);
+			if (LEFT_permission !== undefined) {
+				await this.chatUserPermissionService.remove(LEFT_permission.id);
+			}
+
+			if (permissionsToAdd.length === 0) {
+				// do nothing?
+				return true;
+			}
+
+			await this.chatUserPermissionService.save(permissionsToAdd);
 
 			if (this.socketService.chatServer !== null) {
 				const updatedChat = await this.chatService.findOne({
 					where: { id: chat.id },
 					relations: { has_users: { users: true } },
 				});
+
 				const socketMessage: SocketMessage<Chat_List_Item> = {
 					action: 'update',
 					data: {
 						id: chat.id,
-						users:
-							updatedChat.users?.map((user) => ({
-								id: user.id,
-								name: user.name,
-								avatar: user.avatar,
-							})) ?? [],
+						users: updatedChat.users,
 					},
 				};
-				// @TODO
-				// emit only to users that are in chat?
-				this.socketService.chatlist_emit('all', socketMessage);
+
+				this.socketService.chatlist_emit(
+					updatedChat.users.map((user) => user.id),
+					socketMessage,
+				);
 			}
 		} catch (e) {
 			console.log(e);
 			return false;
 		}
+		return {};
 	}
 
 	@Delete(':id')
