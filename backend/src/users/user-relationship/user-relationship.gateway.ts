@@ -8,6 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../../auth/auth.service';
+import { jwtCookieFromHandshakeString } from '../../socket/socket.utils';
 import { UserService } from '../user/user.service';
 
 type RelationshipObservers = Record<number, { rooms: string[] }>;
@@ -36,13 +37,6 @@ export class UserRelationshipGateway
 	server: Server;
 	public relationshipObservers: RelationshipObservers = {};
 
-	jwtCookieFromHandshakeString(string: string) {
-		return string
-			.split(' ')
-			.find((cookie) => cookie.startsWith('jwt='))
-			?.slice(4);
-	}
-
 	//  create a unique name for the room by:
 	//  taking the id of the relationship and appending
 	//  the smallest number between the source/target and then
@@ -68,7 +62,7 @@ export class UserRelationshipGateway
 	}
 
 	async handleConnection(client: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);
 		try {
@@ -79,20 +73,22 @@ export class UserRelationshipGateway
 				this.saveRoomsObservedPerUser(userId, roomName);
 				client.join(roomName);
 			});
-		} catch (e) {
-			console.log();
-		}
+		} catch (e) {}
 	}
 
 	handleDisconnect(client: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);
-		const userId: number = this.authService.userIdFromCookieString(cookie);
-		this.relationshipObservers[userId].rooms.forEach((roomId) => {
-			client.leave(roomId);
-		});
-		this.relationshipObservers[userId].rooms = [];
+		try {
+			const userId: number = this.authService.userIdFromCookieString(cookie);
+			if (this.relationshipObservers[userId]) {
+				this.relationshipObservers[userId].rooms.forEach((roomId) => {
+					client.leave(roomId);
+				});
+				this.relationshipObservers[userId].rooms = [];
+			}
+		} catch (e) {}
 	}
 
 	// receives an emit from relationshipStore updateRelationship()

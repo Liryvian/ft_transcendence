@@ -49,7 +49,7 @@ export const useUserStore = defineStore('users', {
 				} else {
 					await postRequest('login', loginForm);
 				}
-				await this.refreshMe();
+				await this.refreshData();
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
