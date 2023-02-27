@@ -5,7 +5,7 @@ import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 import router from '@/router';
 
-export const useGameStore = defineStore("games", {
+export const useGameStore = defineStore('games', {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
@@ -50,7 +50,7 @@ export const useGameStore = defineStore("games", {
 			await this.refreshAllGames();
 		},
 
-		isAvailable(): boolean {
+		async isAvailable(): boolean {
 			const me: User = useUserStore().getMe;
 			// if (!me.isOnline)
 				// retunr false;
@@ -58,24 +58,20 @@ export const useGameStore = defineStore("games", {
 				if (game.is_active === true)
 					return false;
 			})
-
 			return true;
 		},
 
 		async createGame(createdGameForm: CreateGameForm){
 			try{
-				console.log(createdGameForm)
 				await postRequest('games', createdGameForm);
-				await router.push({
-					name: 'chat',
-					// params: { profile_id: createdGameForm.player_two},
-				});
-				console.log("GEEN ERROR HIER! 1")
-				// this.errors.length = 0;
+				await router.push('/chat');
+				// await router.push({
+				// 	name: 'chat',
+				// 	params: { profile_id: createdGameForm.player_two},
+				// });
+				this.errors.length = 0;
 				} catch (e: any) {
-				console.log("ERROR", e)
-					// this.handleFormError(e);
-					return [];
+					this.handleFormError(e.response.data);
 				}
 		}
 	}

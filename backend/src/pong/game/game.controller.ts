@@ -23,11 +23,17 @@ export class GameController {
 	@Post()
 	async create(@Body() createGameDto: CreateGameDto) {
 		try {
+			const currentGames: Game[] = await this.gameService.findAll({
+				relations: { player_one: true, player_two: true },
+			});
+			currentGames.forEach((item, index) => {
+				console.log(currentGames, index);
+			});
+			console.log('curren games', currentGames[0]);
 			const newGame: Game = await this.gameService.save(createGameDto);
-			console.log(newGame);
 			return newGame;
 		} catch (e) {
-			throw new BadRequestException();
+			throw new BadRequestException('game can not be created');
 		}
 	}
 

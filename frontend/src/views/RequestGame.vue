@@ -81,27 +81,15 @@ export default defineComponent({
 	// },
 
 	setup(props) {
-		// const userStore = useUserStore();
-		// useUserStore().refreshMe();
-		// userStore.refreshData();
 		const gameStore = useGameStore();
 		useGameStore().refreshMyGames();
 		const { errors } = storeToRefs(gameStore);
-		// const { me } = storeToRefs(userStore);
 		// console.log("ME", me.value.id);
-		const {createGame } = gameStore;
-		// let createGameForm: CreateGameForm = reactive({
-		// 	score_to_win: 10,
-		// 	background_color: 'fff',
-		// 	player_one: me.value.id,
-		// 	player_two: Number(props.profile_id),
-		// });
+		const {createGame } = gameStore;;
 		return {
 			gameStore,
 			errors,
-			// createGameForm,
 			createGame,
-			// me,
 		};
 	},
 });
