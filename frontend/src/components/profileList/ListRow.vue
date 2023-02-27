@@ -3,7 +3,7 @@
 	<div v-if="!isBlocked(relationship.type)">
 		<Avatar
 			:avatar="user.avatar"
-			:is-online="true"
+			:is-online="userStore.getOnlineStatus(user.id)"
 			v-on:click="routeToProfile(user.id)"
 		/>
 	</div>

@@ -16,6 +16,7 @@ export const useUserStore = defineStore('users', {
 	state: () => ({
 		allUsers: [] as User[],
 		me: {} as User,
+		onlineStatus: new Map<Number, boolean>(),
 		errors: [] as String[],
 		// persists data accross refreshes
 		isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
@@ -37,6 +38,10 @@ export const useUserStore = defineStore('users', {
 					msg.replace('(o) => o.', ''),
 				);
 			}
+		},
+
+		getOnlineStatus(id: number) {
+			return this.onlineStatus.has(id) && this.onlineStatus[id] === true;
 		},
 
 		getUserById(id: number) {

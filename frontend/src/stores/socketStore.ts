@@ -13,13 +13,19 @@ export const useSocketStore = defineStore('sockets', {
 		chats: {
 			socket: null,
 			initialized: false,
-			in_rooms: [],
+		},
+		online: {
+			socket: null,
+			initialized: false,
 		},
 	}),
 	actions: {
 		initialize() {
 			if (this.chats.initialized === false) {
 				this.initializeChats();
+			}
+			if (this.online.initialized === false) {
+				this.initializeOnline();
 			}
 		},
 		async initializeChats() {
@@ -44,6 +50,9 @@ export const useSocketStore = defineStore('sockets', {
 				},
 			);
 		},
+		async initializeOnline() {
+			this.online.initialized = true;
+		},
 		disconnect() {
 			this.chats.socket?.off('newMessage');
 			this.chats.socket?.off('chatListUpdate');
@@ -53,9 +62,7 @@ export const useSocketStore = defineStore('sockets', {
 			if (this.chats.initialized === false) {
 				await this.initializeChats();
 			}
-			console.log('emit join');
 			if (this.chats.socket !== null) {
-				console.log('actually emit join');
 				this.chats.socket!.emit('join', chatId);
 			}
 		},
