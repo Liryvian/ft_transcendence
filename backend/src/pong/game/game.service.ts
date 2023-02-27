@@ -39,7 +39,7 @@ export class GameService extends AbstractService<Game> {
 	}
 
 	// check if a user has any active games
-	async hasActiveGame(userId: number) {
+	async getActiveGame(userId: number) {
 		try {
 			const gameForPlayer: Game = await this.findOne({
 				relations: {
@@ -67,25 +67,54 @@ export class GameService extends AbstractService<Game> {
 		}
 	}
 
-	//  checks first if users already have an
+	//  check and get pending game between two users
+	async getPendingGame(p1: number, p2: number) {
+		try {
+			const confilcitingGame: Game = await this.findOne({
+				relations: {
+					player_one: true,
+					player_two: true,
+				},
+				where: {
+					state: gameStates.PENDING,
+
+					player_one: {
+						id: In([p1, p2]),
+					},
+
+					player_two: {
+						id: In([p1, p2]),
+					},
+				},
+			});
+			return confilcitingGame;
+		} catch (e) {
+			return null;
+		}
+	}
+
+	//  checks first if users already have a pending game between them
+	//  then checks if either users have an active game going
 	async checkInitOrThrow(gameData: CreateGameDto): Promise<boolean> {
 		const playerOneId: number = gameData.player_one;
 		const playerTwoId: number = gameData.player_two;
 
-		const confilcitingGame: Game = await this.getGamesContainingBothUserss(
+		const getPendingGame: Game = await this.getPendingGame(
 			playerOneId,
 			playerTwoId,
 		);
 
-		if (confilcitingGame) {
-			throw new BadRequestException('Game exists between the two users');
+		if (getPendingGame) {
+			throw new BadRequestException(
+				'Pending game exists between the two users',
+			);
 		}
 
 		const playerOneHasActiveGames: boolean =
-			(await this.hasActiveGame(playerOneId)) !== null;
+			(await this.getActiveGame(playerOneId)) !== null;
 
 		const playerTwoHasActiveGames: boolean =
-			(await this.hasActiveGame(playerTwoId)) !== null;
+			(await this.getActiveGame(playerTwoId)) !== null;
 
 		if (playerOneHasActiveGames || playerTwoHasActiveGames) {
 			throw new BadRequestException('A player already has an active game');
