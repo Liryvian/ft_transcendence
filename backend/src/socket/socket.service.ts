@@ -121,10 +121,6 @@ export class SocketService {
 				this.chatListSubscribers[userId] = [];
 			}
 			this.chatListSubscribers[userId].push(socket);
-			console.log({
-				userId,
-				sockets: this.chatListSubscribers[userId].map((sock) => sock.id),
-			});
 		} catch (e) {
 			console.log('Error on subscribing to chatlist');
 			console.log(e);

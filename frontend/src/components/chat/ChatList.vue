@@ -12,7 +12,7 @@
 import { RouterLink } from 'vue-router';
 import { defineComponent, type PropType } from 'vue';
 import ChatListItem from './ChatListItem.vue';
-import type { Chat_List } from "@/types/Chat";
+import type { Chat_List } from '@/types/Chat';
 
 export default defineComponent({
 	name: 'ChatList',
@@ -22,13 +22,6 @@ export default defineComponent({
 			type: Object as PropType<Chat_List>,
 			required: true,
 		},
-	},
-	setup() {
-	},
-	computed: {
-	},
-	data() {
-		return {};
 	},
 });
 </script>
