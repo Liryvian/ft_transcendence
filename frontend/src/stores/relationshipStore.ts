@@ -102,6 +102,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				updateRelationshipDto,
 			);
 		},
+
 		// check if relationship already exists
 		// else initialize it with specific type required
 		async updateRelationship(targetId: number, type: string) {
@@ -110,6 +111,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				await getRequest(`user-relationships/${sourceId}/${targetId}`)
 			).data;
 			let updatedRelId: number = 0;
+			
 			if (existingRelationship) {
 				this.updateExistingRelationship(
 					existingRelationship.id,

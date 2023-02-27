@@ -31,6 +31,7 @@ export class UserRelationshipGateway
 		private readonly authService: AuthService,
 		private userService: UserService,
 	) {}
+
 	@WebSocketServer()
 	server: Server;
 	public relationshipObservers: RelationshipObservers = {};
@@ -56,7 +57,7 @@ export class UserRelationshipGateway
 	}
 
 	//  this is only to be able to leave rooms when disconnecting
-	saveRoomObservedByUser(userId: number, roomName: string) {
+	saveRoomsObservedPerUser(userId: number, roomName: string) {
 		if (!this.relationshipObservers[userId]) {
 			this.relationshipObservers[userId] = {
 				rooms: [],
@@ -75,7 +76,7 @@ export class UserRelationshipGateway
 			await this.userService.findOne({ where: { id: userId } });
 			client.on('joinRoom', (roomInfo: RelationshipRoom) => {
 				const roomName = this.buildUniqueRoomId(roomInfo);
-				this.saveRoomObservedByUser(userId, roomName);
+				this.saveRoomsObservedPerUser(userId, roomName);
 				client.join(roomName);
 			});
 		} catch (e) {
@@ -94,6 +95,8 @@ export class UserRelationshipGateway
 		this.relationshipObservers[userId].rooms = [];
 	}
 
+	// receives an emit from relationshipStore updateRelationship()
+	// and emits back to all users in room(roomName) to refresh their relationships
 	@SubscribeMessage('updateRelationship')
 	updateRelationship(@MessageBody() roomInfo: RelationshipRoom) {
 		const roomName = this.buildUniqueRoomId(roomInfo);
