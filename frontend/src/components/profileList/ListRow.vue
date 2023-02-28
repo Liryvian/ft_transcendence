@@ -58,6 +58,7 @@ import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
 import router from '@/router';
 import type { Relationship } from '@/types/Relationship';
+import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ListRow',
@@ -67,12 +68,14 @@ export default defineComponent({
 	},
 
 	setup(props) {
+		const userStore = useUserStore();
 		const relationshipStore = useRelationshipStore();
 		relationshipStore.initialize();
 		console.log('props: ', props);
 		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
 			relationshipStore;
 		return {
+			userStore,
 			isFriend,
 			isBlocked,
 			joinRoomOnConnect,

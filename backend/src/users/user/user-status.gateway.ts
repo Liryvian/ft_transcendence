@@ -8,6 +8,7 @@ import { Server, Socket } from 'socket.io';
 import { SocketService } from '../../socket/socket.service';
 import { OnlineList } from '../../socket/socket.types';
 import { AuthService } from '../../auth/auth.service';
+import { jwtCookieFromHandshakeString } from '../../socket/socket.utils';
 
 @WebSocketGateway({
 	namespace: '/onlinestatus',
@@ -16,10 +17,7 @@ import { AuthService } from '../../auth/auth.service';
 	},
 })
 export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
-	constructor(
-		private socketService: SocketService,
-		private readonly authService: AuthService,
-	) {}
+	constructor(private readonly authService: AuthService) {}
 
 	public onlineList: OnlineList = {};
 
@@ -27,7 +25,7 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	server: Server;
 
 	async handleDisconnect(socket: Socket) {
-		const cookie: string = this.socketService.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {
@@ -54,7 +52,7 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	handleConnection(socket: Socket) {
-		const cookie: string = this.socketService.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 
