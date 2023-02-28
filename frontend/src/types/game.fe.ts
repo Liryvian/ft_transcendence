@@ -51,3 +51,9 @@ export interface GameRequest {
 	created_at: Date;
 	updated_at: Date;
 }
+
+export interface UpdateGameState {
+	player_one: number;
+	player_two: number;
+	state: gameStates;
+}
