@@ -58,12 +58,12 @@ export class SeederService {
 	}
 
 	async seedChatUserPermissions() {
-		const users: number[] = (
+		const users = (
 			await this.userService.findAll({ order: { name: 'asc' } })
-		).map((u) => u.id);
-		const chats: number[] = (
+		).map((u) => ({ id: u.id, name: u.name }));
+		const chats = (
 			await this.chatService.findAll({ order: { name: 'asc' } })
-		).map((c) => c.id);
+		).map((c) => ({ id: c.id, name: c.name }));
 
 		return this.chatUserPermissionService.trySeed(
 			seedData.chatUserPermission(users, chats),
@@ -87,12 +87,12 @@ export class SeederService {
 	}
 
 	async seedMessages() {
-		const users: number[] = (
+		const users = (
 			await this.userService.findAll({ order: { name: 'asc' } })
-		).map((u) => u.id);
-		const chats: number[] = (
+		).map((u) => ({ id: u.id, name: u.name }));
+		const chats = (
 			await this.chatService.findAll({ order: { name: 'asc' } })
-		).map((c) => c.id);
+		).map((c) => ({ id: c.id, name: c.name }));
 
 		return this.messageService.trySeed(seedData.messages(users, chats));
 	}

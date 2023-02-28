@@ -49,6 +49,36 @@ export class MeController {
 		return 'users visible to me';
 	}
 
+	@Get('relationships')
+	async getMyRelationships(@Req() request: Request) {
+		const userRelations: UserRelationsQueryDto = {
+			relationshipSource: true,
+			relationshipTarget: true,
+		};
+		// get userId with jwt token
+		const id: number = await this.authService.userId(request);
+		const user: User = await this.userService.findOne({
+			where: { id },
+			relations: userRelations,
+		});
+
+		// we want to send only the:
+		// relationshipId
+		// source / target userId,
+		// relationshipType
+		// we do this by mapping the array of Relationship in user
+		const relationships = user.relationships.map((rel) => {
+			return {
+				id: rel.id,
+				source: rel.source.id,
+				target: rel.target.id,
+				type: rel.type,
+				specifier_id: rel.specifier_id,
+			};
+		});
+		return relationships;
+	}
+
 	@Get('blocked')
 	async blocked(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
@@ -79,6 +109,7 @@ export class MeController {
 					},
 				},
 				{
+					type: 'channel',
 					visibility: 'public',
 				},
 			],
