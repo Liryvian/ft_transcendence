@@ -32,7 +32,7 @@ export class UserInChat {
 	name?: string;
 
 	@IsArray()
-	permissions: String[];
+	permissions: string[];
 }
 
 @Entity('users')
@@ -104,12 +104,12 @@ export class User {
 	achievements: Achievement[];
 
 	@Exclude()
-	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source)
 	@JoinColumn({ name: 'relationshipSource' })
 	relationshipSource: UserRelationship[];
 
 	@Exclude()
-	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target_id)
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target)
 	@JoinColumn({ name: 'relationshipTarget' })
 	relationshipTarget: UserRelationship[];
 

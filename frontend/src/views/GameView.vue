@@ -188,13 +188,14 @@ export default defineComponent({
 			// redraws after intervalMs
 			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
+				// Command backend to update positions
 				this.socket!.emit('updatePositions', this.isPressed);
 			}
 
 			if (!this.done) {
 				window.requestAnimationFrame(this.getUpdatedPositions);
 			} else {
-				console.log('DONE')!;
+				console.log('DONE');
 			}
 		},
 
