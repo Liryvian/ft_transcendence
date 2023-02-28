@@ -21,6 +21,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
 import AuthGuard from './auth.guard';
+import { TwoFaService } from './twofa/twofa.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -29,6 +30,7 @@ export class AuthController {
 		private userService: UserService,
 		private authService: AuthService,
 		private configService: ConfigService,
+		private twoFaService: TwoFaService,
 	) {}
 
 	@Get('/auth/authenticate')
@@ -117,5 +119,10 @@ export class AuthController {
 		return {
 			message: 'Success',
 		};
+	}
+
+	@Get('auth/2fa_qr')
+	twofa() {
+		return this.twoFaService.generateSecret();
 	}
 }
