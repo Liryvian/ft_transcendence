@@ -2,7 +2,7 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>2 factor authentication settings</h1>
-			<template v-if="me.has_2fa"> turn of 2fa </template>
+			<template v-if="me.has_2fa_on"> turn of 2fa </template>
 			<form
 				action=""
 				@submit.prevent="submitForm($event)"

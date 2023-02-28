@@ -148,7 +148,7 @@ export class User {
 	two_factor_secret: string;
 
 	@Column({ default: false })
-	has_2fa: boolean;
+	has_2fa_on: boolean;
 
 	@CreateDateColumn()
 	created_at: Date;
