@@ -107,7 +107,7 @@ export class GameService extends AbstractService<Game> {
 
 		if (getPendingGame) {
 			throw new BadRequestException(
-				'There is already a pending game, please wait for a response',
+				'There is already a pending game\n, please wait for a response',
 			);
 		}
 

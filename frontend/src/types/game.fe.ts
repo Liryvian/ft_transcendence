@@ -53,11 +53,3 @@ export interface ElementPositions {
 	ball: Ball;
 }
 
-// export interface GameRequest {
-// 	id: number;
-// 	user: User;
-//
-// 	created_at: Date;
-// 	updated_at: Date;
-// }
-
