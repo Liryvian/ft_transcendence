@@ -18,7 +18,7 @@ export const useChatStore = defineStore('chats', {
 	},
 	// actions == methods
 	actions: {
-		async init(force: boolean) {
+		async initialize(force: boolean) {
 			if (this.initialized === false || force) {
 				this.initialized = true;
 				try {

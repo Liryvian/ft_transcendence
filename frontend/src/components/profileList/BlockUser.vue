@@ -26,6 +26,7 @@
 
 <script lang="ts">
 import { useRelationshipStore } from '@/stores/relationshipStore';
+import { useUserStore } from '@/stores/userStore';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { storeToRefs } from 'pinia';
 import { defineComponent, type PropType } from 'vue';
@@ -37,10 +38,11 @@ export default defineComponent({
 		console.log("me:", this.me.id, "Specifier:", this.relationship.specifier_id, "rel:", this.relationship);
 	}, 
 	setup() {
+		const userStore = useUserStore()
 		const relationshipStore = useRelationshipStore();
-		relationshipStore.refreshMe()
+		userStore.refreshMe()
 		const { updateRelationship } = relationshipStore;
-		const { me } = storeToRefs(relationshipStore);
+		const { me } = storeToRefs(userStore);
 		return {
 			updateRelationship,
 			ValidRelationships,

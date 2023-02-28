@@ -1,6 +1,6 @@
 <template>
 	<!-- Route to profile via avatar link -->
-	<div v-if="!isBlocked(relationship.type)">
+	<div v-if="!isBlocked(getRelationshipType)">
 		<Avatar
 			:avatar="user.avatar"
 			:is-online="true"
@@ -12,7 +12,7 @@
 	</div>
 
 	<!-- Route to profile via username link -->
-	<div v-if="!isBlocked(relationship.type)">
+	<div v-if="!isBlocked(getRelationshipType)">
 		<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{
 			user.name
 		}}</a>
@@ -22,7 +22,7 @@
 	</div>
 
 	<!-- Route to chat -->
-	<div v-if="!isBlocked(relationship.type)">
+	<div v-if="!isBlocked(getRelationshipType)">
 		<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
 	</div>
 	<div v-else>
@@ -32,14 +32,14 @@
 	<!-- Update friend status -->
 	<FriendInvite
 		:userId="user.id"
-		:isBlocked="isBlocked(relationship.type)"
-		:isFriend="isFriend(relationship.type)"
+		:isBlocked="isBlocked(getRelationshipType)"
+		:isFriend="isFriend(getRelationshipType)"
 	/>
 
 	<!-- Update blocked status -->
 	<BlockUser
 		:userId="user.id"
-		:isBlocked="isBlocked(relationship.type)"
+		:isBlocked="isBlocked(getRelationshipType)"
 		:relationship="relationship"
 	/>
 </template>
@@ -57,6 +57,11 @@ import type { Relationship } from '@/types/Relationship';
 
 export default defineComponent({
 	name: 'ListRow',
+	computed: {
+		getRelationshipType(): string{
+			return this.relationship.type;
+		}
+	},
 
 	created() {
 		console.log('rel in listrow', this.relationship);
@@ -65,7 +70,6 @@ export default defineComponent({
 	setup(props) {
 		const relationshipStore = useRelationshipStore();
 		relationshipStore.initialize();
-		console.log('props: ', props);
 		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
 			relationshipStore;
 		return {
@@ -76,8 +80,10 @@ export default defineComponent({
 		};
 	},
 	mounted() {
-		// this.socke
-		this.joinRoomOnConnect(this.relationship);
+		if (this.relationship.id !== -1) {
+			console.log("joining room")
+			this.joinRoomOnConnect(this.relationship);
+		}
 	},
 
 	unmounted() {

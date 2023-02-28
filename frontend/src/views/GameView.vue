@@ -79,7 +79,7 @@ export default defineComponent({
 
 	setup() {
 		const gameStore = useGameStore();
-		gameStore.refreshData();
+		gameStore.initialize();
 		return {
 			gameStore,
 		};

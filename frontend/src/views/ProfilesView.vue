@@ -18,7 +18,7 @@
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
 import { useRelationshipStore } from '@/stores/relationshipStore';
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent } from 'vue';
 import ListRow from '@/components/profileList/ListRow.vue';
 import { storeToRefs } from 'pinia';
 
@@ -33,16 +33,12 @@ export default defineComponent({
 		relationshipStore.initialize();
 
 		const userStore = useUserStore();
-		const { refreshData } = userStore;
 		const { me, allUsers } = storeToRefs(userStore);
-		refreshData();
-		onMounted(async () => {
-		});
+		userStore.initialize();
 
 		return {
 			getSingleRelationship,
 			userStore,
-			refreshData,
 			allUsers,
 			me,
 		};

@@ -33,6 +33,7 @@ export default defineComponent({
 
 		// shouldbe removed in favour of sockets + init once
 		userStore.refreshData();
+		userStore.isIntialized();
 		return {
 			userStore,
 		};

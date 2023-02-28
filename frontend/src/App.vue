@@ -1,5 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import { useChatStore } from './stores/chatStore';
+import { useGameStore } from './stores/gameStore';
+import { useRelationshipStore } from './stores/relationshipStore';
+import { useUserStore } from './stores/userStore';
+
+if (useUserStore().isLoggedIn) {
+	useUserStore().initialize();
+	useGameStore().initialize();
+	useChatStore().initialize(false);
+	useRelationshipStore().initialize();
+}
+
 </script>
 
 <template>

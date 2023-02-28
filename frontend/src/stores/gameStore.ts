@@ -1,5 +1,4 @@
-import { gameStates, type Game } from '@/types/game.fe';
-import type { User } from '@/types/User';
+import type { Game } from '@/types/game.fe';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
@@ -8,42 +7,37 @@ export const useGameStore = defineStore('games', {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
+		isInitialized: false,
 	}),
 	// getters == computed values
 	getters: {
-		getMyGames: () => useUserStore().getMe.games,
-		getAllGames: (state) => state.allGames,
 	},
 	// actions == methods
 	actions: {
 		async refreshAllGames() {
-			try {
-				const data = await getRequest('games');
-				this.allGames = data.data;
-				await useUserStore().refreshAllUsers();
-			} catch (e) {
-				console.error(e);
-				return [];
+			if (this.isInitialized === false){
+				try {
+					this.isInitialized = true;
+					const data = await getRequest('games');
+					this.allGames = data.data;
+					await useUserStore().refreshAllUsers();
+				} catch (e) {
+					this.isInitialized = false;
+					console.error(e);
+					return [];
+				}
 			}
-		},
 
-		async refreshMyGames() {
-			await useUserStore().refreshMe();
 		},
-
-		async refreshData() {
-			await this.refreshMyGames();
-			await this.refreshAllGames();
-		},
-
-		isAvailable(): boolean {
-			const me: User = useUserStore().getMe;
-			// if (!me.isOnline)
-			// retunr false;
-			me.games.forEach((game: Game) => {
-				if (game.state === gameStates.ACTIVE) return false;
-			});
-			return true;
+		async initialize() {
+			if (this.isInitialized === true){
+				try {
+					this.isInitialized = true;
+					await this.refreshAllGames();
+				} catch (e) {
+					this.isInitialized = false;
+				}
+			}
 		},
 	},
 });

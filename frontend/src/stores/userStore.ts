@@ -18,6 +18,7 @@ export const useUserStore = defineStore('users', {
 		errors: [] as String[],
 		// persists data accross refreshes
 		isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
+		isIntialized: false,
 	}),
 
 	// getters == computed values
@@ -53,7 +54,7 @@ export const useUserStore = defineStore('users', {
 				} else {
 					await postRequest('login', loginForm);
 				}
-				await this.refreshData();
+				await this.initialize();
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
@@ -129,7 +130,19 @@ export const useUserStore = defineStore('users', {
 
 		async refreshData() {
 			await this.refreshMe();
-			await this.refreshAllUsers();
+			await this.refreshAllUsers()
+		},
+
+
+		async initialize() {
+			if (this.isIntialized === false) {
+				try {
+					this.isIntialized = true;
+					await this.refreshData();
+				} catch (e) {
+					this.isIntialized = false;
+				}
+			}
 		},
 	},
 });

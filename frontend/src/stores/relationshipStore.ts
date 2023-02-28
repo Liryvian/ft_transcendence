@@ -3,6 +3,7 @@ import type { User } from '@/types/User';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { io, type Socket } from 'socket.io-client';
+import { useUserStore } from './userStore';
 
 export const useRelationshipStore = defineStore('relationship', {
 	//  actions == data definitions
@@ -18,11 +19,14 @@ export const useRelationshipStore = defineStore('relationship', {
 	actions: {
 		async initialize() {
 			if (this.isInitialized === false) {
-				// for when sockets are setup
-				this.isInitialized = false;
-				this.socket = io('http://localhost:8080/user/relationship');
-				await this.refreshRelationships();
-				await this.refreshMe();
+				try {
+						this.isInitialized = true;
+						this.socket = io('http://localhost:8080/user/relationship');
+						await this.refreshRelationships();
+				} catch (e) {
+					this.isInitialized = false;
+				}
+
 			}
 		},
 
@@ -30,19 +34,11 @@ export const useRelationshipStore = defineStore('relationship', {
 			this.relationships = await (
 				await getRequest('me/relationships')
 			).data;
-		},
-
-		async refreshMe() {
-			try {
-				this.me = await (await getRequest(`me`)).data;
-			} catch (e) {
-				console.error(e);
-				return [];
-			}
+			useUserStore().refreshMe();
 		},
 
 		isMatchingRelationship(userId: number, rel: Relationship): boolean {
-			const myId: number = this.me.id;
+			const myId: number = useUserStore().me.id;
 			const sourceId: number = rel.source;
 			const targetId: number = rel.target;
 
@@ -57,10 +53,10 @@ export const useRelationshipStore = defineStore('relationship', {
 		getSingleRelationship(userId: number) {
 			const placeHolderRelationship: Relationship = {
 				id: -1,
-				source: this.me.id,
+				source: useUserStore().me.id,
 				target: userId,
 				type: 'none',
-				specifier_id: this.me.id,
+				specifier_id: useUserStore().me.id,
 			};
 
 			// check if the relationship already exists
@@ -96,7 +92,6 @@ export const useRelationshipStore = defineStore('relationship', {
 				type,
 				specifier_id: sourceId,
 			};
-			console.log('setting specifierId to me: ', sourceId === this.me.id);
 			await patchRequest(
 				`user-relationships/${relationshipId}`,
 				updateRelationshipDto,
@@ -106,7 +101,7 @@ export const useRelationshipStore = defineStore('relationship', {
 		// check if relationship already exists
 		// else initialize it with specific type required
 		async updateRelationship(targetId: number, type: string) {
-			const sourceId: number = this.me.id;
+			const sourceId: number = useUserStore().me.id;
 			const existingRelationship: Relationship = await (
 				await getRequest(`user-relationships/${sourceId}/${targetId}`)
 			).data;
@@ -120,15 +115,17 @@ export const useRelationshipStore = defineStore('relationship', {
 				);
 				updatedRelId = existingRelationship.id;
 			} else {
-				updatedRelId = await (
-					await this.initializeRelationship(sourceId, targetId, type)
-				).data.id;
+				const rel: Relationship = await (
+					await this.initializeRelationship(sourceId, targetId, type)).data;
+				updatedRelId = rel.id;
+				this.joinRoomOnConnect(rel);
 			}
 			const relation = {
 				source: sourceId,
 				target: targetId,
 				id: updatedRelId,
 			};
+			console.log("emitting rel; ", relation)
 			this.socket.emit('updateRelationship', relation);
 		},
 
@@ -146,14 +143,19 @@ export const useRelationshipStore = defineStore('relationship', {
 				target: relationship.target,
 				id: relationship.id,
 			};
+
+			console.log("Connection socket");
 			this.socket.connect();
 			this.socket.on('connect', async () => {
 				if (relationship.id > 0) {
+					console.log("Cennection socket");
 					this.socket.emit('joinRoom', relation);
 				}
 			});
 			this.socket.on('updateHasHappened', () => {
 				this.refreshRelationships();
+				console.log("Refreshing me");
+				useUserStore().refreshMe()
 			});
 		},
 
