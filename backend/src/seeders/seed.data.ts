@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateChatUserPermissionDto } from '../chats/chat-user-permissions/dto/create-chat-user-permission.dto';
 import { CreateUserAchievementDto } from '../users/user-achievements/dto/create-user-achievement.dto';
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import { gameStates } from '../pong/game/entities/game.entity';
 
 class seedUser {
 	name: string;
@@ -21,7 +22,7 @@ class seedGame {
 	player_two: number;
 	score_player_one: number;
 	score_player_two: number;
-	is_active: boolean;
+	state: gameStates;
 }
 
 class seedMessage {
@@ -152,28 +153,28 @@ const seedData = {
 				player_two: ids[1],
 				score_player_one: 10,
 				score_player_two: 5,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[1],
 				player_two: ids[2],
 				score_player_one: 8,
 				score_player_two: 3,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[2],
 				player_two: ids[0],
 				score_player_one: 12,
 				score_player_two: 7,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[3],
 				player_two: ids[2],
 				score_player_one: 4,
 				score_player_two: 10,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 		];
 		return games;

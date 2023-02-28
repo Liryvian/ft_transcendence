@@ -1,4 +1,4 @@
-import type { Game } from '@/types/game.fe';
+import { gameStates, type Game } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -41,7 +41,7 @@ export const useGameStore = defineStore('games', {
 			// if (!me.isOnline)
 			// retunr false;
 			me.games.forEach((game: Game) => {
-				if (game.is_active === true) return false;
+				if (game.state === gameStates.ACTIVE) return false;
 			});
 			return true;
 		},
