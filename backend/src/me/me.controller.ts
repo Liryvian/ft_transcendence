@@ -102,11 +102,17 @@ export class MeController {
 		// if you add the relationship here it only returns relations where you are the user, not all users in the chat
 		const chatIds: Chat[] = await this.chatService.findAll({
 			select: { id: true },
-			where: {
-				has_users: {
-					user_id: id,
+			where: [
+				{
+					has_users: {
+						user_id: id,
+					},
 				},
-			},
+				{
+					type: 'channel',
+					visibility: 'public',
+				},
+			],
 		});
 
 		const chats: Chat[] = (
@@ -115,6 +121,9 @@ export class MeController {
 					id: c.id,
 				})),
 				relations: { has_users: { users: true } },
+				order: {
+					created_at: 'asc',
+				},
 			})
 		).filter(
 			// removes chats where "I" am blocked
