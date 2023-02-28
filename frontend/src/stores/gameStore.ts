@@ -1,5 +1,4 @@
 import { gameStates, type Game } from '@/types/game.fe';
-import type { User } from '@/types/User';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
@@ -10,8 +9,7 @@ export const useGameStore = defineStore('games', {
 		allGames: <Game[]>[],
 	}),
 	// getters == computed values
-	getters: {
-	},
+	getters: {},
 	// actions == methods
 	actions: {
 		async refreshAllGames() {

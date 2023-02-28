@@ -1,11 +1,14 @@
 <template>
 	<div>
 		<div class="page_box_wrapper">
-			<PlayerNames :player_left="getPlayerOne?.name" :player_right="getPlayerTwo?.name" />
+			<PlayerNames
+				:player_left="getPlayerOne?.name"
+				:player_right="getPlayerTwo?.name"
+			/>
 
 			<div class="page_box">
 				<div class="gameHeader space-between">
-					<p class="playerOneSore">{{ score_player_one }} </p>
+					<p class="playerOneSore">{{ score_player_one }}</p>
 					<p class="pongHeader">PONG</p>
 					<p class="playerTwoScore">{{ score_player_two }}</p>
 				</div>
@@ -25,12 +28,14 @@
 
 <script lang="ts">
 import { useGameStore } from '@/stores/gameStore';
-import { defineComponent, onMounted, ref, type Ref} from 'vue';
+import { defineComponent, ref, type Ref } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue';
-import type { ElementPositions, Ball, Paddle} from '@/types/game.fe';
-import GameStatusEnum  from '@/types/game.fe'
+import type { ElementPositions, Ball, Paddle } from '@/types/game.fe';
+import GameStatusEnum from '@/types/game.fe';
 import { io, Socket } from 'socket.io-client';
 import { storeToRefs } from 'pinia';
+import router from '@/router';
+import { patchRequest } from '@/utils/apiRequests';
 
 interface MovementKeys {
 	ArrowUp: boolean;
@@ -55,7 +60,7 @@ interface DataObject {
 	player_two: Player;
 	score_player_one: Ref<number>;
 	score_player_two: Ref<number>;
-	gameStatus: number,
+	gameStatus: number;
 }
 
 let score_player_one = ref(0);
@@ -66,16 +71,12 @@ export default defineComponent({
 	components: {
 		PlayerNames,
 	},
-    props: {
+	props: {
 		currentGame: String,
 	},
 
 	beforeRouteLeave(to, from, next) {
-        console.log("thisgame:", this.currentGame)
-		this.gameStatus = GameStatusEnum.GAME_OVER;
-		this.socket.off('updatePosition', this.render);
-		// patch game in database with the updated scores
-		console.log('Game disconnected');
+		this.finishGame();
 		next();
 	},
 
@@ -91,28 +92,28 @@ export default defineComponent({
 			},
 			player_one: {
 				score: 0,
-				name: ""
+				name: '',
 			},
 			player_two: {
 				score: 0,
-				name: ""
+				name: '',
 			},
 			gameLoopInterval: 0,
 			timeStampStart: 0,
 			previousTimeStamp: 0,
 			score_player_two,
 			score_player_one,
-			gameStatus: GameStatusEnum.PLAYING
+			gameStatus: GameStatusEnum.PLAYING,
 		};
 	},
 
 	setup() {
 		const gameStore = useGameStore();
-        const { allGames }= storeToRefs(gameStore)
-// ss
+		const { allGames } = storeToRefs(gameStore);
+
 		return {
 			gameStore,
-            allGames
+			allGames,
 		};
 	},
 
@@ -124,21 +125,19 @@ export default defineComponent({
 		height() {
 			return (this.$refs.GameRef as HTMLCanvasElement).height;
 		},
-        currentgameId(){
-            return Number(this.currentGame);
-        },
-        getCurrentGame() {
-           return this.allGames.find(
-				(game) => game.id === this.currentgameId,
-			);
+		currentgameId() {
+			return Number(this.currentGame);
 		},
-        getPlayerOne(){
-			console.log("p1:", this.getCurrentGame?.player_one);
-            return this.getCurrentGame?.player_one;
-        },
-        getPlayerTwo(){
-            return this.getCurrentGame?.player_two;
-        }
+		getCurrentGame() {
+			return this.allGames.find((game) => game.id === this.currentgameId);
+		},
+		getPlayerOne() {
+			console.log('p1:', this.getCurrentGame?.player_one);
+			return this.getCurrentGame?.player_one;
+		},
+		getPlayerTwo() {
+			return this.getCurrentGame?.player_two;
+		},
 	},
 
 	methods: {
@@ -224,13 +223,19 @@ export default defineComponent({
 			}
 		},
 
+		resetPressedKeys() {
+			this.isPressed.ArrowDown = false;
+			this.isPressed.ArrowUp = false;
+			this.isPressed.w = false;
+			this.isPressed.s = false;
+		},
 		// MAIN GAME LOOP
 		getUpdatedPositions(timeStamp: DOMHighResTimeStamp) {
 			if (this.previousTimeStamp === 0) {
 				this.previousTimeStamp = timeStamp;
 			}
 			const elapsedTime = timeStamp - this.previousTimeStamp;
-			const intervalMs = 10;
+			const intervalMs = 10; // refresh rate of a browser is 1/60th of a sec (17)
 			// redraws after intervalMs
 			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
@@ -239,25 +244,38 @@ export default defineComponent({
 
 			if (this.gameStatus === GameStatusEnum.PLAYING) {
 				window.requestAnimationFrame(this.getUpdatedPositions);
-			} else if (this.gameStatus === GameStatusEnum.POINT_OVER){
+			} else if (this.gameStatus === GameStatusEnum.POINT_OVER) {
 				// update scores
-				this.gameStatus = GameStatusEnum.PLAYING
+				this.gameStatus = GameStatusEnum.PLAYING;
+				this.resetPressedKeys();
 				// reset positions
-				this.socket.emit("resetAfterPointFinished")
-				this.isPressed.ArrowDown = false;
-				this.isPressed.ArrowUp = false;
-				this.isPressed.w = false;
-				this.isPressed.s = false;
+				this.socket.emit('resetAfterPointFinished');
+
+				// restart game loop
 				window.requestAnimationFrame(this.getUpdatedPositions);
-				// call window animation frame
-			} else {
-				// GameStatus ==== GAME_OVER
-				console.log('DONE')!;
 			}
+			//  else game is over
 		},
 
 		startGameLoop() {
 			window.requestAnimationFrame(this.getUpdatedPositions);
+		},
+
+		finishGame() {
+			const upadteGameDto = {
+				score_player_one: score_player_one.value,
+				score_player_two: score_player_two.value,
+				state: 'done',
+			};
+			this.gameStatus = GameStatusEnum.GAME_OVER;
+			this.socket.off('updatePosition', this.render);
+			// patch game in database with the updated scores
+			patchRequest(`games/${this.currentgameId}`, upadteGameDto);
+			const winner: string | undefined =
+				score_player_one > score_player_two
+					? this.getPlayerOne?.name
+					: this.getPlayerTwo?.name;
+			alert(`Game over!\nWell done ${winner}!`);
 		},
 	},
 
@@ -267,15 +285,17 @@ export default defineComponent({
 		document.addEventListener('keyup', this.keyUp);
 
 		this.socket.on('elementPositions', this.render);
-		this.socket.on('pointOver', (player: string) => {
-			this.gameStatus = GameStatusEnum.POINT_OVER
-			if (player === "Player 1") {
-				++score_player_one.value;
-			} else {
-				++score_player_two.value;
-			}
-			// alert(`Point to ${player}`)
-		})
+		this.socket.on(
+			'pointOver',
+			(scores: { scorePlayerOne: number; scorePlayerTwo: number }) => {
+				this.gameStatus = GameStatusEnum.POINT_OVER;
+				score_player_one.value = scores.scorePlayerOne;
+				score_player_two.value = scores.scorePlayerTwo;
+			},
+		);
+		this.socket.on('gameOver', () => {
+			router.push({ name: 'activeGames' });
+		});
 		// MAIN GAME LOOP
 		this.startGameLoop();
 	},

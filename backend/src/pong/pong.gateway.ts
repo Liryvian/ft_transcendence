@@ -22,21 +22,24 @@ export class PongGateway implements OnGatewayConnection {
 
 	private gameState: GameState;
 
-	async handleConnection() {
+	handleConnection() {
 		console.log('\n!Socket is connected!\n');
+		this.pongService.gameIsFinished = false;
+		this.pongService.pointIsOver = false;
 		this.gameState = this.pongService.createNewGameState();
+		//  set score to win with requestGame info
+		this.gameState.scoreToWin = 2;
 	}
 
 	sendPositionOfElements(@MessageBody() gameState: GameState) {
 		this.server.emit('elementPositions', gameState);
 	}
 
-
 	sendPointOver(@MessageBody() player: string) {
-		this.server.emit("pointOver", player);
+		this.server.emit('pointOver', player);
 	}
 
-	@SubscribeMessage("resetAfterPointFinished")
+	@SubscribeMessage('resetAfterPointFinished')
 	resetBallAfterPointIsOver() {
 		this.pongService.resetBallPosition(this.gameState.ball);
 		this.sendPositionOfElements(this.gameState);
@@ -52,10 +55,17 @@ export class PongGateway implements OnGatewayConnection {
 		this.pongService.moveBall(this.gameState);
 		this.sendPositionOfElements(this.gameState);
 		if (this.pongService.pointIsOver) {
-			console.log("Emitting point is over")
-			this.server.emit("pointOver", this.pongService.pointWinner);
+			console.log('Emitting point is over');
+			const scores = {
+				scorePlayerOne: this.gameState.scorePlayerOne,
+				scorePlayerTwo: this.gameState.scorePlayerTwo,
+			};
+			this.server.emit('pointOver', scores);
 			this.pongService.pointIsOver = false;
-			this.pongService.pointWinner = ""
+		}
+		if (this.pongService.gameIsFinished) {
+			this.server.emit('gameOver');
+			this.pongService.gameIsFinished = false;
 		}
 	}
 }

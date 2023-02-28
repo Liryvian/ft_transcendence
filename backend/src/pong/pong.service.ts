@@ -9,7 +9,7 @@ import {
 
 // expects integers
 // for this case using -3 and 3
-function randomDirection(min, max) {
+function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
 	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
 		directionAndSpeed *= min;
@@ -24,11 +24,11 @@ export class PongService {
 
 	private readonly ballRadius = 1;
 
-	private dy = randomDirection(-3, 3) || 0.3;
-	private dx = randomDirection(-3, 3) || 0.3;
+	private dy = randomDirection(-4, 4) || 0.3;
+	private dx = randomDirection(-4, 4) || 0.3;
 
 	public pointIsOver = false;
-	public pointWinner = "";
+	public gameIsFinished = false;
 
 	createNewGameState(): GameState {
 		const newGameState: GameState = {
@@ -52,8 +52,8 @@ export class PongService {
 
 			ball: {
 				position: {
-					x: 40,
-					y: 65,
+					x: 50,
+					y: 50,
 				},
 				radius: this.ballRadius,
 			},
@@ -61,6 +61,9 @@ export class PongService {
 				x: 1200,
 				y: 960,
 			},
+			scoreToWin: 0,
+			scorePlayerOne: 0,
+			scorePlayerTwo: 0,
 		};
 		return newGameState;
 	}
@@ -88,19 +91,27 @@ export class PongService {
 			ball.position.y > paddleTop &&
 			ball.position.y < paddleBottom &&
 			// check that ball hits the paddle on the same side
-			Math.abs(ball.position.x - rect.position.x) < 2 
+			Math.abs(ball.position.x - rect.position.x) < 2
 		) {
-			console.log("Ball x: ", ball.position.x);
-			console.log("paddle X: ", rect.position.x);
 			return true;
 		}
 
 		return false;
 	}
 
+	changeBallDirection(paddle: Paddle, ballY: number, sign: number) {
+		const paddleCenter = paddle.position.y + paddle.height / 2;
+		const d = paddleCenter - ballY;
+		const changeInDx = 0.02 * sign;
+		const changeInDy = 0.01 * sign;
+		//  speed up the ball
+		this.dx = -(this.dx + changeInDx);
+		// change bounce angle
+		this.dy -= d * changeInDy;
+	}
 	// moves ball dy(directioY) / x(directionX)%
 	// if ball hits a wall the directiion (dx /dy) reverses
-	// with game logic implemented, hitting the y axis-wall would be a point
+	// hitting the y axis-wall would be a point
 	moveBall(gameState: GameState) {
 		const radius = gameState.ball.radius;
 		const ballPos: Position = gameState.ball.position;
@@ -110,28 +121,21 @@ export class PongService {
 		//  check collision for paddle one
 		if (this.doesHitPaddle(gameState.ball, paddleP1, gameState.canvas)) {
 			console.log('Collision Paddle one');
-			const paddleCenter = paddleP1.position.y + paddleP1.height / 2;
-			const d = paddleCenter - ballPos.y;
-			//  speed up the ball
-			this.dx = -(this.dx - 0.02);
-			// change bounce angle
-			this.dy -= d * -0.01;
-			// check collision for paddle two
-			// DRY I know but
+			this.changeBallDirection(paddleP1, gameState.ball.position.y, -1);
 		} else if (this.doesHitPaddle(gameState.ball, paddleP2, gameState.canvas)) {
 			console.log('Collision Paddle two');
-			const paddleCenter = paddleP2.position.y + paddleP2.height / 2;
-			const d = paddleCenter - ballPos.y;
-			// speed up ball
-			this.dx = -(this.dx + 0.02);
-			//  change bounce angle
-			this.dy += d * -0.01;
+			this.changeBallDirection(paddleP2, gameState.ball.position.y, 1);
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
-			console.log('Point is over');
-			const pointWinner = ballPos.x > 80 ? 'Player 1' : 'Player 2';
-			console.log("Setting point is over: ", pointWinner);
+			//  check which side the ball hit to decide who the winner is
+			ballPos.x > 80 ? ++gameState.scorePlayerOne : ++gameState.scorePlayerTwo;
 			this.pointIsOver = true;
-			this.pointWinner = pointWinner;
+			if (
+				gameState.scorePlayerOne >= gameState.scoreToWin ||
+				gameState.scorePlayerTwo >= gameState.scoreToWin
+			) {
+				console.log('Setting game is finsished');
+				this.gameIsFinished = true;
+			}
 			this.resetBallPosition(gameState.ball);
 			this.dx = -this.dx;
 		}
@@ -174,12 +178,12 @@ export class PongService {
 		}
 	}
 
-	resetBallPosition(ball: Ball){
-		ball.position =  {
-					x: 40,
-					y: 65,
-				};
-		this.dx = randomDirection(-3, 3) || 0.3;
-		this.dy = randomDirection(-3, 3) || 0.3;
+	resetBallPosition(ball: Ball) {
+		ball.position = {
+			x: 50,
+			y: 50,
+		};
+		this.dx = randomDirection(-4, 4) || 0.3;
+		this.dy = randomDirection(-4, 4) || 0.3;
 	}
 }

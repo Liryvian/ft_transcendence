@@ -7,9 +7,8 @@ import { useUserStore } from './stores/userStore';
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshData();
 	useGameStore().refreshAllGames();
-	useRelationshipStore().initialize()
+	useRelationshipStore().initialize();
 }
-
 </script>
 
 <template>
@@ -39,7 +38,7 @@ if (useUserStore().isLoggedIn) {
 				<div class="nav_ball"></div>
 				Settings
 			</RouterLink>
-			<RouterLink to="/game">
+			<RouterLink to="/active-games">
 				<div class="nav_ball"></div>
 				Game
 			</RouterLink>
@@ -71,7 +70,7 @@ header {
 	border-bottom: var(--border-width) solid var(--color-border);
 	padding: 0.2em;
 	background-color: var(--color-background-soft);
-	font-size: 0.9em
+	font-size: 0.9em;
 }
 
 nav {
@@ -92,7 +91,7 @@ nav {
 	top: 50%;
 	transform: translateY(-45%);
 	opacity: 0;
-	left: 0.60em;
+	left: 0.6em;
 	transition: all 0.1s linear;
 }
 

@@ -65,7 +65,6 @@ export default defineComponent({
 	setup(props) {
 		const relationshipStore = useRelationshipStore();
 		relationshipStore.initialize();
-		console.log('props: ', props);
 		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
 			relationshipStore;
 		return {

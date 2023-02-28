@@ -18,8 +18,8 @@ const router = createRouter({
 			component: () => import('../views/SettingsView.vue'),
 		},
 		{
-			path: '/game',
-			name: 'game',
+			path: '/active-games',
+			name: 'activeGames',
 			component: () => import('../views/GameView.vue'),
 		},
 		{
