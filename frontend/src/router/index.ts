@@ -89,8 +89,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	const isLoggedIn: boolean = useUserStore().isLoggedIn;
-	console.log('isLogged in router?: ', isLoggedIn);
-	console.log('Path: ', to.name);
+
 	if (!isLoggedIn && to.name !== 'login' && to.name !== 'register') {
 		return { name: 'login' };
 	} else if ((to.name === 'login' || to.name === 'register') && isLoggedIn) {

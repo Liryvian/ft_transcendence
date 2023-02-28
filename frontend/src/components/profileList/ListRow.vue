@@ -31,16 +31,16 @@
 
 	<!-- Update friend status -->
 	<FriendInvite
-		:user-id="user.id"
+		:userId="user.id"
 		:isBlocked="isBlocked(relationship.type)"
 		:isFriend="isFriend(relationship.type)"
 	/>
 
 	<!-- Update blocked status -->
 	<BlockUser
-		:user-id="user.id"
+		:userId="user.id"
 		:isBlocked="isBlocked(relationship.type)"
-		:relationshipSourceId="relationship.source_id.id"
+		:relationship="relationship"
 	/>
 </template>
 
@@ -48,7 +48,7 @@
 import { defineComponent, type PropType, ref } from 'vue';
 import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
 import type { User } from '@/types/User';
-import { useUserStore } from '@/stores/userStore';
+import { useRelationshipStore } from '@/stores/relationshipStore';
 import Avatar from '@/components/profileList/Avatar.vue';
 import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
@@ -58,15 +58,30 @@ import type { Relationship } from '@/types/Relationship';
 export default defineComponent({
 	name: 'ListRow',
 
-	setup() {
-		const userStore = useUserStore();
-		const { isFriend, isBlocked } = useUserStore();
-		userStore.refreshData();
+	created() {
+		console.log('rel in listrow', this.relationship);
+	},
+
+	setup(props) {
+		const relationshipStore = useRelationshipStore();
+		relationshipStore.initialize();
+		console.log('props: ', props);
+		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
+			relationshipStore;
 		return {
-			userStore,
 			isFriend,
 			isBlocked,
+			joinRoomOnConnect,
+			disconnectSocket,
 		};
+	},
+	mounted() {
+		// this.socke
+		this.joinRoomOnConnect(this.relationship);
+	},
+
+	unmounted() {
+		this.disconnectSocket();
 	},
 
 	components: {
@@ -87,6 +102,7 @@ export default defineComponent({
 			required: true,
 		},
 	},
+
 	methods: {
 		async routeToChat(userId: number) {
 			console.log(`Starting chat with ${userId}`);

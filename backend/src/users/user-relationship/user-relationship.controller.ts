@@ -40,14 +40,14 @@ export class UserRelationshipController {
 	@Get()
 	async findAll() {
 		return this.service.findAll({
-			relations: { source_id: true, target_id: true },
+			relations: { source: true, target: true },
 		});
 	}
 	@Get(':id')
 	async findOne(@Param('id') id: number) {
 		return this.service.findOne({
 			where: { id },
-			relations: { source_id: true, target_id: true },
+			relations: { source: true, target: true },
 		});
 	}
 

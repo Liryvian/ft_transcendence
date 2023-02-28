@@ -1,5 +1,4 @@
 import router from '@/router';
-import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import type {
@@ -57,7 +56,7 @@ export const useUserStore = defineStore('users', {
 				if (loginResult === '2fa') {
 					// handle it
 				}
-				await this.refreshMe();
+				await this.refreshData();
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
@@ -131,73 +130,9 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-		async initializeRelationship(source: number, target: number) {
-			const createRelationship = {
-				source_id: source,
-				target_id: target,
-				type: 'none',
-			};
-			return await (
-				await postRequest('user-relationships/', createRelationship)
-			).data;
-		},
-
-		async getRelationship(source: number, target: number) {
-			const existingRel: Relationship = await (
-				await getRequest(`user-relationships/${source}/${target}`)
-			).data;
-
-			if (!existingRel) {
-				return this.initializeRelationship(source, target);
-			}
-			return existingRel;
-		},
-
 		async refreshData() {
 			await this.refreshMe();
 			await this.refreshAllUsers();
-		},
-
-		isMatchingRelationship(userId: number, rel: Relationship): boolean {
-			const myId: number = this.me.id;
-			const sourceId: number = rel.source_id.id;
-			const targetId: number = rel.target_id.id;
-
-			return (
-				(targetId === myId || sourceId === myId) &&
-				(sourceId === userId || targetId === userId)
-			);
-		},
-
-		getExistingRelationship(userId: number): Relationship {
-			for (let i = 0; i < this.me.relationships.length; i++) {
-				const rel: Relationship = this.me.relationships[i];
-				if (this.isMatchingRelationship(userId, rel)) {
-					return rel;
-				}
-			}
-			return this.me.relationships[0];
-		},
-
-		async updateRelationship(userId: number, type: string) {
-			const rel: Relationship = await this.getRelationship(
-				userId,
-				this.me.id,
-			);
-			await patchRequest(`user-relationships/${rel.id}`, { type });
-			await this.refreshData();
-		},
-
-		getCurrentRel(userId: number): Relationship {
-			return this.getExistingRelationship(userId);
-		},
-
-		isFriend(type: string): boolean {
-			return type === ValidRelationships.FRIEND;
-		},
-
-		isBlocked(type: string): boolean {
-			return type === ValidRelationships.BLOCKED;
 		},
 	},
 });

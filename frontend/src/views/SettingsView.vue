@@ -61,7 +61,6 @@ import InputField from '@/components/input-fields/InputField.vue';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
 import type { UpdateProfileForm } from '@/types/User';
-import ProfileList from '@/views/ProfilesView.vue';
 import ProfileSettingAvatar from '@/components/user-info/ProfileSettingAvatar.vue';
 import ChangeAvatar from '@/components/input-fields/ChangeAvatar.vue';
 import { storeToRefs } from 'pinia';
@@ -71,7 +70,6 @@ export default defineComponent({
 	components: {
 		ChangeAvatar,
 		ProfileSettingAvatar,
-		ProfileList,
 		InputField,
 	},
 
