@@ -38,7 +38,8 @@ import CornerButton from '@/components/buttons/CornerButton.vue';
 import { useGameStore } from '@/stores/gameStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
-import type { UpdateGameState } from '@/types/game.fe';
+import type { Game, UpdateGameState } from '@/types/game.fe';
+import { User } from '@/types/User';
 
 
 export default defineComponent({
@@ -51,22 +52,26 @@ export default defineComponent({
 		},
 	},
 	setup(props) {
-		const userStore = useUserStore();
-		useUserStore().refreshMe();
 		const gameStore = useGameStore();
 		useGameStore().refreshMyGames();
-		const { errors } = storeToRefs(userStore);
-		let updateGameState : UpdateGameState  = reactive({
-			player_one: 0,
-			player_two: 0,
-			state: 1,
+		// const currentGame = useGameStore().allGames.find(
+		// 	(game: Game) => Number(game.id) === Number(props.game_id),
+		// );
+		// useUserStore().refreshMe();
+		// const { me, errors } = storeToRefs(userStore);
+		// const { errors } = storeToRefs(gameStore);
+		const updateGameState : UpdateGameState  = reactive({
+			player_one: '',
+			player_two: '',
+			state: '',
 		});
 		// const { errors } = storeToRefs(gameStore);
 		// const {createGame } = gameStore;
 	return {
 		gameStore,
-		errors,
+		// errors,
 		props,
+		updateGameState,
 	};
 },
 });
