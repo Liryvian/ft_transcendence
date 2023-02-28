@@ -22,6 +22,7 @@ export class GameController {
 
 	@Post()
 	async create(@Body() createGameDto: CreateGameDto) {
+		await this.gameService.checkInitOrThrow(createGameDto);
 		try {
 			const newGame: Game = await this.gameService.save(createGameDto);
 			return newGame;

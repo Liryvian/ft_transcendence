@@ -36,6 +36,9 @@ lerna-debug.log*
 
 public/avatars/*
 !public/avatars/.gitkeep
+!public/avatars/seeded_profile_aardwolf.png
 !public/avatars/seeded_profile_flamink.png
 !public/avatars/seeded_profile_renoster.png
 !public/avatars/seeded_profile_vaalboskat.png
+!public/avatars/seeded_profile_wildsbok.png
+!public/avatars/tmp_default_avatar.png

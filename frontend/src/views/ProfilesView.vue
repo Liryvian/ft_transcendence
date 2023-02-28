@@ -7,7 +7,7 @@
 					<ListRow
 						v-if="user.id !== me.id"
 						:user="user"
-						:relationship="getCurrentRel(user.id)"
+						:relationship="getSingleRelationship(user.id)"
 					/>
 				</template>
 			</div>
@@ -17,55 +17,35 @@
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
+import { useRelationshipStore } from '@/stores/relationshipStore';
 import { defineComponent, onMounted } from 'vue';
 import ListRow from '@/components/profileList/ListRow.vue';
-import type { User } from '@/types/User';
-import router from '@/router';
 import { storeToRefs } from 'pinia';
 
 export default defineComponent({
-	name: 'ProfileList',
+	name: 'ProfilesView',
 	components: {
 		ListRow,
 	},
 	setup() {
+		const relationshipStore = useRelationshipStore();
+		const { getSingleRelationship } = relationshipStore;
+		relationshipStore.initialize();
+
 		const userStore = useUserStore();
-		const { refreshData, isBlocked, getCurrentRel } = userStore;
+		const { refreshData } = userStore;
 		const { me, allUsers } = storeToRefs(userStore);
+		refreshData();
 		onMounted(async () => {
-			await refreshData();
 		});
 
 		return {
+			getSingleRelationship,
 			userStore,
 			refreshData,
 			allUsers,
-			isBlocked,
-			getCurrentRel,
 			me,
 		};
 	},
-
-	methods: {
-		routeToProfile(id: number) {
-			router.push(`/ProfileView/${id}`);
-		},
-		createChat(user: User) {
-			console.log(`Starting chat with ${user.name}`);
-		},
-	},
 });
 </script>
-
-<style>
-.avatar {
-	vertical-align: middle;
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-}
-
-.grayedOut {
-	color: grey;
-}
-</style>

@@ -32,15 +32,18 @@ export const useMessageStore = defineStore('messages', {
 		newMessage(message: SingleMessage) {
 			// if chat is does not exist, fuck it and ignore
 			// temp store timestamp of last message
-			const prev_timestamp = this.messages[message.chat_id]
-				.slice(-1)[0]
-				.created_at.valueOf();
+			const shouldSort =
+				this.messages[message.chat_id] &&
+				this.messages[message.chat_id].length > 0 &&
+				this.messages[message.chat_id]
+					.slice(-1)[0]
+					.created_at.valueOf() < message.created_at.valueOf();
 
 			// add message
 			this.messages[message.chat_id].push(message);
 
 			// check if we need to sort
-			if (message.created_at.valueOf() < prev_timestamp) {
+			if (shouldSort) {
 				// sort if needed
 				this.messages[message.chat_id].sort(
 					(a: SingleMessage, b: SingleMessage) =>

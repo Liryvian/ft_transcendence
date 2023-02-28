@@ -121,7 +121,9 @@ export default defineComponent({
 				return score_a - score_b;
 			});
 			// return a slice of length 3 (should now always be at least 2, yourself + fallback)
-			return [fallback, me[0], ...sorted].slice(-3);
+			return [fallback, me[0], ...sorted]
+				.filter((el) => el !== undefined)
+				.slice(-3);
 		},
 	},
 });
