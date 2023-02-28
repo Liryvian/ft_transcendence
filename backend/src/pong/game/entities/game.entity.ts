@@ -9,6 +9,13 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
+import { IsEnum } from 'class-validator';
+
+export enum gameStates {
+	ACTIVE = 'active',
+	DONE = 'done',
+	PENDING = 'pending',
+}
 
 @Entity('games')
 export class Game {
@@ -25,8 +32,9 @@ export class Game {
 	@Column({ default: null })
 	customization: string;
 
-	@Column({ default: true })
-	is_active: boolean;
+	@IsEnum(gameStates)
+	@Column({ default: gameStates.PENDING })
+	state: gameStates;
 
 	@CreateDateColumn()
 	created_at: Date;
