@@ -178,6 +178,7 @@ const seedData = {
 			{ name: 'flamink-renoster', type: 'dm' },
 			{ name: 'vaalboskat-renoster', type: 'dm' },
 			{ name: 'Zoo' },
+			{ name: 'Zzz sleepy', type: 'channel', visibility: 'public' },
 		];
 		return chats;
 	},
@@ -244,7 +245,7 @@ const seedData = {
 			permissionsEnum.POST,
 			permissionsEnum.READ,
 		].forEach((p) => {
-			users.slice(0, -1).forEach((u) => {
+			users.slice(0, -2).forEach((u) => {
 				cups.push({
 					chat_id: chats[3],
 					user_id: u,
@@ -255,7 +256,7 @@ const seedData = {
 
 		// add almost everybody to 'Desert' with read permission
 		users
-			.slice(0, -1)
+			.slice(0, -2)
 			.map(
 				(u) =>
 					({
@@ -282,6 +283,18 @@ const seedData = {
 				permission: permissionsEnum.LEFT,
 			}))
 			.forEach((cup) => cups.push(cup));
+
+		// add wildsbok to Zzz sleepy channel
+		cups.push({
+			chat_id: chats[4],
+			user_id: users[4],
+			permission: permissionsEnum.POST,
+		});
+		cups.push({
+			chat_id: chats[4],
+			user_id: users[4],
+			permission: permissionsEnum.READ,
+		});
 		return cups;
 	},
 
