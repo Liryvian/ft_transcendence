@@ -186,6 +186,7 @@ const seedData = {
 			{ name: 'flamink-renoster', type: 'dm' },
 			{ name: 'vaalboskat-renoster', type: 'dm' },
 			{ name: 'Zoo' },
+			{ name: 'Zzz sleepy', type: 'channel', visibility: 'public' },
 		];
 		return chats;
 	},
@@ -207,14 +208,28 @@ const seedData = {
 		return userAchievements;
 	},
 
-	chatUserPermission: (users: number[], chats: number[]) => {
+	chatUserPermission: (users, chats) => {
 		const cups: CreateChatUserPermissionDto[] = [];
 
+		const aardwolf = users.find((u) => u.name === 'aardwolf').id;
+		const flamink = users.find((u) => u.name === 'flamink').id;
+		const renoster = users.find((u) => u.name === 'renoster').id;
+		const vaalboskat = users.find((u) => u.name === 'vaalboskat').id;
+		const wildsbok = users.find((u) => u.name === 'wildsbok').id;
+
+		const desert = chats.find((c) => c.name === 'Desert').id;
+		const flaminkRenoster = chats.find((c) => c.name === 'flamink-renoster').id;
+		const vaalboskatRenoster = chats.find(
+			(c) => c.name === 'vaalboskat-renoster',
+		).id;
+		const zoo = chats.find((c) => c.name === 'Zoo').id;
+		const zzzSleepy = chats.find((c) => c.name === 'Zzz sleepy').id;
+
 		// Add flamink and renoster to their DM
-		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
-			[users[1], users[2]].forEach((u) => {
+		[(permissionsEnum.POST, permissionsEnum.READ)].forEach((p) => {
+			[flamink, renoster].forEach((u) => {
 				cups.push({
-					chat_id: chats[1],
+					chat_id: flaminkRenoster,
 					user_id: u,
 					permission: p,
 				});
@@ -223,9 +238,9 @@ const seedData = {
 
 		// Add vaalboskat and renoster to their DM
 		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
-			[users[3], users[2]].forEach((u) => {
+			[vaalboskat, renoster].forEach((u) => {
 				cups.push({
-					chat_id: chats[2],
+					chat_id: vaalboskatRenoster,
 					user_id: u,
 					permission: p,
 				});
@@ -239,8 +254,8 @@ const seedData = {
 			permissionsEnum.POST,
 		].forEach((p) => {
 			cups.push({
-				chat_id: chats[0],
-				user_id: users[2],
+				chat_id: desert,
+				user_id: renoster,
 				permission: p,
 			});
 		});
@@ -252,9 +267,9 @@ const seedData = {
 			permissionsEnum.POST,
 			permissionsEnum.READ,
 		].forEach((p) => {
-			users.slice(0, -1).forEach((u) => {
+			[aardwolf, flamink, renoster, vaalboskat].forEach((u) => {
 				cups.push({
-					chat_id: chats[3],
+					chat_id: zoo,
 					user_id: u,
 					permission: p,
 				});
@@ -262,38 +277,61 @@ const seedData = {
 		});
 
 		// add almost everybody to 'Desert' with read permission
-		users
-			.slice(0, -1)
+		[aardwolf, flamink, renoster, vaalboskat]
 			.map(
 				(u) =>
 					({
-						chat_id: chats[0],
+						chat_id: desert,
 						user_id: u,
 						permission: permissionsEnum.READ,
 					} as CreateChatUserPermissionDto),
 			)
 			.forEach((cup) => cups.push(cup));
 
-		// add bitch user blocked + left to every chat
-		chats
+		// add wildsbok user blocked + left to every chat
+		[desert, zoo]
 			.map((c) => ({
 				chat_id: c,
-				user_id: users[4],
+				user_id: wildsbok,
 				permission: permissionsEnum.BLOCKED,
 			}))
 			.forEach((cup) => cups.push(cup));
-		chats
+		[desert, zoo]
 			.map((c) => ({
 				chat_id: c,
-				user_id: users[4],
+				user_id: wildsbok,
 				permission: permissionsEnum.LEFT,
 			}))
 			.forEach((cup) => cups.push(cup));
+
+		// add wildsbok to Zzz sleepy channel
+		cups.push({
+			chat_id: zzzSleepy,
+			user_id: wildsbok,
+			permission: permissionsEnum.POST,
+		});
+		cups.push({
+			chat_id: zzzSleepy,
+			user_id: wildsbok,
+			permission: permissionsEnum.READ,
+		});
 		return cups;
 	},
 
-	messages: (users: number[], chats: number[]) => {
+	messages: (users, chats) => {
 		const messages: seedMessage[] = [];
+
+		const aardwolf = users.find((u) => u.name === 'aardwolf').id;
+		const flamink = users.find((u) => u.name === 'flamink').id;
+		const renoster = users.find((u) => u.name === 'renoster').id;
+		const vaalboskat = users.find((u) => u.name === 'vaalboskat').id;
+
+		const desert = chats.find((c) => c.name === 'Desert').id;
+		const flaminkRenoster = chats.find((c) => c.name === 'flamink-renoster').id;
+		const vaalboskatRenoster = chats.find(
+			(c) => c.name === 'vaalboskat-renoster',
+		).id;
+		const zoo = chats.find((c) => c.name === 'Zoo').id;
 
 		[
 			'Hello everybody,',
@@ -301,8 +339,8 @@ const seedData = {
 			'We hope you will enjoy your time here and please take this opportunity to send some messages',
 		].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[2],
-				chat: chats[3],
+				sender_id: renoster,
+				chat: zoo,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(8, 12 + index, 0),
@@ -323,8 +361,8 @@ const seedData = {
 			'Wanna play some pong?',
 		].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[index % 2 === 0 ? 2 : 3],
-				chat: chats[2],
+				sender_id: [vaalboskat, renoster][index % 2 === 0 ? 0 : 1],
+				chat: vaalboskatRenoster,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(9, 2 + index, 0),
@@ -353,8 +391,8 @@ const seedData = {
 			'you promised!!',
 		].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[index % users.length],
-				chat: chats[0],
+				sender_id: [aardwolf, flamink, renoster, vaalboskat][index % 4],
+				chat: desert,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(10, 25 + index * 2, 0),
@@ -367,8 +405,8 @@ const seedData = {
 
 		['hi', 'hi', 'hi!', 'hi!'].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[index % 2 === 0 ? 2 : 1],
-				chat: chats[1],
+				sender_id: [flamink, renoster][index % 2 === 0 ? 0 : 1],
+				chat: flaminkRenoster,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(11, 48 + index, 0),

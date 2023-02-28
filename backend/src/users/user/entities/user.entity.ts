@@ -17,7 +17,10 @@ import { Game } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
-import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import {
+	ChatUserPermission,
+	permissionsEnum,
+} from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { IsArray, IsNumber, IsString } from 'class-validator';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
 
@@ -31,8 +34,11 @@ export class UserInChat {
 	@IsString()
 	name?: string;
 
+	@IsString()
+	avatar?: string;
+
 	@IsArray()
-	permissions: string[];
+	permissions: permissionsEnum[];
 }
 
 @Entity('users')
