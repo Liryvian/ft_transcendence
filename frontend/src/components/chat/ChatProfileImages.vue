@@ -1,9 +1,13 @@
 <template>
-	<div v-for="member in visible_avatars" class="c_asset c_asset__circle">
-		<img
-			:src="`/api/avatars/${member.avatar ?? 'tmp_default_avatar.png'}`"
-			:alt="`Avatar of ${member.name}`"
-		/>
+	<div class="c_media__asset" :class="is_online">
+		<div v-for="member in visible_avatars" class="c_asset c_asset__circle">
+			<img
+				:src="`/api/avatars/${
+					member.avatar ?? 'tmp_default_avatar.png'
+				}`"
+				:alt="`Avatar of ${member.name}`"
+			/>
+		</div>
 	</div>
 </template>
 
