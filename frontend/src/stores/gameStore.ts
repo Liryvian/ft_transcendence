@@ -1,5 +1,4 @@
-import type { CreateGameForm, type Game, gameStates } from '@/types/game.fe';
-import type { User } from '@/types/User';
+import type { CreateGameForm, Game, gameStates } from '@/types/game.fe';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
@@ -10,6 +9,7 @@ export const useGameStore = defineStore('games', {
 	state: () => ({
 		allGames: <Game[]>[],
 		errors: [] as String[],
+
 	}),
 	// getters == computed values
 	getters: {

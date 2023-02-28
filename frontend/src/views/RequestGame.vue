@@ -68,8 +68,8 @@ export default defineComponent({
 		await useUserStore().refreshMe();
 		const { me } = storeToRefs(userStore);
 		this.createGameForm = {
-			score_to_win: 10,
-			background_color: 'fff',
+			score_to_win: 10, //these shoulde be connected
+			background_color: '#ffffff', //these should be connected
 			player_one: me.value.id,
 			player_two: Number(this.profile_id),
 		};

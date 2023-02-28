@@ -28,7 +28,7 @@ export class Game {
 	@Column({ default: 0 })
 	score_player_two: number;
 
-	@Column({ default: 0 })
+	@Column({ default: 10 })
 	score_to_win?: number;
 
 	@Column({ default: null }) // '#FFC0CB'
