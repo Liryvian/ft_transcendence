@@ -10,6 +10,7 @@ export const useGameStore = defineStore('games', {
 	state: () => ({
 		allGames: <Game[]>[],
 		errors: [] as String[],
+		users: [] as String[],
 	}),
 	// getters == computed values
 	getters: {
@@ -49,19 +50,20 @@ export const useGameStore = defineStore('games', {
 			await this.refreshAllGames();
 		},
 
-		isAvailable(): boolean {
-			const me: User = useUserStore().getMe;
-			// if (!me.isOnline)
-			// retunr false;
-			me.games.forEach((game: Game) => {
-				if (game.state === gameStates.ACTIVE) return false;
-			});
-			return true;
-		},
-
+		// isAvailable(): boolean {
+		// 	const me: User = useUserStore().getMe;
+		// 	if (!me.isOnline)
+		// 	   return false;
+		// 	me.games.forEach((game: Game) => {
+		// 		if (game.state === gameStates.ACTIVE) return false;
+		// 	});
+		// 	return true;
+		// },
 
 		async createGame(createdGameForm: CreateGameForm){
-			try{
+			try {
+				// const user = await getRequest('users',createdGameForm.player_two);
+				// console.log('user', user);
 				await postRequest('games', createdGameForm);
 				await router.push('/chat');
 				// await router.push({

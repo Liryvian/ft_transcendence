@@ -4,6 +4,8 @@ import { AbstractService } from '../../shared/abstract.service';
 import { In, Repository } from 'typeorm';
 import { Game, gameStates } from './entities/game.entity';
 import { CreateGameDto } from './dto/create-game.dto';
+import { User } from '../../users/user/entities/user.entity';
+import { userInfo } from 'os';
 
 @Injectable()
 export class GameService extends AbstractService<Game> {
@@ -14,11 +16,9 @@ export class GameService extends AbstractService<Game> {
 		super(repository);
 	}
 
-	// if a game exists where both players
-
 	async getGamesContainingBothUsers(p1: number, p2: number) {
 		try {
-			const conflicitingGame: Game = await this.findOne({
+			const conflictingGame: Game = await this.findOne({
 				relations: {
 					player_one: true,
 					player_two: true,
@@ -33,7 +33,7 @@ export class GameService extends AbstractService<Game> {
 					},
 				},
 			});
-			return conflicitingGame;
+			return conflictingGame;
 		} catch (e) {
 			return null;
 		}
@@ -107,7 +107,7 @@ export class GameService extends AbstractService<Game> {
 
 		if (getPendingGame) {
 			throw new BadRequestException(
-				'Pending game exists between the two users',
+				'There is already a pending game, please wait for a response',
 			);
 		}
 
@@ -118,7 +118,7 @@ export class GameService extends AbstractService<Game> {
 			(await this.getActiveGame(playerTwoId)) !== null;
 
 		if (playerOneHasActiveGames || playerTwoHasActiveGames) {
-			throw new BadRequestException('A player already has an active game');
+			throw new BadRequestException('This player is currently playing a game, please come back and try it again later');
 		}
 
 		return true;
