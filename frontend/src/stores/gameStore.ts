@@ -61,6 +61,7 @@ export const useGameStore = defineStore('games', {
 
 		async createGame(createdGameForm: CreateGameForm){
 			try {
+				createdGameForm.player_one = useUserStore().me.id;
 				await postRequest('games', createdGameForm);
 				await router.push('/chat'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
 				// await router.push({

@@ -3,7 +3,7 @@
 		<div class="page_box">
 			<h1>NEW GAME</h1>
 			<h1>VS</h1>
-			<h1>PLAYER_02</h1>
+			<h1>{{ getNamePlayerTwo }}</h1>
 			<div class="c_block c_form_group">
 				<form
 					method="Post"
@@ -53,39 +53,38 @@ export default defineComponent({
 	props: {
 		profile_id: { type: String, required: true },
 	},
-	data() {
-		let createGameForm: CreateGameForm = reactive({
-			score_to_win: 0,
-			background_color: '',
-			player_one: 0,
-			player_two: 0,
-		});
-		return { createGameForm };
+	computed: {
+		// get the display name of player 2
+		getNamePlayerTwo(): string {
+			const player_two = this.allUsers.find(user => (user.id === Number(this.profile_id)))?.name;
+			if (player_two) {
+				return player_two;
+			}
+			return "!! Invalid user"
+		},
 	},
-
-	async created() {
-		const userStore = useUserStore();
-		await useUserStore().refreshMe();
-		const { me } = storeToRefs(userStore);
-		this.createGameForm = {
-			score_to_win: 10,
-			background_color: '#FFFFFF',
-			player_one: me.value.id,
-			player_two: Number(this.profile_id),
-		};
-	},
-
 	setup(props) {
+		const userStore = useUserStore();
+		useUserStore().refreshData();
+		const { allUsers } = storeToRefs(userStore);
 		const gameStore = useGameStore();
 		useGameStore().refreshMyGames();
 		const { errors } = storeToRefs(gameStore);
-		const {createGame } = gameStore;;
+		const {createGame } = gameStore;
+		let createGameForm : CreateGameForm = reactive({
+			score_to_win: 10,
+			background_color: '#FFFFFF',
+			player_one: 0, // assign in createGame()
+			player_two: Number(props.profile_id),
+		});
 		return {
 			gameStore,
 			errors,
 			createGame,
+			allUsers,
+			createGameForm,
 		};
 	},
 });
 </script>
-<style scoped></style>
+
