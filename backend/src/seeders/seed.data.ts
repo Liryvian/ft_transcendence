@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateChatUserPermissionDto } from '../chats/chat-user-permissions/dto/create-chat-user-permission.dto';
 import { CreateUserAchievementDto } from '../users/user-achievements/dto/create-user-achievement.dto';
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import { gameStates } from '../pong/game/entities/game.entity';
 
 class seedUser {
 	name: string;
@@ -21,7 +22,7 @@ class seedGame {
 	player_two: number;
 	score_player_one: number;
 	score_player_two: number;
-	is_active: boolean;
+	state: gameStates;
 }
 
 class seedMessage {
@@ -100,39 +101,46 @@ const seedData = {
 	userRelations: (ids: number[]) => {
 		const userRelations: CreateUserRelationshipDto[] = [
 			{
-				source_id: ids[0],
-				target_id: ids[1],
+				source: ids[0],
+				target: ids[1],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[2],
+				source: ids[0],
+				target: ids[2],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[3],
+				source: ids[0],
+				target: ids[3],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[1],
-				target_id: ids[2],
+				source: ids[1],
+				target: ids[2],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[1],
 			},
 			{
-				source_id: ids[1],
-				target_id: ids[3],
+				source: ids[1],
+				target: ids[3],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[1],
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[4],
+				source: ids[0],
+				target: ids[4],
 				type: validRelationships.BLOCKED,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[3],
-				target_id: ids[4],
+				source: ids[3],
+				target: ids[4],
 				type: validRelationships.BLOCKED,
+				specifier_id: ids[3],
 			},
 		];
 		return userRelations;
@@ -145,28 +153,28 @@ const seedData = {
 				player_two: ids[1],
 				score_player_one: 10,
 				score_player_two: 5,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[1],
 				player_two: ids[2],
 				score_player_one: 8,
 				score_player_two: 3,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[2],
 				player_two: ids[0],
 				score_player_one: 12,
 				score_player_two: 7,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[3],
 				player_two: ids[2],
 				score_player_one: 4,
 				score_player_two: 10,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 		];
 		return games;

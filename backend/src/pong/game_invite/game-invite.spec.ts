@@ -87,14 +87,14 @@ describe('GameInvite unit tests', () => {
 			);
 		});
 
-		it('should throw error when source_id is empty', async () => {
+		it('should throw error when source is empty', async () => {
 			testObject.players[0] = null;
 			await expect(validator.transform(testObject, meta)).rejects.toThrow(
 				BadRequestException,
 			);
 		});
 
-		it('should throw error when source_id is NaN', async () => {
+		it('should throw error when source is NaN', async () => {
 			const NaNtestObject = {
 				players: ['1', 1],
 			};
