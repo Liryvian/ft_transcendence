@@ -31,6 +31,17 @@ export class PongGateway implements OnGatewayConnection {
 		this.server.emit('elementPositions', gameState);
 	}
 
+
+	sendPointOver(@MessageBody() player: string) {
+		this.server.emit("pointOver", player);
+	}
+
+	@SubscribeMessage("resetAfterPointFinished")
+	resetBallAfterPointIsOver() {
+		this.pongService.resetBallPosition(this.gameState.ball);
+		this.sendPositionOfElements(this.gameState);
+	}
+
 	@SubscribeMessage('updatePositions')
 	updatePositions(@MessageBody() keyPress: MovementKeys) {
 		this.pongService.movePaddles(
@@ -40,5 +51,11 @@ export class PongGateway implements OnGatewayConnection {
 		);
 		this.pongService.moveBall(this.gameState);
 		this.sendPositionOfElements(this.gameState);
+		if (this.pongService.pointIsOver) {
+			console.log("Emitting point is over")
+			this.server.emit("pointOver", this.pongService.pointWinner);
+			this.pongService.pointIsOver = false;
+			this.pongService.pointWinner = ""
+		}
 	}
 }

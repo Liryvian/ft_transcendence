@@ -53,3 +53,12 @@ export interface GameRequest {
 	created_at: Date;
 	updated_at: Date;
 }
+
+const GameStatusEnum = Object.freeze({
+	GAME_OVER: 0,
+	POINT_OVER: 1,
+	PLAYING: 2
+	// GAME_OVER: 0,
+})
+
+export default GameStatusEnum;

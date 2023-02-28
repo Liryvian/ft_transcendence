@@ -5,9 +5,9 @@
 
 			<div class="page_box">
 				<div class="gameHeader space-between">
-					<p class="playerOneSore">{{ getCurrentGame?.score_player_one }} </p>
+					<p class="playerOneSore">{{ score_player_one }} </p>
 					<p class="pongHeader">PONG</p>
-					<p class="playerTwoScore">{{ getCurrentGame?.score_player_two }}</p>
+					<p class="playerTwoScore">{{ score_player_two }}</p>
 				</div>
 
 				<canvas
@@ -25,9 +25,10 @@
 
 <script lang="ts">
 import { useGameStore } from '@/stores/gameStore';
-import { defineComponent, onMounted} from 'vue';
+import { defineComponent, onMounted, ref, type Ref} from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue';
-import type { ElementPositions, Ball, Paddle } from '@/types/game.fe';
+import type { ElementPositions, Ball, Paddle} from '@/types/game.fe';
+import GameStatusEnum  from '@/types/game.fe'
 import { io, Socket } from 'socket.io-client';
 import { storeToRefs } from 'pinia';
 
@@ -50,11 +51,15 @@ interface DataObject {
 	gameLoopInterval: number;
 	timeStampStart: DOMHighResTimeStamp;
 	previousTimeStamp: DOMHighResTimeStamp;
-	done: boolean;
 	player_one: Player;
 	player_two: Player;
-
+	score_player_one: Ref<number>;
+	score_player_two: Ref<number>;
+	gameStatus: number,
 }
+
+let score_player_one = ref(0);
+let score_player_two = ref(0);
 
 export default defineComponent({
 	name: 'GameView',
@@ -67,8 +72,9 @@ export default defineComponent({
 
 	beforeRouteLeave(to, from, next) {
         console.log("thisgame:", this.currentGame)
-		this.done = true;
+		this.gameStatus = GameStatusEnum.GAME_OVER;
 		this.socket.off('updatePosition', this.render);
+		// patch game in database with the updated scores
 		console.log('Game disconnected');
 		next();
 	},
@@ -94,16 +100,16 @@ export default defineComponent({
 			gameLoopInterval: 0,
 			timeStampStart: 0,
 			previousTimeStamp: 0,
-			done: false,
+			score_player_two,
+			score_player_one,
+			gameStatus: GameStatusEnum.PLAYING
 		};
 	},
 
 	setup() {
 		const gameStore = useGameStore();
         const { allGames }= storeToRefs(gameStore)
-		onMounted(async () => {
-			await gameStore.refreshData();
-		})
+// ss
 		return {
 			gameStore,
             allGames
@@ -127,6 +133,7 @@ export default defineComponent({
 			);
 		},
         getPlayerOne(){
+			console.log("p1:", this.getCurrentGame?.player_one);
             return this.getCurrentGame?.player_one;
         },
         getPlayerTwo(){
@@ -230,9 +237,21 @@ export default defineComponent({
 				this.socket!.emit('updatePositions', this.isPressed);
 			}
 
-			if (!this.done) {
+			if (this.gameStatus === GameStatusEnum.PLAYING) {
 				window.requestAnimationFrame(this.getUpdatedPositions);
+			} else if (this.gameStatus === GameStatusEnum.POINT_OVER){
+				// update scores
+				this.gameStatus = GameStatusEnum.PLAYING
+				// reset positions
+				this.socket.emit("resetAfterPointFinished")
+				this.isPressed.ArrowDown = false;
+				this.isPressed.ArrowUp = false;
+				this.isPressed.w = false;
+				this.isPressed.s = false;
+				window.requestAnimationFrame(this.getUpdatedPositions);
+				// call window animation frame
 			} else {
+				// GameStatus ==== GAME_OVER
 				console.log('DONE')!;
 			}
 		},
@@ -248,6 +267,15 @@ export default defineComponent({
 		document.addEventListener('keyup', this.keyUp);
 
 		this.socket.on('elementPositions', this.render);
+		this.socket.on('pointOver', (player: string) => {
+			this.gameStatus = GameStatusEnum.POINT_OVER
+			if (player === "Player 1") {
+				++score_player_one.value;
+			} else {
+				++score_player_two.value;
+			}
+			// alert(`Point to ${player}`)
+		})
 		// MAIN GAME LOOP
 		this.startGameLoop();
 	},

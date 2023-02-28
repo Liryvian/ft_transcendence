@@ -27,6 +27,9 @@ export class PongService {
 	private dy = randomDirection(-3, 3) || 0.3;
 	private dx = randomDirection(-3, 3) || 0.3;
 
+	public pointIsOver = false;
+	public pointWinner = "";
+
 	createNewGameState(): GameState {
 		const newGameState: GameState = {
 			playerOnePaddle: {
@@ -80,12 +83,15 @@ export class PongService {
 
 		// if ball will hit the invisible wall that extends from the paddle
 		// and ball position is within the paddle top and bottom
-		// console.log(paddleWall);
 		if (
 			this.doesHitWall(paddleWall, ball.position.x, this.dx) &&
 			ball.position.y > paddleTop &&
-			ball.position.y < paddleBottom
+			ball.position.y < paddleBottom &&
+			// check that ball hits the paddle on the same side
+			Math.abs(ball.position.x - rect.position.x) < 2 
 		) {
+			console.log("Ball x: ", ball.position.x);
+			console.log("paddle X: ", rect.position.x);
 			return true;
 		}
 
@@ -122,6 +128,11 @@ export class PongService {
 			this.dy += d * -0.01;
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
 			console.log('Point is over');
+			const pointWinner = ballPos.x > 80 ? 'Player 1' : 'Player 2';
+			console.log("Setting point is over: ", pointWinner);
+			this.pointIsOver = true;
+			this.pointWinner = pointWinner;
+			this.resetBallPosition(gameState.ball);
 			this.dx = -this.dx;
 		}
 
@@ -161,5 +172,14 @@ export class PongService {
 		if (pressedKey.s) {
 			playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
 		}
+	}
+
+	resetBallPosition(ball: Ball){
+		ball.position =  {
+					x: 40,
+					y: 65,
+				};
+		this.dx = randomDirection(-3, 3) || 0.3;
+		this.dy = randomDirection(-3, 3) || 0.3;
 	}
 }

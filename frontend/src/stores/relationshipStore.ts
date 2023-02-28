@@ -19,7 +19,7 @@ export const useRelationshipStore = defineStore('relationship', {
 		async initialize() {
 			if (this.isInitialized === false) {
 				// for when sockets are setup
-				this.isInitialized = false;
+				this.isInitialized = true;
 				this.socket = io('http://localhost:8080/user/relationship');
 				await this.refreshRelationships();
 				await this.refreshMe();
