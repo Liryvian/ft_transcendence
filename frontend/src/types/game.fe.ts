@@ -22,7 +22,6 @@ export interface Ball {
 	radius: number;
 }
 
-
 export interface Game {
 	id: number;
 

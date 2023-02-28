@@ -1,5 +1,14 @@
 import type { User } from './User';
 
+export enum permissionsEnum {
+	READ = 'read',
+	POST = 'post',
+	LEFT = 'left',
+	BLOCKED = 'blocked',
+	MANAGE_USERS = 'manage_users',
+	EDIT_SETTINGS = 'edit_settings',
+}
+
 export interface UserChatPermissions {
 	id: number;
 
@@ -11,20 +20,29 @@ export interface UserChatPermissions {
 
 	users: User[];
 
-	permission: string;
+	permission: permissionsEnum;
 }
 
 export interface SingleMessage {
 	id: number;
 
-	sender: User;
-	chat: Chat;
+	sender?: User;
 
+	user_id: number;
+	chat_id: number;
 	content: string;
 
 	created_at: Date;
-	updated_at: Date;
+	updated_at?: Date;
 }
+
+export interface NewMessage {
+	sender_id: number;
+	chat: number;
+	content: string;
+}
+
+export type ChatVisibility = 'public' | 'private';
 
 export interface Chat {
 	id: number;
@@ -33,15 +51,17 @@ export interface Chat {
 	has_users: UserChatPermissions[];
 	users: User;
 
-	visibility: string;
+	visibility: ChatVisibility;
 	password: string;
 
 	messages: SingleMessage[];
 }
 
 export interface Chat_Member {
+	id: number;
 	name: string;
 	avatar?: string;
+	permissions: permissionsEnum[];
 }
 
 export type Chat_Type = 'dm' | 'channel';
@@ -50,7 +70,7 @@ export interface Chat_List_Item {
 	id: number;
 	name: string;
 	type: Chat_Type;
-	members: Chat_Member[];
+	users: Chat_Member[];
 }
 
 export interface Chat_List {

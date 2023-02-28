@@ -15,9 +15,10 @@ export class GameService extends AbstractService<Game> {
 	}
 
 	// if a game exists where both players
+
 	async getGamesContainingBothUsers(p1: number, p2: number) {
 		try {
-			const conflcitingGame: Game = await this.findOne({
+			const conflicitingGame: Game = await this.findOne({
 				relations: {
 					player_one: true,
 					player_two: true,
@@ -32,7 +33,7 @@ export class GameService extends AbstractService<Game> {
 					},
 				},
 			});
-			return conflcitingGame;
+			return conflicitingGame;
 		} catch (e) {
 			return null;
 		}

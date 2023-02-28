@@ -5,9 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserAchievement } from './entities/user-achievement.entity';
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([UserAchievement]),
-	],
+	imports: [TypeOrmModule.forFeature([UserAchievement])],
 	controllers: [UserAchievementsController],
 	providers: [UserAchievementsService],
 	exports: [UserAchievementsService],

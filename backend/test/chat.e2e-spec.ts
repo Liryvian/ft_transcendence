@@ -12,8 +12,8 @@ describe('chat e2e', () => {
 	let chatController: ChatController;
 
 	const testChats: CreateChatDto[] = [
-		{ name: 'A', visibility: 'Not', password: 'A' },
-		{ name: 'B', visibility: 'Yes', password: 'B' },
+		{ name: 'A', visibility: 'private', password: 'A' },
+		{ name: 'B', visibility: 'public', password: 'B' },
 	];
 
 	beforeAll(async () => {

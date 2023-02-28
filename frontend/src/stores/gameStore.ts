@@ -1,4 +1,4 @@
-import type { CreateGameForm, Game, gameStates } from '@/types/game.fe';
+import type { CreateGameForm, type Game, gameStates } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -31,18 +31,17 @@ export const useGameStore = defineStore('games', {
 
 		async refreshAllGames() {
 			try {
-				const data = await getRequest("games");
+				const data = await getRequest('games');
 				this.allGames = data.data;
 				await useUserStore().refreshAllUsers();
-			}
-			catch (e) {
+			} catch (e) {
 				console.error(e);
 				return [];
 			}
 		},
 
 		async refreshMyGames() {
-			await useUserStore().refreshMe()
+			await useUserStore().refreshMe();
 		},
 
 		async refreshData() {
@@ -50,15 +49,16 @@ export const useGameStore = defineStore('games', {
 			await this.refreshAllGames();
 		},
 
-		// isAvailable(): boolean {
-		// 	const me: User = useUserStore().getMe;
-		// 	// if (!me.isOnline)
-		// 	// retunr false;
-		// 	me.games.forEach((game: Game) => {
-		// 		if (game.state === gameStates.ACTIVE) return false;
-		// 	});
-		// 	return true;
-		// },
+		isAvailable(): boolean {
+			const me: User = useUserStore().getMe;
+			// if (!me.isOnline)
+			// retunr false;
+			me.games.forEach((game: Game) => {
+				if (game.state === gameStates.ACTIVE) return false;
+			});
+			return true;
+		},
+
 
 		async createGame(createdGameForm: CreateGameForm){
 			try{
@@ -69,10 +69,12 @@ export const useGameStore = defineStore('games', {
 				// 	params: { profile_id: createdGameForm.player_two},
 				// });
 				this.errors.length = 0;
-				} catch (e: any) {
-					this.handleFormError(e.response.data);
-				}
+			} catch (e: any) {
+				this.handleFormError(e.response.data);
+			}
 		}
-	}
+	},
 
-});
+	});
+
+

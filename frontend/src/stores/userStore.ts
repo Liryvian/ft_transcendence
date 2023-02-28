@@ -8,7 +8,7 @@ import type {
 	RegisterForm,
 	UpdateProfileForm,
 } from '../types/User';
-import { useStorage } from "@vueuse/core";
+import { useStorage } from '@vueuse/core';
 import { apiUrl } from '@/types/Constants';
 
 export const useUserStore = defineStore('users', {
@@ -18,31 +18,40 @@ export const useUserStore = defineStore('users', {
 		me: {} as User,
 		errors: [] as String[],
 		// persists data accross refreshes
-		isLoggedIn: useStorage("isLoggedIn", false, sessionStorage),
+		isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
 	}),
 
 	// getters == computed values
-	getters: {
-	},
+	getters: {},
 	// actions == methods
 	actions: {
+		// this should be moved out of the userStore
+		// it is not userStore functionality
+		// and it should be typed with something other than any..
 		handleFormError(responseData: any) {
-			if (typeof responseData.message === 'string') {
-				this.errors.length = 0;
-				this.errors.push(responseData.message);
+			if (responseData.hasOwnProperty('message')) {
+				if (typeof responseData.message === 'string') {
+					this.errors.length = 0;
+					this.errors.push(responseData.message);
+				} else {
+					this.errors = responseData.message.map((msg: String) =>
+						msg.replace('(o) => o.', ''),
+					);
+				}
 			} else {
-				this.errors = responseData.message.map((msg: String) =>
-					msg.replace('(o) => o.', ''),
-				);
+				this.errors.length = 0;
 			}
+		},
+
+		getUserById(id: number) {
+			return this.allUsers.find((user) => user.id === id);
 		},
 
 		async login(loginType: string, loginForm?: LoginForm) {
 			try {
-				if (loginType === 'intra'){
+				if (loginType === 'intra') {
 					location.href = `${apiUrl}/auth/authenticate`;
-				}
-				else {
+				} else {
 					await postRequest('login', loginForm);
 				}
 				await this.refreshMe();
@@ -58,10 +67,9 @@ export const useUserStore = defineStore('users', {
 			try {
 				await getRequest('logout');
 				this.isLoggedIn = false;
-				router.push({name: "login"})
+				router.push({ name: 'login' });
 				this.errors.length = 0;
-			}
-			catch (e) {
+			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
 		},
