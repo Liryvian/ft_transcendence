@@ -109,6 +109,7 @@ export class MeController {
 					},
 				},
 				{
+					type: 'channel',
 					visibility: 'public',
 				},
 			],
