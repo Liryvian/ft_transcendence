@@ -22,6 +22,7 @@ export class GameController {
 
 	@Post()
 	async create(@Body() createGameDto: CreateGameDto) {
+		await this.gameService.checkInitOrThrow(createGameDto);
 		try {
 			const currentGames: Game[] = await this.gameService.findAll({
 				relations: { player_one: true, player_two: true },
