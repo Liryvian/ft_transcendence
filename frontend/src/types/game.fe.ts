@@ -29,7 +29,9 @@ export interface Game {
 	updated_at: Date;
 
 	player_one: User;
+	p1_score: number;
 	player_two: User;
+	p2_score: number;
 }
 
 export interface ElementPositions {

@@ -11,15 +11,13 @@ export const useGameStore = defineStore('games', {
 	}),
 	// getters == computed values
 	getters: {
-		getMyGames: () => useUserStore().getMe.games,
-		getAllGames: (state) => state.allGames,
 	},
 	// actions == methods
 	actions: {
 		async refreshAllGames() {
 			try {
-				const data = await getRequest('games');
-				this.allGames = data.data;
+				this.allGames = await (await getRequest('games')).data;
+				console.log(this.allGames);
 				await useUserStore().refreshAllUsers();
 			} catch (e) {
 				console.error(e);
@@ -27,23 +25,8 @@ export const useGameStore = defineStore('games', {
 			}
 		},
 
-		async refreshMyGames() {
-			await useUserStore().refreshMe();
-		},
-
 		async refreshData() {
-			await this.refreshMyGames();
 			await this.refreshAllGames();
-		},
-
-		isAvailable(): boolean {
-			const me: User = useUserStore().getMe;
-			// if (!me.isOnline)
-			// retunr false;
-			me.games.forEach((game: Game) => {
-				if (game.is_active === true) return false;
-			});
-			return true;
 		},
 	},
 });

@@ -23,6 +23,12 @@ const router = createRouter({
 			component: () => import('../views/GameView.vue'),
 		},
 		{
+			path: '/pong/:currentGame?',
+			name: 'pong',
+			props: true,
+			component: () => import('../components/pongGame/pongGame.vue'),
+		},
+		{
 			path: '/chat/:currentChat?',
 			name: 'chat',
 			props: true,
