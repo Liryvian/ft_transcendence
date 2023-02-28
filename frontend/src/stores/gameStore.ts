@@ -10,7 +10,6 @@ export const useGameStore = defineStore('games', {
 	state: () => ({
 		allGames: <Game[]>[],
 		errors: [] as String[],
-		users: [] as String[],
 	}),
 	// getters == computed values
 	getters: {
@@ -62,10 +61,8 @@ export const useGameStore = defineStore('games', {
 
 		async createGame(createdGameForm: CreateGameForm){
 			try {
-				// const user = await getRequest('users',createdGameForm.player_two);
-				// console.log('user', user);
 				await postRequest('games', createdGameForm);
-				await router.push('/chat');
+				await router.push('/chat'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
 				// await router.push({
 				// 	name: 'chat',
 				// 	params: { profile_id: createdGameForm.player_two},
