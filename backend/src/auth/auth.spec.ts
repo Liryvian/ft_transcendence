@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import AuthGuard from './auth.guard';
 
 import { AllTestingModule } from '../shared/test.module';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
@@ -13,7 +12,6 @@ import { BadRequestException } from '@nestjs/common';
 describe('Auth', () => {
 	let authController: AuthController;
 	let authService: AuthService;
-	let authGuard: AuthGuard;
 	let userService: UserService;
 
 	beforeAll(async () => {
@@ -23,7 +21,6 @@ describe('Auth', () => {
 
 		authController = module.get<AuthController>(AuthController);
 		authService = module.get<AuthService>(AuthService);
-		authGuard = module.get<AuthGuard>(AuthGuard);
 		userService = module.get<UserService>(UserService);
 	});
 
@@ -31,7 +28,6 @@ describe('Auth', () => {
 
 	describe('Auth-Guard/Controller/Service', () => {
 		it('should be defined', () => {
-			expect(authGuard).toBeDefined();
 			expect(authController).toBeDefined();
 			expect(authService).toBeDefined();
 		});
