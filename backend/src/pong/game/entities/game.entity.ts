@@ -34,8 +34,9 @@ export class Game {
 	@Column({ default: null }) // '#FFC0CB'
 	background_color?: string;
 
-	@Column({ default: false })
-	is_active: boolean;
+	@IsEnum(gameStates)
+	@Column({ default: gameStates.PENDING })
+	state: gameStates;
 
 	@CreateDateColumn()
 	created_at: Date;

@@ -4,17 +4,17 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { globalValidationPipeOptions } from '../../main.validationpipe';
+import { globalValidationPipeOptions } from '../main.validationpipe';
 import { InsertResult } from 'typeorm';
 
-import { CreateGameDto } from './dto/create-game.dto';
-import { CreateUserDto } from '../../users/user/dto/create-user.dto';
-import { Game, gameStates } from './entities/game.entity';
-import { GameController } from './game.controller';
-import { GameService } from './game.service';
-import { UpdateGameDto } from './dto/update-game.dto';
-import { UserService } from '../../users/user/user.service';
-import { AllTestingModule } from '../../shared/test.module';
+import { CreateGameDto } from '../pong/game/dto/create-game.dto';
+import { CreateUserDto } from '../users/user/dto/create-user.dto';
+import { Game, gameStates } from '../pong/game/entities/game.entity';
+import { GameController } from '../pong/game/game.controller';
+import { GameService } from '../pong/game/game.service';
+import { UpdateGameDto } from '../pong/game/dto/update-game.dto';
+import { UserService } from '../users/user/user.service';
+import { AllTestingModule } from '../shared/test.module';
 
 describe('Game unit tests', () => {
 	let service: GameService;
