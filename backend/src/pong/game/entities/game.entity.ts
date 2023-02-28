@@ -31,7 +31,7 @@ export class Game {
 	@Column({ default: 10 })
 	score_to_win?: number;
 
-	@Column({ default: null }) // '#FFC0CB'
+	@Column({ default: '#FFFFFF' })
 	background_color?: string;
 
 	@IsEnum(gameStates)
