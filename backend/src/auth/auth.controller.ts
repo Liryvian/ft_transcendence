@@ -24,6 +24,7 @@ import { Api42Guard } from './api42.guard';
 import AuthGuard from './auth.guard';
 import { TwoFaService } from './twofa/twofa.service';
 import { Activate2FaDto } from './dto/activate2fa.dto';
+import { TwoFaGuard } from './twofa/twofa.guard';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -51,7 +52,6 @@ export class AuthController {
 	@Get('/auth/oauth42')
 	async recieveCodeFromApi(
 		@Query('code') code: string,
-		@Query('state') state: string,
 		@Res() response: Response,
 	): Promise<any> {
 		const rawTokenData = await this.authService.exchangeCodeForToken(code);
@@ -63,6 +63,7 @@ export class AuthController {
 		const validatedTokenData: IntraTokendataDto =
 			await this.authService.validateIntraTokenData(rawTokenData);
 
+		// user data from API
 		const userData = await this.authService.getAuthenticatedApiUser(
 			validatedTokenData,
 		);
@@ -71,11 +72,11 @@ export class AuthController {
 			throw new BadRequestException(userData.message);
 		}
 
-		const { redirectLocation, userId } = await this.authService.processUserData(
+		const { redirectLocation, user } = await this.authService.processUserData(
 			userData,
 		);
 
-		await this.authService.login(userId, response);
+		await this.authService.login(user, response);
 		return response.redirect(redirectLocation);
 	}
 
@@ -96,7 +97,7 @@ export class AuthController {
 			) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
-			await this.authService.login(user.id, response);
+			await this.authService.login(user, response);
 			return user;
 		} catch (e) {
 			throw new BadRequestException('Invalid user/password combination');
@@ -128,15 +129,15 @@ export class AuthController {
 		return this.twoFaService.generateSecret();
 	}
 
+	@UseGuards(TwoFaGuard)
 	@Post('auth/activate_2fa')
 	twofa_activate(
 		@Body() activate2FaDto: Activate2FaDto,
 		@Req() request: Request,
 	) {
 		const isValid = this.twoFaService.verifySetupCode(activate2FaDto);
-		if (isValid) {
-			// save to user from request
-			return true;
+		if (!isValid) {
+			return false;
 		}
 
 		return false;
