@@ -141,9 +141,8 @@ describe('Auth', () => {
 						id: u4.user.id,
 					},
 				];
-				console.log(await userService.findAll());
 				const usersMatchingUsername: User[] = await userService.findAll({
-					where: { name: ILike('fakeintrauser%') },
+					where: { name: ILike('fakeintrause%') },
 				});
 				expect(usersMatchingUsername).toHaveLength(5);
 
