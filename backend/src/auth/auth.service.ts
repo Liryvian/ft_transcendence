@@ -117,16 +117,28 @@ export class AuthService {
 		}
 	}
 
-	async login(user: User, response: Response) {
-		const jwt = await this.jwtService.signAsync({
+	login(user: User, response: Response, with_2fa: boolean = false) {
+		const jwt = this.jwtService.sign({
 			id: user.id,
-			require_2fa: user.has_2fa_on,
-			validated_2fa: false,
+			require_2fa: user.two_factor_required,
+			validated_2fa: with_2fa,
 		});
+		console.log(
+			'contents of JWT: ',
+			JSON.stringify(
+				{
+					id: user.id,
+					require_2fa: user.two_factor_required,
+					validated_2fa: with_2fa,
+				},
+				null,
+				2,
+			),
+		);
 		response.cookie('jwt', jwt, { httpOnly: true });
 	}
 
-	async logout(response: Response) {
+	logout(response: Response) {
 		response.clearCookie('jwt');
 	}
 

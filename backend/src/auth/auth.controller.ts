@@ -14,7 +14,7 @@ import {
 	Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user/user.service';
 import { AllowUnauthorizedRequest, AuthService } from './auth.service';
@@ -23,8 +23,13 @@ import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
 import AuthGuard from './auth.guard';
 import { TwoFaService } from './twofa/twofa.service';
-import { Activate2FaDto } from './dto/activate2fa.dto';
+import { TwoFaDto } from './dto/twofa.dto';
 import { TwoFaGuard } from './twofa/twofa.guard';
+import { Achievement } from '../users/achievements/entities/achievement.entity';
+import { AchievementsService } from '../users/achievements/achievements.service';
+import { UserAchievementsService } from '../users/user-achievements/user-achievements.service';
+import { UserAchievement } from '../users/user-achievements/entities/user-achievement.entity';
+import { Like } from 'typeorm';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -34,6 +39,8 @@ export class AuthController {
 		private authService: AuthService,
 		private configService: ConfigService,
 		private twoFaService: TwoFaService,
+		private achievementService: AchievementsService,
+		private userAchievementsService: UserAchievementsService,
 	) {}
 
 	@Get('/auth/authenticate')
@@ -76,7 +83,7 @@ export class AuthController {
 			userData,
 		);
 
-		await this.authService.login(user, response);
+		this.authService.login(user, response);
 		return response.redirect(redirectLocation);
 	}
 
@@ -97,7 +104,7 @@ export class AuthController {
 			) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
-			await this.authService.login(user, response);
+			this.authService.login(user, response);
 			return user;
 		} catch (e) {
 			throw new BadRequestException('Invalid user/password combination');
@@ -107,8 +114,9 @@ export class AuthController {
 	@UseGuards(AuthGuard())
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
-	async logout(@Res({ passthrough: true }) response: Response) {
+	logout(@Res({ passthrough: true }) response: Response) {
 		this.authService.logout(response);
+
 		return {
 			message: 'Success',
 		};
@@ -117,13 +125,15 @@ export class AuthController {
 	@UseGuards(AuthGuard())
 	@Get('logout')
 	@HttpCode(HttpStatus.OK)
-	async logoutGet(@Res({ passthrough: true }) response: Response) {
+	logoutGet(@Res({ passthrough: true }) response: Response) {
 		this.authService.logout(response);
+
 		return {
 			message: 'Success',
 		};
 	}
 
+	@UseGuards(AuthGuard())
 	@Get('auth/2fa_qr')
 	twofa_get_qr() {
 		return this.twoFaService.generateSecret();
@@ -131,15 +141,76 @@ export class AuthController {
 
 	@UseGuards(TwoFaGuard)
 	@Post('auth/activate_2fa')
-	twofa_activate(
-		@Body() activate2FaDto: Activate2FaDto,
+	async twofa_activate(
+		@Body() twoFaDto: TwoFaDto,
 		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
 	) {
-		const isValid = this.twoFaService.verifySetupCode(activate2FaDto);
-		if (!isValid) {
+		const isValid = this.twoFaService.verify2faCode(twoFaDto);
+
+		if (isValid === false) {
+			return isValid;
+		}
+
+		const userId = await this.authService.userId(request);
+		const user = await this.userService.findOne({ where: { id: userId } });
+
+		try {
+			const twoFaAchievement: Achievement =
+				await this.achievementService.findOne({
+					where: { name: 'You turned on 2fa! Nice job security geek!' },
+				});
+			const currentAchievement: UserAchievement[] =
+				await this.userAchievementsService.findAll({
+					where: {
+						user_id: user.id,
+						achievement_id: twoFaAchievement.id,
+					},
+				});
+			if (currentAchievement.length === 0) {
+				// user does not yet have this achievement, add it
+				await this.userAchievementsService.save({
+					user_id: user.id,
+					achievement_id: twoFaAchievement.id,
+				});
+			}
+		} catch (e) {
+			// ignore if something goes wrong
+		}
+
+		user.two_factor_required = true;
+		user.two_factor_secret = twoFaDto.secret;
+		await this.userService.save(user);
+
+		// replace jwt cookie with updated info
+		this.authService.login(user, response, true);
+		return isValid;
+	}
+
+	@UseGuards(TwoFaGuard)
+	@Post('auth/deactivate_2fa')
+	async twofa_deactivate(
+		@Body() twoFaDto: TwoFaDto,
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		const userId = await this.authService.userId(request);
+		const user = await this.userService.findOne({ where: { id: userId } });
+
+		const isValid = this.twoFaService.verify2faCode({
+			...twoFaDto,
+			secret: user.two_factor_secret,
+		});
+
+		if (isValid === false) {
 			return false;
 		}
 
-		return false;
+		user.two_factor_required = false;
+		user.two_factor_secret = null;
+		await this.userService.save(user);
+
+		this.authService.login(user, response, false);
+		return isValid;
 	}
 }

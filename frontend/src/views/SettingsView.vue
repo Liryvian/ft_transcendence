@@ -40,7 +40,9 @@
 				/>
 				<div class="c_block c_split">
 					<p>
-						<RouterLink :to="{ name: 'turn-on-2fa' }">turn on 2fa</RouterLink>
+						<RouterLink :to="{ name: 'turn-on-2fa' }"
+							>2fa settings</RouterLink
+						>
 					</p>
 				</div>
 				<div class="page_button pb_bottom">

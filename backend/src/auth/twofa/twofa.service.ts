@@ -4,7 +4,7 @@ import { UserService } from '../../users/user/user.service';
 import * as crypto from 'crypto';
 import * as QRCode from 'qrcode';
 import { authenticator } from 'otplib';
-import { Activate2FaDto } from '../dto/activate2fa.dto';
+import { TwoFaDto } from '../dto/twofa.dto';
 
 // we might want to consider encrypting/decrypting the secret
 // instead of saving it plaintext into the db
@@ -40,12 +40,9 @@ export class TwoFaService {
 		};
 	}
 
-	verifySetupCode(activate2FaDto: Activate2FaDto) {
+	verify2faCode(twoFaDto: TwoFaDto) {
 		try {
-			const isValid = authenticator.check(
-				activate2FaDto.token,
-				activate2FaDto.secret,
-			);
+			const isValid = authenticator.check(twoFaDto.token, twoFaDto.secret);
 			return isValid;
 		} catch (e) {
 			console.log(e);

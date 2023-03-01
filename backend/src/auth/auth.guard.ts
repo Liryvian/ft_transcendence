@@ -21,8 +21,6 @@ const AuthGuard = (): Type<CanActivate> => {
 		async canActivate(context: ExecutionContext): Promise<boolean> {
 			const request = context.switchToHttp().getRequest<Request>();
 			try {
-				// jwt should probably have a time element to reject after long absence
-
 				const jwt = request.cookies['jwt'];
 				const validated: JwtDto = this.jwtService.verify(jwt);
 
@@ -35,7 +33,7 @@ const AuthGuard = (): Type<CanActivate> => {
 				const user = await this.dataSource.getRepository(User).findOneBy({
 					id: validated.id,
 				});
-				if (user.has_2fa_on) {
+				if (user.two_factor_required) {
 					if (
 						!validated.hasOwnProperty('require_2fa') ||
 						validated.require_2fa === false ||
