@@ -44,11 +44,6 @@ interface MovementKeys {
 	s: boolean;
 }
 
-interface Player {
-	score: number;
-	name: string;
-}
-
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
@@ -56,8 +51,6 @@ interface DataObject {
 	gameLoopInterval: number;
 	timeStampStart: DOMHighResTimeStamp;
 	previousTimeStamp: DOMHighResTimeStamp;
-	player_one: Player;
-	player_two: Player;
 	score_player_one: Ref<number>;
 	score_player_two: Ref<number>;
 	gameStatus: number;
@@ -89,14 +82,6 @@ export default defineComponent({
 				ArrowDown: false,
 				w: false,
 				s: false,
-			},
-			player_one: {
-				score: 0,
-				name: '',
-			},
-			player_two: {
-				score: 0,
-				name: '',
 			},
 			gameLoopInterval: 0,
 			timeStampStart: 0,
