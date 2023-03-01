@@ -54,7 +54,7 @@ describe('Auth', () => {
 					intra_id: fakeUserData.id,
 				});
 
-				const { redirectLocation, userId } = await authService.processUserData(
+				const { redirectLocation, user } = await authService.processUserData(
 					fakeUserData,
 				);
 				expect(redirectLocation).toContain('recurring_user');
@@ -63,14 +63,14 @@ describe('Auth', () => {
 				});
 				expect(users).toHaveLength(1);
 				expect(users[0].name).toBe('not_fakeintrauser');
-				expect(users[0].id).toBe(userId);
+				expect(users[0].id).toBe(user.id);
 				await userService.remove(users[0].id);
 			});
 		});
 
 		describe('for new user', () => {
 			it('should create a new user and return a redirect to profile', async () => {
-				const { redirectLocation, userId } = await authService.processUserData(
+				const { redirectLocation, user } = await authService.processUserData(
 					fakeUserData,
 				);
 				expect(redirectLocation).toContain('new_user');
@@ -124,11 +124,11 @@ describe('Auth', () => {
 					},
 					{
 						name: fakeUserData.login + '_22346',
-						id: u1.userId,
+						id: u1.user.id,
 					},
 					{
 						name: fakeUserData.login + '_2091',
-						id: u2.userId,
+						id: u2.user.id,
 					},
 					{
 						name: fakeUserData.login + '_2091_4894',
@@ -138,7 +138,7 @@ describe('Auth', () => {
 						name: expect.stringMatching(
 							/^fakeintrauser_2091_4894_[a-fA-F0-9]{1,8}$/,
 						),
-						id: u4.userId,
+						id: u4.user.id,
 					},
 				];
 
