@@ -2,8 +2,8 @@
 	<div>
 		<div class="page_box_wrapper">
 			<PlayerNames
-				:player_left="getPlayerOne?.name"
-				:player_right="getPlayerTwo?.name"
+				:player_left="getPlayerOne?.name ?? 'Player One'"
+				:player_right="getPlayerTwo?.name ?? 'Player Two'"
 			/>
 
 			<div class="page_box">
@@ -262,7 +262,7 @@ export default defineComponent({
 		},
 
 		finishGame() {
-			const upadteGameDto = {
+			const updateGameDto = {
 				score_player_one: score_player_one.value,
 				score_player_two: score_player_two.value,
 				state: 'done',
@@ -270,7 +270,7 @@ export default defineComponent({
 			this.gameStatus = GameStatusEnum.GAME_OVER;
 			this.socket.off('updatePosition', this.render);
 			// patch game in database with the updated scores
-			patchRequest(`games/${this.currentgameId}`, upadteGameDto);
+			patchRequest(`games/${this.currentgameId}`, updateGameDto);
 			const winner: string | undefined =
 				score_player_one > score_player_two
 					? this.getPlayerOne?.name
