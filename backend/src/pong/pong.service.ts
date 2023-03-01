@@ -117,6 +117,7 @@ export class PongService {
 		const ballPos: Position = gameState.ball.position;
 		const paddleP1: Paddle = gameState.playerOnePaddle;
 		const paddleP2: Paddle = gameState.playerTwoPaddle;
+		const midWayPoint = 50;
 
 		//  check collision for paddle one
 		if (this.doesHitPaddle(gameState.ball, paddleP1, gameState.canvas)) {
@@ -127,7 +128,7 @@ export class PongService {
 			this.changeBallDirection(paddleP2, gameState.ball.position.y, 1);
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
 			//  check which side the ball hit to decide who the winner is
-			ballPos.x > 80 ? ++gameState.scorePlayerOne : ++gameState.scorePlayerTwo;
+			ballPos.x > midWayPoint ? ++gameState.scorePlayerOne : ++gameState.scorePlayerTwo;
 			this.pointIsOver = true;
 			if (
 				gameState.scorePlayerOne >= gameState.scoreToWin ||
