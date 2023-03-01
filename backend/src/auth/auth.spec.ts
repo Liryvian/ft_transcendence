@@ -57,7 +57,7 @@ describe('Auth', () => {
 				const { redirectLocation, user } = await authService.processUserData(
 					fakeUserData,
 				);
-				expect(redirectLocation).toContain('recurring_user');
+				expect(redirectLocation).toContain('profiles');
 				const users = await userService.findAll({
 					where: { intra_id: fakeUserData.id },
 				});
@@ -73,7 +73,7 @@ describe('Auth', () => {
 				const { redirectLocation, user } = await authService.processUserData(
 					fakeUserData,
 				);
-				expect(redirectLocation).toContain('new_user');
+				expect(redirectLocation).toContain('settings');
 				const users = await userService.findAll({
 					where: { intra_id: fakeUserData.id },
 				});
@@ -141,7 +141,7 @@ describe('Auth', () => {
 						id: u4.user.id,
 					},
 				];
-
+				console.log(await userService.findAll());
 				const usersMatchingUsername: User[] = await userService.findAll({
 					where: { name: ILike('fakeintrauser%') },
 				});
