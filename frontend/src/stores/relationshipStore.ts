@@ -3,17 +3,22 @@ import type { User } from '@/types/User';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import { io, type Socket } from 'socket.io-client';
+import { useUserStore } from './userStore';
 
 export const useRelationshipStore = defineStore('relationship', {
 	//  actions == data definitions
 	state: () => ({
 		relationships: <Relationship[]>[],
-		me: {} as User,
+		// me: {} as User,
 		isInitialized: false,
 		socket: {} as Socket,
 	}),
 	// getters == computed values
-	getters: {},
+	getters: {
+		myId: () => {
+			return useUserStore().me.id;
+		},
+	},
 	// actions == methods
 	actions: {
 		async initialize() {
@@ -25,7 +30,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				withCredentials: true,
 			});
 			this.isInitialized = true;
-			await this.refreshMe();
+			// await this.refreshMe();
 			await this.refreshRelationships();
 			console.log('relationships ready!');
 		},
@@ -36,22 +41,22 @@ export const useRelationshipStore = defineStore('relationship', {
 			).data;
 		},
 
-		async refreshMe() {
-			try {
-				this.me = await (await getRequest(`me`)).data;
-			} catch (e) {
-				console.error(e);
-				return [];
-			}
-		},
+		// async refreshMe() {
+		// 	try {
+		// 		this.me = await (await getRequest(`me`)).data;
+		// 	} catch (e) {
+		// 		console.error(e);
+		// 		return [];
+		// 	}
+		// },
 
 		isMatchingRelationship(userId: number, rel: Relationship): boolean {
-			const myId: number = this.me.id;
+			// const myId: number = useUserStore().me.id;
 			const sourceId: number = rel.source;
 			const targetId: number = rel.target;
 
 			return (
-				(targetId === myId || sourceId === myId) &&
+				(targetId === this.myId || sourceId === this.myId) &&
 				(sourceId === userId || targetId === userId)
 			);
 		},
@@ -61,10 +66,10 @@ export const useRelationshipStore = defineStore('relationship', {
 		getSingleRelationship(userId: number) {
 			const placeHolderRelationship: Relationship = {
 				id: -1,
-				source: this.me.id,
+				source: this.myId,
 				target: userId,
 				type: 'none',
-				specifier_id: this.me.id,
+				specifier_id: this.myId,
 			};
 
 			// check if the relationship already exists
@@ -100,7 +105,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				type,
 				specifier_id: sourceId,
 			};
-			console.log('setting specifierId to me: ', sourceId === this.me.id);
+			console.log('setting specifierId to me: ', sourceId === this.myId);
 			await patchRequest(
 				`user-relationships/${relationshipId}`,
 				updateRelationshipDto,
@@ -110,7 +115,7 @@ export const useRelationshipStore = defineStore('relationship', {
 		// check if relationship already exists
 		// else initialize it with specific type required
 		async updateRelationship(targetId: number, type: string) {
-			const sourceId: number = this.me.id;
+			const sourceId: number = this.myId;
 			const existingRelationship: Relationship = await (
 				await getRequest(`user-relationships/${sourceId}/${targetId}`)
 			).data;
