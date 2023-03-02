@@ -77,7 +77,7 @@ export class AuthService {
 			});
 
 			return Promise.resolve({
-				redirectLocation: '/?type=recurring_user',
+				redirectLocation: '/profiles',
 				user: user,
 			});
 		} catch (e) {
@@ -101,7 +101,7 @@ export class AuthService {
 						const user = await this.userService.save(newUser);
 
 						return Promise.resolve({
-							redirectLocation: '/?type=new_user',
+							redirectLocation: '/settings',
 							user: user,
 						});
 					} catch (e) {

@@ -229,8 +229,8 @@ const seedData = {
 		[(permissionsEnum.POST, permissionsEnum.READ)].forEach((p) => {
 			[flamink, renoster].forEach((u) => {
 				cups.push({
-					chat_id: flaminkRenoster,
-					user_id: u,
+					chat_id: flaminkRenoster.id,
+					user_id: u.id,
 					permission: p,
 				});
 			});
@@ -240,8 +240,8 @@ const seedData = {
 		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
 			[vaalboskat, renoster].forEach((u) => {
 				cups.push({
-					chat_id: vaalboskatRenoster,
-					user_id: u,
+					chat_id: vaalboskatRenoster.id,
+					user_id: u.id,
 					permission: p,
 				});
 			});
@@ -254,8 +254,8 @@ const seedData = {
 			permissionsEnum.POST,
 		].forEach((p) => {
 			cups.push({
-				chat_id: desert,
-				user_id: renoster,
+				chat_id: desert.id,
+				user_id: renoster.id,
 				permission: p,
 			});
 		});
@@ -269,8 +269,8 @@ const seedData = {
 		].forEach((p) => {
 			[aardwolf, flamink, renoster, vaalboskat].forEach((u) => {
 				cups.push({
-					chat_id: zoo,
-					user_id: u,
+					chat_id: zoo.id,
+					user_id: u.id,
 					permission: p,
 				});
 			});
@@ -281,8 +281,8 @@ const seedData = {
 			.map(
 				(u) =>
 					({
-						chat_id: desert,
-						user_id: u,
+						chat_id: desert.id,
+						user_id: u.id,
 						permission: permissionsEnum.READ,
 					} as CreateChatUserPermissionDto),
 			)
@@ -291,28 +291,28 @@ const seedData = {
 		// add wildsbok user blocked + left to every chat
 		[desert, zoo]
 			.map((c) => ({
-				chat_id: c,
-				user_id: wildsbok,
+				chat_id: c.id,
+				user_id: wildsbok.id,
 				permission: permissionsEnum.BLOCKED,
 			}))
 			.forEach((cup) => cups.push(cup));
 		[desert, zoo]
 			.map((c) => ({
-				chat_id: c,
-				user_id: wildsbok,
+				chat_id: c.id,
+				user_id: wildsbok.id,
 				permission: permissionsEnum.LEFT,
 			}))
 			.forEach((cup) => cups.push(cup));
 
 		// add wildsbok to Zzz sleepy channel
 		cups.push({
-			chat_id: zzzSleepy,
-			user_id: wildsbok,
+			chat_id: zzzSleepy.id,
+			user_id: wildsbok.id,
 			permission: permissionsEnum.POST,
 		});
 		cups.push({
-			chat_id: zzzSleepy,
-			user_id: wildsbok,
+			chat_id: zzzSleepy.id,
+			user_id: wildsbok.id,
 			permission: permissionsEnum.READ,
 		});
 		return cups;
