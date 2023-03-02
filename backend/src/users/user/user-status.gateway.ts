@@ -29,8 +29,6 @@ export class StatusGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		);
 		try {
 			const userId: number = this.authService.userIdFromCookieString(cookie);
-			// we don't realy care if it's a valid user id for removing it right?
-			// await this.userService.findOne({ where: { id: userId } });
 
 			if (this.onlineList[userId]) {
 				// if userId is in onlineList
