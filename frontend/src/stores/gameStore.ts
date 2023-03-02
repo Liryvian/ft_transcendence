@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import { gameStates, type Game, updateGameState, UpdateGameState } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest, patchRequest } from '@/utils/apiRequests';
+=======
+import { gameStates, type Game } from '@/types/game.fe';
+import { getRequest } from '@/utils/apiRequests';
+>>>>>>> main
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 
@@ -14,12 +19,13 @@ export const useGameStore = defineStore('games', {
 		// getMyGames: () => useUserStore().getMe.games,
 		getAllGames: (state) => state.allGames,
 	},
+
 	// actions == methods
 	actions: {
 		async refreshAllGames() {
 			try {
-				const data = await getRequest('games');
-				this.allGames = data.data;
+				this.allGames = await (await getRequest('games')).data;
+				console.log(this.allGames);
 				await useUserStore().refreshAllUsers();
 			} catch (e) {
 				console.error(e);
@@ -27,14 +33,10 @@ export const useGameStore = defineStore('games', {
 			}
 		},
 
-		async refreshMyGames() {
-			await useUserStore().refreshMe();
-		},
-
 		async refreshData() {
-			await this.refreshMyGames();
 			await this.refreshAllGames();
 		},
+
 
 		async updateGame(updateGameState: UpdateGameState){
 			try {
@@ -50,6 +52,5 @@ export const useGameStore = defineStore('games', {
 				// this.handleFormError(e.response.data);
 			}
 		},
-
 	},
 });

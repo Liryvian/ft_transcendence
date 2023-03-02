@@ -19,7 +19,7 @@ export const useRelationshipStore = defineStore('relationship', {
 		async initialize() {
 			if (this.isInitialized === false) {
 				// for when sockets are setup
-				this.isInitialized = false;
+				this.isInitialized = true;
 				this.socket = io('http://localhost:8080/user/relationship');
 				await this.refreshRelationships();
 				await this.refreshMe();
@@ -111,7 +111,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				await getRequest(`user-relationships/${sourceId}/${targetId}`)
 			).data;
 			let updatedRelId: number = 0;
-			
+
 			if (existingRelationship) {
 				this.updateExistingRelationship(
 					existingRelationship.id,

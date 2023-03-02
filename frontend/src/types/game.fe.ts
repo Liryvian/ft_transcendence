@@ -35,7 +35,9 @@ export interface Game {
 	updated_at: Date;
 
 	player_one: User;
+	p1_score: number;
 	player_two: User;
+	p2_score: number;
 }
 
 export interface ElementPositions {
@@ -57,3 +59,13 @@ export interface UpdateGameState {
 	player_two: number;
 	state: gameStates;
 }
+
+const GameStatusEnum = Object.freeze({
+	GAME_OVER: 0,
+	POINT_OVER: 1,
+	PLAYING: 2
+	// GAME_OVER: 0,
+})
+
+export default GameStatusEnum;
+
