@@ -149,6 +149,13 @@ export class User {
 		}, []);
 	}
 
+	@Exclude()
+	@Column({ nullable: true })
+	two_factor_secret: string;
+
+	@Column({ default: false })
+	two_factor_required: boolean;
+
 	@CreateDateColumn()
 	created_at: Date;
 

@@ -22,6 +22,7 @@ import { ChatsModule } from './chats/chats.module';
 import { SocketModule } from './socket/socket.module';
 import { AppService } from './app.service';
 import { PongModule } from './pong/pong.module';
+import { TwoFaModule } from './auth/twofa/twofa.module';
 
 @Module({
 	imports: [
@@ -34,6 +35,7 @@ import { PongModule } from './pong/pong.module';
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AuthModule,
+		TwoFaModule,
 		SharedModule,
 		ChatModule,
 		MessageModule,

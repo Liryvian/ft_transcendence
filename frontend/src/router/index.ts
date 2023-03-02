@@ -10,12 +10,22 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/SettingsView.vue'),
+			component: () => import('../views/ChatView.vue'),
 		},
 		{
 			path: '/settings',
-			name: 'settings',
-			component: () => import('../views/SettingsView.vue'),
+			children: [
+				{
+					path: '/settings',
+					name: 'settings',
+					component: () => import('../views/SettingsView.vue'),
+				},
+				{
+					path: 'turn-on-2fa',
+					name: 'turn-on-2fa',
+					component: () => import('../views/Settings2fa.vue'),
+				},
+			],
 		},
 		{
 			path: '/game',
@@ -23,10 +33,20 @@ const router = createRouter({
 			component: () => import('../views/GameView.vue'),
 		},
 		{
-			path: '/chat/:currentChat?',
-			name: 'chat',
-			props: true,
-			component: () => import('../views/ChatView.vue'),
+			path: '/chat',
+			children: [
+				{
+					path: '/chat',
+					name: 'chat',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: ':currentChat?',
+					name: 'singlechat',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
 		},
 		{
 			path: '/profiles',

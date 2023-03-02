@@ -78,7 +78,7 @@ export class AuthService {
 
 			return Promise.resolve({
 				redirectLocation: '/?type=recurring_user',
-				userId: user.id,
+				user: user,
 			});
 		} catch (e) {
 			if (e instanceof NotFoundException) {
@@ -102,7 +102,7 @@ export class AuthService {
 
 						return Promise.resolve({
 							redirectLocation: '/?type=new_user',
-							userId: user.id,
+							user: user,
 						});
 					} catch (e) {
 						if (!(e instanceof QueryFailedError)) {
@@ -117,8 +117,24 @@ export class AuthService {
 		}
 	}
 
-	async login(id: number, response: Response) {
-		const jwt = await this.jwtService.signAsync({ id: id });
+	login(user: User, response: Response, with_2fa: boolean = false) {
+		const jwt = this.jwtService.sign({
+			id: user.id,
+			require_2fa: user.two_factor_required,
+			validated_2fa: with_2fa,
+		});
+		console.log(
+			'contents of JWT: ',
+			JSON.stringify(
+				{
+					id: user.id,
+					require_2fa: user.two_factor_required,
+					validated_2fa: with_2fa,
+				},
+				null,
+				2,
+			),
+		);
 		response.cookie('jwt', jwt, { httpOnly: true });
 	}
 
