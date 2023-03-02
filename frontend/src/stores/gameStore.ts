@@ -55,18 +55,18 @@ export const useGameStore = defineStore('games', {
 		) {
 			try {
 				this.errors.length = 0;
-				if (/^#[a-fA-F0-9]{6}$/.test(createdGameForm.background_color)){
-					this.errors.push("Not a valid color");
+				if (
+					/^#[a-fA-F0-9]{6}$/.test(createdGameForm.background_color)
+				) {
+					this.errors.push('Not a valid color');
 					return;
 				}
 				createdGameForm.player_one = useUserStore().me.id;
 				const newGame = await postRequest('games', createdGameForm);
 				newMessage.sender_id = useUserStore().me.id;
-				newMessage.content = '<a href="/games/${newGame.id}">wanna play PONG?</a>';
-				const message = await postRequest(
-					'messages',
-					newMessage,
-				);
+				newMessage.content =
+					'<a href="/games/${newGame.id}">wanna play PONG?</a>';
+				const message = await postRequest('messages', newMessage);
 				await router.push('/game'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
 				// router.push({
 				// 	name: 'game',
