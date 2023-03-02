@@ -29,15 +29,17 @@
 					<div class="c_block c_split">
 						<p>
 							<input
+								tabindex="3"
 								class="link_button"
 								type="submit"
 								value="Login"
 							/>
 							/
-							<a href="/register">Register</a>
+							<a tabindex="4" href="/register">Register</a>
 						</p>
 						<p>
 							<a
+								tabindex="5"
 								href="#"
 								v-on:click.prevent="userStore.login('intra')"
 								>Sign in with 42</a

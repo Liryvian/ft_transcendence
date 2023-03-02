@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import { useSocketStore } from './stores/socketStore';
 import { useUserStore } from './stores/userStore';
 
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshMe();
+	useSocketStore().initializeOnline();
 }
 </script>
 
@@ -36,29 +38,25 @@ if (useUserStore().isLoggedIn) {
 					},
 					```
 			-->
-			<RouterLink :to="{name: 'settings'}">
+			<RouterLink :to="{ name: 'settings' }">
 				<div class="nav_ball"></div>
 				Settings
 			</RouterLink>
-			<RouterLink :to="{name: 'game'}">
+			<RouterLink :to="{ name: 'game' }">
 				<div class="nav_ball"></div>
 				Game
 			</RouterLink>
-			<RouterLink :to="{name: 'chat'}">
+			<RouterLink :to="{ name: 'chat' }">
 				<div class="nav_ball"></div>
 				Chat
 			</RouterLink>
-			<RouterLink :to="{name: 'profiles'}">
+			<RouterLink :to="{ name: 'profiles' }">
 				<div class="nav_ball"></div>
 				Profiles
 			</RouterLink>
-			<RouterLink :to="{name: 'logout'}">
+			<RouterLink :to="{ name: 'logout' }">
 				<div class="nav_ball"></div>
 				Logout
-			</RouterLink>
-			<RouterLink :to="{name: 'elements-to-reuse'}">
-				<div class="nav_ball"></div>
-				elems
 			</RouterLink>
 		</nav>
 	</header>
@@ -72,7 +70,7 @@ header {
 	border-bottom: var(--border-width) solid var(--color-border);
 	padding: 0.2em;
 	background-color: var(--color-background-soft);
-	font-size: 0.9em
+	font-size: 0.9em;
 }
 
 nav {
@@ -93,7 +91,7 @@ nav {
 	top: 50%;
 	transform: translateY(-45%);
 	opacity: 0;
-	left: 0.60em;
+	left: 0.6em;
 	transition: all 0.1s linear;
 }
 
