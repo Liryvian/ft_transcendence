@@ -9,7 +9,13 @@ if (useUserStore().isLoggedIn) {
 
 <template>
 	<header>
-		<nav id="mainnav">
+		<nav v-if="useUserStore().isLoggedIn === false">
+			<RouterLink :to="{ name: 'login' }">
+				<div class="nav_ball"></div>
+				login
+			</RouterLink>
+		</nav>
+		<nav v-else id="mainnav">
 			<!--
 					// NOTE / TODO
 
