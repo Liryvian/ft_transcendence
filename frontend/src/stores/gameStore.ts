@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-import { gameStates, type Game, updateGameState, UpdateGameState } from '@/types/game.fe';
+import {  type Game,  UpdateGameState } from '@/types/game.fe';
 import type { User } from '@/types/User';
 import { getRequest, patchRequest } from '@/utils/apiRequests';
-=======
-import { gameStates, type Game } from '@/types/game.fe';
-import { getRequest } from '@/utils/apiRequests';
->>>>>>> main
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 
