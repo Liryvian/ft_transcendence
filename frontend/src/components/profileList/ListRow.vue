@@ -19,7 +19,7 @@
 
 	<!-- Route to chat -->
 	<div v-if="!isBlocked(relationship.type)">
-		<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
+		<RouterLink :to="{ name: 'dm', params: { dmId: user.id }}">Chat</RouterLink>
 	</div>
 	<div v-else>
 		<span class="grayedOut">Chat</span>
@@ -98,13 +98,6 @@ export default defineComponent({
 		relationship: {
 			type: Object as PropType<Relationship>,
 			required: true,
-		},
-	},
-
-	methods: {
-		async routeToChat(userId: number) {
-			console.log(`Starting chat with ${userId}`);
-			await router.push({ name: 'chat', params: { profile_id: userId } });
 		},
 	},
 });

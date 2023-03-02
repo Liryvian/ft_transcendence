@@ -43,8 +43,14 @@ const router = createRouter({
 					component: () => import('../views/ChatView.vue'),
 				},
 				{
-					path: ':currentChat?',
-					name: 'singlechat',
+					path: 'dm/:dmId',
+					name: 'dm',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'channel/:channelId?',
+					name: 'channel',
 					props: true,
 					component: () => import('../views/ChatView.vue'),
 				},
