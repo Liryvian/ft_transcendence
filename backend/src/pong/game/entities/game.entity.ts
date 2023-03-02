@@ -9,7 +9,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { IsEnum, IsIn, IsString } from 'class-validator';
+import { IsEnum } from 'class-validator';
 
 export enum gameStates {
 	ACTIVE = 'active',
