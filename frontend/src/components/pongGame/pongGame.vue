@@ -53,7 +53,7 @@ export default defineComponent({
 	},
 
 	beforeRouteLeave(to, from, next) {
-		if (this.getCurrentGame?.player_two.id === this.getMyId || this.getCurrentGame?.player_one.id === this.getMyId) {
+		if (this.isPlayerOne || this.isPlayerTwo) {
 			this.finishGame();
 		}
 		next();
@@ -78,6 +78,8 @@ export default defineComponent({
 			score_player_one,
 			score_player_two,
 			gameStatus,
+			playerOneIsInGame,
+			playerTwoIsInGame
 		} = storeToRefs(gameStore);
 		return {
 			gameStore,
@@ -89,6 +91,8 @@ export default defineComponent({
 			score_player_one,
 			score_player_two,
 			gameStatus,
+			playerOneIsInGame,
+			playerTwoIsInGame
 		};
 	},
 
@@ -114,6 +118,20 @@ export default defineComponent({
 		},
 		getMyId(){
 			return useUserStore().me.id;
+		},
+		isPlayerOne(){
+			return this.getCurrentGame?.player_one.id === this.getMyId;
+		},
+		isPlayerTwo(){
+			return this.getCurrentGame?.player_two.id === this.getMyId;
+		},
+		isPlayer() {
+			 return this.isPlayerOne || this.isPlayerTwo;
+		},
+		gameIsReadyToStart() {
+			console.log("PLayer one is in: ", this.playerOneIsInGame)
+			console.log("PLayer two is in: ", this.playerTwoIsInGame)
+			return this.playerOneIsInGame && this.playerTwoIsInGame
 		}
 	},
 
@@ -211,7 +229,7 @@ export default defineComponent({
 				this.previousTimeStamp = timeStamp;
 			}
 			const elapsedTime = timeStamp - this.previousTimeStamp;
-			const intervalMs = 10; // refresh rate of a browser is 1/60th of a sec (17)
+			const intervalMs = 17; // refresh rate of a browser is 1/60th of a sec (17)
 			// redraws after intervalMs
 			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
@@ -270,25 +288,26 @@ export default defineComponent({
 			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
-			//  when either of the users disconnects the game finsishes
+			//  when either of the users disconnects game finsishes
 			this.socket.on('disconnect', this.finishGame);
 		},
 	},
 
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		console.log(this.getCurrentGame?.player_two.id,  this.getCurrentGame?.player_one.id,  this.getMyId) 
-		if (this.getCurrentGame?.player_two.id === this.getMyId || this.getCurrentGame?.player_one.id === this.getMyId) {
-			console.log("setting eventlisteners")
+		console.log(this.getCurrentGame?.player_two.id,  this.getCurrentGame?.player_one.id,  this.getMyId);
+		if (this.isPlayer) {
+			console.log("\n\n\nsetting eventlisteners\n\n\n")
 			document.addEventListener('keydown', this.keyDown);
 			document.addEventListener('keyup', this.keyUp);
 		}
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
 		this.setSocketOn();
 		// MAIN GAME LOOP
-		if (this.getCurrentGame?.player_two.id === this.getMyId) {
+
+		this.socket.on("GameCanStart", () => {
 			this.startGameLoop();
-		}
+		})
 	},
 });
 </script>

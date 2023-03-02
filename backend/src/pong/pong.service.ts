@@ -12,9 +12,9 @@ import {
 function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
 	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
+		return 0;
 		directionAndSpeed *= min;
 	}
-	return 0.2;
 	return directionAndSpeed / 10;
 }
 
@@ -25,8 +25,8 @@ export class PongService {
 
 	private readonly ballRadius = 1;
 
-	private dy = randomDirection(-4, 4) || 0.3;
-	private dx = randomDirection(-4, 4) || 0.3;
+	private dy = randomDirection(-5, 5) || 0.3;
+	private dx = randomDirection(-5, 5) || 0.3;
 
 	public pointIsOver = false;
 	public gameIsFinished = false;
@@ -155,12 +155,12 @@ export class PongService {
 
 	moveUp(paddlePosY: number) {
 		const topMax = this.paddleHeight / 2;
-		return Math.max(paddlePosY - 1, topMax);
+		return Math.max(paddlePosY - 2, topMax);
 	}
 
 	moveDown(paddlePosY: number) {
 		const bottomMax = 100 - this.paddleHeight / 2;
-		return Math.min(paddlePosY + 1, bottomMax);
+		return Math.min(paddlePosY + 2, bottomMax);
 	}
 
 	// checks if paddle is at max x/y otherwise move it 1% up/down
