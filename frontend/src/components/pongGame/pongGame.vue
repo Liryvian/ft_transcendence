@@ -76,26 +76,34 @@ export default defineComponent({
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
-			socket: io('http://localhost:8080/pong', { withCredentials: true }),
-			isPressed: {
-				ArrowUp: false,
-				ArrowDown: false,
-				w: false,
-				s: false,
-			},
-			gameLoopInterval: 0,
-			timeStampStart: 0,
-			previousTimeStamp: 0,
-			score_player_two,
-			score_player_one,
-			gameStatus: GameStatusEnum.PLAYING,
+			// socket: io('http://localhost:8080/pong', { withCredentials: true }),
+			// isPressed: {
+			// 	ArrowUp: false,
+			// 	ArrowDown: false,
+			// 	w: false,
+			// 	s: false,
+			// },
+			// gameLoopInterval: 0,
+			// timeStampStart: 0,
+			// previousTimeStamp: 0,
+			// score_player_two,
+			// score_player_one,
+			// gameStatus: GameStatusEnum.PLAYING,
 		};
 	},
 
 	setup() {
 		const gameStore = useGameStore();
 		// gameStore.initialize();
-		const { allGames } = storeToRefs(gameStore);
+		const {
+			allGames,
+			isPressed,
+			gameLoopInterval,
+			timeStampStart,
+			previousTimeStamp,
+			score_player_one,
+			score_player_two,
+		} = storeToRefs(gameStore);
 		console.log('all games: ', allGames);
 		return {
 			gameStore,
