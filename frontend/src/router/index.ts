@@ -103,12 +103,6 @@ const router = createRouter({
 			component: () => import('../views/RegisterView.vue'),
 		},
 		{
-			path: '/game-invite/:game_id?',
-			name: 'game-invite',
-			component: () => import('../views/GameInvite.vue'),
-			props: true,
-		},
-		{
 			path: '/request-game/:profile_id?/:chat_id?',
 			name: 'request-game',
 			component: () => import('../views/RequestGame.vue'),
