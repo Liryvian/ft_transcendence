@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+
 import { useGameStore } from './stores/gameStore';
 import { useRelationshipStore } from './stores/relationshipStore';
 import { useUserStore } from './stores/userStore';
+import { useSocketStore } from './stores/socketStore';
 
 if (useUserStore().isLoggedIn) {
+	useSocketStore().initializeOnline();
 	useUserStore().refreshData();
 	useGameStore().refreshAllGames();
 	useRelationshipStore().initialize();
@@ -53,10 +56,6 @@ if (useUserStore().isLoggedIn) {
 			<RouterLink to="/logout">
 				<div class="nav_ball"></div>
 				Logout
-			</RouterLink>
-			<RouterLink to="/elements-to-reuse">
-				<div class="nav_ball"></div>
-				elems
 			</RouterLink>
 		</nav>
 	</header>
