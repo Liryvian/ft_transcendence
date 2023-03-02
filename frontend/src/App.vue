@@ -20,7 +20,7 @@ if (useUserStore().isLoggedIn) {
 		<nav v-if="useUserStore().isLoggedIn === false">
 			<RouterLink :to="{ name: 'login' }">
 				<div class="nav_ball"></div>
-				login
+				login / register
 			</RouterLink>
 		</nav>
 		<nav v-else id="mainnav">
