@@ -63,10 +63,9 @@ export const useUserStore = defineStore('users', {
 
 		async login(loginType: string, loginForm?: LoginForm) {
 			try {
-				if (loginType === 'intra') {
-					location.href = `${apiUrl}/auth/authenticate`;
-				} else {
-					await postRequest('login', loginForm);
+				const user: User = (await postRequest('login', loginForm)).data;
+				if (user.two_factor_required === true) {
+					// go to 2fa
 				}
 				await this.refreshData();
 				useSocketStore().initializeOnline();

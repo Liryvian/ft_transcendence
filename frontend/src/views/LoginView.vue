@@ -38,12 +38,9 @@
 							<a tabindex="4" href="/register">Register</a>
 						</p>
 						<p>
-							<a
-								tabindex="5"
-								href="#"
-								v-on:click.prevent="userStore.login('intra')"
-								>Sign in with 42</a
-							>
+							<a tabindex="5" href="/api/auth/authenticate">
+								Sign in with 42
+							</a>
 						</p>
 					</div>
 					<div v-if="userStore.errors.length">
