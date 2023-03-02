@@ -9,7 +9,7 @@ import {
 	PrimaryGeneratedColumn,
 	UpdateDateColumn,
 } from 'typeorm';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsIn, IsString } from 'class-validator';
 
 export enum gameStates {
 	ACTIVE = 'active',
@@ -28,7 +28,7 @@ export class Game {
 	@Column({ default: 0 })
 	score_player_two: number;
 
-	@Column({ default: 10 })
+	@Column({ default: 0 })
 	score_to_win?: number;
 
 	@Column({ default: null })

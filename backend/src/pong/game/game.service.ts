@@ -4,8 +4,6 @@ import { AbstractService } from '../../shared/abstract.service';
 import { In, Repository } from 'typeorm';
 import { Game, gameStates } from './entities/game.entity';
 import { CreateGameDto } from './dto/create-game.dto';
-import { User } from '../../users/user/entities/user.entity';
-import { userInfo } from 'os';
 
 @Injectable()
 export class GameService extends AbstractService<Game> {
@@ -118,7 +116,9 @@ export class GameService extends AbstractService<Game> {
 			(await this.getActiveGame(playerTwoId)) !== null;
 
 		if (playerOneHasActiveGames || playerTwoHasActiveGames) {
-			throw new BadRequestException('This player is currently playing a game, please come back and try it again later');
+			throw new BadRequestException(
+				'This player is currently playing a game, please come back and try it again later',
+			);
 		}
 
 		return true;

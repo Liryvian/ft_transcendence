@@ -9,7 +9,6 @@ export const useGameStore = defineStore('games', {
 	state: () => ({
 		allGames: <Game[]>[],
 		errors: [] as String[],
-
 	}),
 	// getters == computed values
 	getters: {
@@ -49,32 +48,19 @@ export const useGameStore = defineStore('games', {
 			await this.refreshAllGames();
 		},
 
-		// isAvailable(): boolean {
-		// 	const me: User = useUserStore().getMe;
-		// 	if (!me.isOnline)
-		// 	   return false;
-		// 	me.games.forEach((game: Game) => {
-		// 		if (game.state === gameStates.ACTIVE) return false;
-		// 	});
-		// 	return true;
-		// },
-
-		async createGame(createdGameForm: CreateGameForm){
+		async createGame(createdGameForm: CreateGameForm) {
 			try {
 				createdGameForm.player_one = useUserStore().me.id;
-				await postRequest('games', createdGameForm);
-				await router.push('/chat'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
-				// await router.push({
-				// 	name: 'chat',
-				// 	params: { profile_id: createdGameForm.player_two},
-				// });
 				this.errors.length = 0;
+				const newGame = await postRequest('games', createdGameForm);
+				// await router.push('/games'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
+				router.push({
+					name: 'game',
+					params: { profile_id: newGame.data.id },
+				});
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
 			}
-		}
+		},
 	},
-
-	});
-
-
+});

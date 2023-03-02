@@ -18,9 +18,10 @@ const router = createRouter({
 			component: () => import('../views/SettingsView.vue'),
 		},
 		{
-			path: '/game',
+			path: '/game/:currentGame?',
 			name: 'game',
 			component: () => import('../views/GameView.vue'),
+			props: true,
 		},
 		{
 			path: '/chat/:currentChat?',
