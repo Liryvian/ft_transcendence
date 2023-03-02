@@ -28,8 +28,8 @@ const router = createRouter({
 			],
 		},
 		{
-			path: '/game',
-			name: 'game',
+			path: '/active-games',
+			name: 'activeGames',
 			component: () => import('../views/GameView.vue'),
 		},
 		{
@@ -47,6 +47,12 @@ const router = createRouter({
 					component: () => import('../views/ChatView.vue'),
 				},
 			],
+		},
+		{
+			path: '/pong/:currentGame?',
+			name: 'pong',
+			props: true,
+			component: () => import('../components/pongGame/pongGame.vue'),
 		},
 		{
 			path: '/profiles',
