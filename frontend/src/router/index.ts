@@ -10,24 +10,51 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/SettingsView.vue'),
+			component: () => import('../views/ChatView.vue'),
 		},
 		{
 			path: '/settings',
-			name: 'settings',
-			component: () => import('../views/SettingsView.vue'),
+			children: [
+				{
+					path: '/settings',
+					name: 'settings',
+					component: () => import('../views/SettingsView.vue'),
+				},
+				{
+					path: 'turn-on-2fa',
+					name: 'turn-on-2fa',
+					component: () => import('../views/Settings2fa.vue'),
+				},
+			],
 		},
 		{
-			path: '/game/:currentGame?',
-			name: 'game',
+			path: '/active-games',
+			name: 'activeGames',
+
 			component: () => import('../views/GameView.vue'),
 			props: true,
 		},
 		{
-			path: '/chat/:currentChat?',
-			name: 'chat',
+			path: '/chat',
+			children: [
+				{
+					path: '/chat',
+					name: 'chat',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: ':currentChat?',
+					name: 'singlechat',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
+		},
+		{
+			path: '/pong/:currentGame?',
+			name: 'pong',
 			props: true,
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../components/pongGame/pongGame.vue'),
 		},
 		{
 			path: '/profiles',
@@ -96,8 +123,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	const isLoggedIn: boolean = useUserStore().isLoggedIn;
-	console.log('isLogged in router?: ', isLoggedIn);
-	console.log('Path: ', to.name);
+
 	if (!isLoggedIn && to.name !== 'login' && to.name !== 'register') {
 		return { name: 'login' };
 	} else if ((to.name === 'login' || to.name === 'register') && isLoggedIn) {

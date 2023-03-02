@@ -1,7 +1,9 @@
 import { Socket } from 'socket.io';
+import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 
 export type ChatId = number;
 export type UserId = number;
+export type SocketId = string;
 
 export interface ChatInfo {
 	chatId: ChatId;
@@ -11,6 +13,7 @@ export interface ChatInfo {
 
 export type ChatList = Record<UserId, Socket[]>;
 export type MessageList = Record<ChatId, ChatInfo>;
+export type OnlineList = Record<UserId, SocketId[]>;
 
 export type Chat_Type = 'dm' | 'channel';
 export type ActionType = 'new' | 'update' | 'delete';
@@ -29,6 +32,7 @@ export interface Chat_Member {
 	id: number;
 	name: string;
 	avatar?: string;
+	permissions?: permissionsEnum[];
 }
 
 export interface Chat_List_Item {

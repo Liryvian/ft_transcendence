@@ -17,7 +17,10 @@ import { Game } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
-import { ChatUserPermission } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import {
+	ChatUserPermission,
+	permissionsEnum,
+} from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { IsArray, IsNumber, IsString } from 'class-validator';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
 
@@ -31,8 +34,11 @@ export class UserInChat {
 	@IsString()
 	name?: string;
 
+	@IsString()
+	avatar?: string;
+
 	@IsArray()
-	permissions: String[];
+	permissions: permissionsEnum[];
 }
 
 @Entity('users')
@@ -104,12 +110,12 @@ export class User {
 	achievements: Achievement[];
 
 	@Exclude()
-	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source_id)
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.source)
 	@JoinColumn({ name: 'relationshipSource' })
 	relationshipSource: UserRelationship[];
 
 	@Exclude()
-	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target_id)
+	@OneToMany(() => UserRelationship, (r: UserRelationship) => r.target)
 	@JoinColumn({ name: 'relationshipTarget' })
 	relationshipTarget: UserRelationship[];
 
@@ -142,6 +148,13 @@ export class User {
 			return acc;
 		}, []);
 	}
+
+	@Exclude()
+	@Column({ nullable: true })
+	two_factor_secret: string;
+
+	@Column({ default: false })
+	two_factor_required: boolean;
 
 	@CreateDateColumn()
 	created_at: Date;

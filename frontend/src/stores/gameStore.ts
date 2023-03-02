@@ -1,4 +1,4 @@
-import type { CreateGameForm, Game, gameStates } from '@/types/game.fe';
+import type { CreateGameForm, Game} from '@/types/game.fe';
 import type { NewMessage } from '@/types/chat';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -31,8 +31,8 @@ export const useGameStore = defineStore('games', {
 
 		async refreshAllGames() {
 			try {
-				const data = await getRequest('games');
-				this.allGames = data.data;
+				this.allGames = await (await getRequest('games')).data;
+				console.log(this.allGames);
 				await useUserStore().refreshAllUsers();
 			} catch (e) {
 				console.error(e);
@@ -40,12 +40,7 @@ export const useGameStore = defineStore('games', {
 			}
 		},
 
-		async refreshMyGames() {
-			await useUserStore().refreshMe();
-		},
-
 		async refreshData() {
-			await this.refreshMyGames();
 			await this.refreshAllGames();
 		},
 

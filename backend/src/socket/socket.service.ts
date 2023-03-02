@@ -10,6 +10,7 @@ import {
 	SingleMessage,
 	SocketMessage,
 } from './socket.types';
+import { jwtCookieFromHandshakeString } from './socket.utils';
 
 @Injectable()
 export class SocketService {
@@ -29,7 +30,7 @@ export class SocketService {
 	}
 
 	async joinRoom(chatId: ChatId, socket: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {
@@ -58,14 +59,14 @@ export class SocketService {
 	}
 
 	leaveRoom(chatId: ChatId, socket: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		// leave a room...
 	}
 
 	async leaveRooms(socket: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {
@@ -82,13 +83,6 @@ export class SocketService {
 		} catch (e) {
 			console.log('something went wrong on leaving rooms');
 		}
-	}
-
-	jwtCookieFromHandshakeString(string: string) {
-		return string
-			.split(' ')
-			.find((cookie) => cookie.startsWith('jwt='))
-			?.slice(4);
 	}
 
 	chatlist_emit(to: string | number[], message: SocketMessage<Chat_List_Item>) {
@@ -110,7 +104,7 @@ export class SocketService {
 	}
 
 	async chatList_subscribe(socket: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {
@@ -121,10 +115,6 @@ export class SocketService {
 				this.chatListSubscribers[userId] = [];
 			}
 			this.chatListSubscribers[userId].push(socket);
-			console.log({
-				userId,
-				sockets: this.chatListSubscribers[userId].map((sock) => sock.id),
-			});
 		} catch (e) {
 			console.log('Error on subscribing to chatlist');
 			console.log(e);
@@ -132,7 +122,7 @@ export class SocketService {
 	}
 
 	async chatList_unsubscribe(socket: Socket) {
-		const cookie: string = this.jwtCookieFromHandshakeString(
+		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {

@@ -36,7 +36,9 @@ export interface Game {
 	updated_at: Date;
 
 	player_one: User;
+	p1_score: number;
 	player_two: User;
+	p2_score: number;
 }
 
 export interface CreateGameForm {
@@ -52,4 +54,20 @@ export interface ElementPositions {
 	playerTwoPaddle: Paddle;
 	ball: Ball;
 }
+
+export interface GameRequest {
+	id: number;
+	user: User;
+
+	created_at: Date;
+	updated_at: Date;
+}
+
+const GameStatusEnum = Object.freeze({
+	GAME_OVER: 0,
+	POINT_OVER: 1,
+	PLAYING: 2
+})
+
+export default GameStatusEnum;
 

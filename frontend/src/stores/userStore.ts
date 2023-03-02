@@ -1,5 +1,4 @@
 import router from '@/router';
-import { ValidRelationships, type Relationship } from '@/types/Relationship';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import type {
@@ -10,12 +9,15 @@ import type {
 } from '../types/User';
 import { useStorage } from '@vueuse/core';
 import { apiUrl } from '@/types/Constants';
+import type { StatusUpdate, StatusList } from '@/types/Sockets';
+import { useSocketStore } from './socketStore';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
 	state: () => ({
 		allUsers: [] as User[],
 		me: {} as User,
+		onlineStatus: {} as StatusList,
 		errors: [] as String[],
 		// persists data accross refreshes
 		isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
@@ -43,6 +45,18 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
+		getOnlineStatus(userId: string | number) {
+			return this.onlineStatus[userId] === true;
+		},
+		updateOnlineStatus(statusUpdate: StatusUpdate) {
+			this.onlineStatus[statusUpdate.user_id] = statusUpdate.status;
+		},
+		initOnlineStatus(statusses: StatusUpdate[]) {
+			statusses.forEach((statusUpdate) => {
+				this.onlineStatus[statusUpdate.user_id] = statusUpdate.status;
+			});
+		},
+
 		getUserById(id: number) {
 			return this.allUsers.find((user) => user.id === id);
 		},
@@ -54,7 +68,8 @@ export const useUserStore = defineStore('users', {
 				} else {
 					await postRequest('login', loginForm);
 				}
-				await this.refreshMe();
+				await this.refreshData();
+				useSocketStore().initializeOnline();
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
@@ -67,6 +82,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await getRequest('logout');
 				this.isLoggedIn = false;
+				useSocketStore().deinitializeOnline();
 				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {
@@ -128,73 +144,9 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
-		async initializeRelationship(source: number, target: number) {
-			const createRelationship = {
-				source_id: source,
-				target_id: target,
-				type: 'none',
-			};
-			return await (
-				await postRequest('user-relationships/', createRelationship)
-			).data;
-		},
-
-		async getRelationship(source: number, target: number) {
-			const existingRel: Relationship = await (
-				await getRequest(`user-relationships/${source}/${target}`)
-			).data;
-
-			if (!existingRel) {
-				return this.initializeRelationship(source, target);
-			}
-			return existingRel;
-		},
-
 		async refreshData() {
 			await this.refreshMe();
 			await this.refreshAllUsers();
-		},
-
-		isMatchingRelationship(userId: number, rel: Relationship): boolean {
-			const myId: number = this.me.id;
-			const sourceId: number = rel.source_id.id;
-			const targetId: number = rel.target_id.id;
-
-			return (
-				(targetId === myId || sourceId === myId) &&
-				(sourceId === userId || targetId === userId)
-			);
-		},
-
-		getExistingRelationship(userId: number): Relationship {
-			for (let i = 0; i < this.me.relationships.length; i++) {
-				const rel: Relationship = this.me.relationships[i];
-				if (this.isMatchingRelationship(userId, rel)) {
-					return rel;
-				}
-			}
-			return this.me.relationships[0];
-		},
-
-		async updateRelationship(userId: number, type: string) {
-			const rel: Relationship = await this.getRelationship(
-				userId,
-				this.me.id,
-			);
-			await patchRequest(`user-relationships/${rel.id}`, { type });
-			await this.refreshData();
-		},
-
-		getCurrentRel(userId: number): Relationship {
-			return this.getExistingRelationship(userId);
-		},
-
-		isFriend(type: string): boolean {
-			return type === ValidRelationships.FRIEND;
-		},
-
-		isBlocked(type: string): boolean {
-			return type === ValidRelationships.BLOCKED;
 		},
 	},
 });

@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
@@ -60,6 +66,9 @@ export class Chat {
 	toJSON() {
 		return instanceToPlain(this);
 	}
+
+	@CreateDateColumn()
+	created_at: Date;
 }
 
 export class ChatUser {

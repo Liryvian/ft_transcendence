@@ -1,9 +1,13 @@
 <template>
-	<div v-for="member in visible_avatars" class="c_asset c_asset__circle">
-		<img
-			:src="`/api/avatars/${member.avatar}`"
-			:alt="`Avatar of ${member.name}`"
-		/>
+	<div class="c_media__asset" :class="is_online">
+		<div v-for="member in visible_avatars" class="c_asset c_asset__circle">
+			<img
+				:src="`/api/avatars/${
+					member.avatar ?? 'tmp_default_avatar.png'
+				}`"
+				:alt="`Avatar of ${member.name}`"
+			/>
+		</div>
 	</div>
 </template>
 
@@ -28,7 +32,26 @@ export default defineComponent({
 			default: '',
 		},
 	},
+	setup() {
+		const userStore = useUserStore();
+
+		return {
+			userStore,
+		};
+	},
 	computed: {
+		is_online(): String {
+			if (this.chat.type === 'dm') {
+				const otherUser: Chat_Member = this.chat.users.filter(
+					(user) => user.id !== this.userStore.me.id,
+				)[0];
+				if (this.userStore.getOnlineStatus(otherUser.id)) {
+					return 'c_asset--online';
+				}
+				return 'c_asset--offline';
+			}
+			return 'c_asset--multi';
+		},
 		visible_avatars(): Chat_Member[] {
 			const fallback: Chat_Member = {
 				id: -1,
@@ -46,7 +69,7 @@ export default defineComponent({
 			// extract me from array
 			const me = possibleUsers.splice(
 				possibleUsers.findIndex(
-					(user) => user.id === useUserStore().me.id,
+					(user) => user.id === this.userStore.me.id,
 				),
 				1,
 			);
@@ -54,7 +77,7 @@ export default defineComponent({
 			if (this.chat.type === 'dm') {
 				// remove myself
 				const users = possibleUsers.filter(
-					(user) => user.id !== useUserStore().me.id,
+					(user) => user.id !== this.userStore.me.id,
 				);
 				// return a slice of length 1 (should for DM always be the "other" unless something went wrong..)
 				return [fallback, ...users].slice(-1);
@@ -100,7 +123,9 @@ export default defineComponent({
 				return score_a - score_b;
 			});
 			// return a slice of length 3 (should now always be at least 2, yourself + fallback)
-			return [fallback, me[0], ...sorted].slice(-3);
+			return [fallback, me[0], ...sorted]
+				.filter((el) => el !== undefined)
+				.slice(-3);
 		},
 	},
 });
