@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-import {  type Game,  UpdateGameState } from '@/types/game.fe';
-import type { User } from '@/types/User';
-import { getRequest, patchRequest } from '@/utils/apiRequests';
-=======
 import type { CreateGameForm, Game, UpdateGameState } from '@/types/game.fe';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import type { NewMessage } from '@/types/chat';
->>>>>>> 2d5747cbe6a89a329a5e8e83da51c22c751c1f1e
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 import router from '@/router';
