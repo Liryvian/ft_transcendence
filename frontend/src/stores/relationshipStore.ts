@@ -17,13 +17,16 @@ export const useRelationshipStore = defineStore('relationship', {
 	// actions == methods
 	actions: {
 		async initialize() {
-			if (this.isInitialized === false) {
-				// for when sockets are setup
-				this.isInitialized = true;
-				this.socket = io('http://localhost:8080/user/relationship');
-				await this.refreshRelationships();
-				await this.refreshMe();
-			}
+			console.log('IsInitialzed:', this.isInitialized);
+			// if (this.isInitialized === false) {
+			// for when sockets are setup
+			this.isInitialized = true;
+			this.socket = io('http://localhost:8080/user/relationship');
+			this;
+			await this.refreshRelationships();
+			await this.refreshMe();
+			console.log('relationships ready!');
+			// }
 		},
 
 		async refreshRelationships() {
@@ -111,7 +114,7 @@ export const useRelationshipStore = defineStore('relationship', {
 				await getRequest(`user-relationships/${sourceId}/${targetId}`)
 			).data;
 			let updatedRelId: number = 0;
-			
+
 			if (existingRelationship) {
 				this.updateExistingRelationship(
 					existingRelationship.id,

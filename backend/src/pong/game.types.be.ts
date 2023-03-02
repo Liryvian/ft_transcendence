@@ -22,6 +22,7 @@ export interface GameState {
 	scoreToWin: number;
 	scorePlayerOne: number;
 	scorePlayerTwo: number;
+	roomName: string;
 }
 
 export interface MovementKeys {

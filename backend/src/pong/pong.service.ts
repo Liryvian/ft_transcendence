@@ -14,6 +14,7 @@ function randomDirection(min: number, max: number) {
 	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
 		directionAndSpeed *= min;
 	}
+	return 0.2;
 	return directionAndSpeed / 10;
 }
 
@@ -64,6 +65,7 @@ export class PongService {
 			scoreToWin: 0,
 			scorePlayerOne: 0,
 			scorePlayerTwo: 0,
+			roomName: '',
 		};
 		return newGameState;
 	}
@@ -128,7 +130,9 @@ export class PongService {
 			this.changeBallDirection(paddleP2, gameState.ball.position.y, 1);
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
 			//  check which side the ball hit to decide who the winner is
-			ballPos.x > midWayPoint ? ++gameState.scorePlayerOne : ++gameState.scorePlayerTwo;
+			ballPos.x > midWayPoint
+				? ++gameState.scorePlayerOne
+				: ++gameState.scorePlayerTwo;
 			this.pointIsOver = true;
 			if (
 				gameState.scorePlayerOne >= gameState.scoreToWin ||

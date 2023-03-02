@@ -94,8 +94,9 @@ export default defineComponent({
 
 	setup() {
 		const gameStore = useGameStore();
+		gameStore.initialize();
 		const { allGames } = storeToRefs(gameStore);
-
+		console.log('all games: ', allGames);
 		return {
 			gameStore,
 			allGames,
@@ -117,6 +118,7 @@ export default defineComponent({
 			return this.allGames.find((game) => game.id === this.currentgameId);
 		},
 		getPlayerOne() {
+			console.log('cur game');
 			console.log('p1:', this.getCurrentGame?.player_one);
 			return this.getCurrentGame?.player_one;
 		},
@@ -268,7 +270,8 @@ export default defineComponent({
 		this.context = (this.$refs.GameRef as any).getContext('2d');
 		document.addEventListener('keydown', this.keyDown);
 		document.addEventListener('keyup', this.keyUp);
-
+		console.log('Emmitting join room with: ', this.currentGame);
+		this.socket.emit('joinGameRoom', this.getCurrentGame);
 		this.socket.on('elementPositions', this.render);
 		this.socket.on(
 			'pointOver',

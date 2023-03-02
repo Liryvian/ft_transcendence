@@ -6,8 +6,8 @@ import { useUserStore } from './stores/userStore';
 
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshData();
-	useGameStore().refreshAllGames();
-	useRelationshipStore().initialize();
+	// useGameStore().refreshAllGames();
+	// useRelationshipStore().initialize();
 }
 </script>
 

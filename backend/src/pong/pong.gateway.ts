@@ -5,8 +5,9 @@ import {
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { GameState, MovementKeys } from './game.types.be';
+import { Game } from './game/entities/game.entity';
 import { PongService } from './pong.service';
 
 @WebSocketGateway({
@@ -22,21 +23,34 @@ export class PongGateway implements OnGatewayConnection {
 
 	private gameState: GameState;
 
-	handleConnection() {
+	buildUniqueRoomId(roomInfo: Game): string {
+		return `${roomInfo.id}${Math.min(
+			roomInfo.player_one.id,
+			roomInfo.player_two.id,
+		)}${Math.max(roomInfo.player_one.id, roomInfo.player_two.id)}`;
+	}
+
+	handleConnection(client: Socket) {
 		console.log('\n!Socket is connected!\n');
 		this.pongService.gameIsFinished = false;
 		this.pongService.pointIsOver = false;
 		this.gameState = this.pongService.createNewGameState();
+		client.on('joinGameRoom', (game: Game) => {
+			console.log('Joining gameroom: ', game);
+			const roomName = this.buildUniqueRoomId(game);
+			client.join(roomName);
+			this.gameState.roomName = roomName;
+		});
 		//  set score to win with requestGame info
-		this.gameState.scoreToWin = 2;
+		this.gameState.scoreToWin = 5;
 	}
 
 	sendPositionOfElements(@MessageBody() gameState: GameState) {
-		this.server.emit('elementPositions', gameState);
+		this.server.in(this.gameState.roomName).emit('elementPositions', gameState);
 	}
 
 	sendPointOver(@MessageBody() player: string) {
-		this.server.emit('pointOver', player);
+		this.server.in(this.gameState.roomName).emit('pointOver', player);
 	}
 
 	@SubscribeMessage('resetAfterPointFinished')
@@ -60,11 +74,11 @@ export class PongGateway implements OnGatewayConnection {
 				scorePlayerOne: this.gameState.scorePlayerOne,
 				scorePlayerTwo: this.gameState.scorePlayerTwo,
 			};
-			this.server.emit('pointOver', scores);
+			this.server.in(this.gameState.roomName).emit('pointOver', scores);
 			this.pongService.pointIsOver = false;
 		}
 		if (this.pongService.gameIsFinished) {
-			this.server.emit('gameOver');
+			this.server.in(this.gameState.roomName).emit('gameOver');
 			this.pongService.gameIsFinished = false;
 		}
 	}

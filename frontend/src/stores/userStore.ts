@@ -54,6 +54,7 @@ export const useUserStore = defineStore('users', {
 					await postRequest('login', loginForm);
 				}
 				await this.refreshData();
+				console.log('User is loggedin');
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;

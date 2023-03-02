@@ -16,6 +16,7 @@ export const useSocketStore = defineStore('sockets', {
 			in_rooms: [],
 		},
 	}),
+
 	actions: {
 		initialize() {
 			if (this.chats.initialized === false) {

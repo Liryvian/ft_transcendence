@@ -57,10 +57,8 @@ import type { Relationship } from '@/types/Relationship';
 
 export default defineComponent({
 	name: 'ListRow',
-
-	created() {
-		console.log('rel in listrow', this.relationship);
-	},
+	computed: {},
+	created() {},
 
 	setup(props) {
 		const relationshipStore = useRelationshipStore();
@@ -74,9 +72,11 @@ export default defineComponent({
 			disconnectSocket,
 		};
 	},
-	mounted() {
-		// this.socke
-		this.joinRoomOnConnect(this.relationship);
+	async mounted() {
+		console.log('rel in listrow', this.relationship);
+		if (this.relationship.id > 0) {
+			this.joinRoomOnConnect(this.relationship);
+		}
 	},
 
 	unmounted() {

@@ -57,8 +57,7 @@ export interface GameRequest {
 const GameStatusEnum = Object.freeze({
 	GAME_OVER: 0,
 	POINT_OVER: 1,
-	PLAYING: 2
-	// GAME_OVER: 0,
-})
+	PLAYING: 2,
+});
 
 export default GameStatusEnum;
