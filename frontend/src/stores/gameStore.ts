@@ -11,7 +11,7 @@ export const useGameStore = defineStore('games', {
 	}),
 	// getters == computed values
 	getters: {
-		getMyGames: () => useUserStore().getMe.games,
+		// getMyGames: () => useUserStore().getMe.games,
 		getAllGames: (state) => state.allGames,
 	},
 	// actions == methods
@@ -51,14 +51,5 @@ export const useGameStore = defineStore('games', {
 			}
 		},
 
-		isAvailable(): boolean {
-			const me: User = useUserStore().getMe;
-			// if (!me.isOnline)
-			// retunr false;
-			me.games.forEach((game: Game) => {
-				if (game.state === gameStates.ACTIVE) return false;
-			});
-			return true;
-		},
 	},
 });
