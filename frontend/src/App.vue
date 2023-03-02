@@ -7,6 +7,7 @@ import { useUserStore } from './stores/userStore';
 import { useSocketStore } from './stores/socketStore';
 
 if (useUserStore().isLoggedIn) {
+	useUserStore().refreshMe();
 	useSocketStore().initializeOnline();
 	useUserStore().refreshData();
 	useGameStore().refreshAllGames();
@@ -16,7 +17,13 @@ if (useUserStore().isLoggedIn) {
 
 <template>
 	<header>
-		<nav id="mainnav">
+		<nav v-if="useUserStore().isLoggedIn === false">
+			<RouterLink :to="{ name: 'login' }">
+				<div class="nav_ball"></div>
+				login
+			</RouterLink>
+		</nav>
+		<nav v-else id="mainnav">
 			<!--
 					// NOTE / TODO
 
@@ -37,23 +44,23 @@ if (useUserStore().isLoggedIn) {
 					},
 					```
 			-->
-			<RouterLink to="/settings">
+			<RouterLink :to="{ name: 'settings' }">
 				<div class="nav_ball"></div>
 				Settings
 			</RouterLink>
-			<RouterLink to="/active-games">
+			<RouterLink :to="{ name: 'activeGames' }">
 				<div class="nav_ball"></div>
 				Game
 			</RouterLink>
-			<RouterLink to="/chat">
+			<RouterLink :to="{ name: 'chat' }">
 				<div class="nav_ball"></div>
 				Chat
 			</RouterLink>
-			<RouterLink to="/profiles">
+			<RouterLink :to="{ name: 'profiles' }">
 				<div class="nav_ball"></div>
 				Profiles
 			</RouterLink>
-			<RouterLink to="/logout">
+			<RouterLink :to="{ name: 'logout' }">
 				<div class="nav_ball"></div>
 				Logout
 			</RouterLink>
@@ -94,7 +101,7 @@ nav {
 	transition: all 0.1s linear;
 }
 
-nav a.router-link-exact-active .nav_ball {
+nav a.router-link-active .nav_ball {
 	opacity: 1;
 }
 
