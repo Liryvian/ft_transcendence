@@ -109,7 +109,7 @@ describe('Game unit tests', () => {
 					id: expect.any(Number),
 					score_player_one: 0,
 					score_player_two: 0,
-					score_to_win: 5,
+					score_to_win: 0,
 					background_color: 0,
 					state: gameStates.PENDING,
 					created_at: expect.any(Date),
