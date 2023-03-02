@@ -155,6 +155,7 @@ export class AuthController {
 		const userId = await this.authService.userId(request);
 		const user = await this.userService.findOne({ where: { id: userId } });
 
+		// try assigning achievement to user
 		try {
 			const twoFaAchievement: Achievement =
 				await this.achievementService.findOne({

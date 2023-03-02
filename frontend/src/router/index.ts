@@ -23,10 +23,18 @@ const router = createRouter({
 			component: () => import('../views/GameView.vue'),
 		},
 		{
-			path: '/chat/:currentChat?',
+			path: '/chat',
 			name: 'chat',
 			props: true,
 			component: () => import('../views/ChatView.vue'),
+			children: [
+				{
+					path: ':currentChat?',
+					name: 'chat',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
 		},
 		{
 			path: '/profiles',
@@ -90,7 +98,12 @@ const router = createRouter({
 router.beforeEach(async (to) => {
 	const isLoggedIn: boolean = useUserStore().isLoggedIn;
 
-	if (!isLoggedIn && to.name !== 'login' && to.name !== 'register') {
+	if (
+		!isLoggedIn &&
+		to.name !== 'login' &&
+		to.name !== 'register' &&
+		to.name !== '2fa'
+	) {
 		return { name: 'login' };
 	} else if ((to.name === 'login' || to.name === 'register') && isLoggedIn) {
 		return { name: 'home' };

@@ -9,7 +9,13 @@ if (useUserStore().isLoggedIn) {
 
 <template>
 	<header>
-		<nav id="mainnav">
+		<nav v-if="useUserStore().isLoggedIn === false">
+			<RouterLink :to="{ name: 'login' }">
+				<div class="nav_ball"></div>
+				login
+			</RouterLink>
+		</nav>
+		<nav v-else id="mainnav">
 			<!--
 					// NOTE / TODO
 
@@ -91,6 +97,7 @@ nav {
 	transition: all 0.1s linear;
 }
 
+nav a.router-link-active .nav_ball,
 nav a.router-link-exact-active .nav_ball {
 	opacity: 1;
 }

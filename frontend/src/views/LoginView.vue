@@ -9,7 +9,7 @@
 					method="post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="userStore.login('local', loginForm)"
+					@submit.prevent="userStore.login(loginForm)"
 				>
 					<InputField
 						tabindex="1"
@@ -37,11 +37,12 @@
 							<a href="/register">Register</a>
 						</p>
 						<p>
-							<a
-								href="#"
-								v-on:click.prevent="userStore.login('intra')"
-								>Sign in with 42</a
-							>
+							<!--
+
+									MAKE SURE THIS WORKS
+
+							-->
+							<a href="/api/auth/authenticate">Sign in with 42</a>
 						</p>
 					</div>
 					<div v-if="userStore.errors.length">

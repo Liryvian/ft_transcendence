@@ -46,13 +46,11 @@ export const useUserStore = defineStore('users', {
 			return this.allUsers.find((user) => user.id === id);
 		},
 
-		async login(loginType: string, loginForm?: LoginForm) {
+		async login(loginForm?: LoginForm) {
 			try {
-				if (loginType === 'intra') {
-					location.href = `${apiUrl}/auth/authenticate`;
-					return ;
-				}
-				const loginResult = await (await postRequest('login', loginForm)).data;
+				const loginResult = await (
+					await postRequest('login', loginForm)
+				).data;
 				if (loginResult === '2fa') {
 					// handle it
 				}
