@@ -225,10 +225,8 @@ const seedData = {
 		const zoo = chats.find((c) => c.name === 'Zoo').id;
 		const zzzSleepy = chats.find((c) => c.name === 'Zzz sleepy').id;
 
-		[
-			// Add flamink and renoster to their DM
-			(permissionsEnum.POST, permissionsEnum.READ),
-		].forEach((p) => {
+		// Add flamink and renoster to their DM
+		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
 			[flamink, renoster].forEach((u) => {
 				cups.push({
 					chat_id: flaminkRenoster,
