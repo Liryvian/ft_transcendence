@@ -110,7 +110,7 @@ describe('Game unit tests', () => {
 					score_player_one: 0,
 					score_player_two: 0,
 					score_to_win: 0,
-					background_color: 0,
+					background_color: null,
 					state: gameStates.PENDING,
 					created_at: expect.any(Date),
 					updated_at: expect.any(Date),
