@@ -9,7 +9,7 @@
 					method="Post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="createGame(createGameForm)"
+					@submit.prevent="createGame(createGameForm,newMessage)"
 				>
 					<InputField
 						label="score_to_win"
@@ -47,6 +47,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
 import type { CreateGameForm } from '@/types/game.fe';
+import type { NewMessage } from '@/types/Chat';
 
 export default defineComponent({
 	name: 'GameRequest',
@@ -56,6 +57,7 @@ export default defineComponent({
 	},
 	props: {
 		profile_id: { type: String, required: true },
+		chat_id: {type: String, required: true},
 	},
 	computed: {
 		getNamePlayerTwo(): string {
@@ -82,12 +84,19 @@ export default defineComponent({
 			player_one: 0, // assign in createGame()
 			player_two: Number(props.profile_id),
 		});
+		let newMessage: NewMessage = reactive({
+			sender_id: Number(0),
+			chat: Number(props.chat_id),
+			content: 'wanna play PONG?',
+		});
+
 		return {
 			gameStore,
 			errors,
 			createGame,
 			allUsers,
 			createGameForm,
+			newMessage,
 		};
 	},
 });

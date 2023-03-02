@@ -76,7 +76,7 @@ const router = createRouter({
 			component: () => import('../views/RegisterView.vue'),
 		},
 		{
-			path: '/request-game/:profile_id?',
+			path: '/request-game/:profile_id?/:chat_id?',
 			name: 'request-game',
 			component: () => import('../views/RequestGame.vue'),
 			props: true,

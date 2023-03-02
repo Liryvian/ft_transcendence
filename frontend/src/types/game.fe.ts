@@ -40,11 +40,11 @@ export interface Game {
 }
 
 export interface CreateGameForm {
-	score_to_win: number,
-	background_color: string,
+	score_to_win: number;
+	background_color: string;
 
-	player_one: number,
-	player_two: number,
+	player_one: number;
+	player_two: number;
 }
 
 export interface ElementPositions {
