@@ -82,6 +82,27 @@ export class TwoFaController {
 		return isValid;
 	}
 
+	@Post('validate')
+	async twofa_validate(
+		@Body() twoFaDto: TwoFaDto,
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		try {
+			const userId = await this.authService.userId(request);
+			const user = await this.userService.findOne({ where: { id: userId } });
+
+			const isValid = this.twoFaService.verify2faCode({
+				token: twoFaDto.token,
+				secret: user.two_factor_secret,
+			});
+
+			this.authService.login(user, response, true);
+			return isValid;
+		} catch (e) {}
+		return false;
+	}
+
 	// should get a guard in next step @UseGuards(TwoFaGuard)
 	@Post('deactivate')
 	async twofa_deactivate(

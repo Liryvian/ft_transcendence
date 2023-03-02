@@ -33,20 +33,10 @@ const router = createRouter({
 			component: () => import('../views/GameView.vue'),
 		},
 		{
-			path: '/chat',
-			children: [
-				{
-					path: '/chat',
-					name: 'chat',
-					component: () => import('../views/ChatView.vue'),
-				},
-				{
-					path: ':currentChat?',
-					name: 'singlechat',
-					props: true,
-					component: () => import('../views/ChatView.vue'),
-				},
-			],
+			path: '/chat/:currentChat?',
+			name: 'chat',
+			props: true,
+			component: () => import('../views/ChatView.vue'),
 		},
 		{
 			path: '/pong/:currentGame?',
