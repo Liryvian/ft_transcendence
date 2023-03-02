@@ -15,9 +15,15 @@ const router = createRouter({
 			component: () => import('../views/SettingsView.vue'),
 		},
 		{
-			path: '/game',
-			name: 'game',
+			path: '/active-games',
+			name: 'activeGames',
 			component: () => import('../views/GameView.vue'),
+		},
+		{
+			path: '/pong/:currentGame?',
+			name: 'pong',
+			props: true,
+			component: () => import('../components/pongGame/pongGame.vue'),
 		},
 		{
 			path: '/chat/:currentChat?',
