@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
-import { useSocketStore } from './stores/socketStore';
+
+import { useGameStore } from './stores/gameStore';
+import { useRelationshipStore } from './stores/relationshipStore';
 import { useUserStore } from './stores/userStore';
+import { useSocketStore } from './stores/socketStore';
 
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshMe();
 	useSocketStore().initializeOnline();
+	useUserStore().refreshData();
+	useGameStore().refreshAllGames();
+	useRelationshipStore().initialize();
 }
 </script>
 
@@ -42,7 +48,7 @@ if (useUserStore().isLoggedIn) {
 				<div class="nav_ball"></div>
 				Settings
 			</RouterLink>
-			<RouterLink :to="{ name: 'game' }">
+			<RouterLink :to="{ name: 'activeGames' }">
 				<div class="nav_ball"></div>
 				Game
 			</RouterLink>

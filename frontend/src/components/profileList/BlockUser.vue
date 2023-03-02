@@ -33,12 +33,9 @@ import { defineComponent, type PropType } from 'vue';
 export default defineComponent({
 	name: 'BlockUser',
 
-	created() {
-		console.log("me:", this.me.id, "Specifier:", this.relationship.specifier_id, "rel:", this.relationship);
-	}, 
 	setup() {
 		const relationshipStore = useRelationshipStore();
-		relationshipStore.refreshMe()
+		relationshipStore.refreshMe();
 		const { updateRelationship } = relationshipStore;
 		const { me } = storeToRefs(relationshipStore);
 		return {
@@ -64,4 +61,3 @@ export default defineComponent({
 	},
 });
 </script>
-
