@@ -98,7 +98,7 @@ export const useUserStore = defineStore('users', {
 			useGameStore().refreshAllGames();
 			useRelationshipStore().initialize();
 			this.isLoggedIn = true;
-			router.push({ name: 'settings' });
+			return router.push({ name: 'settings' });
 		},
 
 		async logout() {
