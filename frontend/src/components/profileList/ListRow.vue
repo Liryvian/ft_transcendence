@@ -63,12 +63,15 @@ import { useUserStore } from '@/stores/userStore';
 export default defineComponent({
 	name: 'ListRow',
 	computed: {},
-	created() {},
+	created() {
+		if (this.relationship.id > 0) {
+			this.joinRoomOnConnect(this.relationship);
+		}
+	},
 
-	setup(props) {
+	setup() {
 		const userStore = useUserStore();
 		const relationshipStore = useRelationshipStore();
-		relationshipStore.initialize();
 		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
 			relationshipStore;
 		return {
@@ -78,12 +81,6 @@ export default defineComponent({
 			joinRoomOnConnect,
 			disconnectSocket,
 		};
-	},
-	async mounted() {
-		console.log('rel in listrow', this.relationship);
-		if (this.relationship.id > 0) {
-			this.joinRoomOnConnect(this.relationship);
-		}
 	},
 
 	unmounted() {

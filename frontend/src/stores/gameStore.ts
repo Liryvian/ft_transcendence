@@ -1,14 +1,14 @@
 import type { Game } from '@/types/game.fe';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import { io, type Socket } from 'socket.io-client';
+// import { io, type Socket } from 'socket.io-client';
 import { useUserStore } from './userStore';
 
 export const useGameStore = defineStore('games', {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
-		socket: {} as Socket,
+		// socket: {} as Socket,
 		isInitialized: false,
 	}),
 	// getters == computed values
@@ -16,17 +16,17 @@ export const useGameStore = defineStore('games', {
 	// actions == methods
 	actions: {
 		async initialize() {
-			useUserStore().refreshData();
+			if (this.isInitialized) {
+				return;
+			}
+			// useUserStore().refreshData();
 			await this.refreshAllGames().then(() => {
 				this.isInitialized = true;
-				this.socket = io('http://localhost:8080/pong', {
-					withCredentials: true,
-				});
+				// this.socket = io('http://localhost:8080/pong', {
+				// 	withCredentials: true,
+				// });
 			});
 			console.log('Game are initialized: ', this.isInitialized);
-			// if (this.isInitialized) {
-			// 	return ;
-			// }
 		},
 
 		async refreshAllGames() {

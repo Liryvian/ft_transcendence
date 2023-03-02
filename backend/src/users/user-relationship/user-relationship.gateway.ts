@@ -1,4 +1,5 @@
 import {
+	ConnectedSocket,
 	MessageBody,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
@@ -44,10 +45,10 @@ export class UserRelationshipGateway
 	//  this way the room name will always be the same no matter which of the two
 	//  users, target or source, is acceessing the room.
 	buildUniqueRoomId(roomInfo: RelationshipRoom): string {
-		return `
-			${roomInfo.id}
-			${Math.min(roomInfo.source, roomInfo.target)}
-			${Math.max(roomInfo.source, roomInfo.target)}`;
+		return `${roomInfo.id}${Math.min(
+			roomInfo.source,
+			roomInfo.target,
+		)}${Math.max(roomInfo.source, roomInfo.target)}`;
 	}
 
 	//  this is only to be able to leave rooms when disconnecting
@@ -61,20 +62,7 @@ export class UserRelationshipGateway
 			this.relationshipObservers[userId].rooms.push(roomName);
 	}
 
-	async handleConnection(client: Socket) {
-		const cookie: string = jwtCookieFromHandshakeString(
-			client.handshake.headers.cookie,
-		);
-		try {
-			const userId: number = this.authService.userIdFromCookieString(cookie);
-			await this.userService.findOne({ where: { id: userId } });
-			client.on('joinRoom', (roomInfo: RelationshipRoom) => {
-				const roomName = this.buildUniqueRoomId(roomInfo);
-				this.saveRoomsObservedPerUser(userId, roomName);
-				client.join(roomName);
-			});
-		} catch (e) {}
-	}
+	handleConnection() {}
 
 	handleDisconnect(client: Socket) {
 		const cookie: string = jwtCookieFromHandshakeString(
@@ -88,6 +76,23 @@ export class UserRelationshipGateway
 				});
 				this.relationshipObservers[userId].rooms = [];
 			}
+		} catch (e) {}
+	}
+
+	@SubscribeMessage('joinRoom')
+	async joinRelationshipRoom(
+		@MessageBody() relationData: RelationshipRoom,
+		@ConnectedSocket() client: Socket,
+	) {
+		const cookie: string = jwtCookieFromHandshakeString(
+			client.handshake.headers.cookie,
+		);
+		try {
+			const userId: number = this.authService.userIdFromCookieString(cookie);
+			await this.userService.findOne({ where: { id: userId } });
+			const roomName = this.buildUniqueRoomId(relationData);
+			this.saveRoomsObservedPerUser(userId, roomName);
+			client.join(roomName);
 		} catch (e) {}
 	}
 

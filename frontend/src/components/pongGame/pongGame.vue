@@ -76,7 +76,7 @@ export default defineComponent({
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
-			socket: io('http://localhost:8080/pong'),
+			socket: io('http://localhost:8080/pong', { withCredentials: true }),
 			isPressed: {
 				ArrowUp: false,
 				ArrowDown: false,
@@ -94,7 +94,7 @@ export default defineComponent({
 
 	setup() {
 		const gameStore = useGameStore();
-		gameStore.initialize();
+		// gameStore.initialize();
 		const { allGames } = storeToRefs(gameStore);
 		console.log('all games: ', allGames);
 		return {
@@ -236,7 +236,7 @@ export default defineComponent({
 				this.gameStatus = GameStatusEnum.PLAYING;
 				this.resetPressedKeys();
 				// reset positions
-				this.socket.emit('resetAfterPointFinished');
+				this.socket!.emit('resetAfterPointFinished');
 
 				// restart game loop
 				window.requestAnimationFrame(this.getUpdatedPositions);

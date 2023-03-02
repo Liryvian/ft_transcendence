@@ -11,6 +11,8 @@ import { useStorage } from '@vueuse/core';
 import { apiUrl } from '@/types/Constants';
 import type { StatusUpdate, StatusList } from '@/types/Sockets';
 import { useSocketStore } from './socketStore';
+import { useRelationshipStore } from './relationshipStore';
+import { useGameStore } from './gameStore';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -71,6 +73,8 @@ export const useUserStore = defineStore('users', {
 				await this.refreshData();
 				console.log('User is loggedin');
 				useSocketStore().initializeOnline();
+				useRelationshipStore().initialize();
+				useGameStore().initialize();
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
@@ -81,8 +85,8 @@ export const useUserStore = defineStore('users', {
 
 		async logout() {
 			try {
-				await getRequest('logout');
 				this.isLoggedIn = false;
+				await getRequest('logout');
 				useSocketStore().deinitializeOnline();
 				router.push({ name: 'login' });
 				this.errors.length = 0;
