@@ -27,8 +27,6 @@ export const useGameStore = defineStore('games', {
 		previousTimeStamp: 0,
 		score_player_two: 0,
 		score_player_one: 0,
-		playerOneIsInGame: false,
-		playerTwoIsInGame: false,
 		gameStatus: GameStatusEnum.PLAYING,
 	}),
 	// getters == computed values

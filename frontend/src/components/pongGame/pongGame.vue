@@ -78,8 +78,6 @@ export default defineComponent({
 			score_player_one,
 			score_player_two,
 			gameStatus,
-			playerOneIsInGame,
-			playerTwoIsInGame
 		} = storeToRefs(gameStore);
 		return {
 			gameStore,
@@ -128,11 +126,6 @@ export default defineComponent({
 		isPlayer() {
 			 return this.isPlayerOne || this.isPlayerTwo;
 		},
-		gameIsReadyToStart() {
-			console.log("PLayer one is in: ", this.playerOneIsInGame)
-			console.log("PLayer two is in: ", this.playerTwoIsInGame)
-			return this.playerOneIsInGame && this.playerTwoIsInGame
-		}
 	},
 
 	methods: {
