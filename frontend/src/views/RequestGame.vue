@@ -1,15 +1,17 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>NEW GAME<br>
-			VS<br>
-			{{ getNamePlayerTwo }}<br></h1>
+			<h1>
+				NEW GAME<br />
+				VS<br />
+				{{ getNamePlayerTwo }}<br />
+			</h1>
 			<div class="c_block c_form_group">
 				<form
 					method="Post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="createGame(createGameForm,newMessage)"
+					@submit.prevent="createGame(createGameForm, newMessage)"
 				>
 					<InputField
 						label="score_to_win"
@@ -57,7 +59,7 @@ export default defineComponent({
 	},
 	props: {
 		profile_id: { type: String, required: true },
-		chat_id: {type: String, required: true},
+		chat_id: { type: String, required: true },
 	},
 	computed: {
 		getNamePlayerTwo(): string {
@@ -89,7 +91,6 @@ export default defineComponent({
 			chat: Number(props.chat_id),
 			content: 'wanna play PONG?',
 		});
-
 		return {
 			gameStore,
 			errors,
