@@ -16,6 +16,7 @@ import { UserService } from '../../users/user/user.service';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
 import { TwoFaDto } from './dto/twofa.dto';
+import { TwoFaGuard } from './twofa.guard';
 import { TwoFaService } from './twofa.service';
 
 @Controller('auth/2fa')
@@ -82,6 +83,7 @@ export class TwoFaController {
 		return isValid;
 	}
 
+	@UseGuards(TwoFaGuard)
 	@Post('validate')
 	async twofa_validate(
 		@Body() twoFaDto: TwoFaDto,
@@ -103,7 +105,7 @@ export class TwoFaController {
 		return false;
 	}
 
-	// should get a guard in next step @UseGuards(TwoFaGuard)
+	@UseGuards(TwoFaGuard)
 	@Post('deactivate')
 	async twofa_deactivate(
 		@Body() twoFaDto: TwoFaDto,
