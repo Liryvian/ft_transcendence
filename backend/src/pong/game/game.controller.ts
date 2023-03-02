@@ -15,7 +15,7 @@ import { UpdateGameDto } from './dto/update-game.dto';
 import { Game } from './entities/game.entity';
 import { AuthGuard } from '../../auth/auth.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('games')
 export class GameController {
 	constructor(private readonly gameService: GameService) {}

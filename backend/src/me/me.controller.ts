@@ -9,7 +9,7 @@ import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dt
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { User } from '../users/user/entities/user.entity';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('me')
 export class MeController {
 	constructor(

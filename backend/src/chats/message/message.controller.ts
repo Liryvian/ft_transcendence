@@ -15,7 +15,7 @@ import { SocketMessage, SingleMessage } from '../../socket/socket.types';
 import { DeleteResult } from 'typeorm';
 import { AuthGuard } from '../../auth/auth.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('messages')
 export class MessageController {
 	constructor(

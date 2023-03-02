@@ -28,7 +28,7 @@ export class TwoFaController {
 		private readonly userAchievementsService: UserAchievementsService,
 	) {}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Get('qr')
 	twofa_get_qr() {
 		return this.twoFaService.generateSecret();
