@@ -30,7 +30,9 @@ const router = createRouter({
 		{
 			path: '/active-games',
 			name: 'activeGames',
+
 			component: () => import('../views/GameView.vue'),
+			props: true,
 		},
 		{
 			path: '/chat',
@@ -99,6 +101,17 @@ const router = createRouter({
 			path: '/register',
 			name: 'register',
 			component: () => import('../views/RegisterView.vue'),
+		},
+		{
+			path: '/request-game/:profile_id?/:chat_id?',
+			name: 'request-game',
+			component: () => import('../views/RequestGame.vue'),
+			props: true,
+		},
+		{
+			path: '/game-invite',
+			name: 'game-invite',
+			component: () => import('../views/GameInvite.vue'),
 		},
 		{
 			path: '/component-test',

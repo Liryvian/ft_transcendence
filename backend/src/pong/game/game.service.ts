@@ -14,10 +14,9 @@ export class GameService extends AbstractService<Game> {
 		super(repository);
 	}
 
-	// if a game exists where both players
-	async getGamesContainingBothUserss(p1: number, p2: number) {
+	async getGamesContainingBothUsers(p1: number, p2: number) {
 		try {
-			const confilcitingGame: Game = await this.findOne({
+			const conflictingGame: Game = await this.findOne({
 				relations: {
 					player_one: true,
 					player_two: true,
@@ -32,7 +31,7 @@ export class GameService extends AbstractService<Game> {
 					},
 				},
 			});
-			return confilcitingGame;
+			return conflictingGame;
 		} catch (e) {
 			return null;
 		}
@@ -106,7 +105,7 @@ export class GameService extends AbstractService<Game> {
 
 		if (getPendingGame) {
 			throw new BadRequestException(
-				'Pending game exists between the two users',
+				'There is already a pending game\n, please wait for a response',
 			);
 		}
 
@@ -117,7 +116,9 @@ export class GameService extends AbstractService<Game> {
 			(await this.getActiveGame(playerTwoId)) !== null;
 
 		if (playerOneHasActiveGames || playerTwoHasActiveGames) {
-			throw new BadRequestException('A player already has an active game');
+			throw new BadRequestException(
+				'This player is currently playing a game, please come back and try it again later',
+			);
 		}
 
 		return true;
