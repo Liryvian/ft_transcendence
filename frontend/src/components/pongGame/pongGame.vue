@@ -36,6 +36,7 @@ import { io, type Socket } from 'socket.io-client';
 import { storeToRefs } from 'pinia';
 import router from '@/router';
 import { patchRequest } from '@/utils/apiRequests';
+import { useUserStore } from '@/stores/userStore';
 
 interface DataObject {
 	context: CanvasRenderingContext2D;
@@ -52,7 +53,9 @@ export default defineComponent({
 	},
 
 	beforeRouteLeave(to, from, next) {
-		this.finishGame();
+		if (this.getCurrentGame?.player_two.id === this.getMyId || this.getCurrentGame?.player_one.id === this.getMyId) {
+			this.finishGame();
+		}
 		next();
 	},
 
@@ -109,6 +112,9 @@ export default defineComponent({
 		getPlayerTwo() {
 			return this.getCurrentGame?.player_two;
 		},
+		getMyId(){
+			return useUserStore().me.id;
+		}
 	},
 
 	methods: {
@@ -181,6 +187,7 @@ export default defineComponent({
 		},
 
 		keyDown(keyPress: KeyboardEvent) {
+			console.log(keyPress)
 			if (this.isPressed[keyPress.key] !== undefined) {
 				this.isPressed[keyPress.key] = true;
 			}
@@ -270,12 +277,18 @@ export default defineComponent({
 
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		document.addEventListener('keydown', this.keyDown);
-		document.addEventListener('keyup', this.keyUp);
+		console.log(this.getCurrentGame?.player_two.id,  this.getCurrentGame?.player_one.id,  this.getMyId) 
+		if (this.getCurrentGame?.player_two.id === this.getMyId || this.getCurrentGame?.player_one.id === this.getMyId) {
+			console.log("setting eventlisteners")
+			document.addEventListener('keydown', this.keyDown);
+			document.addEventListener('keyup', this.keyUp);
+		}
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
 		this.setSocketOn();
 		// MAIN GAME LOOP
-		this.startGameLoop();
+		if (this.getCurrentGame?.player_two.id === this.getMyId) {
+			this.startGameLoop();
+		}
 	},
 });
 </script>
