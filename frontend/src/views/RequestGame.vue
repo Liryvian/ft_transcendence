@@ -77,7 +77,7 @@ export default defineComponent({
 		userStore.refreshData();
 		const { allUsers } = storeToRefs(userStore);
 		const gameStore = useGameStore();
-		gameStore.refreshMyGames();
+		gameStore.refreshAllGames();
 		const { errors } = storeToRefs(gameStore);
 		const { createGame } = gameStore;
 		let createGameForm: CreateGameForm = reactive({

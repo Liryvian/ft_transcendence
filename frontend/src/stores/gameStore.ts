@@ -52,7 +52,7 @@ export const useGameStore = defineStore('games', {
 				this.errors.length = 0;
 				if (
 					/^#[a-fA-F0-9]{6}$/.test(createdGameForm.background_color)
-				) {
+				=== false) {
 					this.errors.push('Not a valid color');
 					return;
 				}
