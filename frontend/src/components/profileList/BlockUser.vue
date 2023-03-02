@@ -27,7 +27,6 @@
 <script lang="ts">
 import { useRelationshipStore } from '@/stores/relationshipStore';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
-import { storeToRefs } from 'pinia';
 import { defineComponent, type PropType } from 'vue';
 
 export default defineComponent({

@@ -1,8 +1,14 @@
-import type { Game } from '@/types/game.fe';
+import type { Game, gameStates } from '@/types/game.fe';
+import GameStatusEnum from '@/types/game.fe';
 import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-// import { io, type Socket } from 'socket.io-client';
-import { useUserStore } from './userStore';
+
+export interface MovementKeys {
+	ArrowUp: boolean;
+	ArrowDown: boolean;
+	w: boolean;
+	s: boolean;
+}
 
 export const useGameStore = defineStore('games', {
 	//  actions == data definitions
@@ -10,6 +16,18 @@ export const useGameStore = defineStore('games', {
 		allGames: <Game[]>[],
 		// socket: {} as Socket,
 		isInitialized: false,
+		isPressed: {
+			ArrowUp: false,
+			ArrowDown: false,
+			w: false,
+			s: false,
+		} as MovementKeys,
+		gameLoopInterval: 0,
+		timeStampStart: 0,
+		previousTimeStamp: 0,
+		score_player_two: 0,
+		score_player_one: 0,
+		gameStatus: GameStatusEnum.PLAYING,
 	}),
 	// getters == computed values
 	getters: {},
@@ -19,14 +37,8 @@ export const useGameStore = defineStore('games', {
 			if (this.isInitialized) {
 				return;
 			}
-			// useUserStore().refreshData();
-			await this.refreshAllGames().then(() => {
-				this.isInitialized = true;
-				// this.socket = io('http://localhost:8080/pong', {
-				// 	withCredentials: true,
-				// });
-			});
-			console.log('Game are initialized: ', this.isInitialized);
+			this.isInitialized = true;
+			await this.refreshAllGames();
 		},
 
 		async refreshAllGames() {
@@ -36,9 +48,6 @@ export const useGameStore = defineStore('games', {
 				console.error(e);
 				return [];
 			}
-		},
-		async refreshData() {
-			await this.refreshAllGames();
 		},
 	},
 });

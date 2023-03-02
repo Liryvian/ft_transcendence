@@ -32,32 +32,15 @@ import { defineComponent, ref, type Ref } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue';
 import type { ElementPositions, Ball, Paddle } from '@/types/game.fe';
 import GameStatusEnum from '@/types/game.fe';
-import { io, Socket } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 import { storeToRefs } from 'pinia';
 import router from '@/router';
 import { patchRequest } from '@/utils/apiRequests';
 
-interface MovementKeys {
-	ArrowUp: boolean;
-	ArrowDown: boolean;
-	w: boolean;
-	s: boolean;
-}
-
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
-	isPressed: MovementKeys;
-	gameLoopInterval: number;
-	timeStampStart: DOMHighResTimeStamp;
-	previousTimeStamp: DOMHighResTimeStamp;
-	score_player_one: Ref<number>;
-	score_player_two: Ref<number>;
-	gameStatus: number;
 }
-
-let score_player_one = ref(0);
-let score_player_two = ref(0);
 
 export default defineComponent({
 	name: 'GameView',
@@ -76,25 +59,13 @@ export default defineComponent({
 	data(): DataObject {
 		return {
 			context: {} as CanvasRenderingContext2D,
-			// socket: io('http://localhost:8080/pong', { withCredentials: true }),
-			// isPressed: {
-			// 	ArrowUp: false,
-			// 	ArrowDown: false,
-			// 	w: false,
-			// 	s: false,
-			// },
-			// gameLoopInterval: 0,
-			// timeStampStart: 0,
-			// previousTimeStamp: 0,
-			// score_player_two,
-			// score_player_one,
-			// gameStatus: GameStatusEnum.PLAYING,
+			socket: io('http://localhost:8080/pong', { withCredentials: true }),
 		};
 	},
 
 	setup() {
 		const gameStore = useGameStore();
-		// gameStore.initialize();
+		gameStore.initialize();
 		const {
 			allGames,
 			isPressed,
@@ -103,11 +74,18 @@ export default defineComponent({
 			previousTimeStamp,
 			score_player_one,
 			score_player_two,
+			gameStatus,
 		} = storeToRefs(gameStore);
-		console.log('all games: ', allGames);
 		return {
 			gameStore,
 			allGames,
+			isPressed,
+			gameLoopInterval,
+			timeStampStart,
+			previousTimeStamp,
+			score_player_one,
+			score_player_two,
+			gameStatus,
 		};
 	},
 
@@ -126,8 +104,6 @@ export default defineComponent({
 			return this.allGames.find((game) => game.id === this.currentgameId);
 		},
 		getPlayerOne() {
-			console.log('cur game');
-			console.log('p1:', this.getCurrentGame?.player_one);
 			return this.getCurrentGame?.player_one;
 		},
 		getPlayerTwo() {
@@ -185,10 +161,8 @@ export default defineComponent({
 			const y: number =
 				this.heightPercentage(paddle.position.y) - lineHeight / 2; // middle of the canvas
 
-			// Player 1
 			let x = 0;
 			if (paddle.position.x === 100) {
-				// Player 2
 				x = this.width - lineWidth;
 			}
 			this.context.fillRect(x, y, lineWidth, lineHeight);
@@ -258,8 +232,8 @@ export default defineComponent({
 
 		finishGame() {
 			const updateGameDto = {
-				score_player_one: score_player_one.value,
-				score_player_two: score_player_two.value,
+				score_player_one: this.score_player_one,
+				score_player_two: this.score_player_two,
 				state: 'done',
 			};
 			this.gameStatus = GameStatusEnum.GAME_OVER;
@@ -267,10 +241,30 @@ export default defineComponent({
 			// patch game in database with the updated scores
 			patchRequest(`games/${this.currentgameId}`, updateGameDto);
 			const winner: string | undefined =
-				score_player_one > score_player_two
+				this.score_player_one > this.score_player_two
 					? this.getPlayerOne?.name
 					: this.getPlayerTwo?.name;
 			alert(`Game over!\nWell done ${winner}!`);
+		},
+
+		setSocketOn() {
+			this.socket.on('elementPositions', this.render);
+			this.socket.on(
+				'pointOver',
+				(scores: {
+					scorePlayerOne: number;
+					scorePlayerTwo: number;
+				}) => {
+					this.gameStatus = GameStatusEnum.POINT_OVER;
+					this.score_player_one = scores.scorePlayerOne;
+					this.score_player_two = scores.scorePlayerTwo;
+				},
+			);
+			this.socket.on('gameOver', () => {
+				router.push({ name: 'activeGames' });
+			});
+			//  when either of the users disconnects the game finsishes
+			this.socket.on('disconnect', this.finishGame);
 		},
 	},
 
@@ -278,20 +272,8 @@ export default defineComponent({
 		this.context = (this.$refs.GameRef as any).getContext('2d');
 		document.addEventListener('keydown', this.keyDown);
 		document.addEventListener('keyup', this.keyUp);
-		console.log('Emmitting join room with: ', this.currentGame);
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
-		this.socket.on('elementPositions', this.render);
-		this.socket.on(
-			'pointOver',
-			(scores: { scorePlayerOne: number; scorePlayerTwo: number }) => {
-				this.gameStatus = GameStatusEnum.POINT_OVER;
-				score_player_one.value = scores.scorePlayerOne;
-				score_player_two.value = scores.scorePlayerTwo;
-			},
-		);
-		this.socket.on('gameOver', () => {
-			router.push({ name: 'activeGames' });
-		});
+		this.setSocketOn();
 		// MAIN GAME LOOP
 		this.startGameLoop();
 	},
