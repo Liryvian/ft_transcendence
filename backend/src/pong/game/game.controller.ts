@@ -25,9 +25,10 @@ export class GameController {
 		await this.gameService.checkInitOrThrow(createGameDto);
 		try {
 			const newGame: Game = await this.gameService.save(createGameDto);
+
 			return newGame;
 		} catch (e) {
-			throw new BadRequestException();
+			throw new BadRequestException("user doesn't exist");
 		}
 	}
 
