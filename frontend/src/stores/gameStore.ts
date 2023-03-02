@@ -1,4 +1,4 @@
-import type { CreateGameForm, Game} from '@/types/game.fe';
+import type { CreateGameForm, Game } from '@/types/game.fe';
 import type { NewMessage } from '@/types/chat';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -51,8 +51,10 @@ export const useGameStore = defineStore('games', {
 			try {
 				this.errors.length = 0;
 				if (
-					/^#[a-fA-F0-9]{6}$/.test(createdGameForm.background_color)
-				=== false) {
+					/^#[a-fA-F0-9]{6}$/.test(
+						createdGameForm.background_color,
+					) === false
+				) {
 					this.errors.push('Not a valid color');
 					return;
 				}
