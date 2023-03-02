@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { AuthGuard } from './auth.guard';
 
 import { AllTestingModule } from '../shared/test.module';
 import { IntraTokendataDto } from './dto/intra-tokendata.dto';
@@ -13,7 +12,6 @@ import { BadRequestException } from '@nestjs/common';
 describe('Auth', () => {
 	let authController: AuthController;
 	let authService: AuthService;
-	let authGuard: AuthGuard;
 	let userService: UserService;
 
 	beforeAll(async () => {
@@ -23,7 +21,6 @@ describe('Auth', () => {
 
 		authController = module.get<AuthController>(AuthController);
 		authService = module.get<AuthService>(AuthService);
-		authGuard = module.get<AuthGuard>(AuthGuard);
 		userService = module.get<UserService>(UserService);
 	});
 
@@ -31,7 +28,6 @@ describe('Auth', () => {
 
 	describe('Auth-Guard/Controller/Service', () => {
 		it('should be defined', () => {
-			expect(authGuard).toBeDefined();
 			expect(authController).toBeDefined();
 			expect(authService).toBeDefined();
 		});
@@ -58,26 +54,26 @@ describe('Auth', () => {
 					intra_id: fakeUserData.id,
 				});
 
-				const { redirectLocation, userId } = await authService.processUserData(
+				const { redirectLocation, user } = await authService.processUserData(
 					fakeUserData,
 				);
-				expect(redirectLocation).toContain('recurring_user');
+				expect(redirectLocation).toContain('profiles');
 				const users = await userService.findAll({
 					where: { intra_id: fakeUserData.id },
 				});
 				expect(users).toHaveLength(1);
 				expect(users[0].name).toBe('not_fakeintrauser');
-				expect(users[0].id).toBe(userId);
+				expect(users[0].id).toBe(user.id);
 				await userService.remove(users[0].id);
 			});
 		});
 
 		describe('for new user', () => {
 			it('should create a new user and return a redirect to profile', async () => {
-				const { redirectLocation, userId } = await authService.processUserData(
+				const { redirectLocation, user } = await authService.processUserData(
 					fakeUserData,
 				);
-				expect(redirectLocation).toContain('new_user');
+				expect(redirectLocation).toContain('settings');
 				const users = await userService.findAll({
 					where: { intra_id: fakeUserData.id },
 				});
@@ -128,11 +124,11 @@ describe('Auth', () => {
 					},
 					{
 						name: fakeUserData.login + '_22346',
-						id: u1.userId,
+						id: u1.user.id,
 					},
 					{
 						name: fakeUserData.login + '_2091',
-						id: u2.userId,
+						id: u2.user.id,
 					},
 					{
 						name: fakeUserData.login + '_2091_4894',
@@ -142,12 +138,11 @@ describe('Auth', () => {
 						name: expect.stringMatching(
 							/^fakeintrauser_2091_4894_[a-fA-F0-9]{1,8}$/,
 						),
-						id: u4.userId,
+						id: u4.user.id,
 					},
 				];
-
 				const usersMatchingUsername: User[] = await userService.findAll({
-					where: { name: ILike('fakeintrauser%') },
+					where: { name: ILike('fakeintrause%') },
 				});
 				expect(usersMatchingUsername).toHaveLength(5);
 

@@ -53,6 +53,8 @@ export interface User {
 
 	chats: Chat[];
 
+	two_factor_required: boolean;
+
 	created_at: Date;
 	updated_at: Date;
 }

@@ -3,6 +3,7 @@ import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-us
 
 export type ChatId = number;
 export type UserId = number;
+export type SocketId = string;
 
 export interface ChatInfo {
 	chatId: ChatId;
@@ -12,6 +13,7 @@ export interface ChatInfo {
 
 export type ChatList = Record<UserId, Socket[]>;
 export type MessageList = Record<ChatId, ChatInfo>;
+export type OnlineList = Record<UserId, SocketId[]>;
 
 export type Chat_Type = 'dm' | 'channel';
 export type ActionType = 'new' | 'update' | 'delete';

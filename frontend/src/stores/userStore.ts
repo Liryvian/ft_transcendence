@@ -9,12 +9,15 @@ import type {
 } from '../types/User';
 import { useStorage } from '@vueuse/core';
 import { apiUrl } from '@/types/Constants';
+import type { StatusUpdate, StatusList } from '@/types/Sockets';
+import { useSocketStore } from './socketStore';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
 	state: () => ({
 		allUsers: [] as User[],
 		me: {} as User,
+		onlineStatus: {} as StatusList,
 		errors: [] as String[],
 		// persists data accross refreshes
 		isLoggedIn: useStorage('isLoggedIn', false, sessionStorage),
@@ -42,6 +45,18 @@ export const useUserStore = defineStore('users', {
 			}
 		},
 
+		getOnlineStatus(userId: string | number) {
+			return this.onlineStatus[userId] === true;
+		},
+		updateOnlineStatus(statusUpdate: StatusUpdate) {
+			this.onlineStatus[statusUpdate.user_id] = statusUpdate.status;
+		},
+		initOnlineStatus(statusses: StatusUpdate[]) {
+			statusses.forEach((statusUpdate) => {
+				this.onlineStatus[statusUpdate.user_id] = statusUpdate.status;
+			});
+		},
+
 		getUserById(id: number) {
 			return this.allUsers.find((user) => user.id === id);
 		},
@@ -55,6 +70,7 @@ export const useUserStore = defineStore('users', {
 				}
 				await this.refreshData();
 				console.log('User is loggedin');
+				useSocketStore().initializeOnline();
 				this.isLoggedIn = true;
 				await router.push('/settings');
 				this.errors.length = 0;
@@ -67,6 +83,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await getRequest('logout');
 				this.isLoggedIn = false;
+				useSocketStore().deinitializeOnline();
 				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {

@@ -16,6 +16,7 @@ export const useGameStore = defineStore('games', {
 	// actions == methods
 	actions: {
 		async initialize() {
+			useUserStore().refreshData();
 			await this.refreshAllGames().then(() => {
 				this.isInitialized = true;
 				this.socket = io('http://localhost:8080/pong', {
@@ -36,20 +37,8 @@ export const useGameStore = defineStore('games', {
 				return [];
 			}
 		},
-
-		// turnOnSocketListeners() {
-		// 	this.socket.on('elementPositions', this.render);
-		// 	this.socket.on(
-		// 		'pointOver',
-		// 		(scores: { scorePlayerOne: number; scorePlayerTwo: number }) => {
-		// 			this.gameStatus = GameStatusEnum.POINT_OVER;
-		// 			score_player_one.value = scores.scorePlayerOne;
-		// 			score_player_two.value = scores.scorePlayerTwo;
-		// 		},
-		// 	);
-		// 	this.socket.on('gameOver', () => {
-		// 		router.push({ name: 'activeGames' });
-		// 	});
-		// }
+		async refreshData() {
+			await this.refreshAllGames();
+		},
 	},
 });
