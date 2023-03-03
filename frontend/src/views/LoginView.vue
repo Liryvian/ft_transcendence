@@ -35,7 +35,9 @@
 								value="Login"
 							/>
 							/
-							<a tabindex="4" href="/register">Register</a>
+							<RouterLink tabindex="4" :to="{ name: 'register' }"
+								>Register</RouterLink
+							>
 						</p>
 						<p>
 							<a

@@ -28,7 +28,8 @@ export interface Game {
 	score_player_one: number;
 	score_player_two: number;
 
-	customization: string;
+	score_to_win: number;
+	background_color: string;
 	state: gameStates;
 
 	created_at: Date;
@@ -38,6 +39,14 @@ export interface Game {
 	p1_score: number;
 	player_two: User;
 	p2_score: number;
+}
+
+export interface CreateGameForm {
+	score_to_win: number;
+	background_color: string;
+
+	player_one: number;
+	player_two: number;
 }
 
 export interface ElementPositions {

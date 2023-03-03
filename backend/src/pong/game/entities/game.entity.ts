@@ -28,9 +28,11 @@ export class Game {
 	@Column({ default: 0 })
 	score_player_two: number;
 
-	// for now empty customization on initialization
+	@Column({ default: 0 })
+	score_to_win?: number;
+
 	@Column({ default: null })
-	customization: string;
+	background_color?: string;
 
 	@IsEnum(gameStates)
 	@Column({ default: gameStates.PENDING })

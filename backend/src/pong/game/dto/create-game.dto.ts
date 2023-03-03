@@ -3,7 +3,10 @@ import { DoesNotMatch } from '../../../shared/does-not-match.decorator';
 
 export class CreateGameDto {
 	@IsOptional()
-	customization?: string;
+	score_to_win?: number;
+
+	@IsOptional()
+	background_color?: string;
 
 	@IsNotEmpty()
 	player_one: number;
