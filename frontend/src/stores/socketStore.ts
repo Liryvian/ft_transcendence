@@ -41,7 +41,6 @@ export const useSocketStore = defineStore('sockets', {
 					useChatStore().socketAction(update);
 				},
 			);
-			this.chats.socket.on('');
 			this.chats.socket.on(
 				'messageListUpdate',
 				(update: SocketMessage<SingleMessage>) => {

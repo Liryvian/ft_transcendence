@@ -202,7 +202,6 @@ export class ChatController {
 					where: { chat: { id: chatId } },
 				})
 			).filter((message: Message) => {
-				console.log(`sender: ${message.user_id} in ${blockedUserIds}`);
 				return blockedUserIds.indexOf(message.user_id) === -1;
 			});
 		} catch (e) {
