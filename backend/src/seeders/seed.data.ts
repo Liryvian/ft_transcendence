@@ -226,32 +226,37 @@ const seedData = {
 		const zzzSleepy = chats.find((c) => c.name === 'Zzz sleepy').id;
 
 		// Add flamink and renoster to their DM
-		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
-			[flamink, renoster].forEach((u) => {
-				cups.push({
-					chat_id: flaminkRenoster,
-					user_id: u,
-					permission: p,
+		[permissionsEnum.POST, permissionsEnum.READ, permissionsEnum.OWNER].forEach(
+			(p) => {
+				[flamink, renoster].forEach((u) => {
+					cups.push({
+						chat_id: flaminkRenoster,
+						user_id: u,
+						permission: p,
+					});
 				});
-			});
-		});
+			},
+		);
 
 		// Add vaalboskat and renoster to their DM
-		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
-			[vaalboskat, renoster].forEach((u) => {
-				cups.push({
-					chat_id: vaalboskatRenoster,
-					user_id: u,
-					permission: p,
+		[permissionsEnum.POST, permissionsEnum.READ, permissionsEnum.OWNER].forEach(
+			(p) => {
+				[vaalboskat, renoster].forEach((u) => {
+					cups.push({
+						chat_id: vaalboskatRenoster,
+						user_id: u,
+						permission: p,
+					});
 				});
-			});
-		});
+			},
+		);
 
 		// make renoster admin of Desert
 		[
 			permissionsEnum.EDIT_SETTINGS,
 			permissionsEnum.MANAGE_USERS,
 			permissionsEnum.POST,
+			permissionsEnum.OWNER,
 		].forEach((p) => {
 			cups.push({
 				chat_id: desert,
@@ -274,6 +279,12 @@ const seedData = {
 					permission: p,
 				});
 			});
+		});
+		// add flamink as owner of zoo
+		cups.push({
+			chat_id: zoo,
+			user_id: flamink,
+			permission: permissionsEnum.OWNER,
 		});
 
 		// add almost everybody to 'Desert' with read permission
