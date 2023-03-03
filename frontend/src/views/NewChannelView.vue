@@ -2,7 +2,7 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>NEW CHANNEL</h1>
-			<div class="c_block c_form_group">
+
 				<form
 					method="Post"
 					action=""
@@ -62,19 +62,20 @@
 						</p>
 					</div>
 				</form>
-			</div>
+
 		</div>
 	</div>
 </template>
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import InputField from '@/components/input-fields/InputField.vue';
-import type { CreateNewChannelForm } from '@/types/Chat';
-import { useChatStore } from '@/stores/chatStore';
+import { permissionsEnum, type CreateNewChannelForm } from '@/types/Chat';
 import RadioButton from '@/components/input-fields/RadioButton.vue';
+import { getRequest, postRequest } from '@/utils/apiRequests';
+import router from '@/router';
 
 export default defineComponent({
 	name: 'newChannel',
@@ -86,9 +87,6 @@ export default defineComponent({
 		const userStore = useUserStore();
 		userStore.refreshAllUsers();
 		const { allUsers, me } = storeToRefs(userStore);
-		const chatStore = useChatStore();
-		const { createNewChannel } = chatStore;
-		const { errors } = storeToRefs(chatStore);
 		const createNewChannelForm: CreateNewChannelForm = reactive({
 			name: '',
 			visibility: 'public',
@@ -97,14 +95,14 @@ export default defineComponent({
 			users: [],
 		});
 
+		const errors = ref([] as string[]);
+
 		return {
 			userStore,
 			allUsers,
 			me,
 			errors,
 			createNewChannelForm,
-			createNewChannel,
-			chatStore,
 		};
 	},
 	computed: {
@@ -112,6 +110,66 @@ export default defineComponent({
 			return this.allUsers.filter((user) => user.id !== this.me.id);
 		},
 	},
+	methods: {
+		handleFormError(responseData: any) {
+			if (typeof responseData.message === 'string') {
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
+			} else {
+				this.errors = responseData.message.map((msg: String) =>
+					msg.replace('(o) => o.', ''),
+				);
+			}
+		},
+		async createNewChannel(createNewChannelForm: CreateNewChannelForm) {
+			try {
+				this.errors.length = 0;
+				const all = (await getRequest('chats')).data;
+				const found = all.find(
+					(chat: Chat_List_Item) => chat.name === createNewChannelForm.name,
+				);
+				if (found !== undefined) {
+					this.errors.push('channel name already exists');
+					return;
+				}
+				if (!createNewChannelForm.name) {
+					this.errors.push('Not a valid channel name');
+					return;
+				}
+				if (!createNewChannelForm.users[0]) {
+					this.errors.push('you need to assign users to this channel');
+					return;
+				}
+				const usersToSend = createNewChannelForm.users.map(
+					(userId) => ({
+						id: userId,
+						permissions: [
+							permissionsEnum.READ,
+							permissionsEnum.POST,
+						],
+					}),
+				);
+				usersToSend.push({
+					id: useUserStore().me.id,
+					permissions: [
+						permissionsEnum.READ,
+						permissionsEnum.POST,
+						permissionsEnum.OWNER,
+					]
+				})
+				const newChannel = await postRequest('chats', {
+					...createNewChannelForm,
+					users: usersToSend
+				});
+				router.push({
+					name: 'singlechat',
+					params: { currentChat: newChannel.data.id },
+				});
+			} catch (e: any) {
+				this.handleFormError(e.response.data);
+			}
+		},
+	}
 });
 </script>
 
