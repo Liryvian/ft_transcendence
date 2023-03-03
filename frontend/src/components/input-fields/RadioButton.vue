@@ -20,7 +20,7 @@ export default defineComponent({
 		name: String,
 		label: String,
 		id: String,
-		value: Boolean
+		value: String
 	},
 	emits: ['update:modelValue'],
 });

@@ -54,7 +54,15 @@ export const useChatStore = defineStore('chats', {
 		async createNewChannel(createNewChannelForm: CreateNewChannelForm) {
 			try {
 				this.errors.length = 0;
-				if (!createNewChannelForm.name){
+				const all = (await getRequest('chats')).data;
+				const found = all.find(
+					(chat: Chat_List_Item) => chat.name === createNewChannelForm.name,
+				);
+				if (found !== undefined){
+					this.errors.push('channel name already exists');
+					return;
+				}
+				if (!createNewChannelForm.name ){
 					this.errors.push('Not a valid channel name');
 					return;
 				}
@@ -75,7 +83,6 @@ export const useChatStore = defineStore('chats', {
 					...createNewChannelForm,
 					users: usersToSend
 				});
-				console.log('channel id', newChannel.data.id);
 				router.push({
 					name: 'singlechat',
 					params: { currentChat : newChannel.data.id},
