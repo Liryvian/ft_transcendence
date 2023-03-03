@@ -28,8 +28,8 @@
 								:user="user"
 							/>
 							<div class="checkiesboxies">
-								<input type="checkbox" id="coding" name="interest" value="coding" checked />
-								<label for="coding">{{user.name}}</label>
+								<input type="checkbox" :id="user.id" name="users" :value="user.id" checked />
+								<label :for="user.id">{{user.name}}</label>
 							</div>
 						</template>
 
