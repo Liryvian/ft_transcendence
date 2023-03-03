@@ -3,6 +3,7 @@ import { permissionsEnum } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
+import router from '@/router';
 
 export const useChatStore = defineStore('chats', {
 	//  actions == data definitions
@@ -11,6 +12,7 @@ export const useChatStore = defineStore('chats', {
 		channels: [] as Chat_List_Item[],
 		subscribed: false,
 		initialized: false,
+		errors: [] as String[],
 	}),
 	// getters == computed values
 	getters: {
@@ -51,6 +53,15 @@ export const useChatStore = defineStore('chats', {
 
 		async createNewChannel(createNewChannelForm: CreateNewChannelForm) {
 			try {
+				this.errors.length = 0;
+				if (!createNewChannelForm.name){
+					this.errors.push('Not a valid channel name');
+					return;
+				}
+				if (!createNewChannelForm.users[0]){
+					this.errors.push('you need to assign users to this channel');
+					return;
+				}
 				const usersToSend = createNewChannelForm.users.map(
 					(userId) => ({
 						id: userId,
@@ -60,11 +71,15 @@ export const useChatStore = defineStore('chats', {
 						],
 					}),
 				);
-				console.log('hallo');
-				// const newGame = postRequest('chat', {
-				// 	...createNewChannelForm,
-				// 	users: usersToSend
-				// });
+				const newChannel = await postRequest('chats', {
+					...createNewChannelForm,
+					users: usersToSend
+				});
+				console.log('channel id', newChannel.data.id);
+				router.push({
+					name: 'singlechat',
+					params: { currentChat : newChannel.data.id},
+				});
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
 			}

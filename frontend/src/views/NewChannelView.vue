@@ -21,7 +21,7 @@
 					<div class="">
 						<label for="example_field">add member:</label>
 						<template v-for="user in usersWithoutMe">
-							<div class="checkiesboxies">
+							<div class="checkbox_overview">
 								<input
 									v-model="createNewChannelForm.users"
 									type="checkbox"
@@ -36,10 +36,6 @@
 					<InputField
 						label="set password"
 						v-model="createNewChannelForm.password"
-					/>
-					<InputField
-						label="confirm password"
-						v-model="createNewChannelForm.confirm_password"
 					/>
 					<div class="c_field_group c_field_group--radio">
 						<RadioButton
@@ -86,23 +82,17 @@ export default defineComponent({
 		InputField,
 		RadioButton,
 	},
-	data() {
-		return {
-			// inputData1: Boolean,
-			// inputData2: false
-		};
-	},
 	setup() {
 		const userStore = useUserStore();
 		userStore.refreshAllUsers();
-		const { allUsers, me, errors } = storeToRefs(userStore);
+		const { allUsers, me } = storeToRefs(userStore);
 		const chatStore = useChatStore();
 		const { createNewChannel } = chatStore;
+		const { errors } = storeToRefs(chatStore);
 		const createNewChannelForm: CreateNewChannelForm = reactive({
 			name: '',
-			visibility: '', //  ChatVisibility,
+			visibility: 'public',
 			password: '',
-			password_confirm: '',
 			type: 'channel',
 			users: [],
 		});
@@ -126,13 +116,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.checkiesboxies {
+.checkbox_overview {
 	display: flex;
 }
-.checkiesboxies label {
+.checkbox_overview label {
 	padding-left: 0.7em;
 }
-.checkiesboxies input {
+.checkbox_overview input {
 	margin-left: 0.7em;
 }
 </style>

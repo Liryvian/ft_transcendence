@@ -83,7 +83,6 @@ export interface CreateNewChannelForm {
 	name: string;
 	visibility: ChatVisibility;
 	password: string;
-	confirm_password: string;
 	type: Chat_Type;
 	users: number[];
 }
