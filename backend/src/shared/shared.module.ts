@@ -10,7 +10,7 @@ const multer = require('multer');
 		JwtModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: async (configService: ConfigService) => ({
-				secret: configService.get('SECRET'),
+				secret: configService.get('JWT_SECRET'),
 				signOptions: { expiresIn: '1d' },
 			}),
 			inject: [ConfigService],
