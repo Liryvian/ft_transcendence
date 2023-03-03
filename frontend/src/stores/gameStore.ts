@@ -32,13 +32,6 @@ export const useGameStore = defineStore('games', {
 
 		async refreshAllGames() {
 			try {
-// <<<<<<< HEAD
-// 				const data = await getRequest("games");
-// 				this.allGames = data.data;
-// 				// await useUserStore().refreshAllUsers();
-// 			}
-// 			catch (e) {
-// =======
 				this.allGames = await (await getRequest('games')).data;
 				console.log(this.allGames);
 				await useUserStore().refreshAllUsers();
