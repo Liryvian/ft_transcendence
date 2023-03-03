@@ -72,7 +72,7 @@ import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import InputField from '@/components/input-fields/InputField.vue';
-import { permissionsEnum, type CreateNewChannelForm } from '@/types/Chat';
+import { permissionsEnum, type Chat_List_Item, type CreateNewChannelForm } from '@/types/Chat';
 import RadioButton from '@/components/input-fields/RadioButton.vue';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import router from '@/router';
