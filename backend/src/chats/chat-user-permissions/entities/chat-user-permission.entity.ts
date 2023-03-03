@@ -19,6 +19,7 @@ export enum permissionsEnum {
 	BLOCKED = 'blocked',
 	MANAGE_USERS = 'manage_users',
 	EDIT_SETTINGS = 'edit_settings',
+	OWNER = 'owner',
 }
 
 export const permissionsArray = [

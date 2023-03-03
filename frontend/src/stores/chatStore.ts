@@ -4,6 +4,7 @@ import type { SocketMessage } from '@/types/Sockets';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 import router from '@/router';
+import { useUserStore } from '@/stores/userStore';
 
 export const useChatStore = defineStore('chats', {
 	//  actions == data definitions
@@ -79,13 +80,21 @@ export const useChatStore = defineStore('chats', {
 						],
 					}),
 				);
+				usersToSend.push({
+					id: useUserStore().me.id,
+					permissions: [
+						permissionsEnum.READ,
+						permissionsEnum.POST,
+						permissionsEnum.OWNER,
+					]
+				})
 				const newChannel = await postRequest('chats', {
 					...createNewChannelForm,
 					users: usersToSend
 				});
 				router.push({
 					name: 'singlechat',
-					params: { currentChat : newChannel.data.id},
+					params: { currentChat : newChannel.data.id },
 				});
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
