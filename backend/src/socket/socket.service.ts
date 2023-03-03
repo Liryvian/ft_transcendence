@@ -110,7 +110,10 @@ export class SocketService {
 			socket.handshake.headers.cookie,
 		);
 		try {
-			const userId: number = this.authService.userIdFromCookieString(cookie);
+			const userId: number = await this.authService.userIdFromCookieString(
+				cookie,
+			);
+
 			await this.userService.findOne({ where: { id: userId } });
 
 			if (!this.chatListSubscribers[userId]) {
@@ -119,17 +122,18 @@ export class SocketService {
 			this.chatListSubscribers[userId].push(socket);
 		} catch (e) {
 			console.log('Error on subscribing to chatlist');
-			console.log(e);
+			console.log(e.response);
 		}
 	}
 
 	async chatList_unsubscribe(socket: Socket) {
+		console.log('unsubscribing from chatlist ', socket.id);
 		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {
 			const userId: number = this.authService.userIdFromCookieString(cookie);
-			await this.userService.findOne({ where: { id: userId } });
+			const user = await this.userService.findOne({ where: { id: userId } });
 
 			if (this.chatListSubscribers[userId]) {
 				const socketIndex = this.chatListSubscribers[userId].findIndex(

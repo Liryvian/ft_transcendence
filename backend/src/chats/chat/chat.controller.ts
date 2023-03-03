@@ -39,7 +39,7 @@ import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-pe
 import { AuthGuard } from '../../auth/auth.guard';
 import { AuthService } from '../../auth/auth.service';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('chats')
 export class ChatController {
 	constructor(
@@ -80,7 +80,6 @@ export class ChatController {
 						],
 					},
 				});
-				console.log({ hasDM });
 				return hasDM;
 			} catch (e) {}
 			createChatDto.name += '--' + crypto.pseudoRandomBytes(4).toString('hex');
@@ -128,17 +127,11 @@ export class ChatController {
 				chat.type === 'dm' ||
 				(chat.type === 'channel' && chat.visibility === 'private')
 			) {
-				console.log(
-					'emitting to: ',
-					chat.users.map((u) => `${u.id}:${u.name} `),
-					JSON.stringify(socketMessage, null, 2),
-				);
 				this.socketService.chatlist_emit(
 					chat.users.map((u) => u.id),
 					socketMessage,
 				);
 			} else {
-				console.log('emitting to all', JSON.stringify(socketMessage, null, 2));
 				this.socketService.chatlist_emit('all', socketMessage);
 			}
 		}

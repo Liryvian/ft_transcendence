@@ -18,16 +18,18 @@
 				/>
 			</template>
 			<template v-else>
-				<div class="c_chat__conversation">
-					<!-- And then create and load the chat.. and update lists etc? -->
-					<img
-						src="/loading.gif"
+				<div class="c_chat__conversation" style="text-align: center">
+					<template
 						v-if="
 							currentChatInfo.id === -1 &&
 							currentChatInfo.type === 'dm'
 						"
-						:class="tryCreateNewDm()"
-					/>
+					>
+						<!-- And then create and load the chat.. and update lists etc? -->
+						<h1>Creating a DM conversation</h1>
+						<img src="/loading.gif" :class="tryCreateNewDm()" />
+						<p v-if="errorMsg.length">{{ errorMsg }}</p>
+					</template>
 				</div>
 			</template>
 		</div>
@@ -85,6 +87,7 @@ export default defineComponent({
 		return {
 			focusTarget: 'c_chat--msg',
 			requestsDoneFor: [] as number[],
+			errorMsg: '',
 		};
 	},
 	computed: {
@@ -140,6 +143,7 @@ export default defineComponent({
 			this.focusTarget = 'c_chat--' + target;
 		},
 		async tryCreateNewDm() {
+			this.errorMsg = '';
 			const otherUser = this.userStore.getUserById(
 				Number(this.dmId ?? '-1'),
 			);
@@ -155,35 +159,44 @@ export default defineComponent({
 			if (this.requestsDoneFor.indexOf(otherUser.id) !== -1) {
 				return '';
 			}
-			try {
-				console.log('trying to make new chat');
-				this.requestsDoneFor.push(otherUser.id);
-				const newChat = await postRequest('chats', {
-					type: 'dm',
-					name: `${this.me.name}-${otherUser.name}`,
-					users: [
-						{
-							id: otherUser.id,
-							permissions: [
-								permissionsEnum.READ,
-								permissionsEnum.POST,
-								permissionsEnum.OWNER,
-							],
-						},
-						{
-							id: this.me.id,
-							permissions: [
-								permissionsEnum.READ,
-								permissionsEnum.POST,
-								permissionsEnum.OWNER,
-							],
-						},
-					],
-				});
-				console.log({ newChat });
-			} catch (e) {
-				console.log(e);
+			console.log(
+				'this.socketStore.chats.initialized',
+				this.socketStore.chats.initialized,
+			);
+			if (this.socketStore.chats.initialized === false) {
+				console.log('chat sock not init');
+				this.socketStore.initialize();
 			}
+			this.requestsDoneFor.push(otherUser.id);
+			setTimeout(async () => {
+				try {
+					const newChat = await postRequest('chats', {
+						type: 'dm',
+						name: `${this.me.name}-${otherUser.name}`,
+						users: [
+							{
+								id: otherUser.id,
+								permissions: [
+									permissionsEnum.READ,
+									permissionsEnum.POST,
+									permissionsEnum.OWNER,
+								],
+							},
+							{
+								id: this.me.id,
+								permissions: [
+									permissionsEnum.READ,
+									permissionsEnum.POST,
+									permissionsEnum.OWNER,
+								],
+							},
+						],
+					});
+				} catch (e) {
+					this.errorMsg =
+						'Something went wrong on creating the chat, please refresh the page';
+				}
+			}, 1000); // this delay is here because sometimes the socket is not yet ready..
 			return '';
 		},
 	},

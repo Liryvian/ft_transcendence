@@ -54,6 +54,7 @@ export default defineComponent({
 			}
 			return 'c_asset--multi';
 		},
+
 		visible_avatars(): Chat_Member[] {
 			const fallback: Chat_Member = {
 				id: -1,

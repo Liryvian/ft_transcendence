@@ -8,7 +8,8 @@ import { useSocketStore } from './stores/socketStore';
 
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshMe();
-	useSocketStore().initializeOnline();
+	const socketStore = useSocketStore();
+	socketStore.initialize();
 	useUserStore().refreshData();
 	useGameStore().refreshAllGames();
 	useRelationshipStore().initialize();
@@ -21,6 +22,10 @@ if (useUserStore().isLoggedIn) {
 			<RouterLink :to="{ name: 'login' }">
 				<div class="nav_ball"></div>
 				login
+			</RouterLink>
+			<RouterLink :to="{ name: 'register' }">
+				<div class="nav_ball"></div>
+				register
 			</RouterLink>
 		</nav>
 		<nav v-else id="mainnav">

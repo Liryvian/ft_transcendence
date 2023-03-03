@@ -2,7 +2,7 @@
 	<RouterLink :to="to">
 		<div class="c_media c_media--clickable">
 			<ChatProfileImages :chat="chat" />
-			<div class="c_media__content">{{ chat.name }}</div>
+			<div class="c_media__content">{{ chatName }}</div>
 		</div>
 	</RouterLink>
 </template>
@@ -40,12 +40,16 @@ export default defineComponent({
 		},
 		to() {
 			if (this.chat.type === 'channel') {
-				return { name: 'channel', params: { channelId: this.chat.id }}
+				return { name: 'channel', params: { channelId: this.chat.id } };
 			}
-			return { name: 'dm', params: { dmId: this.otherUser.id }}
-		}
-	}
+			return { name: 'dm', params: { dmId: this.otherUser.id } };
+		},
+		chatName() {
+			if (this.chat.type === 'channel') {
+				return this.chat.name;
+			}
+			return this.otherUser.name ?? this.chat.name;
+		},
+	},
 });
 </script>
-
-<style scoped></style>
