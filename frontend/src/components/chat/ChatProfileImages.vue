@@ -40,18 +40,21 @@ export default defineComponent({
 		};
 	},
 	computed: {
+		otherUser(): Chat_Member {
+			return this.chat.users.filter(
+				(user) => user.id !== this.userStore.me.id,
+			)[0];
+		},
 		is_online(): String {
 			if (this.chat.type === 'dm') {
-				const otherUser: Chat_Member = this.chat.users.filter(
-					(user) => user.id !== this.userStore.me.id,
-				)[0];
-				if (this.userStore.getOnlineStatus(otherUser.id)) {
+				if (this.userStore.getOnlineStatus(this.otherUser.id)) {
 					return 'c_asset--online';
 				}
 				return 'c_asset--offline';
 			}
 			return 'c_asset--multi';
 		},
+
 		visible_avatars(): Chat_Member[] {
 			const fallback: Chat_Member = {
 				id: -1,

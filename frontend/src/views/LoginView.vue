@@ -35,7 +35,6 @@ export default defineComponent({
 	},
 	methods: {
 		async tryLogin(loginForm: LoginForm) {
-			console.log('try login from main component');
 			const loginResult: string = await this.userStore.login(loginForm);
 			if (loginResult === '2fa') {
 				this.toggleTwoFa();
