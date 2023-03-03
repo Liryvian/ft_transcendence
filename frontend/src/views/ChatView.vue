@@ -20,7 +20,11 @@
 			<template v-else>
 				<div class="c_chat__conversation">
 					<!-- And then create and load the chat.. and update lists etc? -->
-					<img src="/loading.gif" v-if="currentChatInfo.id === -1 && currentChatInfo.type === 'dm'">
+					<img
+						src="/loading.gif"
+						v-if="currentChatInfo.id === -1 && currentChatInfo.type === 'dm'"
+						:class="tryCreateNewDm()"
+					/>
 				</div>
 			</template>
 		</div>
@@ -33,11 +37,12 @@ import { storeToRefs } from 'pinia';
 
 import Chat from '@/components/chat/Chat.vue';
 import ChatList from '@/components/chat/ChatList.vue';
-import type { Chat_List, Chat_List_Item } from '@/types/Chat';
+import { type Chat_List, type Chat_List_Item, permissionsEnum } from '@/types/Chat';
 import { useSocketStore } from '@/stores/socketStore';
 import { useChatStore } from '@/stores/chatStore';
 import { useUserStore } from '@/stores/userStore';
 import router from '@/router';
+import { postRequest } from '@/utils/apiRequests';
 
 export default defineComponent({
 	name: 'ChatView',
@@ -49,6 +54,7 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 		userStore.refreshMe();
+		const { me } = storeToRefs(userStore);
 
 		const socketStore = useSocketStore();
 		socketStore.initialize();
@@ -62,6 +68,7 @@ export default defineComponent({
 			userStore,
 			chatStore,
 			dms,
+			me,
 			channels,
 			getAllChats,
 			router
@@ -70,6 +77,7 @@ export default defineComponent({
 	data() {
 		return {
 			focusTarget: 'c_chat--msg',
+			requestsDoneFor: [] as number[]
 		};
 	},
 	computed: {
@@ -99,7 +107,7 @@ export default defineComponent({
 					(chat) =>
 						(chat.users.length === 2 &&
 						chat.users.findIndex((u) => u.id === this.currentChatId) !== -1 &&
-						chat.users.findIndex((u) => u.id === this.userStore.me.id) !== -1)
+						chat.users.findIndex((u) => u.id === this.me.id) !== -1)
 				)
 			}
 			return this.getAllChats.findIndex(
@@ -114,7 +122,7 @@ export default defineComponent({
 				id: -1,
 				name: '',
 				type: this.router.currentRoute.value.name,
-				users: []
+				users: [],
 			} as Chat_List_Item;
 		},
 	},
@@ -122,6 +130,49 @@ export default defineComponent({
 		toggleFocusTarget(target: string) {
 			this.focusTarget = 'c_chat--' + target;
 		},
+		async tryCreateNewDm() {
+			const otherUser = this.userStore.getUserById(Number(this.dmId ?? '-1'));
+			if (this.dmId === undefined ||
+				otherUser === undefined ||
+				this.me?.id === undefined
+			) {
+				router.push({ name: 'chat' });
+				return;
+			}
+			// try to make sure the request only happens once..
+			if (this.requestsDoneFor.indexOf(otherUser.id) !== -1) {
+				return;
+			}
+			try {
+				console.log("trying to make new chat");
+				this.requestsDoneFor.push(otherUser.id);
+				const newChat = await postRequest('chats', {
+					type: 'dm',
+					name: `${this.me.name}-${otherUser.name}`,
+					users: [
+						{
+							id: otherUser.id,
+							permissions: [
+								permissionsEnum.READ,
+								permissionsEnum.POST,
+								permissionsEnum.OWNER
+							]
+						},
+						{
+							id: this.me.id,
+							permissions: [
+								permissionsEnum.READ,
+								permissionsEnum.POST,
+								permissionsEnum.OWNER
+							]
+						}
+					]
+				});
+				console.log({newChat});
+			} catch (e) {
+				console.log(e);
+			}
+		}
 	},
 });
 </script>

@@ -48,16 +48,11 @@ import { useRelationshipStore } from '@/stores/relationshipStore';
 import Avatar from '@/components/profileList/Avatar.vue';
 import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
-import router from '@/router';
 import type { Relationship } from '@/types/Relationship';
 import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ListRow',
-
-	created() {
-		console.log('rel in listrow', this.relationship);
-	},
 
 	setup(props) {
 		const userStore = useUserStore();

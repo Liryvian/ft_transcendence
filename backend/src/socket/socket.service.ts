@@ -98,6 +98,8 @@ export class SocketService {
 					this.chatListSubscribers[userId].forEach((socket) => {
 						socket.emit('chatListUpdate', message);
 					});
+				} else {
+					console.log(`User ${userId} not subscribed, not emitting`);
 				}
 			});
 		}
