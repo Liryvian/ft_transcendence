@@ -108,7 +108,10 @@ export default defineComponent({
 			return Number(this.currentGame);
 		},
 		getCurrentGame() {
-			return this.allGames.find((game) => game.id === this.currentgameId);
+			const currentGame = this.allGames.find((game) => game.id === this.currentgameId);
+			console.log("curretn game:", this.currentGame);
+			return currentGame
+			// return this.allGames.find((game) => game.id === this.currentgameId);
 		},
 		getPlayerOne() {
 			return this.getCurrentGame?.player_one;
@@ -201,6 +204,7 @@ export default defineComponent({
 
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
+				console.log("Keypress")
 				this.isPressed[keyPress.key] = true;
 			}
 		},
@@ -226,9 +230,10 @@ export default defineComponent({
 			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
 				this.socket!.emit(
-					'updatePositions',
-					this.currentgameId,
-					this.isPressed,
+					'updatePositions', {
+						id: this.currentgameId,
+						keyPress: this.isPressed
+					}
 				);
 			}
 
@@ -238,11 +243,6 @@ export default defineComponent({
 				// update scores
 				this.gameStatus = GameStatusEnum.PLAYING;
 				this.resetPressedKeys();
-				// reset positions
-				this.socket!.emit(
-					'resetAfterPointFinished',
-					this.currentgameId,
-				);
 
 				// restart game loop
 				window.requestAnimationFrame(this.getUpdatedPositions);
@@ -262,7 +262,7 @@ export default defineComponent({
 			};
 			this.gameStatus = GameStatusEnum.GAME_OVER;
 			this.socket.disconnect();
-			// this.socket.off('updatePosition', this.render);
+			this.socket.off('updatePosition', this.render);
 			// patch game in database with the updated scores
 			patchRequest(`games/${this.currentgameId}`, updateGameDto);
 			const winner: string | undefined =
@@ -294,21 +294,22 @@ export default defineComponent({
 
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		console.log(
-			this.getCurrentGame!.player_two.id,
-			this.getCurrentGame!.player_one.id,
-			this.getMyId,
-		);
 		if (this.isPlayer) {
 			console.log('\n\n\nsetting eventlisteners\n\n\n');
 			document.addEventListener('keydown', this.keyDown);
 			document.addEventListener('keyup', this.keyUp);
 		}
 		this.setSocketOn();
+		// while (1) {
+		// 	console.log("Current game exists? ", this.getCurrentGame !== undefined)
+		// 	if (this.getCurrentGame) {
+		// 		break ;
+		// 	}
+		// }
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
 
 		// // MAIN GAME LOOP
-		this.socket.on('GameCanStart', () => {
+		this.socket.once('GameCanStart', () => {
 			this.startGameLoop();
 		});
 	},
