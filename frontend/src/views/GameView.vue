@@ -10,10 +10,18 @@
 </template>
 
 <script lang="ts">
+import { useGameStore } from '@/stores/gameStore';
+import { storeToRefs } from 'pinia';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
 	name: 'GameView',
+	
+	setup(){
+		const gameStore = useGameStore();
+		gameStore.refreshAllGames();
+		const { allGames } = storeToRefs(gameStore);
+	},
 });
 </script>
 
