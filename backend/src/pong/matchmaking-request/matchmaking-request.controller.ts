@@ -13,7 +13,7 @@ import { CreateMatchmakingRequestDto } from './dto/create-matchmaking-request.dt
 import { MatchmakingRequest } from './entities/matchmaking-request.entity';
 import { AuthGuard } from '../../auth/auth.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('matchmaking-requests')
 export class MatchmakingRequestController {
 	constructor(

@@ -37,20 +37,10 @@ const router = createRouter({
 			props: true,
 		},
 		{
-			path: '/chat',
-			children: [
-				{
-					path: '/chat',
-					name: 'chat',
-					component: () => import('../views/ChatView.vue'),
-				},
-				{
-					path: ':currentChat?',
-					name: 'singlechat',
-					props: true,
-					component: () => import('../views/ChatView.vue'),
-				},
-			],
+			path: '/chat/:currentChat?',
+			name: 'chat',
+			props: true,
+			component: () => import('../views/ChatView.vue'),
 		},
 		{
 			path: '/pong/:currentGame?',
@@ -60,8 +50,19 @@ const router = createRouter({
 		},
 		{
 			path: '/profiles',
-			name: 'profiles',
-			component: () => import('../views/ProfilesView.vue'),
+			children: [
+				{
+					path: '/profiles',
+					name: 'profiles',
+					component: () => import('../views/ProfilesView.vue'),
+				},
+				{
+					path: ':profile_id?',
+					name: 'profile',
+					component: () => import('../views/ProfileView.vue'),
+					props: true,
+				},
+			],
 		},
 		{
 			path: '/logout',
@@ -92,12 +93,6 @@ const router = createRouter({
 			path: '/new-channel',
 			name: 'new-channel',
 			component: () => import('../views/NewChannelView.vue'),
-		},
-		{
-			path: '/profile/:profile_id?',
-			name: 'profile',
-			component: () => import('../views/ProfileView.vue'),
-			props: true,
 		},
 		{
 			path: '/elements-to-reuse',

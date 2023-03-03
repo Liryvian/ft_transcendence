@@ -8,7 +8,6 @@ import type {
 	UpdateProfileForm,
 } from '../types/User';
 import { useStorage } from '@vueuse/core';
-import { apiUrl } from '@/types/Constants';
 import type { StatusUpdate, StatusList } from '@/types/Sockets';
 import { useSocketStore } from './socketStore';
 import { useRelationshipStore } from './relationshipStore';
@@ -29,9 +28,6 @@ export const useUserStore = defineStore('users', {
 	getters: {},
 	// actions == methods
 	actions: {
-		// this should be moved out of the userStore
-		// it is not userStore functionality
-		// and it should be typed with something other than any..
 		handleFormError(responseData: any) {
 			if (responseData.hasOwnProperty('message')) {
 				if (typeof responseData.message === 'string') {
@@ -63,24 +59,46 @@ export const useUserStore = defineStore('users', {
 			return this.allUsers.find((user) => user.id === id);
 		},
 
-		async login(loginType: string, loginForm?: LoginForm) {
+		async login(loginForm?: LoginForm): Promise<string> {
+			this.errors.length = 0;
 			try {
-				if (loginType === 'intra') {
-					location.href = `${apiUrl}/auth/authenticate`;
-				} else {
-					await postRequest('login', loginForm);
+				const user: User = (await postRequest('login', loginForm)).data;
+				if (user.two_factor_required === true) {
+					return '2fa';
 				}
-				await this.refreshData();
-				console.log('User is loggedin');
-				useSocketStore().initializeOnline();
-				useRelationshipStore().initialize();
-				useGameStore().initialize();
-				this.isLoggedIn = true;
-				await router.push('/settings');
-				this.errors.length = 0;
+				this.finalizeLogin();
 			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
+			return 'login';
+		},
+
+		async twoFaVerify(tokenData: { token: string }) {
+			this.errors.length = 0;
+			try {
+				const result = (
+					await postRequest('auth/2fa/validate', tokenData)
+				).data;
+
+				if (result === false) {
+					this.errors.length = 0;
+					this.errors.push('Invalid code, please try again');
+					return;
+				}
+				this.finalizeLogin();
+			} catch (e) {
+				this.handleFormError(e.response.data);
+			}
+		},
+
+		async finalizeLogin() {
+			await this.refreshData();
+			useSocketStore().initializeOnline();
+			useUserStore().refreshMe();
+			useGameStore().refreshAllGames();
+			useRelationshipStore().initialize();
+			this.isLoggedIn = true;
+			return router.push({ name: 'settings' });
 		},
 
 		async logout() {
@@ -99,7 +117,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('users', registerForm);
 				await this.refreshData();
-				await router.push('/login');
+				router.push('/login');
 				this.errors.length = 0;
 			} catch (e) {
 				this.handleFormError(e.response.data);
@@ -116,7 +134,7 @@ export const useUserStore = defineStore('users', {
 				await patchRequest(`users/${id}`, updateProfileForm);
 				await this.refreshData();
 				this.errors.length = 0;
-				await router.push({
+				router.push({
 					name: 'profile',
 					params: { profile_id: id },
 				});
