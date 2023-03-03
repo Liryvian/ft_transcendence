@@ -63,7 +63,7 @@ a {
 }
 
 .page_button a,
-.page_button input[type="submit"]{
+.page_button input[type='submit'] {
 	padding: 1.4em;
 	border: var(--border-width) solid var(--color-border);
 	border-radius: 50%;
@@ -152,6 +152,11 @@ h1 {
 	font-size: 1.2em;
 	text-transform: uppercase;
 	font-weight: bold;
+}
+
+.c_list .router-link-active .c_media__content {
+	font-weight: bold;
+	text-decoration: underline;
 }
 
 .tac {
