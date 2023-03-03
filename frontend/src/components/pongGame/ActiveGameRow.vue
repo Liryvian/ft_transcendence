@@ -1,7 +1,7 @@
 <template>
 	<div class="">{{ player_left }} {{ player_left_score }}</div>
     <!-- MIDDLE LINE HERE -->
-	<div class="">{{ player_right }} {{ player_right_score }}</div>
+	<div class="">{{ player_right_score }} {{ player_right }}</div>
 
     <router-link :to="{name: 'pong'}"> [watch game]</router-link>
 </template>
