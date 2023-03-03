@@ -58,7 +58,7 @@ export class UserController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Get()
 	async findAll(
 		@Query() userRelationsQuery?: UserRelationsQueryDto,
@@ -74,7 +74,7 @@ export class UserController {
 		return users;
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Get(':id')
 	async findOne(
 		@Param('id') id: number,
@@ -95,7 +95,7 @@ export class UserController {
 		});
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
 		try {
@@ -134,7 +134,7 @@ export class UserController {
 		}
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Post(':id/avatar')
 	@UseInterceptors(FileInterceptor('avatar'))
 	async setAvatar(
@@ -158,7 +158,7 @@ export class UserController {
 			});
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Delete(':id/avatar')
 	async removeAvatar(@Param('id') id: number) {
 		return this.userService
