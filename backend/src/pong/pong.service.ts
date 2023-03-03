@@ -31,6 +31,11 @@ export class PongService {
 
 	createNewGameState(): GameState {
 		const newGameState: GameState = {
+			gameId: -1,
+			playerOneId: -1,
+			playerTwoId: -1,
+			playerOneIsInGame: false,
+			playerTwoIsInGame: false,
 			playerOnePaddle: {
 				position: {
 					x: 0,
@@ -64,6 +69,12 @@ export class PongService {
 			scorePlayerOne: 0,
 			scorePlayerTwo: 0,
 			roomName: '',
+			isPressed: {
+				w: false,
+				s: false,
+			},
+			gameIsOver: false,
+			pointIsover: false,
 		};
 		return newGameState;
 	}
@@ -175,8 +186,7 @@ export class PongService {
 			if (pressedKey.s) {
 				playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
 			}
-		}
-		else {
+		} else {
 			if (pressedKey.w) {
 				playerTwoPaddle.position.y = this.moveUp(playerTwoPaddle.position.y);
 			}
@@ -193,5 +203,9 @@ export class PongService {
 		};
 		this.dx = randomDirection(-4, 4) || 0.3;
 		this.dy = randomDirection(-4, 4) || 0.3;
+	}
+
+	startGame() {
+		// window.re
 	}
 }

@@ -15,6 +15,9 @@ export class Ball {
 }
 
 export interface GameState {
+	gameId: number;
+	playerOneId: number;
+	playerTwoId: number;
 	playerOnePaddle: Paddle;
 	playerTwoPaddle: Paddle;
 	ball: Ball;
@@ -23,11 +26,14 @@ export interface GameState {
 	scorePlayerOne: number;
 	scorePlayerTwo: number;
 	roomName: string;
+	isPressed: MovementKeys;
+	pointIsover: boolean;
+	gameIsOver: boolean;
+	playerOneIsInGame: boolean;
+	playerTwoIsInGame: boolean;
 }
 
 export interface MovementKeys {
-	ArrowUp: boolean;
-	ArrowDown: boolean;
 	w: boolean;
 	s: boolean;
 }

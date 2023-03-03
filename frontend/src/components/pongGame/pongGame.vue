@@ -53,8 +53,10 @@ export default defineComponent({
 	},
 
 	beforeRouteLeave(to, from, next) {
-		if (this.gameStatus !== GameStatusEnum.GAME_OVER
-			&& (this.isPlayerOne || this.isPlayerTwo)) {
+		if (
+			this.gameStatus !== GameStatusEnum.GAME_OVER &&
+			(this.isPlayerOne || this.isPlayerTwo)
+		) {
 			this.finishGame();
 		}
 		this.socket.disconnect();
@@ -74,8 +76,8 @@ export default defineComponent({
 		const {
 			allGames,
 			isPressed,
-			gameLoopInterval,
-			timeStampStart,
+			// gameLoopInterval,
+			// timeStampStart,
 			previousTimeStamp,
 			score_player_one,
 			score_player_two,
@@ -85,8 +87,8 @@ export default defineComponent({
 			gameStore,
 			allGames,
 			isPressed,
-			gameLoopInterval,
-			timeStampStart,
+			// gameLoopInterval,
+			// timeStampStart,
 			previousTimeStamp,
 			score_player_one,
 			score_player_two,
@@ -114,17 +116,17 @@ export default defineComponent({
 		getPlayerTwo() {
 			return this.getCurrentGame?.player_two;
 		},
-		getMyId(){
+		getMyId() {
 			return useUserStore().me.id;
 		},
-		isPlayerOne(){
+		isPlayerOne() {
 			return this.getCurrentGame?.player_one.id === this.getMyId;
 		},
-		isPlayerTwo(){
+		isPlayerTwo() {
 			return this.getCurrentGame?.player_two.id === this.getMyId;
 		},
 		isPlayer() {
-			 return this.isPlayerOne || this.isPlayerTwo;
+			return this.isPlayerOne || this.isPlayerTwo;
 		},
 	},
 
@@ -223,7 +225,11 @@ export default defineComponent({
 			// redraws after intervalMs
 			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
-				this.socket!.emit('updatePositions', this.isPressed);
+				this.socket!.emit(
+					'updatePositions',
+					this.currentgameId,
+					this.isPressed,
+				);
 			}
 
 			if (this.gameStatus === GameStatusEnum.PLAYING) {
@@ -233,7 +239,10 @@ export default defineComponent({
 				this.gameStatus = GameStatusEnum.PLAYING;
 				this.resetPressedKeys();
 				// reset positions
-				this.socket!.emit('resetAfterPointFinished');
+				this.socket!.emit(
+					'resetAfterPointFinished',
+					this.currentgameId,
+				);
 
 				// restart game loop
 				window.requestAnimationFrame(this.getUpdatedPositions);
@@ -264,6 +273,7 @@ export default defineComponent({
 		},
 
 		setSocketOn() {
+			console.log('Setting sockets on');
 			this.socket.on('elementPositions', this.render);
 			this.socket.on(
 				'pointOver',
@@ -284,19 +294,23 @@ export default defineComponent({
 
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
-		console.log(this.getCurrentGame?.player_two.id,  this.getCurrentGame?.player_one.id,  this.getMyId);
+		console.log(
+			this.getCurrentGame!.player_two.id,
+			this.getCurrentGame!.player_one.id,
+			this.getMyId,
+		);
 		if (this.isPlayer) {
-			console.log("\n\n\nsetting eventlisteners\n\n\n")
+			console.log('\n\n\nsetting eventlisteners\n\n\n');
 			document.addEventListener('keydown', this.keyDown);
 			document.addEventListener('keyup', this.keyUp);
 		}
-		this.socket.emit('joinGameRoom', this.getCurrentGame);
 		this.setSocketOn();
-		
-		// MAIN GAME LOOP
-		this.socket.on("GameCanStart", () => {
+		this.socket.emit('joinGameRoom', this.getCurrentGame);
+
+		// // MAIN GAME LOOP
+		this.socket.on('GameCanStart', () => {
 			this.startGameLoop();
-		})
+		});
 	},
 });
 </script>

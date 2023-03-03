@@ -52,12 +52,12 @@ const router = createRouter({
 			path: '/profiles',
 			children: [
 				{
-					path: '/profiles',
+					path: '',
 					name: 'profiles',
 					component: () => import('../views/ProfilesView.vue'),
 				},
 				{
-					path: ':profile_id?',
+					path: ':profile_id',
 					name: 'profile',
 					component: () => import('../views/ProfileView.vue'),
 					props: true,
