@@ -18,8 +18,11 @@ import { UserAchievementsModule } from './users/user-achievements/user-achieveme
 import { ChatUserPermissionModule } from './chats/chat-user-permissions/chat-user-permission.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MeModule } from './me/me.module';
+import { ChatsModule } from './chats/chats.module';
+import { SocketModule } from './socket/socket.module';
 import { AppService } from './app.service';
 import { PongModule } from './pong/pong.module';
+import { TwoFaModule } from './auth/twofa/twofa.module';
 
 @Module({
 	imports: [
@@ -32,6 +35,7 @@ import { PongModule } from './pong/pong.module';
 		ConfigModule.forRoot({ isGlobal: true }),
 		TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
 		AuthModule,
+		TwoFaModule,
 		SharedModule,
 		ChatModule,
 		MessageModule,
@@ -45,6 +49,8 @@ import { PongModule } from './pong/pong.module';
 		AchievementsModule,
 		UserAchievementsModule,
 		MeModule,
+		ChatsModule,
+		SocketModule,
 		PongModule,
 	],
 	providers: [AppService],

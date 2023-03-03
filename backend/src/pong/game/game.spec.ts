@@ -9,7 +9,7 @@ import { InsertResult } from 'typeorm';
 
 import { CreateGameDto } from './dto/create-game.dto';
 import { CreateUserDto } from '../../users/user/dto/create-user.dto';
-import { Game } from './entities/game.entity';
+import { Game, gameStates } from './entities/game.entity';
 import { GameController } from './game.controller';
 import { GameService } from './game.service';
 import { UpdateGameDto } from './dto/update-game.dto';
@@ -109,8 +109,7 @@ describe('Game unit tests', () => {
 					id: expect.any(Number),
 					score_player_one: 0,
 					score_player_two: 0,
-					customization: expect.any(Object),
-					is_active: true,
+					state: gameStates.PENDING,
 					created_at: expect.any(Date),
 					updated_at: expect.any(Date),
 					player_one: relationTestUsersIds[0],

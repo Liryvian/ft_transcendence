@@ -22,6 +22,7 @@ import { IntraTokendataDto } from './dto/intra-tokendata.dto';
 import { Api42Guard } from './api42.guard';
 import { AuthGuard } from './auth.guard';
 
+//
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AuthController {
@@ -67,11 +68,11 @@ export class AuthController {
 			throw new BadRequestException(userData.message);
 		}
 
-		const { redirectLocation, userId } = await this.authService.processUserData(
+		const { redirectLocation, user } = await this.authService.processUserData(
 			userData,
 		);
 
-		await this.authService.login(userId, response);
+		this.authService.login(user, response);
 		return response.redirect(redirectLocation);
 	}
 
@@ -92,7 +93,7 @@ export class AuthController {
 			) {
 				throw new BadRequestException('Invalid user/password combination');
 			}
-			await this.authService.login(user.id, response);
+			this.authService.login(user, response);
 			return user;
 		} catch (e) {
 			throw new BadRequestException('Invalid user/password combination');

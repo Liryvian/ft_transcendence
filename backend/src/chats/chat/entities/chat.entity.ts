@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	OneToMany,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { Message } from '../../message/entities/message.entity';
 import { IsIn } from 'class-validator';
@@ -7,6 +13,8 @@ import { User } from '../../../users/user/entities/user.entity';
 
 const validVisibility = ['public', 'private'];
 const chatType = ['dm', 'channel'];
+export type ChatType = 'dm' | 'channel';
+export type ChatVisibility = 'public' | 'private';
 
 @Entity('chats')
 export class Chat {
@@ -42,22 +50,25 @@ export class Chat {
 
 	@IsIn(validVisibility)
 	@Column({ default: 'public' })
-	visibility: string;
+	visibility: ChatVisibility;
 
 	@IsIn(chatType)
 	@Column({ default: 'channel' })
-	type: string;
+	type: ChatType;
 
 	@Column({ nullable: true })
 	@Exclude()
 	password: string;
 
-	@OneToMany(() => Message, (message) => message.chat_id)
+	@OneToMany(() => Message, (message) => message.chat)
 	messages: Message[];
 
 	toJSON() {
 		return instanceToPlain(this);
 	}
+
+	@CreateDateColumn()
+	created_at: Date;
 }
 
 export class ChatUser {

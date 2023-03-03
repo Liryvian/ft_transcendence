@@ -20,23 +20,19 @@
 					/>
 				</div>
 
-				<div class="c_field_group">
+				<div class="">
 					<label for="example_field">add member:</label>
 						<template v-for="user in allUsers">
 							<ListRow
 								v-if="user.id !== me.id"
 								:user="user"
-								:relationship="getCurrentRel(user.id)"
 							/>
-							<div>
+							<div class="checkiesboxies">
 								<input type="checkbox" id="coding" name="interest" value="coding" checked />
-								<label for="coding">Coding</label>
+								<label for="coding">{{user.name}}</label>
 							</div>
 						</template>
-					<div>
-						<input type="checkbox" id="coding" name="interest" value="coding" checked />
-						<label for="coding">Coding</label>
-					</div>
+
 <!--					<input-->
 <!--						id="example_field"-->
 <!--						type="text"-->
@@ -88,3 +84,45 @@
 		</div>
 	</div>
 </template>
+
+<script lang="ts">
+import { useUserStore } from '@/stores/userStore';
+import { defineComponent, reactive } from 'vue';
+import { storeToRefs } from 'pinia';
+
+export default defineComponent({
+	name: 'newChannel',
+	components: {
+	},
+
+	setup() {
+		const userStore = useUserStore();
+		userStore.refreshData();
+		const {allUsers, me, errors} = storeToRefs(userStore);
+
+		// const registerForm: RegisterForm = reactive({
+		// 	name: '',
+		// 	password: '',
+		// 	password_confirm: '',
+		// });
+		return {
+			userStore,
+			allUsers,
+			me,
+			errors,
+		};
+	},
+});
+</script>
+
+<style scoped>
+.checkiesboxies {
+	display: flex;
+}
+.checkiesboxies label {
+	padding-left: 0.7em;
+}
+.checkiesboxies input {
+	margin-left: 0.7em;
+}
+</style>

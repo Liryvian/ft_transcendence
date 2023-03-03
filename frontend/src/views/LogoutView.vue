@@ -1,9 +1,20 @@
-<template>
-	<div class="page_box_wrapper">
-		<div class="page_box">
-			<h1>GOODBYE!</h1>
-		</div>
-	</div>
-</template>
+<template></template>
 
-<script lang="ts"></script>
+<script lang="ts">
+import { useChatStore } from '@/stores/chatStore';
+import { useGameStore } from '@/stores/gameStore';
+import { useUserStore } from '@/stores/userStore';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+	name: 'Logout',
+
+	setup() {
+		useUserStore().logout();
+		// reset all stores
+		useUserStore().$reset();
+		useGameStore().$reset();
+		useChatStore().$reset();
+	},
+});
+</script>

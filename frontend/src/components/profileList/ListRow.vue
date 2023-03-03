@@ -3,12 +3,16 @@
 	<div v-if="!isBlocked(relationship.type)">
 		<Avatar
 			:avatar="user.avatar"
-			:is-online="true"
+			:is-online="userStore.getOnlineStatus(user.id)"
 			v-on:click="routeToProfile(user.id)"
 		/>
 	</div>
 	<div v-else>
-		<Avatar :avatar="user.avatar" :is-online="false" class="grayedOut" />
+		<Avatar
+			:avatar="user.avatar"
+			:is-online="userStore.getOnlineStatus(user.id)"
+			class="grayedOut"
+		/>
 	</div>
 
 	<!-- Route to profile via username link -->
@@ -31,16 +35,16 @@
 
 	<!-- Update friend status -->
 	<FriendInvite
-		:user-id="user.id"
+		:userId="user.id"
 		:isBlocked="isBlocked(relationship.type)"
 		:isFriend="isFriend(relationship.type)"
 	/>
 
 	<!-- Update blocked status -->
 	<BlockUser
-		:user-id="user.id"
+		:userId="user.id"
 		:isBlocked="isBlocked(relationship.type)"
-		:relationshipSourceId="relationship.source_id.id"
+		:relationship="relationship"
 	/>
 </template>
 
@@ -48,25 +52,42 @@
 import { defineComponent, type PropType, ref } from 'vue';
 import HorizontalAvatarAndUserName from '@/components/user-info/HorizontalAvatarAndUserName.vue';
 import type { User } from '@/types/User';
-import { useUserStore } from '@/stores/userStore';
+import { useRelationshipStore } from '@/stores/relationshipStore';
 import Avatar from '@/components/profileList/Avatar.vue';
 import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
 import router from '@/router';
 import type { Relationship } from '@/types/Relationship';
+import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ListRow',
 
-	setup() {
+	created() {
+		console.log('rel in listrow', this.relationship);
+	},
+
+	setup(props) {
 		const userStore = useUserStore();
-		const { isFriend, isBlocked } = useUserStore();
-		userStore.refreshData();
+		const relationshipStore = useRelationshipStore();
+		relationshipStore.initialize();
+		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
+			relationshipStore;
 		return {
 			userStore,
 			isFriend,
 			isBlocked,
+			joinRoomOnConnect,
+			disconnectSocket,
 		};
+	},
+	mounted() {
+		// this.socke
+		this.joinRoomOnConnect(this.relationship);
+	},
+
+	unmounted() {
+		this.disconnectSocket();
 	},
 
 	components: {
@@ -87,6 +108,7 @@ export default defineComponent({
 			required: true,
 		},
 	},
+
 	methods: {
 		async routeToChat(userId: number) {
 			console.log(`Starting chat with ${userId}`);

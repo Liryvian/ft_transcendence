@@ -5,7 +5,7 @@ export class CreateMessageDto {
 	sender_id: number;
 
 	@IsNotEmpty()
-	chat_id: number;
+	chat: number;
 
 	@IsNotEmpty()
 	content: string;

@@ -77,8 +77,8 @@ export class AuthService {
 			});
 
 			return Promise.resolve({
-				redirectLocation: '/?type=recurring_user',
-				userId: user.id,
+				redirectLocation: '/profiles',
+				user: user,
 			});
 		} catch (e) {
 			if (e instanceof NotFoundException) {
@@ -101,8 +101,8 @@ export class AuthService {
 						const user = await this.userService.save(newUser);
 
 						return Promise.resolve({
-							redirectLocation: '/?type=new_user',
-							userId: user.id,
+							redirectLocation: '/settings',
+							user: user,
 						});
 					} catch (e) {
 						if (!(e instanceof QueryFailedError)) {
@@ -117,8 +117,24 @@ export class AuthService {
 		}
 	}
 
-	async login(id: number, response: Response) {
-		const jwt = await this.jwtService.signAsync({ id: id });
+	login(user: User, response: Response, with_2fa: boolean = false) {
+		const jwt = this.jwtService.sign({
+			id: user.id,
+			require_2fa: user.two_factor_required,
+			validated_2fa: with_2fa,
+		});
+		console.log(
+			'contents of JWT: ',
+			JSON.stringify(
+				{
+					id: user.id,
+					require_2fa: user.two_factor_required,
+					validated_2fa: with_2fa,
+				},
+				null,
+				2,
+			),
+		);
 		response.cookie('jwt', jwt, { httpOnly: true });
 	}
 
@@ -128,8 +144,24 @@ export class AuthService {
 
 	async userId(request: Request): Promise<number> {
 		const cookie = request.cookies['jwt'];
-		const data = this.jwtService.verify(cookie);
 
-		return data['id'];
+		return this.userIdFromCookieString(cookie);
+	}
+
+	async validUserId(request: Request): Promise<number> {
+		const userId = await this.userId(request);
+		await this.userService.findOne({ where: { id: userId } });
+
+		return userId;
+	}
+
+	userIdFromCookieString(cookie: string) {
+		try {
+			const data = this.jwtService.verify(cookie);
+
+			return data['id'];
+		} catch (e) {
+			throw new BadRequestException('Invalid Authentication');
+		}
 	}
 }

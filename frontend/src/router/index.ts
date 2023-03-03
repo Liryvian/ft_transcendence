@@ -1,3 +1,4 @@
+import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
 const router = createRouter({
@@ -9,23 +10,51 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/LoginView.vue'),
+			component: () => import('../views/ChatView.vue'),
 		},
 		{
 			path: '/settings',
-			name: 'settings',
-			component: () => import('../views/SettingsView.vue'),
+			children: [
+				{
+					path: '/settings',
+					name: 'settings',
+					component: () => import('../views/SettingsView.vue'),
+				},
+				{
+					path: 'turn-on-2fa',
+					name: 'turn-on-2fa',
+					component: () => import('../views/Settings2fa.vue'),
+				},
+			],
 		},
 		{
-			path: '/game',
-			name: 'game',
+			path: '/active-games',
+			name: 'activeGames',
+
 			component: () => import('../views/GameView.vue'),
+			props: true,
 		},
 		{
-			path: '/chat/:currentChat?',
-			name: 'chat',
+			path: '/chat',
+			children: [
+				{
+					path: '/chat',
+					name: 'chat',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: ':currentChat?',
+					name: 'singlechat',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
+		},
+		{
+			path: '/pong/:currentGame?',
+			name: 'pong',
 			props: true,
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../components/pongGame/pongGame.vue'),
 		},
 		{
 			path: '/profiles',
@@ -41,6 +70,11 @@ const router = createRouter({
 			path: '/login',
 			name: 'login',
 			component: () => import('../views/LoginView.vue'),
+		},
+		{
+			path: '/register',
+			name: 'register',
+			component: () => import('../views/RegisterView.vue'),
 		},
 		{
 			path: '/channel-settings',
@@ -69,9 +103,15 @@ const router = createRouter({
 			component: () => import('../views/ElementsToReuse.vue'),
 		},
 		{
-			path: '/register',
-			name: 'register',
-			component: () => import('../views/RegisterView.vue'),
+			path: '/request-game/:profile_id?/:chat_id?',
+			name: 'request-game',
+			component: () => import('../views/RequestGame.vue'),
+			props: true,
+		},
+		{
+			path: '/game-invite',
+			name: 'game-invite',
+			component: () => import('../views/GameInvite.vue'),
 		},
 		{
 			path: '/component-test',
@@ -79,6 +119,16 @@ const router = createRouter({
 			component: () => import('../views/ComponentTest.vue'),
 		},
 	],
+});
+
+router.beforeEach(async (to) => {
+	const isLoggedIn: boolean = useUserStore().isLoggedIn;
+
+	if (!isLoggedIn && to.name !== 'login' && to.name !== 'register') {
+		return { name: 'login' };
+	} else if ((to.name === 'login' || to.name === 'register') && isLoggedIn) {
+		return { name: 'home' };
+	}
 });
 
 export default router;

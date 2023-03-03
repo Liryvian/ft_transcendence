@@ -14,12 +14,14 @@ export class Ball {
 	radius: number;
 }
 
-
 export interface GameState {
 	playerOnePaddle: Paddle;
 	playerTwoPaddle: Paddle;
 	ball: Ball;
 	canvas: Position;
+	scoreToWin: number;
+	scorePlayerOne: number;
+	scorePlayerTwo: number;
 }
 
 export interface MovementKeys {

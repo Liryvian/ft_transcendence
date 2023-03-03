@@ -49,6 +49,36 @@ export class MeController {
 		return 'users visible to me';
 	}
 
+	@Get('relationships')
+	async getMyRelationships(@Req() request: Request) {
+		const userRelations: UserRelationsQueryDto = {
+			relationshipSource: true,
+			relationshipTarget: true,
+		};
+		// get userId with jwt token
+		const id: number = await this.authService.userId(request);
+		const user: User = await this.userService.findOne({
+			where: { id },
+			relations: userRelations,
+		});
+
+		// we want to send only the:
+		// relationshipId
+		// source / target userId,
+		// relationshipType
+		// we do this by mapping the array of Relationship in user
+		const relationships = user.relationships.map((rel) => {
+			return {
+				id: rel.id,
+				source: rel.source.id,
+				target: rel.target.id,
+				type: rel.type,
+				specifier_id: rel.specifier_id,
+			};
+		});
+		return relationships;
+	}
+
 	@Get('blocked')
 	async blocked(@Req() request: Request) {
 		const id: number = await this.authService.userId(request);
@@ -72,11 +102,17 @@ export class MeController {
 		// if you add the relationship here it only returns relations where you are the user, not all users in the chat
 		const chatIds: Chat[] = await this.chatService.findAll({
 			select: { id: true },
-			where: {
-				has_users: {
-					user_id: id,
+			where: [
+				{
+					has_users: {
+						user_id: id,
+					},
 				},
-			},
+				{
+					type: 'channel',
+					visibility: 'public',
+				},
+			],
 		});
 
 		const chats: Chat[] = (
@@ -85,6 +121,9 @@ export class MeController {
 					id: c.id,
 				})),
 				relations: { has_users: { users: true } },
+				order: {
+					created_at: 'asc',
+				},
 			})
 		).filter(
 			// removes chats where "I" am blocked

@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { CreateChatUserPermissionDto } from '../chats/chat-user-permissions/dto/create-chat-user-permission.dto';
 import { CreateUserAchievementDto } from '../users/user-achievements/dto/create-user-achievement.dto';
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
+import { gameStates } from '../pong/game/entities/game.entity';
 
 class seedUser {
 	name: string;
@@ -21,12 +22,12 @@ class seedGame {
 	player_two: number;
 	score_player_one: number;
 	score_player_two: number;
-	is_active: boolean;
+	state: gameStates;
 }
 
 class seedMessage {
 	sender_id: number;
-	chat_id: number;
+	chat: number;
 	content: string;
 	created_at?: string;
 	updated_at?: string;
@@ -87,8 +88,8 @@ const seedData = {
 				updated_at: user_dates[3],
 			},
 			{
-				name: 'X the bitch',
-				password: await bcrypt.hash('x', 11),
+				name: 'wildsbok',
+				password: await bcrypt.hash('w', 11),
 				is_intra: false,
 				created_at: user_dates[4],
 				updated_at: user_dates[4],
@@ -100,39 +101,46 @@ const seedData = {
 	userRelations: (ids: number[]) => {
 		const userRelations: CreateUserRelationshipDto[] = [
 			{
-				source_id: ids[0],
-				target_id: ids[1],
+				source: ids[0],
+				target: ids[1],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[2],
+				source: ids[0],
+				target: ids[2],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[3],
+				source: ids[0],
+				target: ids[3],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[1],
-				target_id: ids[2],
+				source: ids[1],
+				target: ids[2],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[1],
 			},
 			{
-				source_id: ids[1],
-				target_id: ids[3],
+				source: ids[1],
+				target: ids[3],
 				type: validRelationships.FRIEND,
+				specifier_id: ids[1],
 			},
 			{
-				source_id: ids[0],
-				target_id: ids[4],
+				source: ids[0],
+				target: ids[4],
 				type: validRelationships.BLOCKED,
+				specifier_id: ids[0],
 			},
 			{
-				source_id: ids[3],
-				target_id: ids[4],
+				source: ids[3],
+				target: ids[4],
 				type: validRelationships.BLOCKED,
+				specifier_id: ids[3],
 			},
 		];
 		return userRelations;
@@ -145,28 +153,28 @@ const seedData = {
 				player_two: ids[1],
 				score_player_one: 10,
 				score_player_two: 5,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[1],
 				player_two: ids[2],
 				score_player_one: 8,
 				score_player_two: 3,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[2],
 				player_two: ids[0],
 				score_player_one: 12,
 				score_player_two: 7,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 			{
 				player_one: ids[3],
 				player_two: ids[2],
 				score_player_one: 4,
 				score_player_two: 10,
-				is_active: false,
+				state: gameStates.DONE,
 			},
 		];
 		return games;
@@ -178,6 +186,7 @@ const seedData = {
 			{ name: 'flamink-renoster', type: 'dm' },
 			{ name: 'vaalboskat-renoster', type: 'dm' },
 			{ name: 'Zoo' },
+			{ name: 'Zzz sleepy', type: 'channel', visibility: 'public' },
 		];
 		return chats;
 	},
@@ -199,14 +208,28 @@ const seedData = {
 		return userAchievements;
 	},
 
-	chatUserPermission: (users: number[], chats: number[]) => {
+	chatUserPermission: (users, chats) => {
 		const cups: CreateChatUserPermissionDto[] = [];
+
+		const aardwolf = users.find((u) => u.name === 'aardwolf').id;
+		const flamink = users.find((u) => u.name === 'flamink').id;
+		const renoster = users.find((u) => u.name === 'renoster').id;
+		const vaalboskat = users.find((u) => u.name === 'vaalboskat').id;
+		const wildsbok = users.find((u) => u.name === 'wildsbok').id;
+
+		const desert = chats.find((c) => c.name === 'Desert').id;
+		const flaminkRenoster = chats.find((c) => c.name === 'flamink-renoster').id;
+		const vaalboskatRenoster = chats.find(
+			(c) => c.name === 'vaalboskat-renoster',
+		).id;
+		const zoo = chats.find((c) => c.name === 'Zoo').id;
+		const zzzSleepy = chats.find((c) => c.name === 'Zzz sleepy').id;
 
 		// Add flamink and renoster to their DM
 		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
-			[users[1], users[2]].forEach((u) => {
+			[flamink, renoster].forEach((u) => {
 				cups.push({
-					chat_id: chats[1],
+					chat_id: flaminkRenoster,
 					user_id: u,
 					permission: p,
 				});
@@ -215,9 +238,9 @@ const seedData = {
 
 		// Add vaalboskat and renoster to their DM
 		[permissionsEnum.POST, permissionsEnum.READ].forEach((p) => {
-			[users[3], users[2]].forEach((u) => {
+			[vaalboskat, renoster].forEach((u) => {
 				cups.push({
-					chat_id: chats[2],
+					chat_id: vaalboskatRenoster,
 					user_id: u,
 					permission: p,
 				});
@@ -231,8 +254,8 @@ const seedData = {
 			permissionsEnum.POST,
 		].forEach((p) => {
 			cups.push({
-				chat_id: chats[0],
-				user_id: users[2],
+				chat_id: desert,
+				user_id: renoster,
 				permission: p,
 			});
 		});
@@ -244,9 +267,9 @@ const seedData = {
 			permissionsEnum.POST,
 			permissionsEnum.READ,
 		].forEach((p) => {
-			users.slice(0, -1).forEach((u) => {
+			[aardwolf, flamink, renoster, vaalboskat].forEach((u) => {
 				cups.push({
-					chat_id: chats[3],
+					chat_id: zoo,
 					user_id: u,
 					permission: p,
 				});
@@ -254,38 +277,61 @@ const seedData = {
 		});
 
 		// add almost everybody to 'Desert' with read permission
-		users
-			.slice(0, -1)
+		[aardwolf, flamink, renoster, vaalboskat]
 			.map(
 				(u) =>
 					({
-						chat_id: chats[0],
+						chat_id: desert,
 						user_id: u,
 						permission: permissionsEnum.READ,
 					} as CreateChatUserPermissionDto),
 			)
 			.forEach((cup) => cups.push(cup));
 
-		// add bitch user blocked + left to every chat
-		chats
+		// add wildsbok user blocked + left to every chat
+		[desert, zoo]
 			.map((c) => ({
 				chat_id: c,
-				user_id: users[4],
+				user_id: wildsbok,
 				permission: permissionsEnum.BLOCKED,
 			}))
 			.forEach((cup) => cups.push(cup));
-		chats
+		[desert, zoo]
 			.map((c) => ({
 				chat_id: c,
-				user_id: users[4],
+				user_id: wildsbok,
 				permission: permissionsEnum.LEFT,
 			}))
 			.forEach((cup) => cups.push(cup));
+
+		// add wildsbok to Zzz sleepy channel
+		cups.push({
+			chat_id: zzzSleepy,
+			user_id: wildsbok,
+			permission: permissionsEnum.POST,
+		});
+		cups.push({
+			chat_id: zzzSleepy,
+			user_id: wildsbok,
+			permission: permissionsEnum.READ,
+		});
 		return cups;
 	},
 
-	messages: (users: number[], chats: number[]) => {
+	messages: (users, chats) => {
 		const messages: seedMessage[] = [];
+
+		const aardwolf = users.find((u) => u.name === 'aardwolf').id;
+		const flamink = users.find((u) => u.name === 'flamink').id;
+		const renoster = users.find((u) => u.name === 'renoster').id;
+		const vaalboskat = users.find((u) => u.name === 'vaalboskat').id;
+
+		const desert = chats.find((c) => c.name === 'Desert').id;
+		const flaminkRenoster = chats.find((c) => c.name === 'flamink-renoster').id;
+		const vaalboskatRenoster = chats.find(
+			(c) => c.name === 'vaalboskat-renoster',
+		).id;
+		const zoo = chats.find((c) => c.name === 'Zoo').id;
 
 		[
 			'Hello everybody,',
@@ -293,8 +339,8 @@ const seedData = {
 			'We hope you will enjoy your time here and please take this opportunity to send some messages',
 		].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[2],
-				chat_id: chats[3],
+				sender_id: renoster,
+				chat: zoo,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(8, 12 + index, 0),
@@ -315,8 +361,8 @@ const seedData = {
 			'Wanna play some pong?',
 		].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[index % 2 === 0 ? 2 : 3],
-				chat_id: chats[2],
+				sender_id: [vaalboskat, renoster][index % 2 === 0 ? 0 : 1],
+				chat: vaalboskatRenoster,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(9, 2 + index, 0),
@@ -345,8 +391,8 @@ const seedData = {
 			'you promised!!',
 		].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[index % users.length],
-				chat_id: chats[0],
+				sender_id: [aardwolf, flamink, renoster, vaalboskat][index % 4],
+				chat: desert,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(10, 25 + index * 2, 0),
@@ -359,8 +405,8 @@ const seedData = {
 
 		['hi', 'hi', 'hi!', 'hi!'].forEach((msg, index) => {
 			messages.push({
-				sender_id: users[index % 2 === 0 ? 2 : 1],
-				chat_id: chats[1],
+				sender_id: [flamink, renoster][index % 2 === 0 ? 0 : 1],
+				chat: flaminkRenoster,
 				content: msg,
 				created_at: new Date(
 					date_source.setHours(11, 48 + index, 0),
