@@ -12,7 +12,6 @@
 						disabled
 					/>
 				</div>
-
 				<div class="c_field_group">
 					<label for="example_field">group name:</label>
 					<input
@@ -29,6 +28,10 @@
 								:user="user"
 								:relationship="getCurrentRel(user.id)"
 							/>
+							<div>
+								<input type="checkbox" id="coding" name="interest" value="coding" checked />
+								<label for="coding">Coding</label>
+							</div>
 						</template>
 					<div>
 						<input type="checkbox" id="coding" name="interest" value="coding" checked />
