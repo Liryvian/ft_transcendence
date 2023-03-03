@@ -53,9 +53,11 @@ export default defineComponent({
 	},
 
 	beforeRouteLeave(to, from, next) {
-		if (this.isPlayerOne || this.isPlayerTwo) {
+		if (this.gameStatus !== GameStatusEnum.GAME_OVER
+			&& (this.isPlayerOne || this.isPlayerTwo)) {
 			this.finishGame();
 		}
+		this.socket.disconnect();
 		next();
 	},
 
@@ -89,8 +91,6 @@ export default defineComponent({
 			score_player_one,
 			score_player_two,
 			gameStatus,
-			playerOneIsInGame,
-			playerTwoIsInGame
 		};
 	},
 
@@ -198,7 +198,6 @@ export default defineComponent({
 		},
 
 		keyDown(keyPress: KeyboardEvent) {
-			console.log(keyPress)
 			if (this.isPressed[keyPress.key] !== undefined) {
 				this.isPressed[keyPress.key] = true;
 			}
@@ -211,8 +210,6 @@ export default defineComponent({
 		},
 
 		resetPressedKeys() {
-			this.isPressed.ArrowDown = false;
-			this.isPressed.ArrowUp = false;
 			this.isPressed.w = false;
 			this.isPressed.s = false;
 		},
@@ -255,7 +252,8 @@ export default defineComponent({
 				state: 'done',
 			};
 			this.gameStatus = GameStatusEnum.GAME_OVER;
-			this.socket.off('updatePosition', this.render);
+			this.socket.disconnect();
+			// this.socket.off('updatePosition', this.render);
 			// patch game in database with the updated scores
 			patchRequest(`games/${this.currentgameId}`, updateGameDto);
 			const winner: string | undefined =
@@ -281,8 +279,6 @@ export default defineComponent({
 			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
-			//  when either of the users disconnects game finsishes
-			this.socket.on('disconnect', this.finishGame);
 		},
 	},
 
@@ -296,8 +292,8 @@ export default defineComponent({
 		}
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
 		this.setSocketOn();
+		
 		// MAIN GAME LOOP
-
 		this.socket.on("GameCanStart", () => {
 			this.startGameLoop();
 		})

@@ -2,6 +2,7 @@ import {
 	ConnectedSocket,
 	MessageBody,
 	OnGatewayConnection,
+	OnGatewayDisconnect,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
@@ -13,39 +14,40 @@ import { GameState, MovementKeys } from './game.types.be';
 import { Game } from './game/entities/game.entity';
 import { PongService } from './pong.service';
 
+type GameObservers = Record<number, Socket[]>;
+
 @WebSocketGateway({
 	namespace: '/pong',
 	cors: {
 		origin: '*',
 	},
 })
-export class PongGateway implements OnGatewayConnection {
+export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	constructor(private readonly pongService: PongService, private readonly authService: AuthService) {}
 	@WebSocketServer()
 	server: Server;
 
 	private gameState: GameState;
-	private playerOneIsInGame: boolean;
-	private playerTwoIsInGame: boolean;
+	private playerOneIsInGame: boolean = false;
+	private playerTwoIsInGame: boolean = false;
+	public gameObservers: GameObservers = {};
+	private playerOneId: number = -1;
+
+
 
 	buildUniqueRoomId(roomInfo: Game): string {
-		return `${roomInfo.id}${Math.min(
-			roomInfo.player_one.id,
-			roomInfo.player_two.id,
-			)}${Math.max(roomInfo.player_one.id, roomInfo.player_two.id)}`;
+		return `${roomInfo.id}${Math.min(roomInfo.player_one.id,roomInfo.player_two.id,)}${Math.max(roomInfo.player_one.id, roomInfo.player_two.id)}`;
 		}
 		
-		handleConnection() {
-		this.playerOneIsInGame = false;
-		this.playerTwoIsInGame = false;
-		console.log("P1 online: ", this.playerOneIsInGame);
-		console.log("P2 online: ", this.playerTwoIsInGame);
+	handleConnection() {
 		console.log('\n!Socket is connected!\n');
 		this.pongService.gameIsFinished = false;
 		this.pongService.pointIsOver = false;
 		this.gameState = this.pongService.createNewGameState();
+		this.gameState.scoreToWin = 10;
+	}
 
-		this.gameState.scoreToWin = 2;
+	handleDisconnect(@ConnectedSocket() client: Socket) {
 	}
 
 	@SubscribeMessage("joinGameRoom") 
@@ -57,6 +59,7 @@ export class PongGateway implements OnGatewayConnection {
 			const userId: number = this.authService.userIdFromCookieString(cookie);
 			if (userId === game.player_one.id) {
 				this.playerOneIsInGame = true;
+				this.playerOneId = game.player_one.id;
 			}
 			else if (userId === game.player_two.id) {
 				this.playerTwoIsInGame = true;
@@ -85,16 +88,21 @@ export class PongGateway implements OnGatewayConnection {
 	}
 
 	@SubscribeMessage('updatePositions')
-	updatePositions(@MessageBody() keyPress: MovementKeys) {
+	updatePositions(@MessageBody() keyPress: MovementKeys, @ConnectedSocket() client: Socket) {
+		const cookie: string = jwtCookieFromHandshakeString(
+			client.handshake.headers.cookie,
+		);
+		const userId: number = this.authService.userIdFromCookieString(cookie);
 		this.pongService.movePaddles(
 			keyPress,
 			this.gameState.playerOnePaddle,
 			this.gameState.playerTwoPaddle,
+			// this.gameState,
+			this.playerOneId === userId,
 		);
 		this.pongService.moveBall(this.gameState);
 		this.sendPositionOfElements(this.gameState);
 		if (this.pongService.pointIsOver) {
-			console.log('Emitting point is over');
 			const scores = {
 				scorePlayerOne: this.gameState.scorePlayerOne,
 				scorePlayerTwo: this.gameState.scorePlayerTwo,
@@ -103,9 +111,11 @@ export class PongGateway implements OnGatewayConnection {
 			this.pongService.pointIsOver = false;
 		}
 		if (this.pongService.gameIsFinished) {
-			console.log("Emitting gam is over")
 			this.server.in(this.gameState.roomName).emit('gameOver');
 			this.pongService.gameIsFinished = false;
+			this.playerOneIsInGame = false;
+			this.playerTwoIsInGame = false;
+			this.playerOneId = -1;
 		}
 	}
 }

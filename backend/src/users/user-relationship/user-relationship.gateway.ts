@@ -64,7 +64,7 @@ export class UserRelationshipGateway
 
 	handleConnection() {}
 
-	handleDisconnect(client: Socket) {
+	handleDisconnect(@ConnectedSocket() client: Socket) {
 		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);

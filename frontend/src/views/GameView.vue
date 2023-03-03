@@ -3,7 +3,7 @@
 		<div class="page_box_wrapper">
 			<div class="page_box">
 				<h1>This is the list of games view</h1>
-				<router-link to="/pong/52">Go to /pong/52</router-link>
+				<router-link to="/pong/3">Go to /pong/3</router-link>
 			</div>
 		</div>
 	</div>

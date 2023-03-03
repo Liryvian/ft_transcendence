@@ -12,7 +12,6 @@ import {
 function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
 	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
-		return 0;
 		directionAndSpeed *= min;
 	}
 	return directionAndSpeed / 10;
@@ -168,18 +167,24 @@ export class PongService {
 		pressedKey: MovementKeys,
 		playerOnePaddle: Paddle,
 		playerTwoPaddle: Paddle,
+		// gameState: GameState,
+		isPressedByPlayerOne: boolean,
 	) {
-		if (pressedKey.ArrowUp) {
-			playerTwoPaddle.position.y = this.moveUp(playerTwoPaddle.position.y);
+		if (isPressedByPlayerOne) {
+			if (pressedKey.w) {
+				playerOnePaddle.position.y = this.moveUp(playerOnePaddle.position.y);
+			}
+			if (pressedKey.s) {
+				playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
+			}
 		}
-		if (pressedKey.ArrowDown) {
-			playerTwoPaddle.position.y = this.moveDown(playerTwoPaddle.position.y);
-		}
-		if (pressedKey.w) {
-			playerOnePaddle.position.y = this.moveUp(playerOnePaddle.position.y);
-		}
-		if (pressedKey.s) {
-			playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
+		else {
+			if (pressedKey.w) {
+				playerTwoPaddle.position.y = this.moveUp(playerTwoPaddle.position.y);
+			}
+			if (pressedKey.s) {
+				playerTwoPaddle.position.y = this.moveDown(playerTwoPaddle.position.y);
+			}
 		}
 	}
 
