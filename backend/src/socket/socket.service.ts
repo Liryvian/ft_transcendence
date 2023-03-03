@@ -121,8 +121,7 @@ export class SocketService {
 			}
 			this.chatListSubscribers[userId].push(socket);
 		} catch (e) {
-			console.log('Error on subscribing to chatlist');
-			console.log(e.response);
+			console.log(`Error on subscribing to chatlist (${socket.id})`);
 		}
 	}
 
@@ -147,7 +146,7 @@ export class SocketService {
 				}
 			}
 		} catch (e) {
-			console.log('Error on unsubscribing from chatlist');
+			console.log(`Error on unsubscribing from chatlist (${socket.id})`);
 		}
 	}
 }

@@ -52,14 +52,10 @@ export default defineComponent({
 			required: true,
 		},
 	},
-	setup(props) {
+	setup() {
 		const messageStore = useMessageStore();
 		const { messages } = storeToRefs(messageStore);
 		const userStore = useUserStore();
-
-		if (props.info.id === -1) {
-			console.log("dm -1!! create new dm between me and userId from url")
-		}
 
 		return {
 			messageStore,
