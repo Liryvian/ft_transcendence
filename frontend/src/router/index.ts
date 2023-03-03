@@ -29,10 +29,21 @@ const router = createRouter({
 		},
 		{
 			path: '/active-games',
-			name: 'activeGames',
-
-			component: () => import('../views/GameView.vue'),
-			props: true,
+			children:[
+				{
+					path: '',
+					name: 'activeGames',
+					component: () => import('../views/GameView.vue'),
+					props: true,
+				},
+				{
+					path: '/pong/:currentGame?',
+					name: 'pong',
+					props: true,
+					component: () => import('../components/pongGame/pongGame.vue'),
+				},
+			],
+			
 		},
 		{
 			path: '/chat/:currentChat?',
@@ -41,21 +52,15 @@ const router = createRouter({
 			component: () => import('../views/ChatView.vue'),
 		},
 		{
-			path: '/pong/:currentGame?',
-			name: 'pong',
-			props: true,
-			component: () => import('../components/pongGame/pongGame.vue'),
-		},
-		{
 			path: '/profiles',
 			children: [
 				{
-					path: '/profiles',
+					path: '',
 					name: 'profiles',
 					component: () => import('../views/ProfilesView.vue'),
 				},
 				{
-					path: ':profile_id?',
+					path: ':profile_id',
 					name: 'profile',
 					component: () => import('../views/ProfileView.vue'),
 					props: true,
