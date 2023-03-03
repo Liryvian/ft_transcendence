@@ -78,6 +78,7 @@ export class ChatController {
 							{ user_id: createChatDto.users[0].id },
 							{ user_id: createChatDto.users[1].id },
 						],
+						type: 'dm',
 					},
 				});
 				return hasDM;
