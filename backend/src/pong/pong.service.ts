@@ -8,7 +8,6 @@ import {
 } from './game.types.be';
 
 // expects integers
-// for this case using -3 and 3
 function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
 	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
@@ -167,7 +166,6 @@ export class PongService {
 		pressedKey: MovementKeys,
 		playerOnePaddle: Paddle,
 		playerTwoPaddle: Paddle,
-		// gameState: GameState,
 		isPressedByPlayerOne: boolean,
 	) {
 		if (isPressedByPlayerOne) {

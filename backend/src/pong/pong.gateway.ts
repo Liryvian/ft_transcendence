@@ -14,8 +14,6 @@ import { GameState, MovementKeys } from './game.types.be';
 import { Game } from './game/entities/game.entity';
 import { PongService } from './pong.service';
 
-type GameObservers = Record<number, Socket[]>;
-
 @WebSocketGateway({
 	namespace: '/pong',
 	cors: {
@@ -30,7 +28,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	private gameState: GameState;
 	private playerOneIsInGame: boolean = false;
 	private playerTwoIsInGame: boolean = false;
-	public gameObservers: GameObservers = {};
 	private playerOneId: number = -1;
 
 
@@ -44,6 +41,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.pongService.gameIsFinished = false;
 		this.pongService.pointIsOver = false;
 		this.gameState = this.pongService.createNewGameState();
+		//  set score to win with requestGame info
 		this.gameState.scoreToWin = 10;
 	}
 
@@ -87,6 +85,22 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.sendPositionOfElements(this.gameState);
 	}
 
+	resetService(){
+		this.pongService.gameIsFinished = false;
+		this.playerOneIsInGame = false;
+		this.playerTwoIsInGame = false;
+		this.playerOneId = -1;
+	}
+
+	handleFinishedPoint(){
+		const scores = {
+			scorePlayerOne: this.gameState.scorePlayerOne,
+			scorePlayerTwo: this.gameState.scorePlayerTwo,
+		};
+		this.server.in(this.gameState.roomName).emit('pointOver', scores);
+		this.pongService.pointIsOver = false;
+	}
+
 	@SubscribeMessage('updatePositions')
 	updatePositions(@MessageBody() keyPress: MovementKeys, @ConnectedSocket() client: Socket) {
 		const cookie: string = jwtCookieFromHandshakeString(
@@ -97,25 +111,16 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			keyPress,
 			this.gameState.playerOnePaddle,
 			this.gameState.playerTwoPaddle,
-			// this.gameState,
 			this.playerOneId === userId,
 		);
 		this.pongService.moveBall(this.gameState);
 		this.sendPositionOfElements(this.gameState);
 		if (this.pongService.pointIsOver) {
-			const scores = {
-				scorePlayerOne: this.gameState.scorePlayerOne,
-				scorePlayerTwo: this.gameState.scorePlayerTwo,
-			};
-			this.server.in(this.gameState.roomName).emit('pointOver', scores);
-			this.pongService.pointIsOver = false;
+			this.handleFinishedPoint()
 		}
 		if (this.pongService.gameIsFinished) {
 			this.server.in(this.gameState.roomName).emit('gameOver');
-			this.pongService.gameIsFinished = false;
-			this.playerOneIsInGame = false;
-			this.playerTwoIsInGame = false;
-			this.playerOneId = -1;
+			this.resetService();
 		}
 	}
 }
