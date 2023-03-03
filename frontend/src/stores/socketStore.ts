@@ -30,6 +30,7 @@ export const useSocketStore = defineStore('sockets', {
 			}
 		},
 		async initializeChats() {
+			console.log('init chat sockets');
 			this.chats.initialized = true;
 			// get initial data in chat store if it is not there
 			await useChatStore().init(false);

@@ -22,7 +22,10 @@
 					<!-- And then create and load the chat.. and update lists etc? -->
 					<img
 						src="/loading.gif"
-						v-if="currentChatInfo.id === -1 && currentChatInfo.type === 'dm'"
+						v-if="
+							currentChatInfo.id === -1 &&
+							currentChatInfo.type === 'dm'
+						"
 						:class="tryCreateNewDm()"
 					/>
 				</div>
@@ -37,7 +40,11 @@ import { storeToRefs } from 'pinia';
 
 import Chat from '@/components/chat/Chat.vue';
 import ChatList from '@/components/chat/ChatList.vue';
-import { type Chat_List, type Chat_List_Item, permissionsEnum } from '@/types/Chat';
+import {
+	type Chat_List,
+	type Chat_List_Item,
+	permissionsEnum,
+} from '@/types/Chat';
 import { useSocketStore } from '@/stores/socketStore';
 import { useChatStore } from '@/stores/chatStore';
 import { useUserStore } from '@/stores/userStore';
@@ -71,13 +78,13 @@ export default defineComponent({
 			me,
 			channels,
 			getAllChats,
-			router
+			router,
 		};
 	},
 	data() {
 		return {
 			focusTarget: 'c_chat--msg',
-			requestsDoneFor: [] as number[]
+			requestsDoneFor: [] as number[],
 		};
 	},
 	computed: {
@@ -105,10 +112,12 @@ export default defineComponent({
 			if (this.router.currentRoute.value.name === 'dm') {
 				return this.getAllChats.findIndex(
 					(chat) =>
-						(chat.users.length === 2 &&
-						chat.users.findIndex((u) => u.id === this.currentChatId) !== -1 &&
-						chat.users.findIndex((u) => u.id === this.me.id) !== -1)
-				)
+						chat.users.length === 2 &&
+						chat.users.findIndex(
+							(u) => u.id === this.currentChatId,
+						) !== -1 &&
+						chat.users.findIndex((u) => u.id === this.me.id) !== -1,
+				);
 			}
 			return this.getAllChats.findIndex(
 				(chat) => chat.id === this.currentChatId,
@@ -131,20 +140,23 @@ export default defineComponent({
 			this.focusTarget = 'c_chat--' + target;
 		},
 		async tryCreateNewDm() {
-			const otherUser = this.userStore.getUserById(Number(this.dmId ?? '-1'));
-			if (this.dmId === undefined ||
+			const otherUser = this.userStore.getUserById(
+				Number(this.dmId ?? '-1'),
+			);
+			if (
+				this.dmId === undefined ||
 				otherUser === undefined ||
 				this.me?.id === undefined
 			) {
 				router.push({ name: 'chat' });
-				return;
+				return '';
 			}
 			// try to make sure the request only happens once..
 			if (this.requestsDoneFor.indexOf(otherUser.id) !== -1) {
-				return;
+				return '';
 			}
 			try {
-				console.log("trying to make new chat");
+				console.log('trying to make new chat');
 				this.requestsDoneFor.push(otherUser.id);
 				const newChat = await postRequest('chats', {
 					type: 'dm',
@@ -155,24 +167,25 @@ export default defineComponent({
 							permissions: [
 								permissionsEnum.READ,
 								permissionsEnum.POST,
-								permissionsEnum.OWNER
-							]
+								permissionsEnum.OWNER,
+							],
 						},
 						{
 							id: this.me.id,
 							permissions: [
 								permissionsEnum.READ,
 								permissionsEnum.POST,
-								permissionsEnum.OWNER
-							]
-						}
-					]
+								permissionsEnum.OWNER,
+							],
+						},
+					],
 				});
-				console.log({newChat});
+				console.log({ newChat });
 			} catch (e) {
 				console.log(e);
 			}
-		}
+			return '';
+		},
 	},
 });
 </script>
