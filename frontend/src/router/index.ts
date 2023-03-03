@@ -93,6 +93,11 @@ const router = createRouter({
 			component: () => import('../views/NewChannelView.vue'),
 		},
 		{
+			path: '/matchmaking',
+			name: 'matchmaking',
+			component: () => import('../views/MatchMaking.vue'),
+		},
+		{
 			path: '/elements-to-reuse',
 			name: 'elements-to-reuse',
 			component: () => import('../views/ElementsToReuse.vue'),
