@@ -1,86 +1,59 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>NEW CHANNEL</h1>
-			<div class="c_block c_form_group">
-				<div class="c_field_group">
-					<label for="disabled_field">channel owner:</label>
-					<input
-						id="disabled_field"
-						type="text"
-						value="disabled field"
-						disabled
-					/>
-				</div>
-				<div class="c_field_group">
-					<label for="example_field">group name:</label>
-					<input
-						id="example_field"
-						type="text"
-					/>
-				</div>
-
-				<div class="">
-					<label for="example_field">add member:</label>
-						<template v-for="user in allUsers">
-							<ListRow
-								v-if="user.id !== me.id"
-								:user="user"
-							/>
-							<div class="checkiesboxies">
-								<input type="checkbox" :id="user.id" name="users" :value="user.id" checked />
-								<label :for="user.id">{{user.name}}</label>
-							</div>
-						</template>
-
-<!--					<input-->
-<!--						id="example_field"-->
-<!--						type="text"-->
-<!--					/>-->
-				</div>
-
-				<div class="c_field_group">
-					<label for="example_field">set password:</label>
-					<input
-						id="example_field"
-						type="text"
-					/>
-				</div>
-
-				<div class="c_field_group">
-					<label for="example_field">confirm password:</label>
-					<input
-						id="example_field"
-						type="text"
-					/>
-				</div>
-
-
-				<div class="c_field_group c_field_group--radio">
-					<div class="c_radio_group">
-						<label for="example_radio2">public</label>
-						<input
-							name="same"
-							id="example_radio2"
-							type="radio"
-							value="on"
-							checked
+			<h1> NEW CHANNEL </h1>
+				<div class="c_block c_form_group">
+					<form
+						method="Post"
+						action=""
+						class="c_block c_form_group"
+						@submit.prevent="createNewChannel(createNewChannelForm)"
+					>
+						<InputField
+							label="channel owner"
+							:modelValue="me.name"
+							:is_disabled="true"
 						/>
-					</div>
-					<div class="c_radio_group">
-						<label for="example_radio1">private</label>
-						<input
-							name="same"
-							id="example_radio1"
-							type="radio"
-							value="on"
+						<InputField
+							label="group name"
+							v-model="createNewChannelForm.name"
 						/>
-					</div>
-					<div class="page_button pb_bottom">
-						<a href="#">create</a>
-					</div>
+						<div class="">
+							<label for="example_field">add member:</label>
+							<template v-for="user in allUsers">
+								<ListRow
+									v-if="user.id !== me.id"
+									:user="user"
+								/>
+								<div class="checkiesboxies">
+									<input type="checkbox" :id="user.id" name="users" :value="user.id" checked />
+									<label :for="user.id">{{user.name}}</label>
+								</div>
+							</template>
+						</div>
+						<InputField
+							label="set password"
+							v-model="createNewChannelForm.password"
+						/>
+						<InputField
+							label="confirm password"
+							v-model="createNewChannelForm.confirm_password"
+						/>
+						<div class="c_field_group c_field_group--radio">
+							<RadioButton v-model="inputData2" :value="true" name="radio1" label="private" id="r1"/>
+							<RadioButton v-model="inputData2" :value="false" name="radio1" label="public" id="r2"/>
+						</div>
+
+						<div class="page_button pb_bottom">
+							<input type="submit" value="request" />
+						</div>
+						<div v-if="errors.length">
+							<p v-for="error in errors" class="c_form--error">
+								!! {{ error }}
+							</p>
+						</div>
+					</form>
 				</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -89,27 +62,51 @@
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
+import InputField from '@/components/input-fields/InputField.vue';
+import type { CreateNewChannelForm } from '@/types/Chat';
+import { permissionsEnum } from '@/types/Chat';
+import { useChatStore } from '@/stores/chatStore';
+import RadioButton from '@/components/input-fields/RadioButton.vue';
+
+export type Chat_Type = 'dm' | 'channel';
+
+export interface Chat_Member {
+	id: number;
+	name: string;
+	avatar?: string;
+	permissions: permissionsEnum[];
+}
 
 export default defineComponent({
 	name: 'newChannel',
 	components: {
+		InputField,
+		RadioButton,
 	},
 
 	setup() {
 		const userStore = useUserStore();
-		userStore.refreshData();
+		userStore.refreshAllUsers();
 		const {allUsers, me, errors} = storeToRefs(userStore);
+		const chatStore = useChatStore();
+		const { createNewChannel } = chatStore;
+		const createNewChannelForm : CreateNewChannelForm = reactive({
+			name: '',
+			visibility: '',//  ChatVisibility,
+			password: '',
+			password_confirm: '',
+			type: 'channel',
+			users: '', //Chat_Member[],
+		});
 
-		// const registerForm: RegisterForm = reactive({
-		// 	name: '',
-		// 	password: '',
-		// 	password_confirm: '',
-		// });
 		return {
 			userStore,
 			allUsers,
 			me,
 			errors,
+			createNewChannelForm,
+			createNewChannel,
+			chatStore,
 		};
 	},
 });
@@ -126,3 +123,8 @@ export default defineComponent({
 	margin-left: 0.7em;
 }
 </style>
+
+
+
+
+

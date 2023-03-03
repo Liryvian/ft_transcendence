@@ -1,6 +1,6 @@
-import type { Chat_List_Item } from '@/types/Chat';
+import type { Chat_List_Item, CreateNewChannelForm } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
-import { getRequest } from '@/utils/apiRequests';
+import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
 
 export const useChatStore = defineStore('chats', {
@@ -18,6 +18,17 @@ export const useChatStore = defineStore('chats', {
 	},
 	// actions == methods
 	actions: {
+		handleFormError(responseData: any) {
+			if (typeof responseData.message === 'string') {
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
+			} else {
+				this.errors = responseData.message.map((msg: String) =>
+					msg.replace('(o) => o.', ''),
+				);
+			}
+		},
+
 		async init(force: boolean) {
 			if (this.initialized === false || force) {
 				this.initialized = true;
@@ -34,6 +45,15 @@ export const useChatStore = defineStore('chats', {
 					console.error('error on getting me/chats', e);
 					return [];
 				}
+			}
+		},
+
+		async createNewChannel(createNewChannelForm: CreateNewChannelForm){
+			try{
+				console.log ("hallo");
+				// const newGame = postRequest('chat', createdNewChannelForm);
+			}catch (e: any) {
+				this.handleFormError(e.response.data);
 			}
 		},
 

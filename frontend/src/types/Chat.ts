@@ -78,3 +78,11 @@ export interface Chat_List {
 	type: Chat_Type;
 	items: Chat_List_Item[];
 }
+
+export interface CreateNewChannelForm {
+	name: string;
+	visibility?: ChatVisibility;
+	password?: string;
+	type?: Chat_Type;
+	users?: Chat_Member[];
+}
