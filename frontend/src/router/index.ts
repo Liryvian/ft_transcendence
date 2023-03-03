@@ -83,6 +83,11 @@ const router = createRouter({
 			component: () => import('../views/LoginView.vue'),
 		},
 		{
+			path: '/register',
+			name: 'register',
+			component: () => import('../views/RegisterView.vue'),
+		},
+		{
 			path: '/channel-settings',
 			name: 'channel-settings',
 			component: () => import('../views/ChannelSettingsView.vue'),
@@ -101,11 +106,6 @@ const router = createRouter({
 			path: '/elements-to-reuse',
 			name: 'elements-to-reuse',
 			component: () => import('../views/ElementsToReuse.vue'),
-		},
-		{
-			path: '/register',
-			name: 'register',
-			component: () => import('../views/RegisterView.vue'),
 		},
 		{
 			path: '/request-game/:profile_id?/:chat_id?',
