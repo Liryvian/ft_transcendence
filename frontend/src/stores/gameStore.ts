@@ -14,7 +14,6 @@ export const useGameStore = defineStore('games', {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
-		// socket: {} as Socket,
 		isInitialized: false,
 		isPressed: {
 			w: false,
