@@ -1,4 +1,5 @@
-import type { Chat_List_Item, CreateNewChannelForm } from '@/types/Chat';
+import type { Chat_List_Item, Chat_Type, ChatVisibility, CreateNewChannelForm } from '@/types/Chat';
+import { permissionsEnum } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
@@ -48,11 +49,23 @@ export const useChatStore = defineStore('chats', {
 			}
 		},
 
-		async createNewChannel(createNewChannelForm: CreateNewChannelForm){
-			try{
-				console.log ("hallo");
-				// const newGame = postRequest('chat', createdNewChannelForm);
-			}catch (e: any) {
+		async createNewChannel(createNewChannelForm: CreateNewChannelForm) {
+			try {
+				const usersToSend = createNewChannelForm.users.map(
+					(userId) => ({
+						id: userId,
+						permissions: [
+							permissionsEnum.READ,
+							permissionsEnum.POST,
+						],
+					}),
+				);
+				console.log('hallo');
+				// const newGame = postRequest('chat', {
+				// 	...createNewChannelForm,
+				// 	users: usersToSend
+				// });
+			} catch (e: any) {
 				this.handleFormError(e.response.data);
 			}
 		},
