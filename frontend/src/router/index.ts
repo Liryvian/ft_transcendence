@@ -29,7 +29,7 @@ const router = createRouter({
 		},
 		{
 			path: '/active-games',
-			children:[
+			children: [
 				{
 					path: '',
 					name: 'activeGames',
@@ -37,13 +37,13 @@ const router = createRouter({
 					props: true,
 				},
 				{
-					path: '/pong/:currentGame?',
+					path: '/pong/:currentGame',
 					name: 'pong',
 					props: true,
-					component: () => import('../components/pongGame/pongGame.vue'),
+					component: () =>
+						import('../components/pongGame/pongGame.vue'),
 				},
 			],
-			
 		},
 		{
 			path: '/chat/:currentChat?',
