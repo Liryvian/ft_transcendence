@@ -3,13 +3,7 @@
 		<div v-if="canInviteForAGame()">invite for a game</div>
 		<div v-if="canEditChannelSettings()">channel settings</div>
 		<div>
-			<RouterLink v-if="chat.type === 'dm'" :to="{ name: 'profile', params: { profile_id: otherUser.id } }" class="c_media c_media--assetright c_media--clickable">
-				<div class="c_media__asset" :class="is_online">
-					<ChatProfileImages :chat="chat" />
-				</div>
-				<div class="c_media__content">{{ chatName }}</div>
-			</RouterLink>
-			<RouterLink v-else="chat.type === 'dm'" :to="{ name: 'chat-members', params: { chatID: chat.id } }" class="c_media c_media--assetright c_media--clickable">
+			<RouterLink :to="{ name: 'profile', params: { profile_id: otherUser.id } }" class="c_media c_media--assetright c_media--clickable">
 				<div class="c_media__asset" :class="is_online">
 					<ChatProfileImages :chat="chat" />
 				</div>
