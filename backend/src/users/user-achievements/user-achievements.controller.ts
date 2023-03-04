@@ -2,7 +2,7 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../../auth/auth.guard';
 import { UserAchievementsService } from './user-achievements.service';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('user-achievements')
 export class UserAchievementsController {
 	constructor(

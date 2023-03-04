@@ -5,56 +5,14 @@
 			<h1>HI WANNA PLAY PONG?</h1>
 
 			<div class="c_block c_form_group">
-				<form
-					method="post"
-					action=""
-					class="c_block c_form_group"
-					@submit.prevent="userStore.login('local', loginForm)"
-				>
-					<InputField
-						tabindex="1"
-						label="Username"
-						placeholder="username"
-						v-model="loginForm.name"
-					/>
-
-					<InputField
-						tabindex="2"
-						inputType="password"
-						label="Password"
-						placeholder="password"
-						v-model="loginForm.password"
-					/>
-
-					<div class="c_block c_split">
-						<p>
-							<input
-								tabindex="3"
-								class="link_button"
-								type="submit"
-								value="Login"
-							/>
-							/
-							<a tabindex="4" href="/register">Register</a>
-						</p>
-						<p>
-							<a
-								tabindex="5"
-								href="#"
-								v-on:click.prevent="userStore.login('intra')"
-								>Sign in with 42</a
-							>
-						</p>
-					</div>
-					<div v-if="userStore.errors.length">
-						<p
-							v-for="error in userStore.errors"
-							class="c_form--error"
-						>
-							!! {{ error }}
-						</p>
-					</div>
-				</form>
+				<LoginFormComponent
+					@tryLogin="tryLogin"
+					v-if="loginStage === 'login'"
+				/>
+				<Login2faComponent
+					@toggleTwoFa="toggleTwoFa"
+					v-if="loginStage === '2fa'"
+				/>
 			</div>
 		</div>
 	</div>
@@ -62,29 +20,41 @@
 
 <script lang="ts">
 import { useUserStore } from '@/stores/userStore';
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, ref } from 'vue';
 import InputField from '@/components/input-fields/InputField.vue';
+import LoginFormComponent from '@/components/login/login.vue';
+import Login2faComponent from '@/components/login/twofa.vue';
 import type { LoginForm } from '@/types/User';
-import { apiUrl } from '@/types/Constants';
 
 export default defineComponent({
 	name: 'Login',
 	components: {
 		InputField,
+		LoginFormComponent,
+		Login2faComponent,
 	},
-
+	methods: {
+		async tryLogin(loginForm: LoginForm) {
+			const loginResult: string = await this.userStore.login(loginForm);
+			if (loginResult === '2fa') {
+				this.toggleTwoFa();
+			}
+		},
+		toggleTwoFa() {
+			if (this.loginStage === 'login') {
+				this.loginStage = '2fa';
+			} else {
+				this.loginStage = 'login';
+			}
+		},
+	},
 	setup() {
-		const redirectUrl: string = `${apiUrl}/auth/authenticate`;
 		const userStore = useUserStore();
-		const loginForm: LoginForm = reactive({
-			name: '',
-			password: '',
-		});
+		const loginStage = ref('login');
 
 		return {
 			userStore,
-			loginForm,
-			redirectUrl,
+			loginStage,
 		};
 	},
 });

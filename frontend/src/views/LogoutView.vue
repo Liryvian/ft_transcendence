@@ -3,6 +3,7 @@
 <script lang="ts">
 import { useChatStore } from '@/stores/chatStore';
 import { useGameStore } from '@/stores/gameStore';
+import { useMessageStore } from '@/stores/messageStore';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
 
@@ -15,6 +16,7 @@ export default defineComponent({
 		useUserStore().$reset();
 		useGameStore().$reset();
 		useChatStore().$reset();
+		useMessageStore().$reset();
 	},
 });
 </script>
