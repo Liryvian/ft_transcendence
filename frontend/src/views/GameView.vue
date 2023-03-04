@@ -35,7 +35,7 @@ export default defineComponent({
 	setup(){
 		const gameStore = useGameStore();
 		gameStore.refreshAllGames()
-		const {allGames} = storeToRefs(gameStore);
+		const { allGames } = storeToRefs(gameStore);
 		return {
 			allGames
 		}
