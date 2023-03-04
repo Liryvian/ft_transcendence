@@ -3,7 +3,21 @@
 		<div v-if="canInviteForAGame()">invite for a game</div>
 		<div v-if="canEditChannelSettings()">channel settings</div>
 		<div>
-			<RouterLink :to="{ name: 'profile', params: { profile_id: otherUser.id } }" class="c_media c_media--assetright c_media--clickable">
+			<RouterLink
+				v-if="chat.type === 'dm'"
+				:to="{ name: 'profile', params: { profile_id: otherUser.id } }"
+				class="c_media c_media--assetright c_media--clickable"
+			>
+				<div class="c_media__asset" :class="is_online">
+					<ChatProfileImages :chat="chat" />
+				</div>
+				<div class="c_media__content">{{ chatName }}</div>
+			</RouterLink>
+			<RouterLink
+				v-else
+				:to="{ name: 'chat-members', params: { chatID: chat.id } }"
+				class="c_media c_media--assetright c_media--clickable"
+			>
 				<div class="c_media__asset" :class="is_online">
 					<ChatProfileImages :chat="chat" />
 				</div>
@@ -15,14 +29,14 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import type { Chat_List_Item, Chat_Member } from '@/types/Chat'
-import ChatProfileImages from '@/components/chat/ChatProfileImages.vue'
+import type { Chat_List_Item, Chat_Member } from '@/types/Chat';
+import ChatProfileImages from '@/components/chat/ChatProfileImages.vue';
 import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ChatHeader',
 	components: {
-		ChatProfileImages
+		ChatProfileImages,
 	},
 	props: {
 		chat: {
@@ -57,7 +71,7 @@ export default defineComponent({
 				return this.chat.name;
 			}
 			return this.otherUser.name ?? this.chat.name;
-		}
+		},
 	},
 	methods: {
 		canInviteForAGame() {
@@ -67,7 +81,7 @@ export default defineComponent({
 		canEditChannelSettings() {
 			// logic here to get current users permissions in this chat
 			return this.chat.type === 'channel';
-		}
-	}
+		},
+	},
 });
 </script>
