@@ -43,31 +43,26 @@ export default defineComponent({
 		InputField,
 		CornerButton,
 	},
-	props: {
-		// profile_id: { type: String, required: true },
-		// chat_id: { type: String, required: true },
-	},
 	computed: {
-		getOnlinePlayers(): string {
-			const player_two = this.allUsers.find(
-				(user) => user.id === 10,
-			)?.name;
-			if (player_two) {
-				return player_two;
-			}
-			return '!! nobody is online';
-		},
+		const onlineGames[] = getOnlineStatus()
+		// getOnlinePlayers(): string {
+		// 	const player_two = this.allUsers.find(
+		// 		(user) => user.id === 10,
+		// 	)?.name;
+		// 	if (player_two) {
+		// 		return player_two;
+		// 	}
+		// 	return '!! nobody is online';
+		// },
 	},
-	setup(props) {
+	setup() {
 		const userStore = useUserStore();
 		userStore.refreshData();
 		const { allUsers } = storeToRefs(userStore);
 		const gameStore = useGameStore();
 		gameStore.refreshAllGames();
 		const { errors } = storeToRefs(gameStore);
-		const socketStore = useSocketStore();
-
-		const { getOnlineStatus } = socketStore;
+		const { getOnlineStatus } = userStore;
 		const { createGame } = gameStore;
 		let createGameForm: CreateGameForm = reactive({
 			score_to_win: 10,
@@ -78,7 +73,7 @@ export default defineComponent({
 		let newMessage: NewMessage = reactive({
 			sender_id: Number(0),
 			chat: Number(0),
-			content: 'wanna play PONG?',
+			content: 'Is this a Match? Wanna play PONG?',
 		});
 		return {
 			gameStore,
