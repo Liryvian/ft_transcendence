@@ -78,6 +78,7 @@ export default defineComponent({
 			});
 		},
 
+		//  should call update chat form chatStore
 		updateChat(userId: number, channelId: number) {},
 	},
 });

@@ -47,7 +47,7 @@ const router = createRouter({
 					name: 'chat-members',
 					path: '/chat/members/:chatID',
 					props: true,
-					component: () => import('@/views/ChatMembersView.vue'),
+					component: () => import('@/views/ChannelMembersView.vue'),
 				},
 			],
 		},

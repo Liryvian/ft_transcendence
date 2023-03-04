@@ -16,7 +16,6 @@ A user who is an administrator of a channel can kick, ban mute -->
 						:avatar-string="member.avatar"
 						:is-owner="getOwnerId() === me.id"
 					/>
-					<!-- {{ member.name}} -->
 				</template>
 			</div>
 		</div>
@@ -52,8 +51,8 @@ export default defineComponent({
 		},
 	},
 	methods: {
+		//  logged in user is owner?
 		getOwnerId(): number {
-			//  if logged in user is owner
 			let ownerId = -1;
 			this.getCurrentChannel?.users.forEach((user) => {
 				if (
