@@ -275,7 +275,7 @@ export class ChatController {
 	@Post(':id/verify_password')
 	async verifyChatPassword(
 		@Param('id') chatId: number,
-		@Body() chatPassword: string,
+		@Body() chatPassword: { password: string },
 	) {
 		try {
 			const chatInfo = await this.chatService.findOne({
@@ -285,7 +285,8 @@ export class ChatController {
 				// wtf? it doesn't have password.. why are you checking?
 				return true;
 			}
-			return bcrypt.compare(chatPassword, chatInfo.password);
+			console.log(chatPassword);
+			return bcrypt.compare(chatPassword.password, chatInfo.password);
 		} catch (e) {}
 		return false;
 	}

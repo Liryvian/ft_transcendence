@@ -9,9 +9,9 @@
 			@submit.prevent="verifyChatPassword()"
 		>
 			<InputField
-				type="password"
+				inputType="password"
 				label="Please enter the password for this chat"
-				v-model="chatPassword"
+				v-model="chatPassword[info.id]"
 			/>
 			<input class="link_button" type="submit" value="submit" />
 			<div v-if="errors.length">
@@ -90,7 +90,7 @@ export default defineComponent({
 	data() {
 		return {
 			joinButtonDisabled: false,
-			chatPassword: '',
+			chatPassword: [] as string[],
 			passwordIsValid: [] as boolean[],
 			errors: [] as string[],
 		};
@@ -159,17 +159,16 @@ export default defineComponent({
 			this.errors.length = 0;
 			try {
 				const result = (
-					await postRequest(
-						`chats/${this.info.id}/join`,
-						this.chatPassword,
-					)
+					await postRequest(`chats/${this.info.id}/verify_password`, {
+						password: this.chatPassword[this.info.id],
+					})
 				).data;
 				if (result !== true) {
 					this.errors.push('wrong password');
 					return;
 				}
 				this.passwordIsValid[this.info.id] = true;
-				this.chatPassword = '';
+				this.chatPassword[this.info.id] = '';
 			} catch (e) {}
 		},
 	},
