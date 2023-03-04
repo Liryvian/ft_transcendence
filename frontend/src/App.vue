@@ -22,6 +22,10 @@ if (useUserStore().isLoggedIn) {
 				<div class="nav_ball"></div>
 				login
 			</RouterLink>
+			<RouterLink :to="{ name: 'register' }">
+				<div class="nav_ball"></div>
+				register
+			</RouterLink>
 		</nav>
 		<nav v-else id="mainnav">
 			<!--

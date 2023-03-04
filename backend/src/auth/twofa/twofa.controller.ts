@@ -16,6 +16,7 @@ import { UserService } from '../../users/user/user.service';
 import { AuthGuard } from '../auth.guard';
 import { AuthService } from '../auth.service';
 import { TwoFaDto } from './dto/twofa.dto';
+import { TwoFaGuard } from './twofa.guard';
 import { TwoFaService } from './twofa.service';
 
 @Controller('auth/2fa')
@@ -28,7 +29,7 @@ export class TwoFaController {
 		private readonly userAchievementsService: UserAchievementsService,
 	) {}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard())
 	@Get('qr')
 	twofa_get_qr() {
 		return this.twoFaService.generateSecret();
@@ -82,7 +83,29 @@ export class TwoFaController {
 		return isValid;
 	}
 
-	// should get a guard in next step @UseGuards(TwoFaGuard)
+	@UseGuards(TwoFaGuard)
+	@Post('validate')
+	async twofa_validate(
+		@Body() twoFaDto: TwoFaDto,
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		try {
+			const userId = await this.authService.userId(request);
+			const user = await this.userService.findOne({ where: { id: userId } });
+
+			const isValid = this.twoFaService.verify2faCode({
+				token: twoFaDto.token,
+				secret: user.two_factor_secret,
+			});
+
+			this.authService.login(user, response, true);
+			return isValid;
+		} catch (e) {}
+		return false;
+	}
+
+	@UseGuards(TwoFaGuard)
 	@Post('deactivate')
 	async twofa_deactivate(
 		@Body() twoFaDto: TwoFaDto,

@@ -35,20 +35,10 @@ const router = createRouter({
 			props: true,
 		},
 		{
-			path: '/chat',
-			children: [
-				{
-					path: '/chat',
-					name: 'chat',
-					component: () => import('../views/ChatView.vue'),
-				},
-				{
-					path: ':currentChat?',
-					name: 'singlechat',
-					props: true,
-					component: () => import('../views/ChatView.vue'),
-				},
-			],
+			path: '/chat/:currentChat?',
+			name: 'chat',
+			props: true,
+			component: () => import('../views/ChatView.vue'),
 		},
 		{
 			path: '/pong/:currentGame?',
@@ -58,8 +48,19 @@ const router = createRouter({
 		},
 		{
 			path: '/profiles',
-			name: 'profiles',
-			component: () => import('../views/ProfilesView.vue'),
+			children: [
+				{
+					path: '/profiles',
+					name: 'profiles',
+					component: () => import('../views/ProfilesView.vue'),
+				},
+				{
+					path: ':profile_id?',
+					name: 'profile',
+					component: () => import('../views/ProfileView.vue'),
+					props: true,
+				},
+			],
 		},
 		{
 			path: '/logout',
@@ -70,6 +71,11 @@ const router = createRouter({
 			path: '/login',
 			name: 'login',
 			component: () => import('../views/LoginView.vue'),
+		},
+		{
+			path: '/register',
+			name: 'register',
+			component: () => import('../views/RegisterView.vue'),
 		},
 		{
 			path: '/channel-settings',
@@ -87,20 +93,9 @@ const router = createRouter({
 			component: () => import('../views/NewChannelView.vue'),
 		},
 		{
-			path: '/profile/:profile_id?',
-			name: 'profile',
-			component: () => import('../views/ProfileView.vue'),
-			props: true,
-		},
-		{
 			path: '/elements-to-reuse',
 			name: 'elements-to-reuse',
 			component: () => import('../views/ElementsToReuse.vue'),
-		},
-		{
-			path: '/register',
-			name: 'register',
-			component: () => import('../views/RegisterView.vue'),
 		},
 		{
 			path: '/request-game/:profile_id?/:chat_id?',

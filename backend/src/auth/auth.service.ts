@@ -76,10 +76,14 @@ export class AuthService {
 				where: { intra_id: userData.id },
 			});
 
-			return Promise.resolve({
+			const returnObject = {
 				redirectLocation: '/profiles',
 				user: user,
-			});
+			};
+			if (user.two_factor_required) {
+				returnObject.redirectLocation = '/2fa';
+			}
+			return returnObject;
 		} catch (e) {
 			if (e instanceof NotFoundException) {
 				const newUser = new User();
@@ -123,18 +127,6 @@ export class AuthService {
 			require_2fa: user.two_factor_required,
 			validated_2fa: with_2fa,
 		});
-		console.log(
-			'contents of JWT: ',
-			JSON.stringify(
-				{
-					id: user.id,
-					require_2fa: user.two_factor_required,
-					validated_2fa: with_2fa,
-				},
-				null,
-				2,
-			),
-		);
 		response.cookie('jwt', jwt, { httpOnly: true });
 	}
 

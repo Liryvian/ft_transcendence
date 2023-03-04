@@ -38,7 +38,7 @@ import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-pe
 import { AuthGuard } from '../../auth/auth.guard';
 import { AuthService } from '../../auth/auth.service';
 
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard())
 @Controller('chats')
 export class ChatController {
 	constructor(

@@ -4,9 +4,9 @@ import * as request from 'supertest';
 import { globalValidationPipeOptions } from '../src/main.validationpipe';
 import { User } from '../src/users/user/entities/user.entity';
 import { UserService } from '../src/users/user/user.service';
-import { AuthGuard } from '../src/auth/auth.guard';
 import { InsertResult } from 'typeorm';
 import { AllTestingModule } from '../src/shared/test.module';
+import * as bcrypt from 'bcrypt';
 
 describe('User (e2e)', () => {
 	let app: INestApplication;
@@ -19,10 +19,9 @@ describe('User (e2e)', () => {
 
 		const moduleFixture: TestingModule = await Test.createTestingModule({
 			imports: [AllTestingModule],
-		})
-			.overrideGuard(AuthGuard)
-			.useValue(mock_guard)
-			.compile();
+		}).compile();
+		// .overrideGuard(AuthGuard)
+		// .useValue(mock_guard)
 
 		app = moduleFixture.createNestApplication();
 		app.useGlobalPipes(new ValidationPipe(globalValidationPipeOptions()));
@@ -32,8 +31,8 @@ describe('User (e2e)', () => {
 
 		await userService
 			.insert([
-				{ name: 'n1', password: 'p1' },
-				{ name: 'n2', password: 'p2' },
+				{ name: 'n1', password: await bcrypt.hash('p1', 11) },
+				{ name: 'n2', password: await bcrypt.hash('p2', 11) },
 			])
 			.then((users: InsertResult) => {
 				users.identifiers.forEach((identifier) => {
@@ -54,15 +53,25 @@ describe('User (e2e)', () => {
 	describe('/users/:id/avatar', () => {
 		describe('POST', () => {
 			it('should save a new image as the current user', async () => {
-				const response = await request(app.getHttpServer())
-					.post(`/users/${userIds[0]}/avatar`)
-					.attach('avatar', './test/test-avatar.png');
+				const agent = request.agent(app.getHttpServer());
 
-				expect(response.status).toBe(HttpStatus.CREATED);
-				expect(response.body.avatar).toEqual(
-					expect.stringContaining('u1_avatar.png'),
-				);
-				return response;
+				// THIS IS A WORK IN PROGRESS
+				// BUT I CANT GET IT TO WORK..
+				await agent
+					.post('/login')
+					.send({ name: 'n1', password: 'p1' })
+					.then((r) => {
+						return agent
+							.post(`/users/${r.body.id}/avatar`)
+							.attach('avatar', './test/test-avatar.png')
+							.expect((s) => {
+								console.log(s);
+								expect(s.statusCode).toBe(HttpStatus.OK);
+								expect(s.body.avatar).toEqual(
+									expect.stringContaining('u1_avatar.png'),
+								);
+							});
+					});
 			});
 
 			it('should not allow another extention than jpg/png/jpeg', async () => {
