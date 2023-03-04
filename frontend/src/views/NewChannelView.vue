@@ -2,7 +2,6 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>NEW CHANNEL</h1>
-			<div class="c_block c_form_group">
 				<form
 					method="Post"
 					action=""
@@ -29,7 +28,7 @@
 									name="users"
 									:value="user.id"
 								/>
-								<label :for="user.id">{{ user.name }}</label>
+								<label :for="user.id.toString()">{{ user.name }}</label>
 							</div>
 						</template>
 					</div>
@@ -64,7 +63,6 @@
 				</form>
 			</div>
 		</div>
-	</div>
 </template>
 
 <script lang="ts">

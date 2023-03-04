@@ -1,4 +1,4 @@
-import type { Chat_List_Item, Chat_Type, ChatVisibility, CreateNewChannelForm } from '@/types/Chat';
+import type { Chat_List_Item, CreateNewChannelForm } from '@/types/Chat';
 import { permissionsEnum } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
 import { getRequest, postRequest } from '@/utils/apiRequests';
@@ -55,6 +55,7 @@ export const useChatStore = defineStore('chats', {
 		async createNewChannel(createNewChannelForm: CreateNewChannelForm) {
 			try {
 				this.errors.length = 0;
+
 				const all = (await getRequest('chats')).data;
 				const found = all.find(
 					(chat: Chat_List_Item) => chat.name === createNewChannelForm.name,
@@ -63,14 +64,14 @@ export const useChatStore = defineStore('chats', {
 					this.errors.push('channel name already exists');
 					return;
 				}
-				if (!createNewChannelForm.name ){
+				if (!createNewChannelForm.name || createNewChannelForm.name.trim().length === 0){
 					this.errors.push('Not a valid channel name');
 					return;
 				}
-				if (!createNewChannelForm.users[0]){
-					this.errors.push('you need to assign users to this channel');
-					return;
-				}
+				// if (!createNewChannelForm.users[0]){
+				// 	this.errors.push('you need to assign users to this channel');
+				// 	return;
+				// }
 				const usersToSend = createNewChannelForm.users.map(
 					(userId) => ({
 						id: userId,
