@@ -68,10 +68,10 @@ export const useChatStore = defineStore('chats', {
 					this.errors.push('Not a valid channel name');
 					return;
 				}
-				// if (!createNewChannelForm.users[0]){
-				// 	this.errors.push('you need to assign users to this channel');
-				// 	return;
-				// }
+				if (!createNewChannelForm.users[0]){
+					this.errors.push('you need to assign one or more users to this channel');
+					return;
+				}
 				const usersToSend = createNewChannelForm.users.map(
 					(userId) => ({
 						id: userId,
@@ -94,7 +94,7 @@ export const useChatStore = defineStore('chats', {
 					users: usersToSend
 				});
 				router.push({
-					name: 'singlechat',
+					name: 'chat',
 					params: { currentChat : newChannel.data.id },
 				});
 			} catch (e: any) {
