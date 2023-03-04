@@ -187,6 +187,12 @@ const seedData = {
 			{ name: 'vaalboskat-renoster', type: 'dm' },
 			{ name: 'Zoo' },
 			{ name: 'Zzz sleepy', type: 'channel', visibility: 'public' },
+			{
+				name: 'secrets',
+				type: 'channel',
+				visibility: 'public',
+				password: bcrypt.hashSync('secrets', 11),
+			},
 		];
 		return chats;
 	},
@@ -224,6 +230,18 @@ const seedData = {
 		).id;
 		const zoo = chats.find((c) => c.name === 'Zoo').id;
 		const zzzSleepy = chats.find((c) => c.name === 'Zzz sleepy').id;
+		const secrets = chats.find((c) => c.name === 'secrets').id;
+
+		// add wildsbok as owner of the secrets
+		[permissionsEnum.POST, permissionsEnum.READ, permissionsEnum.OWNER].forEach(
+			(p) => {
+				cups.push({
+					chat_id: secrets,
+					user_id: wildsbok,
+					permission: p,
+				});
+			},
+		);
 
 		// Add flamink and renoster to their DM
 		[permissionsEnum.POST, permissionsEnum.READ, permissionsEnum.OWNER].forEach(
