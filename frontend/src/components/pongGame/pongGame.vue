@@ -281,11 +281,16 @@ export default defineComponent({
 			this.socket.off('updatePosition', this.render);
 			// patch game in database with the updated scores
 			patchRequest(`games/${this.currentgameId}`, updateGameDto);
-			const winner: string | undefined =
-				this.score_player_one > this.score_player_two
-					? this.getPlayerOne?.name
-					: this.getPlayerTwo?.name;
-			alert(`Game over!\nWell done ${winner}!`);
+			if (this.score_player_one === this.score_player_two) {
+				alert(`Game over!\nIt's a draw, boooooring!`);
+			}
+			else {
+				const winner: string | undefined =
+					this.score_player_one > this.score_player_two
+						? this.getPlayerOne?.name
+						: this.getPlayerTwo?.name;
+				alert(`Game over!\nWell done ${winner}!`);
+			}
 		},
 
 		setSocketOn() {

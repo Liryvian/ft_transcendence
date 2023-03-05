@@ -40,6 +40,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			client.handshake.headers.cookie,
 		);
 		const userId: number = this.authService.userIdFromCookieString(cookie);
+			// this.server.in( .roomName).emit('gameOver');
+			// gameSubscribers[data!.id] = undefined;
+			this.pongService.gameIsFinished = true;
 	}
 
 	createGameInstance(game: Game, client: Socket) {
@@ -141,9 +144,9 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 		if (this.pongService.gameIsFinished) {
 			this.server.in(currentgame.roomName).emit('gameOver');
-			gameSubscribers[data!.id] = undefined;
 			this.pongService.gameIsFinished = false;
 			this.resetService();
+			this.server.in(gameSubscribers[data!.id].roomName).disconnectSockets()
 		}
 	}
 }

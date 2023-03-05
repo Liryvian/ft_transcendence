@@ -9,10 +9,10 @@ import {
 // expects integers
 function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
-	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
+	if (directionAndSpeed > -1.5 && directionAndSpeed < 1.5) {
 		directionAndSpeed *= min;
 	}
-	return 0.2;
+	return directionAndSpeed / 10;
 }
 
 @Injectable()
@@ -198,7 +198,7 @@ export class PongService {
 			x: 50,
 			y: 50,
 		};
-		this.dx = randomDirection(-4, 4) || 0.3;
-		this.dy = randomDirection(-4, 4) || 0.3;
+		this.dx = randomDirection(-3, 3) || 0.3;
+		this.dy = randomDirection(-3, 3) || 0.3;
 	}
 }
