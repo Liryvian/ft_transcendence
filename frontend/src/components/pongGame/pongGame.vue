@@ -76,6 +76,8 @@ export default defineComponent({
 	},
 
 	setup(props: any) {
+		const userStore = useUserStore();
+		const { me } = storeToRefs(userStore);
 		const gameStore = useGameStore();
 		gameStore.initialize();
 		const {
@@ -90,6 +92,7 @@ export default defineComponent({
 			(game) => game.id === Number(props.currentGameId),
 		);
 		return {
+			me,
 			gameStore,
 			allGames,
 			isPressed,
@@ -205,16 +208,26 @@ export default defineComponent({
 			this.drawBall(elementPositions.ball);
 		},
 
+
+		emitKeyStateUpdate(){
+			this.socket!.emit("keyStateUpdate", {
+				id: this.currentGameId,
+				keyPress: this.isPressed,
+				userId: this.me.id
+			})
+		},
+
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
-				console.log('Keypress');
 				this.isPressed[keyPress.key] = true;
+				this.emitKeyStateUpdate()
 			}
 		},
 
 		keyUp(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
 				this.isPressed[keyPress.key] = false;
+				this.emitKeyStateUpdate();
 			}
 		},
 
@@ -222,6 +235,7 @@ export default defineComponent({
 			this.isPressed.w = false;
 			this.isPressed.s = false;
 		},
+
 		// MAIN GAME LOOP
 		getUpdatedPositions(timeStamp: DOMHighResTimeStamp) {
 			if (this.previousTimeStamp === 0) {
@@ -235,6 +249,7 @@ export default defineComponent({
 				this.socket!.emit('updatePositions', {
 					id: this.currentgameId,
 					keyPress: this.isPressed,
+					userId: this.me.id
 				});
 			}
 
@@ -276,19 +291,17 @@ export default defineComponent({
 		setSocketOn() {
 			console.log('Setting sockets on');
 			this.socket.on('elementPositions', this.render);
-			if (this.isPlayer) {
-				this.socket.on(
-					'pointOver',
-					(scores: {
-						scorePlayerOne: number;
-						scorePlayerTwo: number;
-					}) => {
-						this.gameStatus = GameStatusEnum.POINT_OVER;
-						this.score_player_one = scores.scorePlayerOne;
-						this.score_player_two = scores.scorePlayerTwo;
-					},
-				);
-			}
+			this.socket.on(
+				'pointOver',
+				(scores: {
+					scorePlayerOne: number;
+					scorePlayerTwo: number;
+				}) => {
+					this.gameStatus = GameStatusEnum.POINT_OVER;
+					this.score_player_one = scores.scorePlayerOne;
+					this.score_player_two = scores.scorePlayerTwo;
+				},
+			);
 			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
@@ -298,22 +311,14 @@ export default defineComponent({
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
 		if (this.isPlayer) {
-			console.log('\n\n\nsetting eventlisteners\n\n\n');
 			document.addEventListener('keydown', this.keyDown);
 			document.addEventListener('keyup', this.keyUp);
 		}
 		this.setSocketOn();
-		// while (1) {
-		// 	console.log("Current game exists? ", this.getCurrentGame !== undefined)
-		// 	if (this.getCurrentGame) {
-		// 		break ;
-		// 	}
-		// }
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
 
-		// // MAIN GAME LOOP
+		// START MAIN GAME LOOP
 		this.socket.once('GameCanStart', () => {
-			console.log('STARTING GAME LOOP');
 			this.startGameLoop();
 		});
 	},
@@ -332,7 +337,6 @@ export default defineComponent({
 .gameHeader {
 	font-weight: bolder;
 	display: flex;
-	/* font size changes on window HEIGHT! */
 	font-size: 2.5vh;
 	padding-left: 2.5%;
 	padding-right: 5%;

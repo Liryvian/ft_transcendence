@@ -31,6 +31,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server: Server;
 
 	handleConnection() {
+		this.resetService()
 		console.log('\n!Socket is connected!\n');
 	}
 
@@ -92,7 +93,11 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			.emit('elementPositions', gameState);
 	}
 
-	resetService() {}
+	resetService() {
+		this.pongService.gameHasStarted = false;
+		this.pongService.gameIsFinished = false;
+		this.pongService.pointIsOver = false;
+	}
 
 	handleFinishedPoint(gameId: number) {
 		const scores = {
@@ -103,21 +108,31 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		gameSubscribers[gameId].pointIsover = false;
 	}
 
+	@SubscribeMessage("keyStateUpdate")
+	keyStateUpdate(@MessageBody() data: any) {
+		const currentgame = gameSubscribers[data!.id];
+		if (!currentgame) {
+			throw new BadRequestException("Game doesn't exists");
+		}
+		console.log("Pressed By: ", data.userId);
+		if (data.userId === currentgame.playerOneId) {
+			currentgame.playerOnePaddle.isPressed = data.keyPress;
+			console.log("Setting player one is pressed")
+		} else {
+			currentgame.playerTwoPaddle.isPressed = data.keyPress;
+			console.log("Setting player two is pressed")
+		}
+	}
+
 	@SubscribeMessage('updatePositions')
-	updatePositions(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
-		const cookie: string = jwtCookieFromHandshakeString(
-			client.handshake.headers.cookie,
-		);
-		const userId: number = this.authService.userIdFromCookieString(cookie);
+	updatePositions(@MessageBody() data: any) {
 		const currentgame = gameSubscribers[data!.id];
 		if (!currentgame) {
 			throw new BadRequestException("Game doesn't exists");
 		}
 		this.pongService.movePaddles(
-			data.keyPress,
 			currentgame.playerOnePaddle,
 			currentgame.playerTwoPaddle,
-			currentgame.playerOneId === userId,
 		);
 		this.pongService.moveBall(currentgame);
 		this.sendPositionOfElements(currentgame);
@@ -128,6 +143,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			this.server.in(currentgame.roomName).emit('gameOver');
 			gameSubscribers[data!.id] = undefined;
 			this.pongService.gameIsFinished = false;
+			this.resetService();
 		}
 	}
 }

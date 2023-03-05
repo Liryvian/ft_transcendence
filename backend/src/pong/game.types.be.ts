@@ -7,6 +7,7 @@ export class Paddle {
 	position: Position;
 	width: number;
 	height: number;
+	isPressed: MovementKeys;
 }
 
 export class Ball {
@@ -26,7 +27,7 @@ export interface GameState {
 	scorePlayerOne: number;
 	scorePlayerTwo: number;
 	roomName: string;
-	isPressed: MovementKeys;
+	// isPressed: MovementKeys;
 	pointIsover: boolean;
 	gameIsOver: boolean;
 	playerOneIsInGame: boolean;

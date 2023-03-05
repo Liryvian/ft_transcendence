@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import {
 	Ball,
 	GameState,
-	MovementKeys,
 	Paddle,
 	Position,
 } from './game.types.be';
@@ -44,6 +43,10 @@ export class PongService {
 				},
 				width: this.paddleWidth,
 				height: this.paddleHeight,
+				isPressed: {
+					w: false,
+					s: false,
+				},
 			},
 
 			playerTwoPaddle: {
@@ -53,6 +56,10 @@ export class PongService {
 				},
 				width: this.paddleWidth,
 				height: this.paddleHeight,
+				isPressed: {
+					w: false,
+					s: false,
+				},
 			},
 
 			ball: {
@@ -70,10 +77,6 @@ export class PongService {
 			scorePlayerOne: 0,
 			scorePlayerTwo: 0,
 			roomName: '',
-			isPressed: {
-				w: false,
-				s: false,
-			},
 			gameIsOver: false,
 			pointIsover: false,
 		};
@@ -165,36 +168,29 @@ export class PongService {
 
 	moveUp(paddlePosY: number) {
 		const topMax = this.paddleHeight / 2;
-		return Math.max(paddlePosY - 4, topMax);
+		return Math.max(paddlePosY - 1, topMax);
 	}
 
 	moveDown(paddlePosY: number) {
 		const bottomMax = 100 - this.paddleHeight / 2;
-		return Math.min(paddlePosY + 4, bottomMax);
+		return Math.min(paddlePosY + 1, bottomMax);
 	}
 
+	movePaddle(paddle: Paddle){
+		if (paddle.isPressed.w) {
+			paddle.position.y = this.moveUp(paddle.position.y);
+		}
+		if (paddle.isPressed.s) {
+			paddle.position.y = this.moveDown(paddle.position.y);
+		}
+	}
 	// checks if paddle is at max x/y otherwise move it 1% up/down
 	movePaddles(
-		pressedKey: MovementKeys,
 		playerOnePaddle: Paddle,
 		playerTwoPaddle: Paddle,
-		isPressedByPlayerOne: boolean,
 	) {
-		if (isPressedByPlayerOne) {
-			if (pressedKey.w) {
-				playerOnePaddle.position.y = this.moveUp(playerOnePaddle.position.y);
-			}
-			if (pressedKey.s) {
-				playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
-			}
-		} else {
-			if (pressedKey.w) {
-				playerTwoPaddle.position.y = this.moveUp(playerTwoPaddle.position.y);
-			}
-			if (pressedKey.s) {
-				playerTwoPaddle.position.y = this.moveDown(playerTwoPaddle.position.y);
-			}
-		}
+		this.movePaddle(playerOnePaddle);
+		this.movePaddle(playerTwoPaddle);
 	}
 
 	resetBallPosition(ball: Ball) {
@@ -204,9 +200,5 @@ export class PongService {
 		};
 		this.dx = randomDirection(-4, 4) || 0.3;
 		this.dy = randomDirection(-4, 4) || 0.3;
-	}
-
-	startGame() {
-		// window.re
 	}
 }
