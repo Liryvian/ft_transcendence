@@ -98,7 +98,7 @@ export class SeederService {
 	}
 
 	async seedDatabase() {
-		if (true || this.shouldSeed()) {
+		if (this.shouldSeed()) {
 			await this.animalService.removeAll();
 			await this.userRelService.removeAll();
 			await this.gameService.removeAll();
