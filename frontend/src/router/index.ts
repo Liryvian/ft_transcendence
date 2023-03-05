@@ -43,7 +43,7 @@ const router = createRouter({
 			component: () => import('../views/ChatView.vue'),
 		},
 		{
-			path: '/pong/:currentGameId?',
+			path: '/pong/:currentGameId',
 			name: 'pong',
 			props: true,
 			component: () => import('../components/pongGame/pongGame.vue'),
@@ -104,11 +104,6 @@ const router = createRouter({
 			name: 'request-game',
 			component: () => import('../views/RequestGame.vue'),
 			props: true,
-		},
-		{
-			path: '/game-invite',
-			name: 'game-invite',
-			component: () => import('../views/GameInvite.vue'),
 		},
 		{
 			path: '/component-test',

@@ -72,19 +72,13 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 		const relationshipStore = useRelationshipStore();
-		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
-			relationshipStore;
+		const { isFriend, isBlocked, joinRoomOnConnect } = relationshipStore;
 		return {
 			userStore,
 			isFriend,
 			isBlocked,
 			joinRoomOnConnect,
-			disconnectSocket,
 		};
-	},
-
-	unmounted() {
-		this.disconnectSocket();
 	},
 
 	components: {

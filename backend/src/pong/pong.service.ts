@@ -1,16 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import {
-	Ball,
-	GameState,
-	Paddle,
-	Position,
-} from './game.types.be';
+import { Ball, GameState, Paddle, Position } from './game.types.be';
 
 // expects integers
 function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
-	if (directionAndSpeed > -1.5 && directionAndSpeed < 1.5) {
-		directionAndSpeed *= min;
+	if (directionAndSpeed > -1 && directionAndSpeed < 1) {
+		return 0;
 	}
 	return directionAndSpeed / 10;
 }
@@ -22,8 +17,8 @@ export class PongService {
 
 	private readonly ballRadius = 1;
 
-	private dy = randomDirection(-3, 3) || 0.3;
-	private dx = randomDirection(-3, 3) || 0.3;
+	private dy = randomDirection(-2, 2) || 0.2;
+	private dx = randomDirection(-2, 2) || -0.2;
 
 	public pointIsOver = false;
 	public gameIsFinished = false;
@@ -136,10 +131,8 @@ export class PongService {
 
 		//  check collision for paddle one
 		if (this.doesHitPaddle(gameState.ball, paddleP1, gameState.canvas)) {
-			console.log('Collision Paddle one');
 			this.changeBallDirection(paddleP1, gameState.ball.position.y, -1);
 		} else if (this.doesHitPaddle(gameState.ball, paddleP2, gameState.canvas)) {
-			console.log('Collision Paddle two');
 			this.changeBallDirection(paddleP2, gameState.ball.position.y, 1);
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
 			//  check which side the ball hit to decide who the winner is
@@ -151,7 +144,6 @@ export class PongService {
 				gameState.scorePlayerOne >= gameState.scoreToWin ||
 				gameState.scorePlayerTwo >= gameState.scoreToWin
 			) {
-				console.log('Setting game is finsished');
 				this.gameIsFinished = true;
 			}
 			this.resetBallPosition(gameState.ball);
@@ -176,7 +168,7 @@ export class PongService {
 		return Math.min(paddlePosY + 1, bottomMax);
 	}
 
-	movePaddle(paddle: Paddle){
+	movePaddle(paddle: Paddle) {
 		if (paddle.isPressed.w) {
 			paddle.position.y = this.moveUp(paddle.position.y);
 		}
@@ -185,10 +177,7 @@ export class PongService {
 		}
 	}
 	// checks if paddle is at max x/y otherwise move it 1% up/down
-	movePaddles(
-		playerOnePaddle: Paddle,
-		playerTwoPaddle: Paddle,
-	) {
+	movePaddles(playerOnePaddle: Paddle, playerTwoPaddle: Paddle) {
 		this.movePaddle(playerOnePaddle);
 		this.movePaddle(playerTwoPaddle);
 	}
@@ -198,7 +187,7 @@ export class PongService {
 			x: 50,
 			y: 50,
 		};
-		this.dx = randomDirection(-3, 3) || 0.3;
-		this.dy = randomDirection(-3, 3) || 0.3;
+		this.dx = randomDirection(-2, 2) || 0.2;
+		this.dy = randomDirection(-2, 2) || 0.2;
 	}
 }

@@ -160,9 +160,5 @@ export const useRelationshipStore = defineStore('relationship', {
 				this.refreshRelationships();
 			});
 		},
-
-		disconnectSocket() {
-			this.socket.disconnect();
-		},
 	},
 });

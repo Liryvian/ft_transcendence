@@ -1,10 +1,10 @@
-import GameStatusEnum from '@/types/game.fe';
-import type { CreateGameForm, Game, gameStates } from '@/types/game.fe';
+import type { CreateGameForm, Game, UpdateGameState } from '@/types/game.fe';
+import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
 import type { NewMessage } from '@/types/Chat';
-import { getRequest, postRequest } from '@/utils/apiRequests';
+import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 import router from '@/router';
-import { defineStore } from 'pinia';
+import GameStatusEnum from '@/types/game.fe';
 
 export interface MovementKeys {
 	w: boolean;
@@ -32,6 +32,7 @@ export const useGameStore = defineStore('games', {
 		// getMyGames: () => useUserStore().getMe.games,
 		getAllGames: (state) => state.allGames,
 	},
+
 	// actions == methods
 	actions: {
 		handleFormError(responseData: any) {
@@ -63,6 +64,21 @@ export const useGameStore = defineStore('games', {
 
 		async refreshData() {
 			await this.refreshAllGames();
+		},
+
+		async updateGame(updateGameState: UpdateGameState) {
+			try {
+				await patchRequest('games', updateGameState);
+				// await router.push('/chat'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
+				// await router.push({
+				// 	name: 'chat',
+				// 	params: { profile_id: createdGameForm.player_two},
+				// });
+				// this.errors.length = 0;
+			} catch (e: any) {
+				console.log('ERROR');
+				// this.handleFormError(e.response.data);
+			}
 		},
 
 		async createGame(

@@ -23,40 +23,33 @@ const gameSubscribers: Record<number, GameState> = {};
 		origin: '*',
 	},
 })
-export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class PongGateway implements OnGatewayConnection {
 	constructor(
 		private readonly pongService: PongService,
 		private readonly authService: AuthService,
 	) {}
 	@WebSocketServer() server: Server;
 
-	handleConnection() {
-		this.resetService()
-		console.log('\n!Socket is connected!\n');
-	}
-
-	handleDisconnect(@ConnectedSocket() client: Socket) {
-		const cookie: string = jwtCookieFromHandshakeString(
-			client.handshake.headers.cookie,
-		);
-		const userId: number = this.authService.userIdFromCookieString(cookie);
-			// this.server.in( .roomName).emit('gameOver');
-			// gameSubscribers[data!.id] = undefined;
-			this.pongService.gameIsFinished = true;
-	}
+	handleConnection() {}
 
 	createGameInstance(game: Game, client: Socket) {
 		const roomName = String(game.id);
 		gameSubscribers[game.id] = this.pongService.createNewGameState();
 		gameSubscribers[game.id].gameId = game.id;
-		gameSubscribers[game.id].scoreToWin = 10;
+		gameSubscribers[game.id].scoreToWin = game.score_to_win || 5;
 		client.join(roomName);
 		gameSubscribers[game.id].roomName = roomName;
 	}
 
+	@SubscribeMessage('PlayerDisconnected')
+	playerDisconnected() {
+		if (!this.pongService.gameIsFinished) {
+			this.pongService.gameIsFinished = true;
+		}
+	}
+
 	@SubscribeMessage('joinGameRoom')
 	joinGameRoom(@MessageBody() game: Game, @ConnectedSocket() client: Socket) {
-		console.log('CurretnGame: ', game);
 		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);
@@ -80,7 +73,6 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 					gameSubscribers[game.id].playerOneIsInGame &&
 					gameSubscribers[game.id].playerTwoIsInGame
 				) {
-					console.log('Emitting game start');
 					this.server
 						.in(gameSubscribers[game.id].roomName)
 						.emit('GameCanStart');
@@ -102,51 +94,47 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.pongService.pointIsOver = false;
 	}
 
-	handleFinishedPoint(gameId: number) {
+	handleFinishedPoint(currentGame: any) {
 		const scores = {
-			scorePlayerOne: gameSubscribers[gameId].scorePlayerOne,
-			scorePlayerTwo: gameSubscribers[gameId].scorePlayerTwo,
+			scorePlayerOne: currentGame.scorePlayerOne,
+			scorePlayerTwo: currentGame.scorePlayerTwo,
 		};
-		this.server.in(gameSubscribers[gameId].roomName).emit('pointOver', scores);
-		gameSubscribers[gameId].pointIsover = false;
+		this.server.in(currentGame.roomName).emit('pointOver', scores);
+		currentGame.pointIsover = false;
 	}
 
-	@SubscribeMessage("keyStateUpdate")
+	handleGameOver(currentGame: any) {
+		this.server.in(currentGame.roomName).emit('gameOver');
+	}
+
+	@SubscribeMessage('keyStateUpdate')
 	keyStateUpdate(@MessageBody() data: any) {
-		const currentgame = gameSubscribers[data!.id];
-		if (!currentgame) {
-			throw new BadRequestException("Game doesn't exists");
-		}
-		console.log("Pressed By: ", data.userId);
-		if (data.userId === currentgame.playerOneId) {
-			currentgame.playerOnePaddle.isPressed = data.keyPress;
-			console.log("Setting player one is pressed")
+		const currentGame = gameSubscribers[data!.id];
+		if (!currentGame) return;
+
+		if (data.userId === currentGame.playerOneId) {
+			currentGame.playerOnePaddle.isPressed = data.keyPress;
 		} else {
-			currentgame.playerTwoPaddle.isPressed = data.keyPress;
-			console.log("Setting player two is pressed")
+			currentGame.playerTwoPaddle.isPressed = data.keyPress;
 		}
 	}
 
 	@SubscribeMessage('updatePositions')
 	updatePositions(@MessageBody() data: any) {
-		const currentgame = gameSubscribers[data!.id];
-		if (!currentgame) {
-			throw new BadRequestException("Game doesn't exists");
-		}
+		const currentGame = gameSubscribers[data!.id];
+		if (!currentGame) return;
+
 		this.pongService.movePaddles(
-			currentgame.playerOnePaddle,
-			currentgame.playerTwoPaddle,
+			currentGame.playerOnePaddle,
+			currentGame.playerTwoPaddle,
 		);
-		this.pongService.moveBall(currentgame);
-		this.sendPositionOfElements(currentgame);
+		this.pongService.moveBall(currentGame);
+		this.sendPositionOfElements(currentGame);
 		if (this.pongService.pointIsOver) {
-			this.handleFinishedPoint(data.id);
+			this.handleFinishedPoint(currentGame);
 		}
 		if (this.pongService.gameIsFinished) {
-			this.server.in(currentgame.roomName).emit('gameOver');
-			this.pongService.gameIsFinished = false;
-			this.resetService();
-			this.server.in(gameSubscribers[data!.id].roomName).disconnectSockets()
+			this.handleGameOver(currentGame);
 		}
 	}
 }

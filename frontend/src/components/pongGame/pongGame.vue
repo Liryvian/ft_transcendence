@@ -37,6 +37,7 @@ import { storeToRefs } from 'pinia';
 import router from '@/router';
 import { patchRequest } from '@/utils/apiRequests';
 import { useUserStore } from '@/stores/userStore';
+import type { NavigationGuardNext } from 'vue-router';
 
 interface DataObject {
 	context: CanvasRenderingContext2D;
@@ -56,11 +57,14 @@ export default defineComponent({
 		},
 	},
 
-	beforeRouteLeave(to, from, next) {
+	beforeRouteLeave(to, from, next: NavigationGuardNext) {
+		void to;
+		void from;
 		if (
 			this.gameStatus !== GameStatusEnum.GAME_OVER &&
 			(this.isPlayerOne || this.isPlayerTwo)
 		) {
+			this.socket.emit('PlayerDisconnected');
 			this.finishGame();
 		}
 		this.socket.disconnect();
@@ -120,10 +124,10 @@ export default defineComponent({
 			// return this.allGames.find((game) => game.id === this.currentgameId);
 		},
 		getPlayerOne() {
-			return this.getCurrentGame!.player_one;
+			return this.getCurrentGame?.player_one;
 		},
 		getPlayerTwo() {
-			return this.getCurrentGame!.player_two;
+			return this.getCurrentGame?.player_two;
 		},
 		getMyId() {
 			return useUserStore().me.id;
@@ -208,19 +212,18 @@ export default defineComponent({
 			this.drawBall(elementPositions.ball);
 		},
 
-
-		emitKeyStateUpdate(){
-			this.socket!.emit("keyStateUpdate", {
+		emitKeyStateUpdate() {
+			this.socket!.emit('keyStateUpdate', {
 				id: this.currentGameId,
 				keyPress: this.isPressed,
-				userId: this.me.id
-			})
+				userId: this.me.id,
+			});
 		},
 
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
 				this.isPressed[keyPress.key] = true;
-				this.emitKeyStateUpdate()
+				this.emitKeyStateUpdate();
 			}
 		},
 
@@ -244,12 +247,12 @@ export default defineComponent({
 			const elapsedTime = timeStamp - this.previousTimeStamp;
 			const intervalMs = 10; // refresh rate of a browser is 1/60th of a sec (17)
 			// redraws after intervalMs
-			if (elapsedTime > intervalMs) {
+			if (elapsedTime > intervalMs && this.isPlayer) {
 				this.previousTimeStamp = timeStamp;
 				this.socket!.emit('updatePositions', {
 					id: this.currentgameId,
 					keyPress: this.isPressed,
-					userId: this.me.id
+					userId: this.me.id,
 				});
 			}
 
@@ -278,13 +281,11 @@ export default defineComponent({
 			};
 			this.gameStatus = GameStatusEnum.GAME_OVER;
 			this.socket.disconnect();
-			this.socket.off('updatePosition', this.render);
 			// patch game in database with the updated scores
 			patchRequest(`games/${this.currentgameId}`, updateGameDto);
 			if (this.score_player_one === this.score_player_two) {
 				alert(`Game over!\nIt's a draw, boooooring!`);
-			}
-			else {
+			} else {
 				const winner: string | undefined =
 					this.score_player_one > this.score_player_two
 						? this.getPlayerOne?.name
@@ -294,7 +295,6 @@ export default defineComponent({
 		},
 
 		setSocketOn() {
-			console.log('Setting sockets on');
 			this.socket.on('elementPositions', this.render);
 			this.socket.on(
 				'pointOver',
