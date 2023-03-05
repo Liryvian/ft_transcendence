@@ -30,7 +30,7 @@
 import { useGameStore } from '@/stores/gameStore';
 import { defineComponent, ref, type Ref } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue';
-import type { ElementPositions, Ball, Paddle } from '@/types/game.fe';
+import type { ElementPositions, Ball, Paddle, Game } from '@/types/game.fe';
 import GameStatusEnum from '@/types/game.fe';
 import { io, type Socket } from 'socket.io-client';
 import { storeToRefs } from 'pinia';
@@ -41,6 +41,7 @@ import { useUserStore } from '@/stores/userStore';
 interface DataObject {
 	context: CanvasRenderingContext2D;
 	socket: Socket;
+	currentGame: Game;
 }
 
 export default defineComponent({
@@ -49,7 +50,10 @@ export default defineComponent({
 		PlayerNames,
 	},
 	props: {
-		currentGame: String,
+		currentGameId: {
+			type: String,
+			required: true,
+		},
 	},
 
 	beforeRouteLeave(to, from, next) {
@@ -67,66 +71,65 @@ export default defineComponent({
 		return {
 			context: {} as CanvasRenderingContext2D,
 			socket: io('http://localhost:8080/pong', { withCredentials: true }),
+			currentGame: {} as Game,
 		};
 	},
 
-	setup() {
+	setup(props: any) {
 		const gameStore = useGameStore();
 		gameStore.initialize();
 		const {
 			allGames,
 			isPressed,
-			// gameLoopInterval,
-			// timeStampStart,
 			previousTimeStamp,
 			score_player_one,
 			score_player_two,
 			gameStatus,
 		} = storeToRefs(gameStore);
+		const currentGame = allGames.value.find(
+			(game) => game.id === Number(props.currentGameId),
+		);
 		return {
 			gameStore,
 			allGames,
 			isPressed,
-			// gameLoopInterval,
-			// timeStampStart,
 			previousTimeStamp,
 			score_player_one,
 			score_player_two,
 			gameStatus,
+			currentGame,
 		};
 	},
 
 	computed: {
 		// typescript wants values used from html to have a type
-		width() {
+		width(): number {
 			return (this.$refs.GameRef as HTMLCanvasElement).width;
 		},
-		height() {
+		height(): number {
 			return (this.$refs.GameRef as HTMLCanvasElement).height;
 		},
-		currentgameId() {
-			return Number(this.currentGame);
+		currentgameId(): number {
+			return this.currentGame!.id;
 		},
 		getCurrentGame() {
-			const currentGame = this.allGames.find((game) => game.id === this.currentgameId);
-			console.log("curretn game:", this.currentGame);
-			return currentGame
+			return this.currentGame;
 			// return this.allGames.find((game) => game.id === this.currentgameId);
 		},
 		getPlayerOne() {
-			return this.getCurrentGame?.player_one;
+			return this.getCurrentGame!.player_one;
 		},
 		getPlayerTwo() {
-			return this.getCurrentGame?.player_two;
+			return this.getCurrentGame!.player_two;
 		},
 		getMyId() {
 			return useUserStore().me.id;
 		},
 		isPlayerOne() {
-			return this.getCurrentGame?.player_one.id === this.getMyId;
+			return this.getCurrentGame!.player_one.id === this.getMyId;
 		},
 		isPlayerTwo() {
-			return this.getCurrentGame?.player_two.id === this.getMyId;
+			return this.getCurrentGame!.player_two.id === this.getMyId;
 		},
 		isPlayer() {
 			return this.isPlayerOne || this.isPlayerTwo;
@@ -204,7 +207,7 @@ export default defineComponent({
 
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key] !== undefined) {
-				console.log("Keypress")
+				console.log('Keypress');
 				this.isPressed[keyPress.key] = true;
 			}
 		},
@@ -225,16 +228,14 @@ export default defineComponent({
 				this.previousTimeStamp = timeStamp;
 			}
 			const elapsedTime = timeStamp - this.previousTimeStamp;
-			const intervalMs = 17; // refresh rate of a browser is 1/60th of a sec (17)
+			const intervalMs = 10; // refresh rate of a browser is 1/60th of a sec (17)
 			// redraws after intervalMs
 			if (elapsedTime > intervalMs) {
 				this.previousTimeStamp = timeStamp;
-				this.socket!.emit(
-					'updatePositions', {
-						id: this.currentgameId,
-						keyPress: this.isPressed
-					}
-				);
+				this.socket!.emit('updatePositions', {
+					id: this.currentgameId,
+					keyPress: this.isPressed,
+				});
 			}
 
 			if (this.gameStatus === GameStatusEnum.PLAYING) {
@@ -275,17 +276,19 @@ export default defineComponent({
 		setSocketOn() {
 			console.log('Setting sockets on');
 			this.socket.on('elementPositions', this.render);
-			this.socket.on(
-				'pointOver',
-				(scores: {
-					scorePlayerOne: number;
-					scorePlayerTwo: number;
-				}) => {
-					this.gameStatus = GameStatusEnum.POINT_OVER;
-					this.score_player_one = scores.scorePlayerOne;
-					this.score_player_two = scores.scorePlayerTwo;
-				},
-			);
+			if (this.isPlayer) {
+				this.socket.on(
+					'pointOver',
+					(scores: {
+						scorePlayerOne: number;
+						scorePlayerTwo: number;
+					}) => {
+						this.gameStatus = GameStatusEnum.POINT_OVER;
+						this.score_player_one = scores.scorePlayerOne;
+						this.score_player_two = scores.scorePlayerTwo;
+					},
+				);
+			}
 			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
@@ -310,6 +313,7 @@ export default defineComponent({
 
 		// // MAIN GAME LOOP
 		this.socket.once('GameCanStart', () => {
+			console.log('STARTING GAME LOOP');
 			this.startGameLoop();
 		});
 	},

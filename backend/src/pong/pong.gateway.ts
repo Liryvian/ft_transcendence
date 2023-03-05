@@ -38,7 +38,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);
-		const userId: number = this.authService.userIdFromCookieString(cookie)
+		const userId: number = this.authService.userIdFromCookieString(cookie);
 	}
 
 	createGameInstance(game: Game, client: Socket) {
@@ -52,7 +52,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 	@SubscribeMessage('joinGameRoom')
 	joinGameRoom(@MessageBody() game: Game, @ConnectedSocket() client: Socket) {
-		console.log("CurretnGame: ", game);
+		console.log('CurretnGame: ', game);
 		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);
@@ -61,26 +61,26 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 			if (game.id && game.player_one && game.player_two) {
 				if (!gameSubscribers[game.id]) {
 					this.createGameInstance(game, client);
-				}
-				else {
+				} else {
 					client.join(gameSubscribers[game.id].roomName);
 				}
 				if (userId === game.player_one.id) {
 					gameSubscribers[game.id].playerOneIsInGame = true;
 					gameSubscribers[game.id].playerOneId = userId;
-					
 				} else if (userId === game.player_two.id) {
 					gameSubscribers[game.id].playerTwoIsInGame = true;
 					gameSubscribers[game.id].playerTwoId = userId;
 				}
 				if (
+					!this.pongService.gameHasStarted &&
 					gameSubscribers[game.id].playerOneIsInGame &&
 					gameSubscribers[game.id].playerTwoIsInGame
 				) {
-					console.log("Emitting game start")
+					console.log('Emitting game start');
 					this.server
 						.in(gameSubscribers[game.id].roomName)
 						.emit('GameCanStart');
+					this.pongService.gameHasStarted = true;
 				}
 			}
 		} catch (e) {}
@@ -104,10 +104,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage('updatePositions')
-	updatePositions(
-		@MessageBody() data: any,
-		@ConnectedSocket() client: Socket,
-	) {
+	updatePositions(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
 		const cookie: string = jwtCookieFromHandshakeString(
 			client.handshake.headers.cookie,
 		);
@@ -130,6 +127,7 @@ export class PongGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (this.pongService.gameIsFinished) {
 			this.server.in(currentgame.roomName).emit('gameOver');
 			gameSubscribers[data!.id] = undefined;
+			this.pongService.gameIsFinished = false;
 		}
 	}
 }

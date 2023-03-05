@@ -13,7 +13,7 @@ function randomDirection(min: number, max: number) {
 	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
 		directionAndSpeed *= min;
 	}
-	return directionAndSpeed / 10;
+	return 0.2;
 }
 
 @Injectable()
@@ -23,11 +23,12 @@ export class PongService {
 
 	private readonly ballRadius = 1;
 
-	private dy = randomDirection(-5, 5) || 0.3;
-	private dx = randomDirection(-5, 5) || 0.3;
+	private dy = randomDirection(-3, 3) || 0.3;
+	private dx = randomDirection(-3, 3) || 0.3;
 
 	public pointIsOver = false;
 	public gameIsFinished = false;
+	public gameHasStarted = false;
 
 	createNewGameState(): GameState {
 		const newGameState: GameState = {
@@ -164,12 +165,12 @@ export class PongService {
 
 	moveUp(paddlePosY: number) {
 		const topMax = this.paddleHeight / 2;
-		return Math.max(paddlePosY - 2, topMax);
+		return Math.max(paddlePosY - 4, topMax);
 	}
 
 	moveDown(paddlePosY: number) {
 		const bottomMax = 100 - this.paddleHeight / 2;
-		return Math.min(paddlePosY + 2, bottomMax);
+		return Math.min(paddlePosY + 4, bottomMax);
 	}
 
 	// checks if paddle is at max x/y otherwise move it 1% up/down

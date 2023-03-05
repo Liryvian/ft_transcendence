@@ -43,7 +43,7 @@ const router = createRouter({
 			component: () => import('../views/ChatView.vue'),
 		},
 		{
-			path: '/pong/:currentGame?',
+			path: '/pong/:currentGameId?',
 			name: 'pong',
 			props: true,
 			component: () => import('../components/pongGame/pongGame.vue'),
