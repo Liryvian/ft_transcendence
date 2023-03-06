@@ -2,7 +2,6 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>NEW CHANNEL</h1>
-
 			<form
 				method="Post"
 				action=""
@@ -37,6 +36,7 @@
 				</div>
 				<InputField
 					label="set password"
+					inputType="password"
 					v-model="createNewChannelForm.password"
 				/>
 				<div class="c_field_group c_field_group--radio">
@@ -52,6 +52,7 @@
 						value="public"
 						name="visibility"
 						label="public"
+						:checked="true"
 						id="r2"
 					/>
 				</div>
