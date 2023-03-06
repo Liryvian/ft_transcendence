@@ -304,6 +304,12 @@ export class ChatController {
 		@Param('id') chatId: number,
 		@Body() chatPassword: { password: string },
 	) {
+		if (
+			!chatPassword.hasOwnProperty('password') ||
+			chatPassword.password.trim().length === 0
+		) {
+			return false;
+		}
 		try {
 			const chatInfo = await this.chatService.findOne({
 				where: { id: chatId },
@@ -312,7 +318,6 @@ export class ChatController {
 				// wtf? it doesn't have password.. why are you checking?
 				return true;
 			}
-			console.log(chatPassword);
 			return bcrypt.compare(chatPassword.password, chatInfo.password);
 		} catch (e) {}
 		return false;
