@@ -1,17 +1,18 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<h1>
-				MATCHMAKING
-			</h1>
+			<h1>MATCHMAKING</h1>
 			<div class="c_block c_form_group">
 				<form
 					method="Post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="createGame(createGameForm, newMessage)"
+					@submit.prevent="
+						searchOrCreateChat(createGameForm),
+							findOpponent(createGameForm),
+							createGame(createGameForm, newMessage)
+					"
 				>
-
 					<div class="page_button pb_bottom">
 						<input type="submit" value="request" />
 					</div>
@@ -37,6 +38,7 @@ import type { CreateGameForm } from '@/types/game.fe';
 import type { NewMessage } from '@/types/Chat';
 import router from '@/router';
 import { postRequest } from '@/utils/apiRequests';
+import { useChatStore } from '@/stores/chatStore';
 
 export default defineComponent({
 	name: 'Matchmaking',
@@ -68,13 +70,13 @@ export default defineComponent({
 		let createGameForm: CreateGameForm = reactive({
 			score_to_win: 10,
 			background_color: '#FFFFFF',
-			player_one: 0, // assign in createGame()
-			player_two: Number(0),
+			player_one: 0,
+			player_two: 0,
 		});
 		let newMessage: NewMessage = reactive({
-			sender_id: Number(0),
-			chat: Number(0),
-			is_game_request: true,
+			sender_id: 0,
+			chat: 17,
+			// is_game_request: true,
 			content: 'Is this a Match? Wanna play PONG?',
 		});
 		const errors = reactive([]);
@@ -101,6 +103,37 @@ export default defineComponent({
 				);
 			}
 		},
+
+		async findOpponent(createdGameForm: CreateGameForm) {
+			const userStore = useUserStore();
+			userStore.refreshData();
+			const { allUsers } = storeToRefs(userStore);
+			const { getOnlineStatus, me } = userStore;
+
+			allUsers.value.find((user) => {
+				if (getOnlineStatus(user.id) === true && user.id !== me.id) {
+					createdGameForm.player_two = user.id;
+				}
+			});
+			if (createdGameForm.player_two === 0) {
+				this.errors.push(
+					'OH NO! No online members to play pong with, please try again later',
+				);
+				return;
+			}
+		},
+
+		async searchOrCreateChat(createdGameForm: CreateGameForm) {
+			const chatStore = useChatStore();
+			const { getAllChats } = storeToRefs(chatStore);
+			// console.log('ALL CHATS', getAllChats.find();
+			// if (useUserStore().me.value.find);
+			// if (getAllChats.find(
+			// 	(chat) => chat.sender_id === createdGameForm.player_one)){
+			// 	return chat;
+			// }
+		},
+
 		async createGame(
 			createdGameForm: CreateGameForm,
 			newMessage: NewMessage,
@@ -119,9 +152,8 @@ export default defineComponent({
 				const newGame = (await postRequest('games', createdGameForm))
 					.data;
 				newMessage.sender_id = useUserStore().me.id;
-				newMessage.content = `<a href="/games/${newGame.id}">wanna play PONG?</a>`;
+				newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				const message = await postRequest('messages', newMessage);
-				//the router push is for later, I can imagine you want to return to your current chat @vvissche?
 				await router.push(`/pong/${newGame.id}`);
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
@@ -130,50 +162,3 @@ export default defineComponent({
 	},
 });
 </script>
-<!--	components: {-->
-<!--		InputField,-->
-<!--		CornerButton,-->
-<!--	},-->
-<!--	computed: {-->
-<!--		// const onlineGames[] = getOnlineStatus()-->
-<!--		// getOnlinePlayers(): string {-->
-<!--		// 	const player_two = this.allUsers.find(-->
-<!--		// 		(user) => user.id === 10,-->
-<!--		// 	)?.name;-->
-<!--		// 	if (player_two) {-->
-<!--		// 		return player_two;-->
-<!--		// 	}-->
-<!--		// 	return '!! nobody is online';-->
-<!--		// },-->
-<!--	},-->
-<!--	setup() {-->
-<!--		const userStore = useUserStore();-->
-<!--		userStore.refreshData();-->
-<!--		const { allUsers } = storeToRefs(userStore);-->
-<!--		const gameStore = useGameStore();-->
-<!--		gameStore.refreshAllGames();-->
-<!--		const { errors } = storeToRefs(gameStore);-->
-<!--		const { getOnlineStatus } = userStore;-->
-<!--		const { createGame } = gameStore;-->
-<!--		let createGameForm: CreateGameForm = reactive({-->
-<!--			score_to_win: 10,-->
-<!--			background_color: '#FFFFFF',-->
-<!--			player_one: 0, // assign in createGame()-->
-<!--			player_two: Number(0),-->
-<!--		});-->
-<!--		let newMessage: NewMessage = reactive({-->
-<!--			sender_id: Number(0),-->
-<!--			chat: Number(0),-->
-<!--			content: 'Is this a Match? Wanna play PONG?',-->
-<!--		});-->
-<!--		return {-->
-<!--			gameStore,-->
-<!--			errors,-->
-<!--			createGame,-->
-<!--			allUsers,-->
-<!--			createGameForm,-->
-<!--			newMessage,-->
-<!--		};-->
-<!--	},-->
-<!--});-->
-<!--</script>-->
