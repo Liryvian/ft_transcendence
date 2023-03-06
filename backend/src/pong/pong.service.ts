@@ -1,18 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import {
-	Ball,
-	GameState,
-	MovementKeys,
-	Paddle,
-	Position,
-} from './game.types.be';
+import { Ball, GameState, Paddle, Position } from './game.types.be';
 
 // expects integers
-// for this case using -3 and 3
 function randomDirection(min: number, max: number) {
 	let directionAndSpeed = Math.floor(Math.random() * (max - min)) + min;
-	if (directionAndSpeed > -2 && directionAndSpeed < 2) {
-		directionAndSpeed *= min;
+	if (directionAndSpeed > -1 && directionAndSpeed < 1) {
+		return 0;
 	}
 	return directionAndSpeed / 10;
 }
@@ -24,14 +17,20 @@ export class PongService {
 
 	private readonly ballRadius = 1;
 
-	private dy = randomDirection(-4, 4) || 0.3;
-	private dx = randomDirection(-4, 4) || 0.3;
+	private dy = randomDirection(-2, 2) || 0.2;
+	private dx = randomDirection(-2, 2) || -0.2;
 
 	public pointIsOver = false;
 	public gameIsFinished = false;
+	public gameHasStarted = false;
 
 	createNewGameState(): GameState {
 		const newGameState: GameState = {
+			gameId: -1,
+			playerOneId: -1,
+			playerTwoId: -1,
+			playerOneIsInGame: false,
+			playerTwoIsInGame: false,
 			playerOnePaddle: {
 				position: {
 					x: 0,
@@ -39,6 +38,10 @@ export class PongService {
 				},
 				width: this.paddleWidth,
 				height: this.paddleHeight,
+				isPressed: {
+					w: false,
+					s: false,
+				},
 			},
 
 			playerTwoPaddle: {
@@ -48,6 +51,10 @@ export class PongService {
 				},
 				width: this.paddleWidth,
 				height: this.paddleHeight,
+				isPressed: {
+					w: false,
+					s: false,
+				},
 			},
 
 			ball: {
@@ -64,6 +71,9 @@ export class PongService {
 			scoreToWin: 0,
 			scorePlayerOne: 0,
 			scorePlayerTwo: 0,
+			roomName: '',
+			gameIsOver: false,
+			pointIsover: false,
 		};
 		return newGameState;
 	}
@@ -121,20 +131,19 @@ export class PongService {
 
 		//  check collision for paddle one
 		if (this.doesHitPaddle(gameState.ball, paddleP1, gameState.canvas)) {
-			console.log('Collision Paddle one');
 			this.changeBallDirection(paddleP1, gameState.ball.position.y, -1);
 		} else if (this.doesHitPaddle(gameState.ball, paddleP2, gameState.canvas)) {
-			console.log('Collision Paddle two');
 			this.changeBallDirection(paddleP2, gameState.ball.position.y, 1);
 		} else if (this.doesHitWall(radius, ballPos.x, this.dx)) {
 			//  check which side the ball hit to decide who the winner is
-			ballPos.x > midWayPoint ? ++gameState.scorePlayerOne : ++gameState.scorePlayerTwo;
+			ballPos.x > midWayPoint
+				? ++gameState.scorePlayerOne
+				: ++gameState.scorePlayerTwo;
 			this.pointIsOver = true;
 			if (
 				gameState.scorePlayerOne >= gameState.scoreToWin ||
 				gameState.scorePlayerTwo >= gameState.scoreToWin
 			) {
-				console.log('Setting game is finsished');
 				this.gameIsFinished = true;
 			}
 			this.resetBallPosition(gameState.ball);
@@ -159,24 +168,18 @@ export class PongService {
 		return Math.min(paddlePosY + 1, bottomMax);
 	}
 
+	movePaddle(paddle: Paddle) {
+		if (paddle.isPressed.w) {
+			paddle.position.y = this.moveUp(paddle.position.y);
+		}
+		if (paddle.isPressed.s) {
+			paddle.position.y = this.moveDown(paddle.position.y);
+		}
+	}
 	// checks if paddle is at max x/y otherwise move it 1% up/down
-	movePaddles(
-		pressedKey: MovementKeys,
-		playerOnePaddle: Paddle,
-		playerTwoPaddle: Paddle,
-	) {
-		if (pressedKey.ArrowUp) {
-			playerTwoPaddle.position.y = this.moveUp(playerTwoPaddle.position.y);
-		}
-		if (pressedKey.ArrowDown) {
-			playerTwoPaddle.position.y = this.moveDown(playerTwoPaddle.position.y);
-		}
-		if (pressedKey.w) {
-			playerOnePaddle.position.y = this.moveUp(playerOnePaddle.position.y);
-		}
-		if (pressedKey.s) {
-			playerOnePaddle.position.y = this.moveDown(playerOnePaddle.position.y);
-		}
+	movePaddles(playerOnePaddle: Paddle, playerTwoPaddle: Paddle) {
+		this.movePaddle(playerOnePaddle);
+		this.movePaddle(playerTwoPaddle);
 	}
 
 	resetBallPosition(ball: Ball) {
@@ -184,7 +187,7 @@ export class PongService {
 			x: 50,
 			y: 50,
 		};
-		this.dx = randomDirection(-4, 4) || 0.3;
-		this.dy = randomDirection(-4, 4) || 0.3;
+		this.dx = randomDirection(-2, 2) || 0.2;
+		this.dy = randomDirection(-2, 2) || 0.2;
 	}
 }

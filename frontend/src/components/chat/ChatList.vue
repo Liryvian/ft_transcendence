@@ -6,14 +6,13 @@
 				class="add_channel"
 				v-if="info.type === 'channel'"
 				:to="{ name: 'new-channel' }"
-			>+
+				>+
 			</RouterLink>
 		</h1>
 
 		<template v-for="item in info.items">
 			<ChatListItem :chat="item" :type="item.type" />
 		</template>
-
 	</div>
 </template>
 

@@ -1,3 +1,5 @@
+import { useGameStore } from '@/stores/gameStore';
+import { useRelationshipStore } from '@/stores/relationshipStore';
 import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -10,7 +12,7 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../views/SettingsView.vue'),
 		},
 		{
 			path: '/settings',
@@ -57,7 +59,7 @@ const router = createRouter({
 			],
 		},
 		{
-			path: '/pong/:currentGame?',
+			path: '/pong/:currentGameId',
 			name: 'pong',
 			props: true,
 			component: () => import('../components/pongGame/pongGame.vue'),

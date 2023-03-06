@@ -1,5 +1,5 @@
 <template>
-	<div v-if="isBlocked && relationship.specifier_id !== me.id">
+	<div v-if="isBlocked && relationship.specifier_id !== myId">
 		<a href="#" class="grayedOut"> Unblock </a>
 	</div>
 	<div v-else-if="isBlocked">
@@ -27,7 +27,6 @@
 <script lang="ts">
 import { useRelationshipStore } from '@/stores/relationshipStore';
 import { ValidRelationships, type Relationship } from '@/types/Relationship';
-import { storeToRefs } from 'pinia';
 import { defineComponent, type PropType } from 'vue';
 
 export default defineComponent({
@@ -35,13 +34,11 @@ export default defineComponent({
 
 	setup() {
 		const relationshipStore = useRelationshipStore();
-		relationshipStore.refreshMe();
-		const { updateRelationship } = relationshipStore;
-		const { me } = storeToRefs(relationshipStore);
+		const { updateRelationship, myId } = relationshipStore;
 		return {
 			updateRelationship,
 			ValidRelationships,
-			me,
+			myId,
 		};
 	},
 
