@@ -36,6 +36,11 @@ export interface UserRelationsQuery {
 	in_chats?: boolean;
 }
 
+export interface GamesHistory {
+	wins: number;
+	losses: number;
+}
+
 export interface User {
 	id: number;
 	name: string;
@@ -47,6 +52,7 @@ export interface User {
 
 	matchmaking_request: GameRequest[];
 	games: Game[];
+	gamesHistory: GamesHistory;
 
 	achievements: Achievement[];
 	relationships: Relationship[];
