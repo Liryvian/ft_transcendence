@@ -1,10 +1,7 @@
-import type { Chat_List_Item, CreateNewChannelForm } from '@/types/Chat';
-import { permissionsEnum } from '@/types/Chat';
+import type { Chat_List_Item } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
-import { getRequest, postRequest } from '@/utils/apiRequests';
+import { getRequest } from '@/utils/apiRequests';
 import { defineStore } from 'pinia';
-import router from '@/router';
-import { useUserStore } from '@/stores/userStore';
 
 export const useChatStore = defineStore('chats', {
 	//  actions == data definitions
@@ -22,17 +19,6 @@ export const useChatStore = defineStore('chats', {
 	},
 	// actions == methods
 	actions: {
-		handleFormError(responseData: any) {
-			if (typeof responseData.message === 'string') {
-				this.errors.length = 0;
-				this.errors.push(responseData.message);
-			} else {
-				this.errors = responseData.message.map((msg: String) =>
-					msg.replace('(o) => o.', ''),
-				);
-			}
-		},
-
 		async init(force: boolean) {
 			if (this.initialized === false || force) {
 				this.initialized = true;
@@ -49,56 +35,6 @@ export const useChatStore = defineStore('chats', {
 					console.error('error on getting me/chats', e);
 					return [];
 				}
-			}
-		},
-
-		async createNewChannel(createNewChannelForm: CreateNewChannelForm) {
-			try {
-				this.errors.length = 0;
-
-				const all = (await getRequest('chats')).data;
-				const found = all.find(
-					(chat: Chat_List_Item) => chat.name === createNewChannelForm.name,
-				);
-				if (found !== undefined){
-					this.errors.push('channel name already exists');
-					return;
-				}
-				if (!createNewChannelForm.name || createNewChannelForm.name.trim().length === 0){
-					this.errors.push('Not a valid channel name');
-					return;
-				}
-				if (!createNewChannelForm.users[0]){
-					this.errors.push('you need to assign one or more users to this channel');
-					return;
-				}
-				const usersToSend = createNewChannelForm.users.map(
-					(userId) => ({
-						id: userId,
-						permissions: [
-							permissionsEnum.READ,
-							permissionsEnum.POST,
-						],
-					}),
-				);
-				usersToSend.push({
-					id: useUserStore().me.id,
-					permissions: [
-						permissionsEnum.READ,
-						permissionsEnum.POST,
-						permissionsEnum.OWNER,
-					]
-				})
-				const newChannel = await postRequest('chats', {
-					...createNewChannelForm,
-					users: usersToSend
-				});
-				router.push({
-					name: 'chat',
-					params: { currentChat : newChannel.data.id },
-				});
-			} catch (e: any) {
-				this.handleFormError(e.response.data);
 			}
 		},
 
