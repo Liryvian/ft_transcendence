@@ -32,7 +32,10 @@ export default defineComponent({
 			if (this.isBlocked) {
 				return { name: 'profiles' };
 			}
-			return { name: 'profile', params: { profile_id: this.userId } };
+			return {
+				name: 'profile',
+				params: { profile_id: this.userId ?? -1 },
+			};
 		},
 	},
 });
