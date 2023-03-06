@@ -37,6 +37,7 @@ export class MessageController {
 					user_id: createMessageDto.sender_id,
 					chat_id: createMessageDto.chat,
 					content: newMessage.content,
+					is_game_request: newMessage.is_game_request,
 					created_at: newMessage.created_at,
 				},
 			};

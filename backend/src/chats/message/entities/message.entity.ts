@@ -45,4 +45,7 @@ export class Message {
 
 	@Column({ nullable: false })
 	content: string;
+
+	@Column({ default: false })
+	is_game_request: boolean;
 }
