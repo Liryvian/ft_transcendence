@@ -9,7 +9,7 @@
 
 	<!-- Route to profile via username link -->
 	<div v-if="!isBlocked(relationship.type)">
-		<RouterLink :to="{ name: 'profile', params: { profile_id: user.id }}">
+		<RouterLink :to="{ name: 'profile', params: { profile_id: user.id } }">
 			{{ user.name }}
 		</RouterLink>
 	</div>
@@ -19,7 +19,9 @@
 
 	<!-- Route to chat -->
 	<div v-if="!isBlocked(relationship.type)">
-		<RouterLink :to="{ name: 'dm', params: { dmId: user.id }}">Chat</RouterLink>
+		<RouterLink :to="{ name: 'dm', params: { dmId: user.id } }"
+			>Chat</RouterLink
+		>
 	</div>
 	<div v-else>
 		<span class="grayedOut">Chat</span>
@@ -53,28 +55,23 @@ import { useUserStore } from '@/stores/userStore';
 
 export default defineComponent({
 	name: 'ListRow',
+	computed: {},
+	created() {
+		if (this.relationship.id > 0) {
+			this.joinRoomOnConnect(this.relationship);
+		}
+	},
 
-	setup(props) {
+	setup() {
 		const userStore = useUserStore();
 		const relationshipStore = useRelationshipStore();
-		relationshipStore.initialize();
-		const { isFriend, isBlocked, joinRoomOnConnect, disconnectSocket } =
-			relationshipStore;
+		const { isFriend, isBlocked, joinRoomOnConnect } = relationshipStore;
 		return {
 			userStore,
 			isFriend,
 			isBlocked,
 			joinRoomOnConnect,
-			disconnectSocket,
 		};
-	},
-	mounted() {
-		// this.socke
-		this.joinRoomOnConnect(this.relationship);
-	},
-
-	unmounted() {
-		this.disconnectSocket();
 	},
 
 	components: {

@@ -3,7 +3,11 @@
 		<RouterLink
 			:to="to"
 			class="c_media__asset"
-			:class="{ 'c_asset--online': isOnline, 'c_asset--offline': !isOnline, 'grayedOut': isBlocked }"
+			:class="{
+				'c_asset--online': isOnline,
+				'c_asset--offline': !isOnline,
+				grayedOut: isBlocked,
+			}"
 		>
 			<div class="c_asset__circle">
 				<img :src="`/api/avatars/${avatar}`" alt="" />
@@ -18,8 +22,8 @@ export default defineComponent({
 	name: 'Avatar',
 
 	props: {
-        avatar: String,
-        isOnline: Boolean,
+		avatar: String,
+		isOnline: Boolean,
 		userId: Number,
 		isBlocked: Boolean,
 	},
@@ -28,8 +32,8 @@ export default defineComponent({
 			if (this.isBlocked) {
 				return { name: 'profiles' };
 			}
-			return { name: 'profile', params: { profile_id: this.userId} };
-		}
-	}
+			return { name: 'profile', params: { profile_id: this.userId } };
+		},
+	},
 });
 </script>
