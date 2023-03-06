@@ -120,6 +120,7 @@ export class ChatController {
 					name: chat.name,
 					type: chat.type,
 					users: chat.users ?? [],
+					hasPassword: chat.hasPassword,
 				},
 			};
 			if (
@@ -271,7 +272,7 @@ export class ChatController {
 			});
 			// check permissions
 			if (
-				!(await bcrypt.compare(current_Chat.password, updateChatDto.password))
+				!(await bcrypt.compare(updateChatDto.password, current_Chat.password))
 			) {
 				throw new BadRequestException('wrong password');
 			}
@@ -296,6 +297,25 @@ export class ChatController {
 			this.socketService.chatlist_emit('all', socketMessage);
 		}
 		return chat;
+	}
+
+	@Post(':id/verify_password')
+	async verifyChatPassword(
+		@Param('id') chatId: number,
+		@Body() chatPassword: { password: string },
+	) {
+		try {
+			const chatInfo = await this.chatService.findOne({
+				where: { id: chatId },
+			});
+			if (chatInfo.hasPassword === false) {
+				// wtf? it doesn't have password.. why are you checking?
+				return true;
+			}
+			console.log(chatPassword);
+			return bcrypt.compare(chatPassword.password, chatInfo.password);
+		} catch (e) {}
+		return false;
 	}
 
 	@Post(':id/join')

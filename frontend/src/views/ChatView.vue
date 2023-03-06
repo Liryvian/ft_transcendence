@@ -134,6 +134,7 @@ export default defineComponent({
 				id: -1,
 				name: '',
 				type: this.router.currentRoute.value.name,
+				hasPassword: false,
 				users: [],
 			} as Chat_List_Item;
 		},
