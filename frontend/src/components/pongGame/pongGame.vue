@@ -321,6 +321,8 @@ export default defineComponent({
 
 	mounted() {
 		this.context = (this.$refs.GameRef as any).getContext('2d');
+		document.getElementById('GameCanvas')!.style.backgroundColor =
+			this.currentGame.background_color;
 		if (this.isPlayer) {
 			document.addEventListener('keydown', this.keyDown);
 			document.addEventListener('keyup', this.keyUp);
