@@ -27,9 +27,9 @@ export interface GameState {
 	scorePlayerOne: number;
 	scorePlayerTwo: number;
 	roomName: string;
-	// isPressed: MovementKeys;
-	pointIsover: boolean;
+	pointIsOver: boolean;
 	gameIsOver: boolean;
+	gameCanStart: boolean;
 	playerOneIsInGame: boolean;
 	playerTwoIsInGame: boolean;
 }

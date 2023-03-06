@@ -135,6 +135,7 @@ export default defineComponent({
 				newMessage.sender_id = useUserStore().me.id;
 				newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await postRequest('messages', newMessage);
+				await useGameStore().refreshAllGames();
 
 				await router.push(`/pong/${newGame.id}`);
 			} catch (e: any) {

@@ -30,7 +30,9 @@ export class PongGateway implements OnGatewayConnection {
 	) {}
 	@WebSocketServer() server: Server;
 
-	handleConnection() {}
+	handleConnection() {
+		console.log('Game connected');
+	}
 
 	createGameInstance(game: Game, client: Socket) {
 		const roomName = String(game.id);
@@ -41,9 +43,9 @@ export class PongGateway implements OnGatewayConnection {
 	}
 
 	@SubscribeMessage('PlayerDisconnected')
-	playerDisconnected() {
-		if (!this.pongService.gameIsFinished) {
-			this.pongService.gameIsFinished = true;
+	playerDisconnected(@MessageBody() gameId: string) {
+		if (!gameSubscribers[+gameId].gameIsOver) {
+			gameSubscribers[+gameId].gameIsOver = true;
 		}
 	}
 
@@ -55,10 +57,12 @@ export class PongGateway implements OnGatewayConnection {
 		try {
 			const userId: number = this.authService.userIdFromCookieString(cookie);
 			if (game.id && game.player_one && game.player_two) {
+				console.log('Entering socket setup');
 				if (!gameSubscribers[game.id]) {
 					this.createGameInstance(game, client);
 				}
 				client.join(gameSubscribers[game.id].roomName);
+				console.log('Joining room BE');
 				if (userId === game.player_one.id) {
 					gameSubscribers[game.id].playerOneIsInGame = true;
 					gameSubscribers[game.id].playerOneId = userId;
@@ -67,14 +71,15 @@ export class PongGateway implements OnGatewayConnection {
 					gameSubscribers[game.id].playerTwoId = userId;
 				}
 				if (
-					!this.pongService.gameHasStarted &&
+					!gameSubscribers[game.id].gameCanStart &&
 					gameSubscribers[game.id].playerOneIsInGame &&
 					gameSubscribers[game.id].playerTwoIsInGame
 				) {
+					console.log('Emitting game can start');
 					this.server
 						.in(gameSubscribers[game.id].roomName)
 						.emit('GameCanStart');
-					this.pongService.gameHasStarted = true;
+					gameSubscribers[game.id].gameCanStart = true;
 				}
 			}
 		} catch (e) {}
@@ -84,12 +89,6 @@ export class PongGateway implements OnGatewayConnection {
 		this.server
 			.in(gameSubscribers[gameState.gameId].roomName)
 			.emit('elementPositions', gameState);
-	}
-
-	resetService() {
-		this.pongService.gameHasStarted = false;
-		this.pongService.gameIsFinished = false;
-		this.pongService.pointIsOver = false;
 	}
 
 	handleFinishedPoint(currentGame: any) {
@@ -128,10 +127,10 @@ export class PongGateway implements OnGatewayConnection {
 		);
 		this.pongService.moveBall(currentGame);
 		this.sendPositionOfElements(currentGame);
-		if (this.pongService.pointIsOver) {
+		if (currentGame.pointIsOver) {
 			this.handleFinishedPoint(currentGame);
 		}
-		if (this.pongService.gameIsFinished) {
+		if (currentGame.gameIsOver) {
 			this.handleGameOver(currentGame);
 		}
 	}
