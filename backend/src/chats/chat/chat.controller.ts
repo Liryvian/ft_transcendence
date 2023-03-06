@@ -18,6 +18,7 @@ import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Chat, ChatType, ChatVisibility } from './entities/chat.entity';
+import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { DeleteResult, FindOptionsOrder } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
@@ -66,7 +67,32 @@ export class ChatController {
 			createChatDto.users.forEach((user) => users.push(user));
 			delete createChatDto.users;
 		}
-		let chat: Chat = await this.chatService.save(createChatDto);
+
+		// make sure dm names are unique
+		if (createChatDto.type === 'dm') {
+			// check if dm between the two users already exists
+			try {
+				const hasDM = this.chatService.findOne({
+					where: {
+						has_users: [
+							{ user_id: createChatDto.users[0].id },
+							{ user_id: createChatDto.users[1].id },
+						],
+						type: 'dm',
+					},
+				});
+				return hasDM;
+			} catch (e) {}
+			createChatDto.name += '--' + crypto.pseudoRandomBytes(4).toString('hex');
+		}
+
+		let chat: Chat;
+		try {
+			chat = await this.chatService.save(createChatDto);
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 
 		// Now add userInChat after unpacking it's permissions array
 		if (users.length) {
@@ -95,15 +121,20 @@ export class ChatController {
 					id: chat.id,
 					name: chat.name,
 					type: chat.type,
-					users:
-						chat.users?.map((user) => ({
-							id: user.id,
-							name: user.name,
-							avatar: user.avatar,
-						})) ?? [],
+					users: chat.users ?? [],
 				},
 			};
-			this.socketService.chatlist_emit('all', socketMessage);
+			if (
+				chat.type === 'dm' ||
+				(chat.type === 'channel' && chat.visibility === 'private')
+			) {
+				this.socketService.chatlist_emit(
+					chat.users.map((u) => u.id),
+					socketMessage,
+				);
+			} else {
+				this.socketService.chatlist_emit('all', socketMessage);
+			}
 		}
 		return chat;
 	}

@@ -105,7 +105,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await getRequest('logout');
 				this.isLoggedIn = false;
-				useSocketStore().deinitializeOnline();
+				useSocketStore().disconnect();
 				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {
@@ -141,7 +141,6 @@ export const useUserStore = defineStore('users', {
 			} catch (e: any) {
 				this.handleFormError(e);
 				return [];
-				x;
 			}
 		},
 
