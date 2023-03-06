@@ -10,26 +10,21 @@ import {
 	Query,
 	UseGuards,
 	Req,
-	HttpCode,
 	ForbiddenException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
-import { Chat, ChatType, ChatVisibility } from './entities/chat.entity';
+import { Chat } from './entities/chat.entity';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
-import { DeleteResult, FindOptionsOrder } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
 import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
 import { MessageService } from '../message/message.service';
 import { SocketService } from '../../socket/socket.service';
-import {
-	Chat_List_Item,
-	Chat_Type,
-	SocketMessage,
-} from '../../socket/socket.types';
+import { Chat_List_Item, SocketMessage } from '../../socket/socket.types';
 import { UserInChat } from '../../users/user/entities/user.entity';
 import {
 	ChatUserPermission,
@@ -38,6 +33,8 @@ import {
 import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import { AuthService } from '../../auth/auth.service';
+import { UserRelationshipService } from '../../users/user-relationship/user-relationship.service';
+import { Message } from '../message/entities/message.entity';
 
 @UseGuards(AuthGuard())
 @Controller('chats')
@@ -48,6 +45,7 @@ export class ChatController {
 		private readonly messageService: MessageService,
 		private readonly socketService: SocketService,
 		private readonly chatUserPermissionService: ChatUserPermissionService,
+		private readonly userRelationshipService: UserRelationshipService,
 	) {}
 
 	private readonly defaultRelationships = { has_users: true };
@@ -162,7 +160,7 @@ export class ChatController {
 	async chatMessages(@Param('id') chatId: number, @Req() request: Request) {
 		try {
 			// verify that we have a valid and existing user from the request
-			const userId: number = await this.authService.validUserId(request);
+			const myId: number = await this.authService.validUserId(request);
 			// verify that we have a valid chat id from the parameter
 			const chat: Chat = await this.chatService.findOne({
 				where: { id: chatId },
@@ -172,7 +170,7 @@ export class ChatController {
 			const userPermissions: ChatUserPermission[] =
 				await this.chatUserPermissionService.findAll({
 					where: {
-						user_id: userId,
+						user_id: myId,
 						chat_id: chat.id,
 					},
 				});
@@ -204,6 +202,39 @@ export class ChatController {
 					return [];
 				}
 			}
+
+			// get blocked users
+			const blocked = await this.userRelationshipService.findAll({
+				where: [
+					{
+						type: 'blocked',
+						source: {
+							id: myId,
+						},
+					},
+					{
+						type: 'blocked',
+						target: {
+							id: myId,
+						},
+					},
+				],
+				relations: { source: true, target: true },
+			});
+			const blockedUserIds = blocked.map((relation) => {
+				if (relation.source.id === myId) {
+					return relation.target.id;
+				}
+				return relation.source.id;
+			});
+
+			return (
+				await this.messageService.findAll({
+					where: { chat: { id: chatId } },
+				})
+			).filter((message: Message) => {
+				return blockedUserIds.indexOf(message.user_id) === -1;
+			});
 		} catch (e) {
 			// catching:
 			// - invalid JWT token
@@ -211,10 +242,6 @@ export class ChatController {
 			// - invalid chat id
 			return [];
 		}
-
-		return this.messageService.findAll({
-			where: { chat: { id: chatId } },
-		});
 	}
 
 	@Get(':id')
