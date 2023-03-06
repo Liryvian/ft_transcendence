@@ -65,6 +65,7 @@
 				</div>
 			</form>
 		</div>
+	</div>
 </template>
 
 <script lang="ts">
