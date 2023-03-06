@@ -330,7 +330,13 @@ export default defineComponent({
 		this.setSocketOn();
 
 		// START MAIN GAME LOOP
-		this.socket.once('GameCanStart', () => {
+		this.socket.on('GameCanStart', () => {
+			const updateGameDto = {
+				state: 'active',
+			};
+			try {
+				patchRequest(`games/${this.currentgameId}`, updateGameDto);
+			} catch (e) {}
 			this.startGameLoop();
 		});
 	},
