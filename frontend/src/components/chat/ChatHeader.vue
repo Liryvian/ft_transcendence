@@ -4,18 +4,7 @@
 		<div v-if="canEditChannelSettings()">channel settings</div>
 		<div>
 			<RouterLink
-				v-if="chat.type === 'dm'"
-				:to="{ name: 'profile', params: { profile_id: otherUser.id } }"
-				class="c_media c_media--assetright c_media--clickable"
-			>
-				<div class="c_media__asset" :class="is_online">
-					<ChatProfileImages :chat="chat" />
-				</div>
-				<div class="c_media__content">{{ chatName }}</div>
-			</RouterLink>
-			<RouterLink
-				v-else
-				:to="{ name: 'chat-members', params: { chatID: chat.id } }"
+				:to="to"
 				class="c_media c_media--assetright c_media--clickable"
 			>
 				<div class="c_media__asset" :class="is_online">
@@ -32,11 +21,13 @@ import { defineComponent, type PropType } from 'vue';
 import type { Chat_List_Item, Chat_Member } from '@/types/Chat';
 import ChatProfileImages from '@/components/chat/ChatProfileImages.vue';
 import { useUserStore } from '@/stores/userStore';
+import { RouterLink } from 'vue-router';
 
 export default defineComponent({
 	name: 'ChatHeader',
 	components: {
 		ChatProfileImages,
+		RouterLink,
 	},
 	props: {
 		chat: {
@@ -52,6 +43,15 @@ export default defineComponent({
 		};
 	},
 	computed: {
+		to() {
+			if (this.chat.type === 'dm') {
+				return {
+					name: 'profile',
+					params: { profile_id: this.otherUser.id },
+				};
+			}
+			return { name: 'chat-members', params: { chatID: this.chat.id } };
+		},
 		otherUser(): Chat_Member {
 			return this.chat.users.filter(
 				(user) => user.id !== this.userStore.me.id,
