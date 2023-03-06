@@ -29,7 +29,9 @@
 					value="Login"
 				/>
 				/
-				<a tabindex="4" href="/register">Register</a>
+				<RouterLink tabindex="4" :to="{ name: 'register' }"
+					>Register</RouterLink
+				>
 			</p>
 			<p>
 				<a tabindex="5" href="/api/auth/authenticate">
@@ -50,11 +52,13 @@ import { defineComponent, reactive } from 'vue';
 import InputField from '@/components/input-fields/InputField.vue';
 import type { LoginForm } from '@/types/User';
 import { useUserStore } from '@/stores/userStore';
+import { RouterLink } from 'vue-router';
 
 export default defineComponent({
 	name: 'LoginFormComponent',
 	components: {
 		InputField,
+		RouterLink,
 	},
 	setup() {
 		const userStore = useUserStore();
