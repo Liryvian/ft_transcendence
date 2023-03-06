@@ -183,6 +183,7 @@ export class MeController {
 				// remove blocked users from chat
 				return {
 					...chat,
+					hasPassword: chat.hasPassword,
 					users: chat.users.filter((user) => {
 						// remove users from blocked list
 						if (
