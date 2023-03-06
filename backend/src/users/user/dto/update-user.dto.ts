@@ -21,4 +21,8 @@ export class UpdateUserDto {
 	@IsOptional()
 	@IsNotEmpty()
 	achievements?: number;
+
+	@IsOptional()
+	@IsNotEmpty()
+	avatar?: string;
 }

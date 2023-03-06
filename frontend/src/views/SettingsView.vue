@@ -4,7 +4,10 @@
 			<h1>SETTINGS</h1>
 			<ProfileSettingAvatar :profile_picture="me.avatar" />
 			<div class="c_block c_form_group tac">
-				<ChangeAvatar />
+				<ChangeAvatar :profile_picture="me.avatar"
+					:modelValue="me.avatar"
+					@update:modelValue="updateProfileForm.avatar = $event"
+				/>
 			</div>
 			<form
 				method="Post"
@@ -86,6 +89,7 @@ export default defineComponent({
 		const { updateProfile, refreshData } = userStore;
 		let updateProfileForm: UpdateProfileForm = reactive({
 			name: me.value.name,
+			avatar: me.value.avatar,
 			new_password: '',
 			new_password_confirm: '',
 			password: '',

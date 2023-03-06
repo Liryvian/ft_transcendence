@@ -111,6 +111,12 @@ export class UserController {
 				});
 				return updateResult;
 			}
+			if (updateUserDto.hasOwnProperty('avatar')) {
+				const updateResult: UpdateResult = await this.userService.update(id, {
+					avatar: updateUserDto.avatar,
+				});
+				return updateResult;
+			}
 			if (updateUserDto.hasOwnProperty('name')) {
 				const updateResult: UpdateResult = await this.userService.update(id, {
 					name: updateUserDto.name,
