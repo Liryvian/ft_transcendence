@@ -42,8 +42,6 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 
-		// shouldbe removed in favour of sockets + init once
-		userStore.refreshData();
 		return {
 			userStore,
 		};
