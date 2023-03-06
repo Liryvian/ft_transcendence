@@ -314,6 +314,7 @@ export class ChatController {
 		const updatedChat = await this.chatService.findOne({
 			where: { id: chatId },
 			relations: { has_users: { users: true } },
+			order: { name: 'asc' },
 		});
 
 		const socketMessage: SocketMessage<Chat_List_Item> = {
