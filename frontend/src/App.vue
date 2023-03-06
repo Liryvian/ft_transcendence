@@ -8,7 +8,8 @@ import { useSocketStore } from './stores/socketStore';
 
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshMe();
-	useSocketStore().initializeOnline();
+	const socketStore = useSocketStore();
+	socketStore.initialize();
 	useUserStore().refreshData();
 	useGameStore().refreshAllGames();
 	useRelationshipStore().initialize();

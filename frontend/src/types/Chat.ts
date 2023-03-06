@@ -71,6 +71,7 @@ export interface Chat_List_Item {
 	id: number;
 	name: string;
 	type: Chat_Type;
+	hasPassword: boolean;
 	users: Chat_Member[];
 }
 

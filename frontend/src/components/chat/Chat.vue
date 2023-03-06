@@ -1,5 +1,27 @@
 <template>
-	<div class="c_chat__conversation">
+	<div
+		v-if="info.hasPassword && !passwordIsValid[info.id]"
+		class="c_chat__conversation"
+	>
+		<form
+			class="c_block passwordform"
+			action=""
+			@submit.prevent="verifyChatPassword()"
+		>
+			<InputField
+				inputType="password"
+				label="Please enter the password for this chat"
+				v-model="chatPassword[info.id]"
+			/>
+			<input class="link_button" type="submit" value="submit" />
+			<div v-if="errors.length">
+				<p v-for="error in errors" class="c_form--error">
+					!! {{ error }}
+				</p>
+			</div>
+		</form>
+	</div>
+	<div v-else class="c_chat__conversation">
 		<div
 			v-if="focusTarget == 'c_chat--list'"
 			@click="$emit('toggleFocusTarget', 'msg')"
@@ -28,6 +50,7 @@ import { defineComponent, type PropType } from 'vue';
 import Message from './Message.vue';
 import ChatHeader from './ChatHeader.vue';
 import SendMessage from './SendMessage.vue';
+import InputField from '@/components/input-fields/InputField.vue';
 import { useMessageStore } from '@/stores/messageStore';
 import {
 	permissionsEnum,
@@ -44,6 +67,7 @@ export default defineComponent({
 		Message,
 		ChatHeader,
 		SendMessage,
+		InputField,
 	},
 	props: {
 		focusTarget: String,
@@ -66,6 +90,9 @@ export default defineComponent({
 	data() {
 		return {
 			joinButtonDisabled: false,
+			chatPassword: [] as string[],
+			passwordIsValid: [] as boolean[],
+			errors: [] as string[],
 		};
 	},
 	computed: {
@@ -128,6 +155,22 @@ export default defineComponent({
 			}
 			this.joinButtonDisabled = false;
 		},
+		async verifyChatPassword() {
+			this.errors.length = 0;
+			try {
+				const result = (
+					await postRequest(`chats/${this.info.id}/verify_password`, {
+						password: this.chatPassword[this.info.id],
+					})
+				).data;
+				if (result !== true) {
+					this.errors.push('wrong password');
+					return;
+				}
+				this.passwordIsValid[this.info.id] = true;
+				this.chatPassword[this.info.id] = '';
+			} catch (e) {}
+		},
 	},
 });
 </script>
@@ -139,5 +182,8 @@ export default defineComponent({
 	align-content: center;
 	flex-basis: 20%;
 	padding: var(--single-spacing);
+}
+.passwordform {
+	padding-top: 3em;
 }
 </style>

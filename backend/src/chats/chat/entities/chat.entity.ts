@@ -60,6 +60,11 @@ export class Chat {
 	@Exclude()
 	password: string;
 
+	@Expose()
+	get hasPassword() {
+		return this.hasOwnProperty('password') && this.password?.length > 0;
+	}
+
 	@OneToMany(() => Message, (message) => message.chat)
 	messages: Message[];
 

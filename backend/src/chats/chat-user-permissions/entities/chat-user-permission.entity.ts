@@ -29,6 +29,7 @@ export const permissionsArray = [
 	'blocked',
 	'manage_users',
 	'edit_settings',
+	'owner',
 ];
 
 @Entity()

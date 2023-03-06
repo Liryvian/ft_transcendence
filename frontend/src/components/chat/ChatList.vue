@@ -10,9 +10,10 @@
 			</RouterLink>
 		</h1>
 
-		<RouterLink v-for="item in info.items" :to="`/chat/${item.id}`">
+		<template v-for="item in info.items">
 			<ChatListItem :chat="item" :type="item.type" />
-		</RouterLink>
+		</template>
+
 	</div>
 </template>
 
