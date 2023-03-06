@@ -50,14 +50,14 @@
 			class="link_button"
 			v-on:click.prevent="unblock(member.id, channelId)"
 		>
-			Unblock
+			Unban
 		</button>
 		<button
 			v-else
 			class="link_button"
 			v-on:click.prevent="block(member.id, channelId)"
 		>
-			Block
+			Ban
 		</button>
 	</div>
 	<div v-else>

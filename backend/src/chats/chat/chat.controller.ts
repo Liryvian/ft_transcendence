@@ -310,6 +310,26 @@ export class ChatController {
 		});
 	}
 
+	async sock_chatUpdate_users(chatId: number) {
+		const updatedChat = await this.chatService.findOne({
+			where: { id: chatId },
+			relations: { has_users: { users: true } },
+		});
+
+		const socketMessage: SocketMessage<Chat_List_Item> = {
+			action: 'update',
+			data: {
+				id: chatId,
+				users: updatedChat.users,
+			},
+		};
+
+		this.socketService.chatlist_emit(
+			updatedChat.users.map((user) => user.id),
+			socketMessage,
+		);
+	}
+
 	@Patch(':chatId/kick/:userId')
 	async kickUser(
 		@Param('chatId') chatId: number,
@@ -350,7 +370,9 @@ export class ChatController {
 				currentPermissions.map((cup) => cup.id),
 			);
 
-			// emit socket message
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
 			return true;
 		} catch (e) {
 			// not able to do action for whatever reason
@@ -401,7 +423,16 @@ export class ChatController {
 				permission: permissionsEnum.BLOCKED,
 			});
 
-			// emit socket message
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+				const socketMessage: SocketMessage<Chat_List_Item> = {
+					action: 'delete',
+					data: {
+						id: chat.id,
+					},
+				};
+				this.socketService.chatlist_emit([userId], socketMessage);
+			}
 			return true;
 		} catch (e) {
 			// not able to do action for whatever reason
@@ -426,15 +457,17 @@ export class ChatController {
 				chat.id,
 				userId,
 			);
-			if (currentPermissions.length > 0) {
-				// user isn't blocked
+			if (currentPermissions.length == 0) {
+				// already is not blocked, no need to update
 				return true;
 			}
 			await this.chatUserPermissionService.remove(
 				currentPermissions.map((p) => p.id),
 			);
 
-			// emit socket message
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
 			return true;
 		} catch (e) {
 			// not able to do action for whatever reason
@@ -470,7 +503,9 @@ export class ChatController {
 				currentPermissions.map((p) => p.id),
 			);
 
-			// emit socket message
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
 			return true;
 		} catch (e) {
 			// not able to do action for whatever reason
@@ -505,7 +540,9 @@ export class ChatController {
 				permission: permissionsEnum.POST,
 			});
 
-			// emit socket message
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
 			return true;
 		} catch (e) {
 			// not able to do action for whatever reason
@@ -639,23 +676,7 @@ export class ChatController {
 			await this.chatUserPermissionService.save(permissionsToAdd);
 
 			if (this.socketService.chatServer !== null) {
-				const updatedChat = await this.chatService.findOne({
-					where: { id: chat.id },
-					relations: { has_users: { users: true } },
-				});
-
-				const socketMessage: SocketMessage<Chat_List_Item> = {
-					action: 'update',
-					data: {
-						id: chat.id,
-						users: updatedChat.users,
-					},
-				};
-
-				this.socketService.chatlist_emit(
-					updatedChat.users.map((user) => user.id),
-					socketMessage,
-				);
+				this.sock_chatUpdate_users(chat.id);
 			}
 		} catch (e) {
 			console.log(e);
