@@ -10,7 +10,7 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../views/SettingsView.vue'),
 		},
 		{
 			path: '/settings',
@@ -29,10 +29,21 @@ const router = createRouter({
 		},
 		{
 			path: '/active-games',
-			name: 'activeGames',
-
-			component: () => import('../views/GameView.vue'),
-			props: true,
+			children: [
+				{
+					path: '',
+					name: 'activeGames',
+					component: () => import('../views/GameView.vue'),
+					props: true,
+				},
+				{
+					path: '/pong/:currentGameId?',
+					name: 'pong',
+					props: true,
+					component: () =>
+						import('../components/pongGame/pongGame.vue'),
+				},
+			],
 		},
 		{
 			path: '/chat',
@@ -56,12 +67,12 @@ const router = createRouter({
 				},
 			],
 		},
-		{
-			path: '/pong/:currentGame?',
-			name: 'pong',
-			props: true,
-			component: () => import('../components/pongGame/pongGame.vue'),
-		},
+		// {
+		// 	path: '/pong/:currentGameId',
+		// 	name: 'pong',
+		// 	props: true,
+		// 	component: () => import('../components/pongGame/pongGame.vue'),
+		// },
 		{
 			path: '/profiles',
 			children: [

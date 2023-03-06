@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
-
 import { useGameStore } from './stores/gameStore';
 import { useRelationshipStore } from './stores/relationshipStore';
-import { useUserStore } from './stores/userStore';
 import { useSocketStore } from './stores/socketStore';
+import { useUserStore } from './stores/userStore';
 
 if (useUserStore().isLoggedIn) {
 	useUserStore().refreshMe();
 	const socketStore = useSocketStore();
 	socketStore.initialize();
 	useUserStore().refreshData();
-	useGameStore().refreshAllGames();
 	useRelationshipStore().initialize();
+	useGameStore().refreshAllGames();
+	useSocketStore().initializeOnline();
 }
 </script>
 

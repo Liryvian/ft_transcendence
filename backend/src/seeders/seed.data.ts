@@ -153,28 +153,28 @@ const seedData = {
 				player_two: ids[1],
 				score_player_one: 10,
 				score_player_two: 5,
-				state: gameStates.DONE,
+				state: gameStates.ACTIVE,
 			},
 			{
 				player_one: ids[1],
 				player_two: ids[2],
 				score_player_one: 8,
 				score_player_two: 3,
-				state: gameStates.DONE,
+				state: gameStates.ACTIVE,
 			},
 			{
 				player_one: ids[2],
 				player_two: ids[0],
 				score_player_one: 12,
 				score_player_two: 7,
-				state: gameStates.DONE,
+				state: gameStates.ACTIVE,
 			},
 			{
 				player_one: ids[3],
 				player_two: ids[2],
 				score_player_one: 4,
 				score_player_two: 10,
-				state: gameStates.DONE,
+				state: gameStates.ACTIVE,
 			},
 		];
 		return games;

@@ -18,6 +18,7 @@ export const useSocketStore = defineStore('sockets', {
 			initialized: false,
 		},
 	}),
+
 	actions: {
 		initialize() {
 			if (this.chats.initialized === false) {
