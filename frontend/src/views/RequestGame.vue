@@ -130,13 +130,13 @@ export default defineComponent({
 					return;
 				}
 				createdGameForm.player_one = useUserStore().me.id;
-				const newGame = await postRequest('games', createdGameForm);
+				const newGame = (await postRequest('games', createdGameForm))
+					.data;
 				newMessage.sender_id = useUserStore().me.id;
-				newMessage.content =
-					'<a href="/games/${newGame.id}">wanna play PONG?</a>';
+				newMessage.content = `<a href="/games/${newGame.id}">wanna play PONG?</a>`;
 				const message = await postRequest('messages', newMessage);
 				//the router push is for later, I can imagine you want to return to your current chat @vvissche?
-				await router.push(`/pong/${newGame.data.data.id}`);
+				await router.push(`/pong/${newGame.id}`);
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
 			}
