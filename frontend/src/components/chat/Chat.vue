@@ -14,10 +14,8 @@
 				v-model="chatPassword[info.id]"
 			/>
 			<input class="link_button" type="submit" value="submit" />
-			<div v-if="errors.length">
-				<p v-for="error in errors" class="c_form--error">
-					!! {{ error }}
-				</p>
+			<div v-if="errors[info.id]">
+				<p class="c_form--error">!! {{ errors[info.id] }}</p>
 			</div>
 		</form>
 	</div>
@@ -156,7 +154,7 @@ export default defineComponent({
 			this.joinButtonDisabled = false;
 		},
 		async verifyChatPassword() {
-			this.errors.length = 0;
+			this.errors[this.info.id] = '';
 			try {
 				const result = (
 					await postRequest(`chats/${this.info.id}/verify_password`, {
@@ -164,7 +162,7 @@ export default defineComponent({
 					})
 				).data;
 				if (result !== true) {
-					this.errors.push('wrong password');
+					this.errors[this.info.id] = 'wrong password';
 					return;
 				}
 				this.passwordIsValid[this.info.id] = true;

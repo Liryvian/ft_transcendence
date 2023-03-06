@@ -11,6 +11,7 @@ export const useGameStore = defineStore('games', {
 		allGames: <Game[]>[],
 		errors: [] as String[],
 	}),
+
 	// getters == computed values
 	getters: {
 		// getMyGames: () => useUserStore().getMe.games,
