@@ -14,6 +14,11 @@ export default defineComponent({
 	props: {
 		profile_picture: String,
 	},
+	// setup (){
+	// :profile_picture="me.avatar"
+	// :modelValue="me.avatar"
+	// @update:modelValue="updateProfileForm.avatar = $event"
+	// },
 });
 </script >
 

@@ -4,10 +4,7 @@
 			<h1>SETTINGS</h1>
 			<ProfileSettingAvatar :profile_picture="me.avatar" />
 			<div class="c_block c_form_group tac">
-				<ChangeAvatar :profile_picture="me.avatar"
-					:modelValue="me.avatar"
-					@update:modelValue="updateProfileForm.avatar = $event"
-				/>
+				<ChangeAvatar />
 			</div>
 			<form
 				method="Post"
