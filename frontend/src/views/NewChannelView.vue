@@ -166,13 +166,16 @@ export default defineComponent({
 						permissionsEnum.OWNER,
 					],
 				});
+				if (createNewChannelForm.password?.trim().length === 0) {
+					delete createNewChannelForm.password;
+				}
 				const newChannel = await postRequest('chats', {
 					...createNewChannelForm,
 					users: usersToSend,
 				});
-				router.push({
-					name: 'singlechat',
-					params: { currentChat: newChannel.data.id },
+				return router.push({
+					name: 'channel',
+					params: { channelId: newChannel.data.id },
 				});
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
