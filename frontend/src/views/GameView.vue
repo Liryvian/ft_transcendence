@@ -17,6 +17,11 @@
 					</template>
 				</div>
 			</div>
+			<corner-button
+				link_text="MATCHMAKING"
+				link_target="/matchmaking"
+				position="pb_bottom"
+			/>
 		</div>
 	</div>
 </template>
@@ -27,12 +32,15 @@ import { storeToRefs } from 'pinia';
 import { defineComponent } from 'vue';
 import PlayerNames from '@/components/game-info/PlayerNames.vue';
 import ActiveGameRow from '@/components/pongGame/ActiveGameRow.vue';
+import CornerButton from '@/components/buttons/CornerButton.vue';
+
 
 export default defineComponent({
 	name: 'GameView',
 	components: {
 		PlayerNames,
 		ActiveGameRow,
+		CornerButton,
 	},
 	setup() {
 		const gameStore = useGameStore();
