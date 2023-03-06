@@ -1,5 +1,3 @@
-import { useGameStore } from '@/stores/gameStore';
-import { useRelationshipStore } from '@/stores/relationshipStore';
 import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -31,10 +29,21 @@ const router = createRouter({
 		},
 		{
 			path: '/active-games',
-			name: 'activeGames',
-
-			component: () => import('../views/GameView.vue'),
-			props: true,
+			children: [
+				{
+					path: '',
+					name: 'activeGames',
+					component: () => import('../views/GameView.vue'),
+					props: true,
+				},
+				{
+					path: '/pong/:currentGameId?',
+					name: 'pong',
+					props: true,
+					component: () =>
+						import('../components/pongGame/pongGame.vue'),
+				},
+			],
 		},
 		{
 			path: '/chat',
@@ -58,12 +67,12 @@ const router = createRouter({
 				},
 			],
 		},
-		{
-			path: '/pong/:currentGameId',
-			name: 'pong',
-			props: true,
-			component: () => import('../components/pongGame/pongGame.vue'),
-		},
+		// {
+		// 	path: '/pong/:currentGameId',
+		// 	name: 'pong',
+		// 	props: true,
+		// 	component: () => import('../components/pongGame/pongGame.vue'),
+		// },
 		{
 			path: '/profiles',
 			children: [
