@@ -7,14 +7,12 @@ A user who is an administrator of a channel can kick, ban mute -->
 		<div class="page_box c_profileslist">
 			<h1>CHAT MEMBERS</h1>
 			<div class="c_profileslist__table">
-				<template v-for="member in getCurrentChannel?.users">
+				<template v-for="member in members">
 					<ChannelMemberRow
 						v-if="member.id !== me.id"
+						:member="member"
 						:channel-id="Number(channelId)"
-						:user-id="member.id"
-						:user-name="member.name"
-						:avatar-string="member.avatar"
-						:is-owner="getOwnerId() === me.id"
+						:is-owner="ownerId === me.id"
 					/>
 				</template>
 			</div>
@@ -28,10 +26,10 @@ import { storeToRefs } from 'pinia';
 import { defineComponent } from 'vue';
 import ChannelMemberRow from '@/components/chat/ChannelMemberRow.vue';
 import { useUserStore } from '@/stores/userStore';
-import { permissionsEnum } from '@/types/Chat';
+import { permissionsEnum, type Chat_Member } from '@/types/Chat';
 
 export default defineComponent({
-	name: 'ChatMembershipiew',
+	name: 'ChatMembershipView',
 	props: {
 		channelId: String,
 	},
@@ -39,32 +37,20 @@ export default defineComponent({
 		ChannelMemberRow,
 	},
 	computed: {
-		getCurrentChannel() {
-			console.log(
-				this.channels.find(
-					(chat) => this.channelId === chat.id.toString(),
-				),
-			);
+		currentChannel() {
 			return this.channels.find(
-				(chat) => this.channelId === chat.id.toString(),
+				(chat) => chat.id.toString() === this.channelId,
 			);
 		},
-	},
-	methods: {
-		//  logged in user is owner?
-		getOwnerId(): number {
-			let ownerId = -1;
-			this.getCurrentChannel?.users.forEach((user) => {
-				if (
-					user.id === this.me.id &&
-					user.permissions.find(
-						(permission) => permission === permissionsEnum.OWNER,
-					)
-				) {
-					ownerId = user.id;
-				}
-			});
-			return ownerId;
+		members(): Chat_Member[] {
+			return this.currentChannel?.users ?? [];
+		},
+		ownerId() {
+			return (
+				this.members.find((user) =>
+					user.permissions.find((p) => p === permissionsEnum.OWNER),
+				)?.id ?? -1
+			);
 		},
 	},
 	setup() {

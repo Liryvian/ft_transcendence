@@ -347,7 +347,7 @@ export class ChatController {
 			}
 
 			await this.chatUserPermissionService.remove(
-				currentPermissions.map((cup) => p.id),
+				currentPermissions.map((cup) => cup.id),
 			);
 
 			// emit socket message
@@ -358,8 +358,8 @@ export class ChatController {
 		}
 	}
 
-	@Patch(':chatId/ban/:userId')
-	async banUser(
+	@Patch(':chatId/block/:userId')
+	async blockUser(
 		@Param('chatId') chatId: number,
 		@Param('userId') userId: number,
 		@Req() request: Request,
@@ -388,7 +388,7 @@ export class ChatController {
 					(cup) => cup.permission === permissionsEnum.OWNER,
 				)
 			) {
-				throw new ForbiddenException('Cannot ban owner');
+				throw new ForbiddenException('Cannot block owner');
 			}
 
 			await this.chatUserPermissionService.remove(
@@ -400,6 +400,39 @@ export class ChatController {
 				chat_id: chat.id,
 				permission: permissionsEnum.BLOCKED,
 			});
+
+			// emit socket message
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
+	@Patch(':chatId/unblock/:userId')
+	async unblockUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[permissionsEnum.BLOCKED],
+				chat.id,
+				userId,
+			);
+			if (currentPermissions.length > 0) {
+				// user isn't blocked
+				return true;
+			}
+			await this.chatUserPermissionService.remove(
+				currentPermissions.map((p) => p.id),
+			);
 
 			// emit socket message
 			return true;
@@ -436,6 +469,41 @@ export class ChatController {
 			await this.chatUserPermissionService.remove(
 				currentPermissions.map((p) => p.id),
 			);
+
+			// emit socket message
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
+	@Patch(':chatId/unmute/:userId')
+	async unmuteUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[permissionsEnum.POST],
+				chat.id,
+				userId,
+			);
+			if (currentPermissions.length > 0) {
+				// already has post perissions, no need to update
+				return true;
+			}
+			await this.chatUserPermissionService.save({
+				chat_id: chat.id,
+				user_id: userId,
+				permission: permissionsEnum.POST,
+			});
 
 			// emit socket message
 			return true;

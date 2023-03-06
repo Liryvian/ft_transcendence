@@ -1,44 +1,75 @@
 <template>
 	<div class="c_media">
 		<div class="c_asset__circle">
-			<img :src="`/api/avatars/${avatarString}`" alt="" />
+			<img
+				:src="`/api/avatars/${
+					member.avatar ?? 'tmp_default_avatar.png	'
+				}`"
+				alt=""
+			/>
 		</div>
 	</div>
 	<div>
-		{{ userName }}
+		{{ member.name }}
 	</div>
 
 	<div v-if="isOwner">
-		<a href="#" v-on:click.prevent="updateChat(userId, channelId)">
+		<button
+			class="link_button"
+			v-on:click.prevent="kick(member.id, channelId)"
+		>
 			Kick
-		</a>
+		</button>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut"> Kick </a>
+		<button class="link_button grayedOut">Kick</button>
 	</div>
 
 	<div v-if="isOwner">
-		<a href="#" v-on:click.prevent="updateChat(userId, channelId)">
+		<button
+			v-if="isMuted"
+			class="link_button"
+			v-on:click.prevent="unmute(member.id, channelId)"
+		>
+			Unmute
+		</button>
+		<button
+			v-else
+			class="link_button"
+			v-on:click.prevent="mute(member.id, channelId)"
+		>
 			Mute
-		</a>
+		</button>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut"> Mute </a>
+		<button class="link_button grayedOut">Mute</button>
 	</div>
 	<div v-if="isOwner">
-		<a href="#" v-on:click.prevent="updateChat(userId, channelId)"> Ban </a>
+		<button
+			v-if="isBanned"
+			class="link_button"
+			v-on:click.prevent="unblock(member.id, channelId)"
+		>
+			Unblock
+		</button>
+		<button
+			v-else
+			class="link_button"
+			v-on:click.prevent="block(member.id, channelId)"
+		>
+			Block
+		</button>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut"> Ban </a>
+		<button class="link_button grayedOut">Block</button>
 	</div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Avatar from '@/components/profileList/Avatar.vue';
+import { defineComponent, type PropType } from 'vue';
 import { useUserStore } from '@/stores/userStore';
-import router from '@/router';
-import { useChatStore } from '@/stores/chatStore';
+import { patchRequest } from '@/utils/apiRequests';
+import { permissionsEnum, type Chat_Member } from '@/types/Chat';
 
 export default defineComponent({
 	name: 'ChannelMemberRow',
@@ -47,40 +78,75 @@ export default defineComponent({
 			type: Number,
 			required: true,
 		},
-		userId: {
-			type: Number,
+		member: {
+			type: Object as PropType<Chat_Member>,
 			required: true,
 		},
-		userName: String,
-		avatarString: String,
 		isOwner: {
 			type: Boolean,
 			required: true,
 		},
 	},
-	components: {
-		Avatar,
-	},
 	setup() {
-		const chatStore = useChatStore();
-		const { updateChat } = chatStore;
 		const userStore = useUserStore();
 		userStore.refreshData();
 		return {
 			userStore,
-			updateChat,
 		};
 	},
-	methods: {
-		async routeToProfile(userId: number) {
-			await router.push({
-				name: 'profile',
-				params: { profile_id: userId },
-			});
+	computed: {
+		isMuted() {
+			return (
+				this.member.permissions.find(
+					(p) => p === permissionsEnum.POST,
+				) === undefined
+			);
 		},
-
+		isBanned() {
+			return (
+				this.member.permissions.find(
+					(p) => p === permissionsEnum.BLOCKED,
+				) !== undefined
+			);
+		},
+	},
+	methods: {
 		//  should call update chat form chatStore
-		updateChat(userId: number, channelId: number) {},
+		async kick(userId: number, channelId: number) {
+			try {
+				await patchRequest(`chats/${channelId}/kick/${userId}`, {});
+			} catch (e) {
+				console.log(e);
+			}
+		},
+		async mute(userId: number, channelId: number) {
+			try {
+				await patchRequest(`chats/${channelId}/mute/${userId}`, {});
+			} catch (e) {
+				console.log(e);
+			}
+		},
+		async unmute(userId: number, channelId: number) {
+			try {
+				await patchRequest(`chats/${channelId}/unmute/${userId}`, {});
+			} catch (e) {
+				console.log(e);
+			}
+		},
+		async block(userId: number, channelId: number) {
+			try {
+				await patchRequest(`chats/${channelId}/block/${userId}`, {});
+			} catch (e) {
+				console.log(e);
+			}
+		},
+		async unblock(userId: number, channelId: number) {
+			try {
+				await patchRequest(`chats/${channelId}/unblock/${userId}`, {});
+			} catch (e) {
+				console.log(e);
+			}
+		},
 	},
 });
 </script>
