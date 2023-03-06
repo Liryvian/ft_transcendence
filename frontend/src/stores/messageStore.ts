@@ -3,6 +3,8 @@ import type { SingleMessage } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
 import { getRequest } from '@/utils/apiRequests';
 import { useSocketStore } from './socketStore';
+import { useRelationshipStore } from './relationshipStore';
+import { useUserStore } from './userStore';
 
 type ChatId = number;
 type MessageList = Record<ChatId, SingleMessage[]>;
@@ -31,6 +33,23 @@ export const useMessageStore = defineStore('messages', {
 
 		newMessage(message: SingleMessage) {
 			// if chat is does not exist, fuck it and ignore
+			if (this.messages[message.chat_id] === undefined) {
+				return;
+			}
+
+			// dont add message if its coming from blocked
+			if (
+				useRelationshipStore().relationships.find(
+					(rel) =>
+						rel.type === 'blocked' &&
+						message.user_id !== useUserStore().me.id &&
+						(rel.source === message.user_id ||
+							rel.target === message.user_id),
+				) !== undefined
+			) {
+				return;
+			}
+
 			// temp store timestamp of last message
 			const shouldSort =
 				this.messages[message.chat_id] &&

@@ -1,8 +1,14 @@
 <template>
 	<div class="c_field_group">
 		<label :for="getId">{{ label }}:</label>
-		<input :tabindex="tabindex" :id="getId" :type="inputType" :value="modelValue"
-			@input="$emit('update:modelValue', $event.target.value)" :disabled="is_disabled" />
+		<input
+			:tabindex="tabindex"
+			:id="getId"
+			:type="inputType"
+			:value="modelValue"
+			@input="$emit('update:modelValue', $event.target.value)"
+			:disabled="is_disabled"
+		/>
 	</div>
 </template>
 

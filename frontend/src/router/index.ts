@@ -10,7 +10,7 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../views/SettingsView.vue'),
 		},
 		{
 			path: '/settings',
@@ -29,33 +29,60 @@ const router = createRouter({
 		},
 		{
 			path: '/active-games',
-			name: 'activeGames',
-
-			component: () => import('../views/GameView.vue'),
-			props: true,
+			children: [
+				{
+					path: '',
+					name: 'activeGames',
+					component: () => import('../views/GameView.vue'),
+					props: true,
+				},
+				{
+					path: '/pong/:currentGameId?',
+					name: 'pong',
+					props: true,
+					component: () =>
+						import('../components/pongGame/pongGame.vue'),
+				},
+			],
 		},
 		{
-			path: '/chat/:currentChat?',
-			name: 'chat',
-			props: true,
-			component: () => import('../views/ChatView.vue'),
+			path: '/chat',
+			children: [
+				{
+					path: '/chat',
+					name: 'chat',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'dm/:dmId',
+					name: 'dm',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'channel/:channelId',
+					name: 'channel',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
 		},
-		{
-			path: '/pong/:currentGame?',
-			name: 'pong',
-			props: true,
-			component: () => import('../components/pongGame/pongGame.vue'),
-		},
+		// {
+		// 	path: '/pong/:currentGameId',
+		// 	name: 'pong',
+		// 	props: true,
+		// 	component: () => import('../components/pongGame/pongGame.vue'),
+		// },
 		{
 			path: '/profiles',
 			children: [
 				{
-					path: '/profiles',
+					path: '',
 					name: 'profiles',
 					component: () => import('../views/ProfilesView.vue'),
 				},
 				{
-					path: ':profile_id?',
+					path: ':profile_id',
 					name: 'profile',
 					component: () => import('../views/ProfileView.vue'),
 					props: true,
@@ -76,11 +103,6 @@ const router = createRouter({
 			path: '/register',
 			name: 'register',
 			component: () => import('../views/RegisterView.vue'),
-		},
-		{
-			path: '/channel-settings',
-			name: 'channel-settings',
-			component: () => import('../views/ChannelSettingsView.vue'),
 		},
 		{
 			path: '/match-history',
@@ -107,11 +129,6 @@ const router = createRouter({
 			name: 'request-game',
 			component: () => import('../views/RequestGame.vue'),
 			props: true,
-		},
-		{
-			path: '/game-invite',
-			name: 'game-invite',
-			component: () => import('../views/GameInvite.vue'),
 		},
 		{
 			path: '/component-test',
