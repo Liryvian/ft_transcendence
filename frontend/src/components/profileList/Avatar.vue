@@ -17,7 +17,6 @@
 </template>
 
 <script lang="ts">
-import { useUserStore } from '@/stores/userStore';
 import { defineComponent } from 'vue';
 export default defineComponent({
 	name: 'Avatar',
@@ -46,7 +45,7 @@ export default defineComponent({
 			}
 			return {
 				name: 'profile',
-				params: { profile_id: this.userId },
+				params: { profile_id: this.userId ?? -1 },
 			};
 		},
 	},
