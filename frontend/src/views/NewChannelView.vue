@@ -3,66 +3,67 @@
 		<div class="page_box">
 			<h1>NEW CHANNEL</h1>
 
-				<form
-					method="Post"
-					action=""
-					class="c_block c_form_group"
-					@submit.prevent="createNewChannel(createNewChannelForm)"
-				>
-					<InputField
-						label="channel owner"
-						:modelValue="me.name"
-						:is_disabled="true"
+			<form
+				method="Post"
+				action=""
+				class="c_block c_form_group"
+				@submit.prevent="createNewChannel(createNewChannelForm)"
+			>
+				<InputField
+					label="channel owner"
+					:modelValue="me.name"
+					:is_disabled="true"
+				/>
+				<InputField
+					label="group name"
+					v-model="createNewChannelForm.name"
+				/>
+				<div class="">
+					<label for="example_field">add member:</label>
+					<template v-for="user in usersWithoutMe">
+						<div class="checkbox_overview">
+							<input
+								v-model="createNewChannelForm.users"
+								type="checkbox"
+								:id="user.id.toString()"
+								name="users"
+								:value="user.id"
+							/>
+							<label :for="user.id.toString()">{{
+								user.name
+							}}</label>
+						</div>
+					</template>
+				</div>
+				<InputField
+					label="set password"
+					v-model="createNewChannelForm.password"
+				/>
+				<div class="c_field_group c_field_group--radio">
+					<RadioButton
+						v-model="createNewChannelForm.visibility"
+						value="private"
+						name="visibility"
+						label="private"
+						id="r1"
 					/>
-					<InputField
-						label="group name"
-						v-model="createNewChannelForm.name"
+					<RadioButton
+						v-model="createNewChannelForm.visibility"
+						value="public"
+						name="visibility"
+						label="public"
+						id="r2"
 					/>
-					<div class="">
-						<label for="example_field">add member:</label>
-						<template v-for="user in usersWithoutMe">
-							<div class="checkbox_overview">
-								<input
-									v-model="createNewChannelForm.users"
-									type="checkbox"
-									:id="user.id"
-									name="users"
-									:value="user.id"
-								/>
-								<label :for="user.id">{{ user.name }}</label>
-							</div>
-						</template>
-					</div>
-					<InputField
-						label="set password"
-						v-model="createNewChannelForm.password"
-					/>
-					<div class="c_field_group c_field_group--radio">
-						<RadioButton
-							v-model="createNewChannelForm.visibility"
-							value="private"
-							name="visibility"
-							label="private"
-							id="r1"
-						/>
-						<RadioButton
-							v-model="createNewChannelForm.visibility"
-							value="public"
-							name="visibility"
-							label="public"
-							id="r2"
-						/>
-					</div>
-					<div class="page_button pb_bottom">
-						<input type="submit" value="request" />
-					</div>
-					<div v-if="errors.length">
-						<p v-for="error in errors" class="c_form--error">
-							!! {{ error }}
-						</p>
-					</div>
-				</form>
-
+				</div>
+				<div class="page_button pb_bottom">
+					<input type="submit" value="request" />
+				</div>
+				<div v-if="errors.length">
+					<p v-for="error in errors" class="c_form--error">
+						!! {{ error }}
+					</p>
+				</div>
+			</form>
 		</div>
 	</div>
 </template>
@@ -72,7 +73,11 @@ import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import InputField from '@/components/input-fields/InputField.vue';
-import { permissionsEnum, type Chat_List_Item, type CreateNewChannelForm } from '@/types/Chat';
+import {
+	permissionsEnum,
+	type Chat_List_Item,
+	type CreateNewChannelForm,
+} from '@/types/Chat';
 import RadioButton from '@/components/input-fields/RadioButton.vue';
 import { getRequest, postRequest } from '@/utils/apiRequests';
 import router from '@/router';
@@ -126,18 +131,21 @@ export default defineComponent({
 				this.errors.length = 0;
 				const all = (await getRequest('chats')).data;
 				const found = all.find(
-					(chat: Chat_List_Item) => chat.name === createNewChannelForm.name,
+					(chat: Chat_List_Item) =>
+						chat.name === createNewChannelForm.name,
 				);
 				if (found !== undefined) {
 					this.errors.push('channel name already exists');
 					return;
 				}
-				if (!createNewChannelForm.name) {
+				if (createNewChannelForm.name.trim().length === 0) {
 					this.errors.push('Not a valid channel name');
 					return;
 				}
 				if (!createNewChannelForm.users[0]) {
-					this.errors.push('you need to assign users to this channel');
+					this.errors.push(
+						'Please assign one or more users to this channel',
+					);
 					return;
 				}
 				const usersToSend = createNewChannelForm.users.map(
@@ -155,11 +163,11 @@ export default defineComponent({
 						permissionsEnum.READ,
 						permissionsEnum.POST,
 						permissionsEnum.OWNER,
-					]
-				})
+					],
+				});
 				const newChannel = await postRequest('chats', {
 					...createNewChannelForm,
-					users: usersToSend
+					users: usersToSend,
 				});
 				router.push({
 					name: 'singlechat',
@@ -169,7 +177,7 @@ export default defineComponent({
 				this.handleFormError(e.response.data);
 			}
 		},
-	}
+	},
 });
 </script>
 
