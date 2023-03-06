@@ -50,6 +50,8 @@ import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
 import type { CreateGameForm } from '@/types/game.fe';
 import type { NewMessage } from '@/types/Chat';
+import router from '@/router';
+import { postRequest } from '@/utils/apiRequests';
 
 export default defineComponent({
 	name: 'GameRequest',
@@ -78,8 +80,6 @@ export default defineComponent({
 		const { allUsers } = storeToRefs(userStore);
 		const gameStore = useGameStore();
 		gameStore.refreshAllGames();
-		const { errors } = storeToRefs(gameStore);
-		const { createGame } = gameStore;
 		let createGameForm: CreateGameForm = reactive({
 			score_to_win: 10,
 			background_color: '#FFFFFF',
@@ -89,16 +89,58 @@ export default defineComponent({
 		let newMessage: NewMessage = reactive({
 			sender_id: Number(0),
 			chat: Number(props.chat_id),
+			is_game_request: true,
 			content: 'wanna play PONG?',
 		});
 		return {
 			gameStore,
-			errors,
-			createGame,
 			allUsers,
 			createGameForm,
 			newMessage,
 		};
+	},
+	data() {
+		return {
+			errors: [] as String[],
+		};
+	},
+	methods: {
+		handleFormError(responseData: any) {
+			if (typeof responseData.message === 'string') {
+				this.errors.length = 0;
+				this.errors.push(responseData.message);
+			} else {
+				this.errors = responseData.message.map((msg: String) =>
+					msg.replace('(o) => o.', ''),
+				);
+			}
+		},
+		async createGame(
+			createdGameForm: CreateGameForm,
+			newMessage: NewMessage,
+		) {
+			try {
+				this.errors.length = 0;
+				if (
+					/^#[a-fA-F0-9]{6}$/.test(
+						createdGameForm.background_color,
+					) === false
+				) {
+					this.errors.push('Not a valid color');
+					return;
+				}
+				createdGameForm.player_one = useUserStore().me.id;
+				const newGame = await postRequest('games', createdGameForm);
+				newMessage.sender_id = useUserStore().me.id;
+				newMessage.content =
+					'<a href="/games/${newGame.id}">wanna play PONG?</a>';
+				const message = await postRequest('messages', newMessage);
+				//the router push is for later, I can imagine you want to return to your current chat @vvissche?
+				await router.push(`/pong/${newGame.data.data.id}`);
+			} catch (e: any) {
+				this.handleFormError(e.response.data);
+			}
+		},
 	},
 });
 </script>
