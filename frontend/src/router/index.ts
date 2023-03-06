@@ -105,11 +105,6 @@ const router = createRouter({
 			component: () => import('../views/RegisterView.vue'),
 		},
 		{
-			path: '/match-history',
-			name: 'match-history',
-			component: () => import('../views/MatchHistoryView.vue'),
-		},
-		{
 			path: '/new-channel',
 			name: 'new-channel',
 			component: () => import('../views/NewChannelView.vue'),

@@ -1,9 +1,7 @@
 <template>
 	<div class="page_box_wrapper">
 		<div class="page_box">
-			<!-- Content should be here -->
 			<h1>HI WANNA PLAY PONG?</h1>
-
 			<div class="c_block c_form_group">
 				<LoginFormComponent
 					@tryLogin="tryLogin"
