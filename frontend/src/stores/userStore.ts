@@ -148,8 +148,7 @@ export const useUserStore = defineStore('users', {
 				'?relationshipSource=true\
 								&relationshipTarget=true';
 			try {
-				const { data } = await getRequest(`me/${queryString}`);
-				this.me = data;
+				this.me = await (await getRequest(`me/${queryString}`)).data;
 			} catch (e) {
 				console.error(e);
 				return [];
@@ -158,8 +157,7 @@ export const useUserStore = defineStore('users', {
 
 		async refreshAllUsers() {
 			try {
-				const { data } = await getRequest('users');
-				this.allUsers = data;
+				this.allUsers = await (await getRequest('users')).data;
 			} catch (e) {
 				console.error(e);
 				return [];
