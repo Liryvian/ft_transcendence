@@ -154,6 +154,11 @@ h1 {
 	font-weight: bold;
 }
 
+.c_list .router-link-active .c_media__content {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
 .tac {
 	text-align: center;
 }

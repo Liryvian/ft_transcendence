@@ -7,6 +7,7 @@ export enum permissionsEnum {
 	BLOCKED = 'blocked',
 	MANAGE_USERS = 'manage_users',
 	EDIT_SETTINGS = 'edit_settings',
+	OWNER = 'owner',
 }
 
 export interface UserChatPermissions {
@@ -70,6 +71,7 @@ export interface Chat_List_Item {
 	id: number;
 	name: string;
 	type: Chat_Type;
+	hasPassword: boolean;
 	users: Chat_Member[];
 }
 
@@ -77,4 +79,12 @@ export interface Chat_List {
 	name: string;
 	type: Chat_Type;
 	items: Chat_List_Item[];
+}
+
+export interface CreateNewChannelForm {
+	name: string;
+	visibility: ChatVisibility;
+	password?: string;
+	type: Chat_Type;
+	users: number[];
 }

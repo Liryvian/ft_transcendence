@@ -1,3 +1,5 @@
+import { useGameStore } from '@/stores/gameStore';
+import { useRelationshipStore } from '@/stores/relationshipStore';
 import { useUserStore } from '@/stores/userStore';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -10,7 +12,7 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../views/SettingsView.vue'),
 		},
 		{
 			path: '/settings',
@@ -37,7 +39,7 @@ const router = createRouter({
 					props: true,
 				},
 				{
-					path: '/pong/:currentGame',
+					path: '/pong/:currentGameId',
 					name: 'pong',
 					props: true,
 					component: () =>
@@ -46,10 +48,32 @@ const router = createRouter({
 			],
 		},
 		{
-			path: '/chat/:currentChat?',
-			name: 'chat',
+			path: '/chat',
+			children: [
+				{
+					path: '/chat',
+					name: 'chat',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'dm/:dmId',
+					name: 'dm',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'channel/:channelId',
+					name: 'channel',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
+		},
+		{
+			path: '/pong/:currentGameId',
+			name: 'pong',
 			props: true,
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../components/pongGame/pongGame.vue'),
 		},
 		{
 			path: '/profiles',
@@ -83,11 +107,6 @@ const router = createRouter({
 			component: () => import('../views/RegisterView.vue'),
 		},
 		{
-			path: '/channel-settings',
-			name: 'channel-settings',
-			component: () => import('../views/ChannelSettingsView.vue'),
-		},
-		{
 			path: '/match-history',
 			name: 'match-history',
 			component: () => import('../views/MatchHistoryView.vue'),
@@ -107,11 +126,6 @@ const router = createRouter({
 			name: 'request-game',
 			component: () => import('../views/RequestGame.vue'),
 			props: true,
-		},
-		{
-			path: '/game-invite',
-			name: 'game-invite',
-			component: () => import('../views/GameInvite.vue'),
 		},
 		{
 			path: '/component-test',

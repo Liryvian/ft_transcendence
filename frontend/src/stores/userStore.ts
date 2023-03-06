@@ -10,8 +10,8 @@ import type {
 import { useStorage } from '@vueuse/core';
 import type { StatusUpdate, StatusList } from '@/types/Sockets';
 import { useSocketStore } from './socketStore';
-import { useGameStore } from './gameStore';
 import { useRelationshipStore } from './relationshipStore';
+import { useGameStore } from './gameStore';
 
 export const useUserStore = defineStore('users', {
 	//  actions == data definitions
@@ -103,9 +103,8 @@ export const useUserStore = defineStore('users', {
 
 		async logout() {
 			try {
-				await getRequest('logout');
 				this.isLoggedIn = false;
-				useSocketStore().deinitializeOnline();
+				useSocketStore().disconnect();
 				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {
@@ -141,7 +140,6 @@ export const useUserStore = defineStore('users', {
 			} catch (e: any) {
 				this.handleFormError(e);
 				return [];
-				x;
 			}
 		},
 

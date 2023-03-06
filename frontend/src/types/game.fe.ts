@@ -63,11 +63,16 @@ export interface GameRequest {
 	updated_at: Date;
 }
 
-const GameStatusEnum = Object.freeze({
+export interface UpdateGameState {
+	player_one: number;
+	player_two: number;
+	state: gameStates;
+}
+
+const GameStatusEnum = Object({
 	GAME_OVER: 0,
 	POINT_OVER: 1,
-	PLAYING: 2
-})
+	PLAYING: 2,
+});
 
 export default GameStatusEnum;
-

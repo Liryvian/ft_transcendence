@@ -1,8 +1,10 @@
 <template>
-	<div class="c_media c_media--clickable">
-		<ChatProfileImages :chat="chat" />
-		<div class="c_media__content">{{ chatName }}</div>
-	</div>
+	<RouterLink :to="to">
+		<div class="c_media c_media--clickable">
+			<ChatProfileImages :chat="chat" />
+			<div class="c_media__content">{{ chatName }}</div>
+		</div>
+	</RouterLink>
 </template>
 
 <script lang="ts">
@@ -36,14 +38,18 @@ export default defineComponent({
 				(user) => user.id !== this.userStore.me.id,
 			)[0];
 		},
+		to() {
+			if (this.chat.type === 'channel') {
+				return { name: 'channel', params: { channelId: this.chat.id } };
+			}
+			return { name: 'dm', params: { dmId: this.otherUser.id } };
+		},
 		chatName() {
 			if (this.chat.type === 'channel') {
 				return this.chat.name;
 			}
 			return this.otherUser.name ?? this.chat.name;
-		}
-	}
+		},
+	},
 });
 </script>
-
-<style scoped></style>

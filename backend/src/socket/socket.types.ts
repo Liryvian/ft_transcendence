@@ -40,6 +40,7 @@ export interface Chat_List_Item {
 	name?: string;
 	type?: Chat_Type;
 	users?: Chat_Member[];
+	hasPassword?: boolean;
 }
 
 export interface SocketMessage<T> {

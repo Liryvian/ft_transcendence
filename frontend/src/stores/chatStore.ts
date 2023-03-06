@@ -10,6 +10,7 @@ export const useChatStore = defineStore('chats', {
 		channels: [] as Chat_List_Item[],
 		subscribed: false,
 		initialized: false,
+		errors: [] as String[],
 	}),
 	// getters == computed values
 	getters: {
@@ -38,6 +39,7 @@ export const useChatStore = defineStore('chats', {
 		},
 
 		newChat(chat: Chat_List_Item) {
+			console.log('new chat from socket in chatStore ', chat);
 			if (chat.type === 'dm') {
 				this.$patch((state) => {
 					state.dms.push(chat);
