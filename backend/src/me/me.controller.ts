@@ -8,6 +8,7 @@ import { UserService } from '../users/user/user.service';
 import { UserRelationsQueryDto } from '../users/user/dto/user-relations-query.dto';
 import { permissionsEnum } from '../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { User } from '../users/user/entities/user.entity';
+import { UserRelationshipService } from '../users/user-relationship/user-relationship.service';
 
 @UseGuards(AuthGuard())
 @Controller('me')
@@ -16,6 +17,7 @@ export class MeController {
 		private readonly authService: AuthService,
 		private readonly userService: UserService,
 		private readonly chatService: ChatService,
+		private readonly userRelationshipService: UserRelationshipService,
 	) {}
 
 	@Get()
@@ -97,7 +99,7 @@ export class MeController {
 
 	@Get('chats')
 	async chats(@Req() request: Request) {
-		const id: number = await this.authService.userId(request);
+		const myId: number = await this.authService.userId(request);
 
 		// if you add the relationship here it only returns relations where you are the user, not all users in the chat
 		const chatIds: Chat[] = await this.chatService.findAll({
@@ -105,7 +107,7 @@ export class MeController {
 			where: [
 				{
 					has_users: {
-						user_id: id,
+						user_id: myId,
 					},
 				},
 				{
@@ -113,6 +115,31 @@ export class MeController {
 					visibility: 'public',
 				},
 			],
+		});
+
+		// get users that blocked me or that I blocked
+		const blocked = await this.userRelationshipService.findAll({
+			where: [
+				{
+					type: 'blocked',
+					source: {
+						id: myId,
+					},
+				},
+				{
+					type: 'blocked',
+					target: {
+						id: myId,
+					},
+				},
+			],
+			relations: { source: true, target: true },
+		});
+		const blockedUserIds = blocked.map((relation) => {
+			if (relation.source.id === myId) {
+				return relation.target.id;
+			}
+			return relation.source.id;
 		});
 
 		const chats: Chat[] = (
@@ -125,16 +152,58 @@ export class MeController {
 					created_at: 'asc',
 				},
 			})
-		).filter(
-			// removes chats where "I" am blocked
-			(chat: Chat) =>
-				chat.users.findIndex(
-					(user: ChatUser) =>
-						user.id === id &&
-						user.permissions.findIndex((p) => p === permissionsEnum.BLOCKED) !==
-							-1,
-				) === -1,
-		);
+		)
+			.filter((chat: Chat) => {
+				const meInChat: ChatUser = chat.users.find(
+					(user: ChatUser) => user.id === myId,
+				);
+				// remove chats where "I" am blocked
+				if (
+					meInChat !== undefined &&
+					meInChat.permissions.findIndex(
+						(p: permissionsEnum) => p === permissionsEnum.BLOCKED,
+					) !== -1
+				) {
+					return false;
+				}
+
+				// remove dm's from blocked people
+				if (
+					blockedUserIds.length > 0 &&
+					chat.type === 'dm' &&
+					chat.users.findIndex((user: ChatUser) => {
+						return blockedUserIds.indexOf(user.id) !== -1;
+					}) !== -1
+				) {
+					return false;
+				}
+				return true;
+			})
+			.map((chat: Chat) => {
+				// remove blocked users from chat
+				return {
+					...chat,
+					hasPassword: chat.hasPassword,
+					users: chat.users.filter((user) => {
+						// remove users from blocked list
+						if (
+							blockedUserIds.length > 0 &&
+							blockedUserIds.indexOf(user.id) !== -1
+						) {
+							return false;
+						}
+						// remove users that are blocked in chat
+						if (
+							user.permissions.findIndex(
+								(p: permissionsEnum) => p === permissionsEnum.BLOCKED,
+							) !== -1
+						) {
+							return false;
+						}
+						return true;
+					}),
+				} as Chat;
+			});
 
 		return chats;
 	}

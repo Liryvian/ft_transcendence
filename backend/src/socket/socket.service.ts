@@ -98,6 +98,8 @@ export class SocketService {
 					this.chatListSubscribers[userId].forEach((socket) => {
 						socket.emit('chatListUpdate', message);
 					});
+				} else {
+					console.log(`User ${userId} not subscribed, not emitting`);
 				}
 			});
 		}
@@ -108,7 +110,10 @@ export class SocketService {
 			socket.handshake.headers.cookie,
 		);
 		try {
-			const userId: number = this.authService.userIdFromCookieString(cookie);
+			const userId: number = await this.authService.userIdFromCookieString(
+				cookie,
+			);
+
 			await this.userService.findOne({ where: { id: userId } });
 
 			if (!this.chatListSubscribers[userId]) {
@@ -116,18 +121,18 @@ export class SocketService {
 			}
 			this.chatListSubscribers[userId].push(socket);
 		} catch (e) {
-			console.log('Error on subscribing to chatlist');
-			console.log(e);
+			console.log(`Error on subscribing to chatlist (${socket.id})`);
 		}
 	}
 
 	async chatList_unsubscribe(socket: Socket) {
+		console.log('unsubscribing from chatlist ', socket.id);
 		const cookie: string = jwtCookieFromHandshakeString(
 			socket.handshake.headers.cookie,
 		);
 		try {
 			const userId: number = this.authService.userIdFromCookieString(cookie);
-			await this.userService.findOne({ where: { id: userId } });
+			const user = await this.userService.findOne({ where: { id: userId } });
 
 			if (this.chatListSubscribers[userId]) {
 				const socketIndex = this.chatListSubscribers[userId].findIndex(
@@ -141,7 +146,7 @@ export class SocketService {
 				}
 			}
 		} catch (e) {
-			console.log('Error on unsubscribing from chatlist');
+			console.log(`Error on unsubscribing from chatlist (${socket.id})`);
 		}
 	}
 }

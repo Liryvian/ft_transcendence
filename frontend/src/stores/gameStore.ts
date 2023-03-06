@@ -1,16 +1,33 @@
 import type { CreateGameForm, Game, UpdateGameState } from '@/types/game.fe';
 import { getRequest, patchRequest, postRequest } from '@/utils/apiRequests';
-import type { NewMessage } from '@/types/chat';
+import type { NewMessage } from '@/types/Chat';
 import { defineStore } from 'pinia';
 import { useUserStore } from './userStore';
 import router from '@/router';
+import GameStatusEnum from '@/types/game.fe';
 
+export interface MovementKeys {
+	w: boolean;
+	s: boolean;
+}
 export const useGameStore = defineStore('games', {
 	//  actions == data definitions
 	state: () => ({
 		allGames: <Game[]>[],
+		isInitialized: false,
+		isPressed: {
+			w: false,
+			s: false,
+		} as MovementKeys,
+		gameLoopInterval: 0,
+		timeStampStart: 0,
+		previousTimeStamp: 0,
+		score_player_two: 0,
+		score_player_one: 0,
+		gameStatus: GameStatusEnum.PLAYING,
 		errors: [] as String[],
 	}),
+
 	// getters == computed values
 	getters: {
 		// getMyGames: () => useUserStore().getMe.games,
@@ -29,12 +46,17 @@ export const useGameStore = defineStore('games', {
 				);
 			}
 		},
+		async initialize() {
+			if (this.isInitialized) {
+				return;
+			}
+			this.isInitialized = true;
+			await this.refreshAllGames();
+		},
 
 		async refreshAllGames() {
 			try {
 				this.allGames = await (await getRequest('games')).data;
-				console.log(this.allGames);
-				await useUserStore().refreshAllUsers();
 			} catch (e) {
 				console.error(e);
 				return [];
@@ -81,9 +103,6 @@ export const useGameStore = defineStore('games', {
 					'<a href="/games/${newGame.id}">wanna play PONG?</a>';
 				const message = await postRequest('messages', newMessage);
 				await router.push('/game'); //the router push is for later, I can imagine you want to return to your current chat @vvissche?
-				// router.push({
-				// 	name: 'game',
-				// 	params: { profile_id: newGame.data.id },
 				// });
 			} catch (e: any) {
 				this.handleFormError(e.response.data);

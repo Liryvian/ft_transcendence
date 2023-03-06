@@ -10,7 +10,7 @@ const router = createRouter({
 			// route level code-splitting
 			// this generates a separate chunk (About.[hash].js) for this route
 			// which is lazy-loaded when the route is visited.
-			component: () => import('../views/ChatView.vue'),
+			component: () => import('../views/SettingsView.vue'),
 		},
 		{
 			path: '/settings',
@@ -29,34 +29,63 @@ const router = createRouter({
 		},
 		{
 			path: '/active-games',
-			name: 'activeGames',
-
-			component: () => import('../views/GameView.vue'),
-			props: true,
+			children: [
+				{
+					path: '',
+					name: 'activeGames',
+					component: () => import('../views/GameView.vue'),
+					props: true,
+				},
+				{
+					path: '/pong/:currentGameId?',
+					name: 'pong',
+					props: true,
+					component: () =>
+						import('../components/pongGame/pongGame.vue'),
+				},
+			],
 		},
 		{
 			path: '/chat',
 			children: [
 				{
+					path: '/chat',
 					name: 'chat',
-					path: '/chat/:currentChat?',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'dm/:dmId',
+					name: 'dm',
 					props: true,
 					component: () => import('../views/ChatView.vue'),
 				},
 				{
-					name: 'chat-members',
-					path: '/chat/members/:chatID',
+					path: 'channel/:channelId',
 					props: true,
-					component: () => import('@/views/ChannelMembersView.vue'),
+					children: [
+						{
+							path: '',
+							name: 'channel',
+							props: true,
+							component: () => import('../views/ChatView.vue'),
+						},
+						{
+							name: 'channelMembers',
+							path: 'members',
+							props: true,
+							component: () =>
+								import('@/views/ChannelMembersView.vue'),
+						},
+					],
 				},
 			],
 		},
-		{
-			path: '/pong/:currentGame?',
-			name: 'pong',
-			props: true,
-			component: () => import('../components/pongGame/pongGame.vue'),
-		},
+		// {
+		// 	path: '/pong/:currentGameId',
+		// 	name: 'pong',
+		// 	props: true,
+		// 	component: () => import('../components/pongGame/pongGame.vue'),
+		// },
 		{
 			path: '/profiles',
 			children: [
@@ -66,7 +95,7 @@ const router = createRouter({
 					component: () => import('../views/ProfilesView.vue'),
 				},
 				{
-					path: ':profile_id?',
+					path: ':profile_id',
 					name: 'profile',
 					component: () => import('../views/ProfileView.vue'),
 					props: true,

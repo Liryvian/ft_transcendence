@@ -1,5 +1,5 @@
-<!-- Owner can kick, ban, mute other users and  
-the channel administrators.  
+<!-- Owner can kick, ban, mute other users and
+the channel administrators.
 A user who is an administrator of a channel can kick, ban mute -->
 
 <template>
@@ -10,7 +10,7 @@ A user who is an administrator of a channel can kick, ban mute -->
 				<template v-for="member in getCurrentChannel?.users">
 					<ChannelMemberRow
 						v-if="member.id !== me.id"
-						:channel-id="Number(chatID)"
+						:channel-id="Number(channelId)"
 						:user-id="member.id"
 						:user-name="member.name"
 						:avatar-string="member.avatar"
@@ -33,7 +33,7 @@ import { permissionsEnum } from '@/types/Chat';
 export default defineComponent({
 	name: 'ChatMembershipiew',
 	props: {
-		chatID: String,
+		channelId: String,
 	},
 	components: {
 		ChannelMemberRow,
@@ -42,11 +42,11 @@ export default defineComponent({
 		getCurrentChannel() {
 			console.log(
 				this.channels.find(
-					(chat) => this.chatID === chat.id.toString(),
+					(chat) => this.channelId === chat.id.toString(),
 				),
 			);
 			return this.channels.find(
-				(chat) => this.chatID === chat.id.toString(),
+				(chat) => this.channelId === chat.id.toString(),
 			);
 		},
 	},
