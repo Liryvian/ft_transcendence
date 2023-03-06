@@ -60,7 +60,7 @@ export class PongService {
 			ball: {
 				position: {
 					x: 50,
-					y: 50,
+					y: Math.floor(Math.random() * 90) + 10,
 				},
 				radius: this.ballRadius,
 			},
@@ -185,7 +185,7 @@ export class PongService {
 	resetBallPosition(ball: Ball) {
 		ball.position = {
 			x: 50,
-			y: 50,
+			y: Math.floor(Math.random() * 90) + 10,
 		};
 		this.dx = randomDirection(-2, 2) || 0.2;
 		this.dy = randomDirection(-2, 2) || 0.2;
