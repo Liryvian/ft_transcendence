@@ -86,10 +86,8 @@ export default defineComponent({
 		const userStore = useUserStore();
 		userStore.refreshMe();
 		const { me } = storeToRefs(userStore);
-		const myId = userStore.me.id;
 		const gameStore = useGameStore();
 		gameStore.initialize();
-		console.log('MyId:', myId);
 		const {
 			allGames,
 			isPressed,
@@ -98,7 +96,6 @@ export default defineComponent({
 			score_player_two,
 			gameStatus,
 		} = storeToRefs(gameStore);
-		console.log('All Games:', allGames.value);
 		const currentGame = allGames.value.find(
 			(game) => game.id === Number(props.currentGameId),
 		);
@@ -127,7 +124,6 @@ export default defineComponent({
 			return this.currentGame!.id;
 		},
 		getCurrentGame() {
-			console.log('CurGame: ', this.currentGame);
 			return this.currentGame;
 		},
 		getPlayerOne() {
@@ -230,7 +226,6 @@ export default defineComponent({
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key as ValidKeys] !== undefined) {
 				this.isPressed[keyPress.key as ValidKeys] = true;
-				console.log('Key is pressed');
 				this.emitKeyStateUpdate();
 			}
 		},
