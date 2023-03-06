@@ -335,7 +335,7 @@ export default defineComponent({
 			this.setSocketOn();
 
 			// START MAIN GAME LOOP
-			this.socket.on('GameCanStart', () => {
+			this.socket.once('GameCanStart', () => {
 				const updateGameDto = {
 					state: 'active',
 				};
