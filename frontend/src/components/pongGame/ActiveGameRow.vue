@@ -6,7 +6,7 @@
 		<div class="table_cell table_right table_extra">
 			{{ player_right_score }} {{ player_right }}
 			<router-link
-				:to="{ name: 'pong', params: { currentGame: game_id } }"
+				:to="{ name: 'pong', params: { currentGameId: game_id } }"
 			>
 				[watch game]
 			</router-link>
