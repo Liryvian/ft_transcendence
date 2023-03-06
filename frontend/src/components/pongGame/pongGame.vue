@@ -66,8 +66,9 @@ export default defineComponent({
 		) {
 			this.socket.emit('PlayerDisconnected');
 			this.finishGame();
+		} else {
+			this.socket.disconnect();
 		}
-		this.socket.disconnect();
 		next();
 	},
 

@@ -37,7 +37,6 @@ export class PongGateway implements OnGatewayConnection {
 		gameSubscribers[game.id] = this.pongService.createNewGameState();
 		gameSubscribers[game.id].gameId = game.id;
 		gameSubscribers[game.id].scoreToWin = game.score_to_win || 5;
-		client.join(roomName);
 		gameSubscribers[game.id].roomName = roomName;
 	}
 
@@ -58,9 +57,8 @@ export class PongGateway implements OnGatewayConnection {
 			if (game.id && game.player_one && game.player_two) {
 				if (!gameSubscribers[game.id]) {
 					this.createGameInstance(game, client);
-				} else {
-					client.join(gameSubscribers[game.id].roomName);
 				}
+				client.join(gameSubscribers[game.id].roomName);
 				if (userId === game.player_one.id) {
 					gameSubscribers[game.id].playerOneIsInGame = true;
 					gameSubscribers[game.id].playerOneId = userId;
