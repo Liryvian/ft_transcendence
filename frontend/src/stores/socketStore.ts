@@ -7,8 +7,6 @@ import type { Chat_List_Item, SingleMessage } from '@/types/Chat';
 import type { SocketMessage } from '@/types/Sockets';
 import { useUserStore } from './userStore';
 
-// it's always only one user..
-
 export const useSocketStore = defineStore('sockets', {
 	state: (): SocketStore => ({
 		chats: {
@@ -30,11 +28,14 @@ export const useSocketStore = defineStore('sockets', {
 			}
 		},
 		async initializeChats() {
+			console.log('init chat sockets');
 			this.chats.initialized = true;
 			// get initial data in chat store if it is not there
 			await useChatStore().init(false);
 			// create socket
-			this.chats.socket = io('/chats', { withCredentials: true });
+			if (this.chats.socket === null) {
+				this.chats.socket = io('/chats', { withCredentials: true });
+			}
 			this.chats.socket.on(
 				'chatListUpdate',
 				(update: SocketMessage<Chat_List_Item>) => {
@@ -48,7 +49,7 @@ export const useSocketStore = defineStore('sockets', {
 				},
 			);
 		},
-		deinitializezChats() {
+		deinitializeChats() {
 			this.chats.socket?.off('newMessage');
 			this.chats.socket?.off('chatListUpdate');
 			this.chats.socket?.disconnect();
