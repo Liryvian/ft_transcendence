@@ -120,11 +120,6 @@ const router = createRouter({
 			props: true,
 		},
 		{
-			path: '/game-invite',
-			name: 'game-invite',
-			component: () => import('../views/GameInvite.vue'),
-		},
-		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),
