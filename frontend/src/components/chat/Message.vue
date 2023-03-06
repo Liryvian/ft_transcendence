@@ -1,7 +1,10 @@
 <template>
 	<div class="c_message" :class="{ 'c_message--mine': isMessageMine }">
 		<div class="c_message__name">{{ getName }}</div>
-		<div class="c_message__wrap">
+		<div
+			class="c_message__wrap"
+			:class="{ is_game_request: isGameRequest }"
+		>
 			<div class="c_message__msg">
 				<div class="c_message__time">
 					{{ formattedTime }}
@@ -82,3 +85,12 @@ export default defineComponent({
 	},
 });
 </script>
+
+<style>
+.is_game_request a {
+	font-weight: bold;
+}
+.is_game_request.c_message__wrap::after {
+	border-width: 3px;
+}
+</style>
