@@ -2,7 +2,7 @@
 	<div>
 		<div class="page_box_wrapper">
 			<div class="page_box">
-				<h1>This is the list of games view</h1>
+				<h1>Game Overview</h1>
 				<div class="table c_block">
 					<div class="line"></div>
 					<template v-for="game in allGames">
@@ -16,7 +16,6 @@
 						/>
 					</template>
 				</div>
-				<router-link to="/pong/3">Go to /pong/3</router-link>
 			</div>
 		</div>
 	</div>
