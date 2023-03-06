@@ -574,3 +574,53 @@ h1 {
 .grayedOut:hover {
 	text-decoration: none;
 }
+
+.line {
+	margin-left: auto;
+	margin-right: auto;
+	width: var(--width-midline);
+	background-color: var(--color-border);
+	position: absolute;
+	left: 50%;
+	top: 0.55em;
+	bottom: 0;
+}
+
+.table {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 1em;
+	padding-top: var(--single-spacing);
+	padding-bottom: var(--double-spacing);
+	position: relative;
+}
+
+.table_row {
+	display: flex;
+}
+
+.table_cell {
+	flex-basis: 50%;
+	padding: 0.2em 1em;
+}
+
+.table_right {
+	text-align: left;
+}
+
+.table_left {
+	text-align: right;
+}
+
+.table_extra {
+	display: flex;
+	justify-content: space-between;
+}
+
+.table_extra a {
+	padding-left: 0.1em;
+}
+
+.table.c_block {
+	max-width: 30em;
+}

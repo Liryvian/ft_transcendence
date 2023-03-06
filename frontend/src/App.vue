@@ -10,8 +10,9 @@ if (useUserStore().isLoggedIn) {
 	const socketStore = useSocketStore();
 	socketStore.initialize();
 	useUserStore().refreshData();
-	useGameStore().refreshAllGames();
 	useRelationshipStore().initialize();
+	useGameStore().refreshAllGames();
+	useSocketStore().initializeOnline();
 }
 </script>
 
