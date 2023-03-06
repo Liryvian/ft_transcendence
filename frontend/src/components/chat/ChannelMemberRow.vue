@@ -1,8 +1,9 @@
 <template>
-	<Avatar
-		:avatar="avatarString"
-		:is-online="userStore.getOnlineStatus(userId)"
-	/>
+	<div class="c_media">
+		<div class="c_asset__circle">
+			<img :src="`/api/avatars/${avatarString}`" alt="" />
+		</div>
+	</div>
 	<div>
 		{{ userName }}
 	</div>
