@@ -10,25 +10,21 @@ import {
 	Query,
 	UseGuards,
 	Req,
-	HttpCode,
 	ForbiddenException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ChatService } from './chat.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
-import { Chat, ChatType, ChatVisibility } from './entities/chat.entity';
+import { Chat } from './entities/chat.entity';
+import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
-import { DeleteResult, FindOptionsOrder } from 'typeorm';
+import { DeleteResult } from 'typeorm';
 import { ChatRelationsBodyDto } from './dto/chat-relations-body.dto';
 import { ChatRelationsQueryDto } from './dto/chat-relations-query.dto';
 import { MessageService } from '../message/message.service';
 import { SocketService } from '../../socket/socket.service';
-import {
-	Chat_List_Item,
-	Chat_Type,
-	SocketMessage,
-} from '../../socket/socket.types';
+import { Chat_List_Item, SocketMessage } from '../../socket/socket.types';
 import { UserInChat } from '../../users/user/entities/user.entity';
 import {
 	ChatUserPermission,
@@ -37,6 +33,8 @@ import {
 import { ChatUserPermissionService } from '../chat-user-permissions/chat-user-permission.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import { AuthService } from '../../auth/auth.service';
+import { UserRelationshipService } from '../../users/user-relationship/user-relationship.service';
+import { Message } from '../message/entities/message.entity';
 
 @UseGuards(AuthGuard())
 @Controller('chats')
@@ -47,6 +45,7 @@ export class ChatController {
 		private readonly messageService: MessageService,
 		private readonly socketService: SocketService,
 		private readonly chatUserPermissionService: ChatUserPermissionService,
+		private readonly userRelationshipService: UserRelationshipService,
 	) {}
 
 	private readonly defaultRelationships = { has_users: true };
@@ -66,7 +65,32 @@ export class ChatController {
 			createChatDto.users.forEach((user) => users.push(user));
 			delete createChatDto.users;
 		}
-		let chat: Chat = await this.chatService.save(createChatDto);
+
+		// make sure dm names are unique
+		if (createChatDto.type === 'dm') {
+			// check if dm between the two users already exists
+			try {
+				const hasDM = this.chatService.findOne({
+					where: {
+						has_users: [
+							{ user_id: createChatDto.users[0].id },
+							{ user_id: createChatDto.users[1].id },
+						],
+						type: 'dm',
+					},
+				});
+				return hasDM;
+			} catch (e) {}
+			createChatDto.name += '--' + crypto.pseudoRandomBytes(4).toString('hex');
+		}
+
+		let chat: Chat;
+		try {
+			chat = await this.chatService.save(createChatDto);
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 
 		// Now add userInChat after unpacking it's permissions array
 		if (users.length) {
@@ -95,15 +119,21 @@ export class ChatController {
 					id: chat.id,
 					name: chat.name,
 					type: chat.type,
-					users:
-						chat.users?.map((user) => ({
-							id: user.id,
-							name: user.name,
-							avatar: user.avatar,
-						})) ?? [],
+					users: chat.users ?? [],
+					hasPassword: chat.hasPassword,
 				},
 			};
-			this.socketService.chatlist_emit('all', socketMessage);
+			if (
+				chat.type === 'dm' ||
+				(chat.type === 'channel' && chat.visibility === 'private')
+			) {
+				this.socketService.chatlist_emit(
+					chat.users.map((u) => u.id),
+					socketMessage,
+				);
+			} else {
+				this.socketService.chatlist_emit('all', socketMessage);
+			}
 		}
 		return chat;
 	}
@@ -131,7 +161,7 @@ export class ChatController {
 	async chatMessages(@Param('id') chatId: number, @Req() request: Request) {
 		try {
 			// verify that we have a valid and existing user from the request
-			const userId: number = await this.authService.validUserId(request);
+			const myId: number = await this.authService.validUserId(request);
 			// verify that we have a valid chat id from the parameter
 			const chat: Chat = await this.chatService.findOne({
 				where: { id: chatId },
@@ -141,7 +171,7 @@ export class ChatController {
 			const userPermissions: ChatUserPermission[] =
 				await this.chatUserPermissionService.findAll({
 					where: {
-						user_id: userId,
+						user_id: myId,
 						chat_id: chat.id,
 					},
 				});
@@ -173,6 +203,39 @@ export class ChatController {
 					return [];
 				}
 			}
+
+			// get blocked users
+			const blocked = await this.userRelationshipService.findAll({
+				where: [
+					{
+						type: 'blocked',
+						source: {
+							id: myId,
+						},
+					},
+					{
+						type: 'blocked',
+						target: {
+							id: myId,
+						},
+					},
+				],
+				relations: { source: true, target: true },
+			});
+			const blockedUserIds = blocked.map((relation) => {
+				if (relation.source.id === myId) {
+					return relation.target.id;
+				}
+				return relation.source.id;
+			});
+
+			return (
+				await this.messageService.findAll({
+					where: { chat: { id: chatId } },
+				})
+			).filter((message: Message) => {
+				return blockedUserIds.indexOf(message.user_id) === -1;
+			});
 		} catch (e) {
 			// catching:
 			// - invalid JWT token
@@ -180,10 +243,6 @@ export class ChatController {
 			// - invalid chat id
 			return [];
 		}
-
-		return this.messageService.findAll({
-			where: { chat: { id: chatId } },
-		});
 	}
 
 	@Get(':id')
@@ -213,7 +272,7 @@ export class ChatController {
 			});
 			// check permissions
 			if (
-				!(await bcrypt.compare(current_Chat.password, updateChatDto.password))
+				!(await bcrypt.compare(updateChatDto.password, current_Chat.password))
 			) {
 				throw new BadRequestException('wrong password');
 			}
@@ -238,6 +297,30 @@ export class ChatController {
 			this.socketService.chatlist_emit('all', socketMessage);
 		}
 		return chat;
+	}
+
+	@Post(':id/verify_password')
+	async verifyChatPassword(
+		@Param('id') chatId: number,
+		@Body() chatPassword: { password: string },
+	) {
+		if (
+			!chatPassword.hasOwnProperty('password') ||
+			chatPassword.password.trim().length === 0
+		) {
+			return false;
+		}
+		try {
+			const chatInfo = await this.chatService.findOne({
+				where: { id: chatId },
+			});
+			if (chatInfo.hasPassword === false) {
+				// wtf? it doesn't have password.. why are you checking?
+				return true;
+			}
+			return bcrypt.compare(chatPassword.password, chatInfo.password);
+		} catch (e) {}
+		return false;
 	}
 
 	@Post(':id/join')

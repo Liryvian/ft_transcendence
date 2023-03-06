@@ -104,8 +104,7 @@ export const useUserStore = defineStore('users', {
 		async logout() {
 			try {
 				this.isLoggedIn = false;
-				await getRequest('logout');
-				useSocketStore().deinitializeOnline();
+				useSocketStore().disconnect();
 				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {

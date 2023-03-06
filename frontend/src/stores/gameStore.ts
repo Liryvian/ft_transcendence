@@ -27,6 +27,7 @@ export const useGameStore = defineStore('games', {
 		gameStatus: GameStatusEnum.PLAYING,
 		errors: [] as String[],
 	}),
+
 	// getters == computed values
 	getters: {
 		// getMyGames: () => useUserStore().getMe.games,

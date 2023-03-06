@@ -37,10 +37,26 @@ const router = createRouter({
 			props: true,
 		},
 		{
-			path: '/chat/:currentChat?',
-			name: 'chat',
-			props: true,
-			component: () => import('../views/ChatView.vue'),
+			path: '/chat',
+			children: [
+				{
+					path: '/chat',
+					name: 'chat',
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'dm/:dmId',
+					name: 'dm',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+				{
+					path: 'channel/:channelId',
+					name: 'channel',
+					props: true,
+					component: () => import('../views/ChatView.vue'),
+				},
+			],
 		},
 		{
 			path: '/pong/:currentGameId',
@@ -78,11 +94,6 @@ const router = createRouter({
 			path: '/register',
 			name: 'register',
 			component: () => import('../views/RegisterView.vue'),
-		},
-		{
-			path: '/channel-settings',
-			name: 'channel-settings',
-			component: () => import('../views/ChannelSettingsView.vue'),
 		},
 		{
 			path: '/match-history',

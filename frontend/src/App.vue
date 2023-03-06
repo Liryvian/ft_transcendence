@@ -2,9 +2,13 @@
 import { RouterLink, RouterView } from 'vue-router';
 import { useGameStore } from './stores/gameStore';
 import { useRelationshipStore } from './stores/relationshipStore';
+import { useSocketStore } from './stores/socketStore';
 import { useUserStore } from './stores/userStore';
 
 if (useUserStore().isLoggedIn) {
+	useUserStore().refreshMe();
+	const socketStore = useSocketStore();
+	socketStore.initialize();
 	useUserStore().refreshData();
 	useGameStore().refreshAllGames();
 	useRelationshipStore().initialize();

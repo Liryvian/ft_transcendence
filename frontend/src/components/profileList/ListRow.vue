@@ -1,36 +1,30 @@
 <template>
 	<!-- Route to profile via avatar link -->
-	<div v-if="!isBlocked(relationship.type)">
-		<Avatar
-			:avatar="user.avatar"
-			:is-online="userStore.getOnlineStatus(user.id)"
-			v-on:click="routeToProfile(user.id)"
-		/>
-	</div>
-	<div v-else>
-		<Avatar
-			:avatar="user.avatar"
-			:is-online="userStore.getOnlineStatus(user.id)"
-			class="grayedOut"
-		/>
-	</div>
+	<Avatar
+		:isBlocked="isBlocked(relationship.type)"
+		:userId="user.id"
+		:avatar="user.avatar"
+		:is-online="userStore.getOnlineStatus(user.id)"
+	/>
 
 	<!-- Route to profile via username link -->
 	<div v-if="!isBlocked(relationship.type)">
-		<a href="#" v-on:click.prevent="routeToProfile(user.id)">{{
-			user.name
-		}}</a>
+		<RouterLink :to="{ name: 'profile', params: { profile_id: user.id } }">
+			{{ user.name }}
+		</RouterLink>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut">{{ user.name }}</a>
+		<span class="grayedOut">{{ user.name }}</span>
 	</div>
 
 	<!-- Route to chat -->
 	<div v-if="!isBlocked(relationship.type)">
-		<a href="#" v-on:click.prevent="routeToChat(user.id)">Chat</a>
+		<RouterLink :to="{ name: 'dm', params: { dmId: user.id } }"
+			>Chat</RouterLink
+		>
 	</div>
 	<div v-else>
-		<a href="#" class="grayedOut">Chat</a>
+		<span class="grayedOut">Chat</span>
 	</div>
 
 	<!-- Update friend status -->
@@ -56,7 +50,6 @@ import { useRelationshipStore } from '@/stores/relationshipStore';
 import Avatar from '@/components/profileList/Avatar.vue';
 import FriendInvite from '@/components/profileList/FriendInvite.vue';
 import BlockUser from '@/components/profileList/BlockUser.vue';
-import router from '@/router';
 import type { Relationship } from '@/types/Relationship';
 import { useUserStore } from '@/stores/userStore';
 
@@ -97,19 +90,6 @@ export default defineComponent({
 		relationship: {
 			type: Object as PropType<Relationship>,
 			required: true,
-		},
-	},
-
-	methods: {
-		async routeToChat(userId: number) {
-			console.log(`Starting chat with ${userId}`);
-			await router.push({ name: 'chat', params: { profile_id: userId } });
-		},
-		async routeToProfile(userId: number) {
-			await router.push({
-				name: 'profile',
-				params: { profile_id: userId },
-			});
 		},
 	},
 });
