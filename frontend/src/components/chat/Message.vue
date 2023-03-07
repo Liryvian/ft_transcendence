@@ -1,14 +1,25 @@
 <template>
 	<div class="c_message" :class="{ 'c_message--mine': isMessageMine }">
 		<div class="c_message__name">{{ getName }}</div>
-		<div class="c_message__wrap">
+		<div
+			class="c_message__wrap"
+			:class="{ is_game_request: isGameRequest }"
+		>
 			<div class="c_message__msg">
 				<div class="c_message__time">
 					{{ formattedTime }}
 				</div>
-				<div v-for="msgpart in message.content.split('\n')">
-					{{ msgpart }}
-				</div>
+				<template v-if="isGameRequest">
+					<div
+						v-for="msgpart in message.content.split('\n')"
+						v-html="msgpart"
+					></div>
+				</template>
+				<template v-else>
+					<div v-for="msgpart in message.content.split('\n')">
+						{{ msgpart }}
+					</div>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -31,13 +42,17 @@ export default defineComponent({
 	setup() {
 		const userStore = useUserStore();
 
-		// shouldbe removed in favour of sockets + init once
-		userStore.refreshData();
 		return {
 			userStore,
 		};
 	},
 	computed: {
+		isGameRequest() {
+			return (
+				this.message.hasOwnProperty('is_game_request') &&
+				this.message.is_game_request
+			);
+		},
 		getName() {
 			if (this.message.user_id) {
 				if (this.message.user_id === this.userStore.me.id) {
@@ -68,3 +83,12 @@ export default defineComponent({
 	},
 });
 </script>
+
+<style>
+.is_game_request a {
+	font-weight: bold;
+}
+.is_game_request.c_message__wrap::after {
+	border-width: 3px;
+}
+</style>

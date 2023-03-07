@@ -264,6 +264,293 @@ export class ChatController {
 		});
 	}
 
+	async checkAuthenticatedUserCanManageUsers(chatId: number, request: Request) {
+		// verify that we have a valid and existing user from the request
+		const userId: number = await this.authService.validUserId(request);
+		// verify that we have a valid chat id from the parameter
+		const chat: Chat = await this.chatService.findOne({
+			where: { id: chatId },
+		});
+
+		// get authenticated users permssions from the chat
+		const userPermissions: ChatUserPermission[] =
+			await this.chatUserPermissionService.findAll({
+				where: [
+					{
+						user_id: userId,
+						chat_id: chat.id,
+						permission: permissionsEnum.OWNER,
+					},
+					{
+						user_id: userId,
+						chat_id: chat.id,
+						permission: permissionsEnum.MANAGE_USERS,
+					},
+				],
+			});
+		if (userPermissions.length === 0) {
+			throw new ForbiddenException(
+				'No permissions for authenticated user to do kick/ban/mute',
+			);
+		}
+		return chat;
+	}
+
+	findUserWithPermisisonsInChat(
+		permissions: permissionsEnum[],
+		chatId: number,
+		userId: number,
+	) {
+		return this.chatUserPermissionService.findAll({
+			where: permissions.map((p) => ({
+				user_id: userId,
+				chat_id: chatId,
+				permission: p,
+			})),
+		});
+	}
+
+	async sock_chatUpdate_users(chatId: number) {
+		const updatedChat = await this.chatService.findOne({
+			where: { id: chatId },
+			relations: { has_users: { users: true } },
+			order: { name: 'asc' },
+		});
+
+		const socketMessage: SocketMessage<Chat_List_Item> = {
+			action: 'update',
+			data: {
+				id: chatId,
+				users: updatedChat.users,
+			},
+		};
+
+		this.socketService.chatlist_emit(
+			updatedChat.users.map((user) => user.id),
+			socketMessage,
+		);
+	}
+
+	@Patch(':chatId/kick/:userId')
+	async kickUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			// cannot kick owner
+
+			// search for permissions in [MANAGE_USERS, EDIT_SETTINGS, READ, POST]
+			// and remove them
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[
+					permissionsEnum.MANAGE_USERS,
+					permissionsEnum.EDIT_SETTINGS,
+					permissionsEnum.READ,
+					permissionsEnum.POST,
+					permissionsEnum.OWNER,
+				],
+				chat.id,
+				userId,
+			);
+
+			if (
+				currentPermissions.find(
+					(cup) => cup.permission === permissionsEnum.OWNER,
+				)
+			) {
+				throw new ForbiddenException('Cannot kick owner');
+			}
+
+			await this.chatUserPermissionService.remove(
+				currentPermissions.map((cup) => cup.id),
+			);
+
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
+	@Patch(':chatId/block/:userId')
+	async blockUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[
+					permissionsEnum.MANAGE_USERS,
+					permissionsEnum.EDIT_SETTINGS,
+					permissionsEnum.READ,
+					permissionsEnum.POST,
+					permissionsEnum.BLOCKED,
+					permissionsEnum.OWNER,
+				],
+				chat.id,
+				userId,
+			);
+
+			if (
+				currentPermissions.find(
+					(cup) => cup.permission === permissionsEnum.OWNER,
+				)
+			) {
+				throw new ForbiddenException('Cannot block owner');
+			}
+
+			await this.chatUserPermissionService.remove(
+				currentPermissions.map((p) => p.id),
+			);
+			// set blocked
+			await this.chatUserPermissionService.save({
+				user_id: userId,
+				chat_id: chat.id,
+				permission: permissionsEnum.BLOCKED,
+			});
+
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+				const socketMessage: SocketMessage<Chat_List_Item> = {
+					action: 'delete',
+					data: {
+						id: chat.id,
+					},
+				};
+				this.socketService.chatlist_emit([userId], socketMessage);
+			}
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
+	@Patch(':chatId/unblock/:userId')
+	async unblockUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[permissionsEnum.BLOCKED],
+				chat.id,
+				userId,
+			);
+			if (currentPermissions.length == 0) {
+				// already is not blocked, no need to update
+				return true;
+			}
+			await this.chatUserPermissionService.remove(
+				currentPermissions.map((p) => p.id),
+			);
+
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
+	@Patch(':chatId/mute/:userId')
+	async muteUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[permissionsEnum.POST, permissionsEnum.OWNER],
+				chat.id,
+				userId,
+			);
+			if (
+				currentPermissions.find(
+					(cup) => cup.permission === permissionsEnum.OWNER,
+				)
+			) {
+				throw new ForbiddenException('Cannot mute owner');
+			}
+			await this.chatUserPermissionService.remove(
+				currentPermissions.map((p) => p.id),
+			);
+
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
+	@Patch(':chatId/unmute/:userId')
+	async unmuteUser(
+		@Param('chatId') chatId: number,
+		@Param('userId') userId: number,
+		@Req() request: Request,
+	) {
+		try {
+			const chat = await this.checkAuthenticatedUserCanManageUsers(
+				chatId,
+				request,
+			);
+
+			const currentPermissions = await this.findUserWithPermisisonsInChat(
+				[permissionsEnum.POST],
+				chat.id,
+				userId,
+			);
+			if (currentPermissions.length > 0) {
+				// already has post perissions, no need to update
+				return true;
+			}
+			await this.chatUserPermissionService.save({
+				chat_id: chat.id,
+				user_id: userId,
+				permission: permissionsEnum.POST,
+			});
+
+			if (this.socketService.chatServer !== null) {
+				this.sock_chatUpdate_users(chat.id);
+			}
+			return true;
+		} catch (e) {
+			// not able to do action for whatever reason
+			return false;
+		}
+	}
+
 	@Patch(':id')
 	async update(@Param('id') id: number, @Body() updateChatDto: UpdateChatDto) {
 		if (updateChatDto.hasOwnProperty('password')) {
@@ -390,23 +677,7 @@ export class ChatController {
 			await this.chatUserPermissionService.save(permissionsToAdd);
 
 			if (this.socketService.chatServer !== null) {
-				const updatedChat = await this.chatService.findOne({
-					where: { id: chat.id },
-					relations: { has_users: { users: true } },
-				});
-
-				const socketMessage: SocketMessage<Chat_List_Item> = {
-					action: 'update',
-					data: {
-						id: chat.id,
-						users: updatedChat.users,
-					},
-				};
-
-				this.socketService.chatlist_emit(
-					updatedChat.users.map((user) => user.id),
-					socketMessage,
-				);
+				this.sock_chatUpdate_users(chat.id);
 			}
 		} catch (e) {
 			console.log(e);

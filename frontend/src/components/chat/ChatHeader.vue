@@ -1,6 +1,15 @@
 <template>
 	<div class="c_conversation__header">
-		<div v-if="canInviteForAGame()">invite for a game</div>
+		<div v-if="canInviteForAGame()">
+			<RouterLink
+				:to="{
+					name: 'request-game',
+					params: { profile_id: otherUser.id, chat_id: chat.id },
+				}"
+			>
+				invite for a game
+			</RouterLink>
+		</div>
 		<div v-if="canEditChannelSettings()">channel settings</div>
 		<div>
 			<RouterLink
@@ -17,6 +26,7 @@
 </template>
 
 <script lang="ts">
+import { RouterLink } from 'vue-router';
 import { defineComponent, type PropType } from 'vue';
 import type { Chat_List_Item, Chat_Member } from '@/types/Chat';
 import ChatProfileImages from '@/components/chat/ChatProfileImages.vue';
@@ -26,6 +36,7 @@ export default defineComponent({
 	name: 'ChatHeader',
 	components: {
 		ChatProfileImages,
+		RouterLink,
 	},
 	props: {
 		chat: {
@@ -48,7 +59,10 @@ export default defineComponent({
 					params: { profile_id: this.otherUser.id },
 				};
 			}
-			return { name: 'channel', params: { channelId: this.chat.id } };
+			return {
+				name: 'channelMembers',
+				params: { channelId: this.chat.id },
+			};
 		},
 		otherUser(): Chat_Member {
 			return this.chat.users.filter(

@@ -24,6 +24,7 @@ export interface SingleMessage {
 	user_id?: number;
 	chat_id: number;
 	content?: string;
+	is_game_request?: boolean;
 
 	created_at?: Date;
 }

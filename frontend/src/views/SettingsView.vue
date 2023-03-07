@@ -2,7 +2,9 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<h1>SETTINGS</h1>
-			<ProfileSettingAvatar :profile_picture="me.avatar" />
+			<ProfileSettingAvatar
+				:profile_picture="me.avatar ?? 'tmp_default_avatar.png'"
+			/>
 			<div class="c_block c_form_group tac">
 				<ChangeAvatar />
 			</div>
@@ -100,8 +102,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-.avatar { vertical-align: middle; width: 50px; height: 50px; border-radius: 50%;
-}
-
-<style scoped></style>
