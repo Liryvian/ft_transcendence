@@ -177,7 +177,6 @@ export class ChatController {
 			const user2InDm = dm.users.find((user) => user.id === id2);
 			return user1InDm !== undefined && user2InDm !== undefined;
 		});
-		console.log('dm with users', JSON.stringify(dmWithUsers, null, 2));
 		if (dmWithUsers && dmWithUsers.users.length === 2) {
 			console.log('dm exists', dmWithUsers);
 			return dmWithUsers.id;

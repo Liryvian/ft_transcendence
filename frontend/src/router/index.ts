@@ -37,7 +37,7 @@ const router = createRouter({
 					props: true,
 				},
 				{
-					path: '/pong/:currentGameId?',
+					path: '/pong/:currentGameId',
 					name: 'pong',
 					props: true,
 					component: () =>

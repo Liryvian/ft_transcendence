@@ -98,9 +98,14 @@ export default defineComponent({
 				this.newMessage.sender_id = useUserStore().me.id;
 				this.newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await postRequest('messages', this.newMessage);
-				setTimeout(async () => {
-					return await router.push(`/pong/${newGame.id}`);
-				}, 1000);
+				console.log('router push to game', {
+					name: 'pong',
+					params: { currentGameId: newGame.id },
+				});
+				return router.push({
+					name: 'pong',
+					params: { currentGameId: newGame.id },
+				});
 			} catch (e) {
 				this.errors.length = 0;
 				this.errors.push(
