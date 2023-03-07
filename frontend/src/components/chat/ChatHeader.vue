@@ -10,7 +10,13 @@
 				invite for a game
 			</RouterLink>
 		</div>
-		<div v-if="canEditChannelSettings()">channel settings</div>
+		<div v-else-if="canLeaveChannel()">
+			<button class="link_button" @click.prevent="leaveChannel()">
+				leave channel
+			</button>
+		</div>
+		<div v-else></div>
+
 		<div>
 			<RouterLink
 				:to="to"
@@ -28,9 +34,14 @@
 <script lang="ts">
 import { RouterLink } from 'vue-router';
 import { defineComponent, type PropType } from 'vue';
-import type { Chat_List_Item, Chat_Member } from '@/types/Chat';
+import {
+	permissionsEnum,
+	type Chat_List_Item,
+	type Chat_Member,
+} from '@/types/Chat';
 import ChatProfileImages from '@/components/chat/ChatProfileImages.vue';
 import { useUserStore } from '@/stores/userStore';
+import { patchRequest } from '@/utils/apiRequests';
 
 export default defineComponent({
 	name: 'ChatHeader',
@@ -90,9 +101,32 @@ export default defineComponent({
 			// logic here to check if there is not already a game going on between the two users
 			return this.chat.type === 'dm';
 		},
-		canEditChannelSettings() {
-			// logic here to get current users permissions in this chat
-			return this.chat.type === 'channel';
+		canLeaveChannel() {
+			if (this.chat.type === 'dm') {
+				return false;
+			}
+			const me = this.chat.users.find(
+				(user) => user.id === this.userStore.me.id,
+			);
+			if (me?.permissions.find((p) => p === permissionsEnum.OWNER)) {
+				return false;
+			}
+			if (
+				me?.permissions.find((p) => p === permissionsEnum.READ) ===
+				undefined
+			) {
+				return false;
+			}
+			return true;
+		},
+		async leaveChannel() {
+			const me = this.chat.users.find(
+				(user) => user.id === this.userStore.me.id,
+			);
+			if (!me) {
+				return;
+			}
+			await patchRequest(`chats/${this.chat.id}/kick/${me.id}`, {});
 		},
 	},
 });
