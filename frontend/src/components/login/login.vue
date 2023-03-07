@@ -39,16 +39,14 @@
 				</a>
 			</p>
 		</div>
-		<div v-if="userStore.errors.length">
-			<p v-for="error in userStore.errors" class="c_form--error">
-				!! {{ error }}
-			</p>
+		<div v-if="errors && errors.length">
+			<p v-for="error in errors" class="c_form--error">!! {{ error }}</p>
 		</div>
 	</form>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, type PropType } from 'vue';
 import InputField from '@/components/input-fields/InputField.vue';
 import type { LoginForm } from '@/types/User';
 import { useUserStore } from '@/stores/userStore';
@@ -59,6 +57,9 @@ export default defineComponent({
 	components: {
 		InputField,
 		RouterLink,
+	},
+	props: {
+		errors: [] as PropType<String[]>,
 	},
 	setup() {
 		const userStore = useUserStore();

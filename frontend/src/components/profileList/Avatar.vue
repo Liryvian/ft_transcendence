@@ -20,19 +20,33 @@
 import { defineComponent } from 'vue';
 export default defineComponent({
 	name: 'Avatar',
-
 	props: {
-		avatar: String,
-		isOnline: Boolean,
-		userId: Number,
-		isBlocked: Boolean,
+		avatar: {
+			type: String,
+			default: 'tmp_default_avatar.png',
+		},
+		isOnline: {
+			type: Boolean,
+			default: false,
+		},
+		userId: {
+			type: Number,
+			default: -1,
+		},
+		isBlocked: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	computed: {
 		to() {
-			if (this.isBlocked) {
+			if (this.isBlocked || this.userId === -1) {
 				return { name: 'profiles' };
 			}
-			return { name: 'profile', params: { profile_id: this.userId } };
+			return {
+				name: 'profile',
+				params: { profile_id: this.userId ?? -1 },
+			};
 		},
 	},
 });
