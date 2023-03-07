@@ -13,6 +13,7 @@ import { AuthService } from '../auth/auth.service';
 import { jwtCookieFromHandshakeString } from '../socket/socket.utils';
 import { GameState } from './game.types.be';
 import { Game } from './game/entities/game.entity';
+import { GameService } from './game/game.service';
 import { PongService } from './pong.service';
 
 const gameSubscribers: Record<number, GameState> = {};
@@ -26,6 +27,7 @@ const gameSubscribers: Record<number, GameState> = {};
 export class PongGateway implements OnGatewayConnection {
 	constructor(
 		private readonly pongService: PongService,
+		private readonly gameService: GameService,
 		private readonly authService: AuthService,
 	) {}
 	@WebSocketServer() server: Server;
@@ -91,6 +93,12 @@ export class PongGateway implements OnGatewayConnection {
 			scorePlayerOne: currentGame.scorePlayerOne,
 			scorePlayerTwo: currentGame.scorePlayerTwo,
 		};
+		if (currentGame.gameId) {
+			this.gameService.update(currentGame.gameId, {
+				score_player_one: scores.scorePlayerOne,
+				score_player_two: scores.scorePlayerTwo,
+			});
+		}
 		this.server.in(currentGame.roomName).emit('pointOver', scores);
 		currentGame.pointIsover = false;
 	}

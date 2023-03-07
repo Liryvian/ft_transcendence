@@ -87,7 +87,8 @@ export default defineComponent({
 		userStore.refreshMe();
 		const { me } = storeToRefs(userStore);
 		const gameStore = useGameStore();
-		gameStore.initialize();
+		gameStore.refreshAllGames();
+		setTimeout(() => {}, 1000);
 		const {
 			allGames,
 			isPressed,
@@ -99,6 +100,9 @@ export default defineComponent({
 		const currentGame = allGames.value.find(
 			(game) => game.id === Number(props.currentGameId),
 		);
+		if (!currentGame) {
+			router.push({ name: 'activeGames' });
+		}
 		return {
 			me,
 			gameStore,
@@ -263,6 +267,7 @@ export default defineComponent({
 				window.requestAnimationFrame(this.getUpdatedPositions);
 			} else if (this.gameStatus === GameStatusEnum.POINT_OVER) {
 				// update scores
+
 				this.gameStatus = GameStatusEnum.PLAYING;
 				this.resetPressedKeys();
 
@@ -310,7 +315,6 @@ export default defineComponent({
 					this.score_player_two = scores.scorePlayerTwo;
 				},
 			);
-			// this.socket.connect();
 			this.socket.once('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
@@ -320,8 +324,10 @@ export default defineComponent({
 	mounted() {
 		setTimeout(() => {
 			this.context = (this.$refs.GameRef as any).getContext('2d');
-			document.getElementById('GameCanvas')!.style.backgroundColor =
-				this.currentGame.background_color;
+			if (this.currentGame.background_color) {
+				document.getElementById('GameCanvas')!.style.backgroundColor =
+					this.currentGame.background_color;
+			}
 			if (this.isPlayer) {
 				document.addEventListener('keydown', this.keyDown);
 				document.addEventListener('keyup', this.keyUp);
@@ -339,7 +345,7 @@ export default defineComponent({
 				} catch (e) {}
 				this.startGameLoop();
 			});
-		}, 1000);
+		}, 100);
 	},
 });
 </script>
