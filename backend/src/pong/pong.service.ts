@@ -20,9 +20,10 @@ export class PongService {
 	private dy = randomDirection(-2, 2) || 0.2;
 	private dx = randomDirection(-2, 2) || -0.2;
 
-	public pointIsOver = false;
-	public gameIsFinished = false;
-	public gameHasStarted = false;
+	//  make part of games state usign the state enum
+	// public pointIsOver = false;
+	// public gameIsFinished = false;
+	// public gameHasStarted = false;
 
 	createNewGameState(): GameState {
 		const newGameState: GameState = {
@@ -60,7 +61,7 @@ export class PongService {
 			ball: {
 				position: {
 					x: 50,
-					y: 50,
+					y: Math.floor(Math.random() * 90) + 10,
 				},
 				radius: this.ballRadius,
 			},
@@ -73,7 +74,8 @@ export class PongService {
 			scorePlayerTwo: 0,
 			roomName: '',
 			gameIsOver: false,
-			pointIsover: false,
+			pointIsOver: false,
+			gameCanStart: false,
 		};
 		return newGameState;
 	}
@@ -139,12 +141,12 @@ export class PongService {
 			ballPos.x > midWayPoint
 				? ++gameState.scorePlayerOne
 				: ++gameState.scorePlayerTwo;
-			this.pointIsOver = true;
+			gameState.pointIsOver = true;
 			if (
 				gameState.scorePlayerOne >= gameState.scoreToWin ||
 				gameState.scorePlayerTwo >= gameState.scoreToWin
 			) {
-				this.gameIsFinished = true;
+				gameState.gameIsOver = true;
 			}
 			this.resetBallPosition(gameState.ball);
 			this.dx = -this.dx;
@@ -185,7 +187,7 @@ export class PongService {
 	resetBallPosition(ball: Ball) {
 		ball.position = {
 			x: 50,
-			y: 50,
+			y: Math.floor(Math.random() * 90) + 10,
 		};
 		this.dx = randomDirection(-2, 2) || 0.2;
 		this.dy = randomDirection(-2, 2) || 0.2;

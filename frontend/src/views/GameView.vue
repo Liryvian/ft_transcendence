@@ -2,7 +2,8 @@
 	<div>
 		<div class="page_box_wrapper">
 			<div class="page_box">
-				<h1>Game Overview</h1>
+				<h1>Games Overview</h1>
+				<h2>ACTIVE GAMES</h2>
 				<div class="table c_block">
 					<div class="line"></div>
 					<template v-for="game in allGames">
@@ -13,6 +14,22 @@
 							:player_right="game.player_two.name"
 							:player_right_score="game.score_player_two"
 							:game_id="game.id"
+						/>
+					</template>
+				</div>
+
+				<h2>PAST GAMES</h2>
+				<div class="table c_block">
+					<div class="line"></div>
+					<template v-for="game in allGames">
+						<ActiveGameRow
+							v-if="game.state === 'done'"
+							:player_left="game.player_one.name"
+							:player_left_score="game.score_player_one"
+							:player_right="game.player_two.name"
+							:player_right_score="game.score_player_two"
+							:game_id="game.id"
+							:watchable="false"
 						/>
 					</template>
 				</div>
