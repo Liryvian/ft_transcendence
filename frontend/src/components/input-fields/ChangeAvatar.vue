@@ -5,29 +5,13 @@
 		class="c_block c_form_group"
 		@submit.prevent="updateProfile(me.id, updateProfileForm)"
 	>
-	<div class="input-group">
-		<input
-			class="form-control form-control-lg"
-			type="file"
-			accept="image/*"
-			@change="handleFileUpload($event)"
-		/>
-		<button
-			type="button"
-			class="btn btn-success"
-			@click="submitFile"
-			:disabled="canUploadFile"
-		>
-			Save
-		</button>
-	</div></form>
 
-<!--	<form class="button">-->
-<!--		<label for="actual-btn">change avatar</label>-->
-<!--		<input type="file" id="actual-btn" hidden/>-->
-<!--		<input type="submit" value="submit" />-->
-<!--	</form>-->
-<!--	</form>-->
+	<form class="button">
+		<label for="actual-btn">change avatar</label>
+		<input type="file" id="actual-btn" hidden/>
+		<input type="submit" value="submit" />
+	</form>
+	</form>
 </template>
 
 <script lang="ts">
