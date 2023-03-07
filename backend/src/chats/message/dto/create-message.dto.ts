@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateMessageDto {
 	@IsNotEmpty()
@@ -9,4 +9,7 @@ export class CreateMessageDto {
 
 	@IsNotEmpty()
 	content: string;
+
+	@IsOptional()
+	is_game_request?: boolean;
 }

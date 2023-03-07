@@ -26,7 +26,10 @@ export class Message {
 	@UpdateDateColumn()
 	updated_at: Date;
 
-	@ManyToOne(() => User, (user) => user.id, { nullable: false })
+	@ManyToOne(() => User, (user) => user.id, {
+		nullable: false,
+		onDelete: 'CASCADE',
+	})
 	@JoinColumn({ name: 'sender_id' })
 	sender_id: User;
 
@@ -45,4 +48,7 @@ export class Message {
 
 	@Column({ nullable: false })
 	content: string;
+
+	@Column({ default: false })
+	is_game_request: boolean;
 }
