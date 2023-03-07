@@ -160,10 +160,6 @@ export default defineComponent({
 			if (this.requestsDoneFor.indexOf(otherUser.id) !== -1) {
 				return '';
 			}
-			console.log(
-				'this.socketStore.chats.initialized',
-				this.socketStore.chats.initialized,
-			);
 			if (this.socketStore.chats.initialized === false) {
 				console.log('chat sock not init');
 				this.socketStore.initialize();

@@ -77,7 +77,7 @@ export class AuthService {
 			});
 
 			const returnObject = {
-				redirectLocation: '/profiles',
+				redirectLocation: '/intra/profiles',
 				user: user,
 			};
 			if (user.two_factor_required) {
@@ -105,7 +105,7 @@ export class AuthService {
 						const user = await this.userService.save(newUser);
 
 						return Promise.resolve({
-							redirectLocation: '/settings',
+							redirectLocation: '/intra/settings',
 							user: user,
 						});
 					} catch (e) {
