@@ -6,8 +6,14 @@
 		class="button"
 	>
 		<label for="actual-btn">change avatar</label>
-		<input type="file" name="avatar" id="actual-btn" hidden />
-		<input type="submit" value="submit" />
+		<input
+			type="file"
+			name="avatar"
+			id="actual-btn"
+			hidden
+			@change="checkChange($event)"
+		/>
+		<input v-if="hasFile" type="submit" value="submit" />
 	</form>
 </template>
 
@@ -25,6 +31,20 @@ export default defineComponent({
 		return {
 			userStore,
 		};
+	},
+	data() {
+		return {
+			hasFile: false,
+		};
+	},
+	methods: {
+		checkChange(event: Event) {
+			if (event.target.value) {
+				this.hasFile = true;
+			} else {
+				this.hasFile = false;
+			}
+		},
 	},
 });
 </script>
