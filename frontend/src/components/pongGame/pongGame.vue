@@ -97,11 +97,12 @@ export default defineComponent({
 			score_player_two,
 			gameStatus,
 		} = storeToRefs(gameStore);
-		const currentGame = allGames.value.find(
+		let currentGame = allGames.value.find(
 			(game) => game.id === Number(props.currentGameId),
 		);
 		if (!currentGame) {
-			router.push({ name: 'activeGames' });
+			currentGame = allGames.value.find(
+				(game) => game.state === 'pending' && game.player_one.id === me.value.id || game.player_two.id === me.value.id)
 		}
 		return {
 			me,
@@ -128,6 +129,7 @@ export default defineComponent({
 			return this.currentGame!.id;
 		},
 		getCurrentGame() {
+			console.log('CurGame: ', this.currentGame);
 			return this.currentGame;
 		},
 		getPlayerOne() {
@@ -146,7 +148,7 @@ export default defineComponent({
 			return this.getPlayerTwo.id === this.getMyId;
 		},
 		isPlayer() {
-			return this.isPlayerOne || this.isPlayerTwo;
+			return (this.isPlayerOne || this.isPlayerTwo) ?? false;
 		},
 	},
 
@@ -324,10 +326,11 @@ export default defineComponent({
 	mounted() {
 		setTimeout(() => {
 			this.context = (this.$refs.GameRef as any).getContext('2d');
-			if (this.currentGame.background_color) {
+			if (this.currentGame?.background_color) {
 				document.getElementById('GameCanvas')!.style.backgroundColor =
 					this.currentGame.background_color;
-			}
+			} 
+			
 			if (this.isPlayer) {
 				document.addEventListener('keydown', this.keyDown);
 				document.addEventListener('keyup', this.keyUp);
