@@ -40,6 +40,11 @@ export const useChatStore = defineStore('chats', {
 
 		newChat(chat: Chat_List_Item) {
 			if (chat.type === 'dm') {
+				if (
+					this.dms.find((existingChat) => existingChat.id === chat.id)
+				) {
+					return;
+				}
 				this.$patch((state) => {
 					state.dms.push(chat);
 				});

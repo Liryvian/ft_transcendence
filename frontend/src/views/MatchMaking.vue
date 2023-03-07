@@ -98,13 +98,9 @@ export default defineComponent({
 				this.newMessage.sender_id = useUserStore().me.id;
 				this.newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await postRequest('messages', this.newMessage);
-				console.log('router push to game', {
-					name: 'dm',
-					params: { dmid: this.createGameForm.player_two },
-				});
+
 				return await router.push({
-					name: 'dm',
-					params: { dmId: this.createGameForm.player_two },
+					name: 'chat',
 				});
 			} catch (e) {
 				this.errors.length = 0;
