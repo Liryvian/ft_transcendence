@@ -11,9 +11,10 @@ import {
 	HttpCode,
 	HttpStatus,
 	Query,
+	Req,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../users/user/user.service';
 import { AllowUnauthorizedRequest, AuthService } from './auth.service';
@@ -124,5 +125,17 @@ export class AuthController {
 	@Get('auth/is_authenticated')
 	async is_authenticated() {
 		return true;
+	}
+
+	@Get('auth/needs_2fa')
+	async needs_2fa(@Req() request: Request) {
+		try {
+			const id = await this.authService.userId(request);
+			const user = await this.userService.findOne({ where: { id: id } });
+			if (user.two_factor_required === true) {
+				return true;
+			}
+		} catch (e) {}
+		return false;
 	}
 }
