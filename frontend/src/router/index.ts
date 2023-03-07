@@ -139,6 +139,12 @@ const router = createRouter({
 			props: true,
 		},
 		{
+			path: '/intra/:next',
+			name: 'intra',
+			props: true,
+			component: () => import('../views/SetIntraLogggedIn.vue'),
+		},
+		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),
@@ -149,9 +155,19 @@ const router = createRouter({
 router.beforeEach(async (to) => {
 	const isLoggedIn: boolean = useUserStore().isLoggedIn;
 
-	if (!isLoggedIn && to.name !== 'login' && to.name !== 'register') {
+	if (
+		!isLoggedIn &&
+		to.name !== 'login' &&
+		to.name !== 'register' &&
+		to.name !== 'intra'
+	) {
 		return { name: 'login' };
-	} else if ((to.name === 'login' || to.name === 'register') && isLoggedIn) {
+	} else if (
+		(to.name === 'login' ||
+			to.name === 'register' ||
+			to.name === 'intra') &&
+		isLoggedIn
+	) {
 		return { name: 'home' };
 	}
 });

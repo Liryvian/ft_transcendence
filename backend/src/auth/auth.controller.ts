@@ -119,4 +119,10 @@ export class AuthController {
 			message: 'Success',
 		};
 	}
+
+	@UseGuards(AuthGuard())
+	@Get('auth/is_authenticated')
+	async is_authenticated() {
+		return true;
+	}
 }
