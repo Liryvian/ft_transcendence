@@ -34,6 +34,11 @@
 					</template>
 				</div>
 			</div>
+			<div class="page_button pb_up">
+				<RouterLink :to="{ name: 'game-rules' }"
+					>RULES</RouterLink
+				>
+			</div>
 			<div class="page_button pb_bottom">
 				<RouterLink :to="{ name: 'matchmaking' }"
 					>MATCHMAKING</RouterLink

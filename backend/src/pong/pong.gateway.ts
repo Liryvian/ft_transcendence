@@ -58,12 +58,10 @@ export class PongGateway implements OnGatewayConnection {
 		try {
 			const userId: number = this.authService.userIdFromCookieString(cookie);
 			if (game.id && game.player_one && game.player_two) {
-				console.log('Entering socket setup');
 				if (!gameSubscribers[game.id]) {
 					this.createGameInstance(game, client);
 				}
 				client.join(gameSubscribers[game.id].roomName);
-				console.log('Joining room BE');
 				if (userId === game.player_one.id) {
 					gameSubscribers[game.id].playerOneIsInGame = true;
 					gameSubscribers[game.id].playerOneId = userId;
@@ -76,7 +74,6 @@ export class PongGateway implements OnGatewayConnection {
 					gameSubscribers[game.id].playerOneIsInGame &&
 					gameSubscribers[game.id].playerTwoIsInGame
 				) {
-					console.log('Emitting game can start');
 					this.server
 						.in(gameSubscribers[game.id].roomName)
 						.emit('GameCanStart');
