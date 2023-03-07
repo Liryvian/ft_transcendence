@@ -84,9 +84,11 @@ export default defineComponent({
 
 	setup(props: any) {
 		const userStore = useUserStore();
+		userStore.refreshMe();
 		const { me } = storeToRefs(userStore);
 		const gameStore = useGameStore();
-		gameStore.initialize();
+		gameStore.refreshAllGames();
+		setTimeout(() => {}, 1000);
 		const {
 			allGames,
 			isPressed,
@@ -95,10 +97,13 @@ export default defineComponent({
 			score_player_two,
 			gameStatus,
 		} = storeToRefs(gameStore);
-		console.log('All Games:', allGames.value);
-		const currentGame = allGames.value.find(
+		let currentGame = allGames.value.find(
 			(game) => game.id === Number(props.currentGameId),
 		);
+		if (!currentGame) {
+			currentGame = allGames.value.find(
+				(game) => game.state === 'pending' && game.player_one.id === me.value.id || game.player_two.id === me.value.id)
+		}
 		return {
 			me,
 			gameStore,
@@ -137,10 +142,10 @@ export default defineComponent({
 			return useUserStore().me.id;
 		},
 		isPlayerOne() {
-			return this.getCurrentGame?.player_one.id === this.getMyId ?? false;
+			return this.getPlayerOne.id === this.getMyId;
 		},
 		isPlayerTwo() {
-			return this.getCurrentGame?.player_two.id === this.getMyId ?? false;
+			return this.getPlayerTwo.id === this.getMyId;
 		},
 		isPlayer() {
 			return (this.isPlayerOne || this.isPlayerTwo) ?? false;
@@ -227,7 +232,6 @@ export default defineComponent({
 		keyDown(keyPress: KeyboardEvent) {
 			if (this.isPressed[keyPress.key as ValidKeys] !== undefined) {
 				this.isPressed[keyPress.key as ValidKeys] = true;
-				console.log('Key is pressed');
 				this.emitKeyStateUpdate();
 			}
 		},
@@ -265,6 +269,7 @@ export default defineComponent({
 				window.requestAnimationFrame(this.getUpdatedPositions);
 			} else if (this.gameStatus === GameStatusEnum.POINT_OVER) {
 				// update scores
+
 				this.gameStatus = GameStatusEnum.PLAYING;
 				this.resetPressedKeys();
 
@@ -312,27 +317,38 @@ export default defineComponent({
 					this.score_player_two = scores.scorePlayerTwo;
 				},
 			);
-			// this.socket.connect();
-			this.socket.on('gameOver', () => {
+			this.socket.once('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
 		},
 	},
 
 	mounted() {
-		this.context = (this.$refs.GameRef as any).getContext('2d');
-		if (this.isPlayer) {
-			document.addEventListener('keydown', this.keyDown);
-			document.addEventListener('keyup', this.keyUp);
-		}
-		console.log('Joining room FE');
-		this.socket.emit('joinGameRoom', this.getCurrentGame);
-		this.setSocketOn();
+		setTimeout(() => {
+			this.context = (this.$refs.GameRef as any).getContext('2d');
+			if (this.currentGame?.background_color) {
+				document.getElementById('GameCanvas')!.style.backgroundColor =
+					this.currentGame.background_color;
+			} 
+			
+			if (this.isPlayer) {
+				document.addEventListener('keydown', this.keyDown);
+				document.addEventListener('keyup', this.keyUp);
+			}
+			this.socket.emit('joinGameRoom', this.getCurrentGame);
+			this.setSocketOn();
 
-		// START MAIN GAME LOOP
-		this.socket.once('GameCanStart', () => {
-			this.startGameLoop();
-		});
+			// START MAIN GAME LOOP
+			this.socket.once('GameCanStart', () => {
+				const updateGameDto = {
+					state: 'active',
+				};
+				try {
+					patchRequest(`games/${this.currentgameId}`, updateGameDto);
+				} catch (e) {}
+				this.startGameLoop();
+			});
+		}, 100);
 	},
 });
 </script>
