@@ -1,16 +1,13 @@
 <template>
 	<form
-		method="Post"
+		method="POST"
 		action=""
 		class="c_block c_form_group"
 		@submit.prevent="updateProfile(me.id, updateProfileForm)"
 	>
-
-	<form class="button">
 		<label for="actual-btn">change avatar</label>
 		<input type="file" id="actual-btn" hidden/>
 		<input type="submit" value="submit" />
-	</form>
 	</form>
 </template>
 
@@ -25,11 +22,19 @@ export default defineComponent({
 	props: {
 		profile_picture: String,
 	},
+
+	methods: {
+		async submitFile() {
+			console.log("FILE", file);
+		}
+
+	},
+
 	setup (){
 		const userStore = useUserStore();
 		useUserStore().refreshMe();
 		const { me, errors } = storeToRefs(userStore);
-		const { updateProfile, refreshData } = userStore;
+		const { refreshData } = userStore;
 		let updateProfileForm: UpdateProfileForm = reactive({
 			name: me.value.name,
 			avatar: '',
@@ -37,11 +42,14 @@ export default defineComponent({
 		return {
 			me,
 			errors,
-			updateProfile,
 			updateProfileForm,
 			userStore,
 		};
 	},
+
+	methods: {
+
+	}
 });
 </script >
 
