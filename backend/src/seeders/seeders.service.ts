@@ -98,29 +98,29 @@ export class SeederService {
 	}
 
 	async seedDatabase() {
-		// if (this.shouldSeed()) {
-		// 	await this.animalService.removeAll();
-		// 	await this.userRelService.removeAll();
-		// 	await this.gameService.removeAll();
-		// 	await this.chatUserPermissionService.removeAll();
-		// 	await this.userAchievementsService.removeAll();
-		//
-		// 	await this.messageService.removeAll();
-		// 	await this.chatService.removeAll();
-		// 	await this.userService.removeAll();
-		//
-		// 	await this.achievementService.removeAll();
-		//
-		// 	await this.seedUsers();
-		// 	await this.seedGames();
-		// 	await this.seedChats();
-		// 	await this.seedUserRelationships();
-		// 	await this.seedChatUserPermissions();
-		// 	await this.seedAchievements();
-		// 	await this.seedUserAchievements();
-		// 	await this.seedMessages();
-		// 	await this.animalService.trySeed(seedData.animals());
-		// 	this.finilizeSeeding();
-		// }
+		if (this.shouldSeed()) {
+			await this.animalService.removeAll();
+			await this.userRelService.removeAll();
+			await this.gameService.removeAll();
+			await this.chatUserPermissionService.removeAll();
+			await this.userAchievementsService.removeAll();
+
+			await this.messageService.removeAll();
+			await this.chatService.removeAll();
+			await this.userService.removeAll();
+
+			await this.achievementService.removeAll();
+
+			await this.seedUsers();
+			await this.seedGames();
+			await this.seedChats();
+			await this.seedUserRelationships();
+			await this.seedChatUserPermissions();
+			await this.seedAchievements();
+			await this.seedUserAchievements();
+			await this.seedMessages();
+			await this.animalService.trySeed(seedData.animals());
+			this.finilizeSeeding();
+		}
 	}
 }
