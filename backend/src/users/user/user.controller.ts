@@ -13,11 +13,13 @@ import {
 	Patch,
 	Post,
 	Query,
+	Res,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
+import { Response } from 'express';
 import * as bcrypt from 'bcrypt';
 import { GamesHistory, User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -149,14 +151,17 @@ export class UserController {
 			}),
 		)
 		avatar: Express.Multer.File,
+		@Res() response: Response,
 	) {
-		return this.userService
+		console.log('here?');
+		await this.userService
 			.findOne({ where: { id: id } })
 			.then(async (user: User) => {
 				user.avatar = avatar.filename;
 				const upd = await this.userService.update(user.id, user);
 				return user;
 			});
+		return response.redirect('/settings');
 	}
 
 	@UseGuards(AuthGuard())
