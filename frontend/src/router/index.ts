@@ -37,7 +37,7 @@ const router = createRouter({
 					props: true,
 				},
 				{
-					path: '/pong/:currentGameId?',
+					path: '/pong/:currentGameId',
 					name: 'pong',
 					props: true,
 					component: () =>
@@ -126,6 +126,11 @@ const router = createRouter({
 			path: '/new-channel',
 			name: 'new-channel',
 			component: () => import('../views/NewChannelView.vue'),
+		},
+		{
+			path: '/matchmaking',
+			name: 'matchmaking',
+			component: () => import('../views/MatchMaking.vue'),
 		},
 		{
 			path: '/elements-to-reuse',

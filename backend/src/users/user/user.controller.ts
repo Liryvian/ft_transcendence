@@ -31,11 +31,15 @@ import { UserRelationsBodyDto } from './dto/user-relations-body.dto';
 import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { Game, gameStates } from '../../pong/game/entities/game.entity';
+import { GameService } from '../../pong/game/game.service';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UserController {
-	constructor(private userService: UserService) {}
+	constructor(
+		private userService: UserService,
+		private gameService: GameService,
+	) {}
 
 	private readonly defaultRelationships = {
 		relationshipSource: true,
@@ -75,6 +79,28 @@ export class UserController {
 
 		const users = this.userService.findAll({ relations: userRelationsDto });
 		return users;
+	}
+
+	@UseGuards(AuthGuard())
+	@Get('without_game')
+	async findUserWithoutGame() {
+		const usersWithGames = await this.userService.findAll({
+			relations: {
+				games_as_player_one: true,
+				games_as_player_two: true,
+			},
+		});
+		// filter out users with active games
+		const usersWithoutActiveGames = usersWithGames.filter((user) => {
+			if (user.games_as_player_one.find((game) => game.state === 'active')) {
+				return false;
+			}
+			if (user.games_as_player_two.find((game) => game.state === 'active')) {
+				return false;
+			}
+			return true;
+		});
+		return usersWithoutActiveGames;
 	}
 
 	@UseGuards(AuthGuard())

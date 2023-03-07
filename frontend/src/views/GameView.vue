@@ -34,12 +34,11 @@
 					</template>
 				</div>
 			</div>
-			<corner-button
-				link_text="RULES"
-				link_target="/game-rules"
-				position="pb_top"
-			/>
-
+			<div class="page_button pb_bottom">
+				<RouterLink :to="{ name: 'matchmaking' }"
+					>MATCHMAKING</RouterLink
+				>
+			</div>
 		</div>
 	</div>
 </template>

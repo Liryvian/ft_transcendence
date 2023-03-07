@@ -157,6 +157,83 @@ export class ChatController {
 		});
 	}
 
+	@Get('findOrCreateDm/:u1/:u2')
+	async findOrCreateDM(@Param('u1') id1: number, @Param('u2') id2: number) {
+		console.log({ id1, id2 });
+		const allDMs = await this.chatService.findAll({
+			where: {
+				type: 'dm',
+			},
+			relations: {
+				has_users: true,
+			},
+		});
+
+		const dmWithUsers = allDMs.find((dm) => {
+			if (!dm.users || dm.users.length !== 2) {
+				return false;
+			}
+			const user1InDm = dm.users.find((user) => user.id === id1);
+			const user2InDm = dm.users.find((user) => user.id === id2);
+			return user1InDm !== undefined && user2InDm !== undefined;
+		});
+		if (dmWithUsers && dmWithUsers.users.length === 2) {
+			console.log('dm exists', dmWithUsers);
+			return dmWithUsers.id;
+		}
+		const newDm = await this.chatService.save({
+			type: 'dm',
+			name: crypto.pseudoRandomBytes(4).toString('hex'),
+		});
+
+		const u1 = [
+			permissionsEnum.OWNER,
+			permissionsEnum.READ,
+			permissionsEnum.POST,
+		].map((p) => ({
+			chat_id: newDm.id,
+			user_id: id1,
+			permission: p,
+		}));
+		const u2 = [
+			permissionsEnum.OWNER,
+			permissionsEnum.READ,
+			permissionsEnum.POST,
+		].map((p) => ({
+			chat_id: newDm.id,
+			user_id: id2,
+			permission: p,
+		}));
+
+		const userPermissions = await this.chatUserPermissionService.save([
+			...u1,
+			...u2,
+		]);
+		// If socket connection exists, emit message with up-to-date chat
+		if (this.socketService.chatServer !== null) {
+			const chat = await this.chatService.findOne({
+				where: { id: newDm.id },
+				relations: { has_users: { users: true } },
+			});
+			const socketMessage: SocketMessage<Chat_List_Item> = {
+				action: 'new',
+				data: {
+					id: chat.id,
+					name: chat.name,
+					type: chat.type,
+					users: chat.users ?? [],
+					hasPassword: chat.hasPassword,
+				},
+			};
+
+			this.socketService.chatlist_emit(
+				chat.users.map((u) => u.id),
+				socketMessage,
+			);
+		}
+		return newDm.id;
+	}
+
 	@Get(':id/messages')
 	async chatMessages(@Param('id') chatId: number, @Req() request: Request) {
 		try {
