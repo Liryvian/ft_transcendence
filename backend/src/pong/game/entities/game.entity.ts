@@ -45,12 +45,14 @@ export class Game {
 	updated_at: Date;
 
 	@ManyToOne(() => User, (user) => user.id, {
+		eager: true,
 		nullable: false,
 	})
 	@JoinColumn({ name: 'player_one' })
 	player_one: User;
 
 	@ManyToOne(() => User, (user) => user.id, {
+		eager: true,
 		nullable: false,
 	})
 	@Check(`"player_one" <> "player_two"`)

@@ -45,6 +45,8 @@ interface DataObject {
 	currentGame: Game;
 }
 
+type ValidKeys = 'w' | 's';
+
 export default defineComponent({
 	name: 'GameView',
 	components: {
@@ -64,7 +66,7 @@ export default defineComponent({
 			this.gameStatus !== GameStatusEnum.GAME_OVER &&
 			(this.isPlayerOne || this.isPlayerTwo)
 		) {
-			this.socket.emit('PlayerDisconnected');
+			this.socket.emit('PlayerDisconnected', from.params.currentGameId);
 			this.finishGame();
 		} else {
 			this.socket.disconnect();
@@ -93,6 +95,7 @@ export default defineComponent({
 			score_player_two,
 			gameStatus,
 		} = storeToRefs(gameStore);
+		console.log('All Games:', allGames.value);
 		const currentGame = allGames.value.find(
 			(game) => game.id === Number(props.currentGameId),
 		);
@@ -121,8 +124,8 @@ export default defineComponent({
 			return this.currentGame!.id;
 		},
 		getCurrentGame() {
+			console.log('CurGame: ', this.currentGame);
 			return this.currentGame;
-			// return this.allGames.find((game) => game.id === this.currentgameId);
 		},
 		getPlayerOne() {
 			return this.getCurrentGame?.player_one;
@@ -134,13 +137,13 @@ export default defineComponent({
 			return useUserStore().me.id;
 		},
 		isPlayerOne() {
-			return this.getCurrentGame!.player_one.id === this.getMyId;
+			return this.getCurrentGame?.player_one.id === this.getMyId ?? false;
 		},
 		isPlayerTwo() {
-			return this.getCurrentGame!.player_two.id === this.getMyId;
+			return this.getCurrentGame?.player_two.id === this.getMyId ?? false;
 		},
 		isPlayer() {
-			return this.isPlayerOne || this.isPlayerTwo;
+			return (this.isPlayerOne || this.isPlayerTwo) ?? false;
 		},
 	},
 
@@ -222,15 +225,16 @@ export default defineComponent({
 		},
 
 		keyDown(keyPress: KeyboardEvent) {
-			if (this.isPressed[keyPress.key] !== undefined) {
-				this.isPressed[keyPress.key] = true;
+			if (this.isPressed[keyPress.key as ValidKeys] !== undefined) {
+				this.isPressed[keyPress.key as ValidKeys] = true;
+				console.log('Key is pressed');
 				this.emitKeyStateUpdate();
 			}
 		},
 
 		keyUp(keyPress: KeyboardEvent) {
-			if (this.isPressed[keyPress.key] !== undefined) {
-				this.isPressed[keyPress.key] = false;
+			if (this.isPressed[keyPress.key as ValidKeys] !== undefined) {
+				this.isPressed[keyPress.key as ValidKeys] = false;
 				this.emitKeyStateUpdate();
 			}
 		},
@@ -308,6 +312,7 @@ export default defineComponent({
 					this.score_player_two = scores.scorePlayerTwo;
 				},
 			);
+			// this.socket.connect();
 			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
@@ -320,8 +325,9 @@ export default defineComponent({
 			document.addEventListener('keydown', this.keyDown);
 			document.addEventListener('keyup', this.keyUp);
 		}
-		this.setSocketOn();
+		console.log('Joining room FE');
 		this.socket.emit('joinGameRoom', this.getCurrentGame);
+		this.setSocketOn();
 
 		// START MAIN GAME LOOP
 		this.socket.once('GameCanStart', () => {

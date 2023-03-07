@@ -29,7 +29,7 @@ export const useGameStore = defineStore('games', {
 	// getters == computed values
 	getters: {
 		// getMyGames: () => useUserStore().getMe.games,
-		getAllGames: (state) => state.allGames,
+		// getAllGames: (state) => state.allGames,
 	},
 
 	// actions == methods
@@ -49,10 +49,6 @@ export const useGameStore = defineStore('games', {
 				console.error(e);
 				return [];
 			}
-		},
-
-		async refreshData() {
-			await this.refreshAllGames();
 		},
 
 		async updateGame(updateGameState: UpdateGameState) {

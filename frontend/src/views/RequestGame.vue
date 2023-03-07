@@ -136,6 +136,9 @@ export default defineComponent({
 				newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await postRequest('messages', newMessage);
 
+				await useGameStore().refreshAllGames();
+
+
 				await router.push(`/pong/${newGame.id}`);
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
