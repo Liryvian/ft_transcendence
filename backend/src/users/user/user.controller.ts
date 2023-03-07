@@ -19,7 +19,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
-import { User } from './entities/user.entity';
+import { GamesHistory, User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InsertResult, QueryFailedError, UpdateResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -28,6 +28,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UserRelationsBodyDto } from './dto/user-relations-body.dto';
 import { UserRelationsQueryDto } from './dto/user-relations-query.dto';
 import { AuthGuard } from '../../auth/auth.guard';
+import { Game, gameStates } from '../../pong/game/entities/game.entity';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -170,5 +171,43 @@ export class UserController {
 				});
 				return upd;
 			});
+	}
+
+	@UseGuards(AuthGuard())
+	@Get(':id/games-history')
+	async getGamesHistory(@Param('id') id: number) {
+		let gamesHistory: GamesHistory = { wins: 0, losses: 0 };
+		try {
+			const user: User = await this.userService.findOne({
+				where: { id },
+				relations: {
+					games_as_player_one: true,
+					games_as_player_two: true,
+				},
+			});
+			user.games.forEach((game: Game) => {
+				if (game.state === gameStates.DONE) {
+					if (
+						game.player_one.id === user.id &&
+						game.score_player_one > game.score_player_two
+					) {
+						++gamesHistory.wins;
+					} else {
+						++gamesHistory.losses;
+					}
+					if (
+						game.player_two.id === user.id &&
+						game.score_player_two > game.score_player_one
+					) {
+						++gamesHistory.wins;
+					} else {
+						++gamesHistory.losses;
+					}
+				}
+			});
+			return gamesHistory;
+		} catch (e) {
+			return gamesHistory;
+		}
 	}
 }

@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 import { Exclude, Expose, instanceToPlain } from 'class-transformer';
 import { MatchmakingRequest } from '../../../pong/matchmaking-request/entities/matchmaking-request.entity';
-import { Game } from '../../../pong/game/entities/game.entity';
+import { Game, gameStates } from '../../../pong/game/entities/game.entity';
 import { GameInvite } from '../../../pong/game_invite/entities/game-invite.entity';
 import { UserRelationship } from '../../user-relationship/entities/user-relationship.entity';
 import { Achievement } from '../../achievements/entities/achievement.entity';
@@ -23,6 +23,11 @@ import {
 } from '../../../chats/chat-user-permissions/entities/chat-user-permission.entity';
 import { IsArray, IsNumber, IsString } from 'class-validator';
 import { Chat } from '../../../chats/chat/entities/chat.entity';
+
+export class GamesHistory {
+	wins: number;
+	losses: number;
+}
 
 export class UserInChat {
 	@IsNumber()
