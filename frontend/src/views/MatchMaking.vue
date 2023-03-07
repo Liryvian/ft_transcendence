@@ -99,12 +99,12 @@ export default defineComponent({
 				this.newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await postRequest('messages', this.newMessage);
 				console.log('router push to game', {
-					name: 'pong',
-					params: { currentGameId: newGame.id },
+					name: 'dm',
+					params: { dmid: this.createGameForm.player_two },
 				});
-				return router.push({
-					name: 'pong',
-					params: { currentGameId: newGame.id },
+				return await router.push({
+					name: 'dm',
+					params: { dmId: this.createGameForm.player_two },
 				});
 			} catch (e) {
 				this.errors.length = 0;

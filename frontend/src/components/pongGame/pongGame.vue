@@ -102,7 +102,11 @@ export default defineComponent({
 		);
 		if (!currentGame) {
 			currentGame = allGames.value.find(
-				(game) => game.state === 'pending' && game.player_one.id === me.value.id || game.player_two.id === me.value.id)
+				(game) =>
+					(game.state === 'pending' &&
+						game.player_one.id === me.value.id) ||
+					game.player_two.id === me.value.id,
+			);
 		}
 		return {
 			me,
@@ -129,6 +133,14 @@ export default defineComponent({
 			return this.currentGame!.id;
 		},
 		getCurrentGame() {
+			if (!this.currentGame) {
+				this.currentGame = this.allGames.find(
+					(game) =>
+						(game.state === 'pending' &&
+							game.player_one.id === this.me.value.id) ||
+						game.player_two.id === this.me.value.id,
+				);
+			}
 			console.log('CurGame: ', this.currentGame);
 			return this.currentGame;
 		},
@@ -142,10 +154,10 @@ export default defineComponent({
 			return useUserStore().me.id;
 		},
 		isPlayerOne() {
-			return this.getPlayerOne.id === this.getMyId;
+			return this.getPlayerOne.id === this.me.id;
 		},
 		isPlayerTwo() {
-			return this.getPlayerTwo.id === this.getMyId;
+			return this.getPlayerTwo.id === this.me.id;
 		},
 		isPlayer() {
 			return (this.isPlayerOne || this.isPlayerTwo) ?? false;
@@ -329,8 +341,8 @@ export default defineComponent({
 			if (this.currentGame?.background_color) {
 				document.getElementById('GameCanvas')!.style.backgroundColor =
 					this.currentGame.background_color;
-			} 
-			
+			}
+
 			if (this.isPlayer) {
 				document.addEventListener('keydown', this.keyDown);
 				document.addEventListener('keyup', this.keyUp);
