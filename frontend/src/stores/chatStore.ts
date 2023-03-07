@@ -38,12 +38,18 @@ export const useChatStore = defineStore('chats', {
 			}
 		},
 
-		newChat(chat: Chat_List_Item) {
+		async newChat(chat: Chat_List_Item) {
 			if (chat.type === 'dm') {
 				if (
 					this.dms.find((existingChat) => existingChat.id === chat.id)
 				) {
-					return;
+					try {
+						const all = (await getRequest('me/chats')).data;
+						this.dms = all.filter(
+							(chat: Chat_List_Item) => chat.type === 'dm',
+						);
+						return;
+					} catch (e) {}
 				}
 				this.$patch((state) => {
 					state.dms.push(chat);
