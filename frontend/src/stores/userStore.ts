@@ -59,7 +59,7 @@ export const useUserStore = defineStore('users', {
 			return this.allUsers.find((user) => user.id === id);
 		},
 
-		async login(loginForm?: LoginForm): Promise<string> {
+		async login(loginForm?: LoginForm) {
 			this.errors.length = 0;
 			try {
 				const user: User = (await postRequest('login', loginForm)).data;
@@ -67,7 +67,7 @@ export const useUserStore = defineStore('users', {
 					return '2fa';
 				}
 				this.finalizeLogin();
-				router.push({ name: 'settings' });
+				return router.push({ name: 'settings' });
 			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
@@ -104,13 +104,12 @@ export const useUserStore = defineStore('users', {
 
 		async logout() {
 			try {
+				this.errors.length = 0;
 				this.isLoggedIn = false;
 				useSocketStore().disconnect();
+				await postRequest('logout', {});
 				router.push({ name: 'login' });
-				this.errors.length = 0;
-			} catch (e) {
-				this.handleFormError(e.response.data);
-			}
+			} catch (e) {}
 		},
 
 		async register(registerForm: RegisterForm) {
