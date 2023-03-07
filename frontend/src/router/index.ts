@@ -150,6 +150,12 @@ const router = createRouter({
 			component: () => import('../views/SetIntraLogggedIn.vue'),
 		},
 		{
+			path: '/game-rules',
+			name: 'game-rules',
+			props: true,
+			component: () => import('../views/GameRules.vue'),
+		},
+		{
 			path: '/component-test',
 			name: 'component-test',
 			component: () => import('../views/ComponentTest.vue'),

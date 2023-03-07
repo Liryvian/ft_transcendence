@@ -6,12 +6,12 @@ import { useSocketStore } from './stores/socketStore';
 import { useUserStore } from './stores/userStore';
 
 if (useUserStore().isLoggedIn) {
+	useGameStore().refreshAllGames();
 	useUserStore().refreshMe();
 	const socketStore = useSocketStore();
 	socketStore.initialize();
 	useUserStore().refreshData();
 	useRelationshipStore().initialize();
-	useGameStore().refreshAllGames();
 	useSocketStore().initializeOnline();
 }
 </script>
