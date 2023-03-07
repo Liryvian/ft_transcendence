@@ -159,6 +159,7 @@ export class ChatController {
 
 	@Get('findOrCreateDm/:u1/:u2')
 	async findOrCreateDM(@Param('u1') id1: number, @Param('u2') id2: number) {
+		console.log({ id1, id2 });
 		const allDMs = await this.chatService.findAll({
 			where: {
 				type: 'dm',
@@ -167,10 +168,17 @@ export class ChatController {
 				has_users: true,
 			},
 		});
-		const dmWithUsers = allDMs.filter((dm) =>
-			dm.users.filter((user) => user.id === id1 || user.id === id2),
-		);
-		if (dmWithUsers[0].users.length === 2) {
+
+		const dmWithUsers = allDMs.find((dm) => {
+			if (!dm.users || dm.users.length !== 2) {
+				return false;
+			}
+			const user1InDm = dm.users.find((user) => user.id === id1);
+			const user2InDm = dm.users.find((user) => user.id === id2);
+			return user1InDm !== undefined && user2InDm !== undefined;
+		});
+		console.log('dm with users', JSON.stringify(dmWithUsers, null, 2));
+		if (dmWithUsers && dmWithUsers.users.length === 2) {
 			console.log('dm exists', dmWithUsers);
 			return dmWithUsers.id;
 		}
@@ -202,7 +210,28 @@ export class ChatController {
 			...u1,
 			...u2,
 		]);
-		console.log({ newDm, userPermissions });
+		// If socket connection exists, emit message with up-to-date chat
+		if (this.socketService.chatServer !== null) {
+			const chat = await this.chatService.findOne({
+				where: { id: newDm.id },
+				relations: { has_users: { users: true } },
+			});
+			const socketMessage: SocketMessage<Chat_List_Item> = {
+				action: 'new',
+				data: {
+					id: chat.id,
+					name: chat.name,
+					type: chat.type,
+					users: chat.users ?? [],
+					hasPassword: chat.hasPassword,
+				},
+			};
+
+			this.socketService.chatlist_emit(
+				chat.users.map((u) => u.id),
+				socketMessage,
+			);
+		}
 		return newDm.id;
 	}
 

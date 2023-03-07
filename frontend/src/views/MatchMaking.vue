@@ -51,6 +51,7 @@ export default defineComponent({
 			sender_id: -1,
 			chat: -1,
 			content: 'Is this a Match? Wanna play PONG?',
+			is_game_request: true,
 		});
 		const errors = reactive([]);
 		return {
@@ -80,28 +81,32 @@ export default defineComponent({
 
 		async makeMatch() {
 			const opponent = await this.findOpponent();
-			console.log({ opponent });
 			this.createGameForm.player_one = this.userStore.me.id;
 			this.createGameForm.player_two = opponent.id;
 
 			const dmId = (
 				await getRequest(
-					`chats/findOrCreateDm/${this.createGameForm.player_one}/${this.createGameForm.player_one}`,
+					`chats/findOrCreateDm/${this.createGameForm.player_one}/${this.createGameForm.player_two}`,
 				)
 			).data;
-			console.log({ dmId });
 			this.newMessage.chat = dmId;
 
-			const newGame = (await postRequest('games', this.createGameForm))
-				.data;
-			console.log({ newGame });
-			this.newMessage.sender_id = useUserStore().me.id;
-			this.newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
-			console.log(
-				'newmsg',
-				await postRequest('messages', this.newMessage),
-			);
-			return await router.push(`/pong/${newGame.id}`);
+			try {
+				const newGame = (
+					await postRequest('games', this.createGameForm)
+				).data;
+				this.newMessage.sender_id = useUserStore().me.id;
+				this.newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
+				await postRequest('messages', this.newMessage);
+				setTimeout(async () => {
+					return await router.push(`/pong/${newGame.id}`);
+				}, 1000);
+			} catch (e) {
+				this.errors.length = 0;
+				this.errors.push(
+					'There seems to be a pending game for you already',
+				);
+			}
 		},
 		async findOpponent() {
 			this.errors.length = 0;
@@ -117,7 +122,6 @@ export default defineComponent({
 				);
 				return;
 			}
-			console.log({ usersWithoutGame });
 			return usersWithoutGame[0];
 		},
 	},
