@@ -31,13 +31,11 @@ export class ChatsGateway
 	}
 
 	handleDisconnect(socket: Socket) {
-		console.log('----- disconnect');
 		this.socketService.chatList_unsubscribe(socket);
 		this.socketService.leaveRooms(socket);
 	}
 
 	handleConnection(socket: Socket) {
-		console.log('\n!Socket is connected!\n');
 		this.socketService.chatList_subscribe(socket);
 	}
 
