@@ -15,7 +15,7 @@ export interface RegisterForm {
 
 export interface UpdateProfileForm {
 	name: string;
-	avatar: string;
+	avatar?: string;
 	new_password?: string;
 	new_password_confirm?: string;
 	password?: string;
