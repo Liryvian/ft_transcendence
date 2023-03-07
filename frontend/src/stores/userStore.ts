@@ -67,6 +67,7 @@ export const useUserStore = defineStore('users', {
 					return '2fa';
 				}
 				this.finalizeLogin();
+				router.push({ name: 'settings' });
 			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
@@ -86,6 +87,7 @@ export const useUserStore = defineStore('users', {
 					return;
 				}
 				this.finalizeLogin();
+				return router.push({ name: 'settings' });
 			} catch (e) {
 				this.handleFormError(e.response.data);
 			}
@@ -98,7 +100,6 @@ export const useUserStore = defineStore('users', {
 			useGameStore().refreshAllGames();
 			useRelationshipStore().initialize();
 			this.isLoggedIn = true;
-			return router.push({ name: 'settings' });
 		},
 
 		async logout() {
@@ -116,7 +117,7 @@ export const useUserStore = defineStore('users', {
 			try {
 				await postRequest('users', registerForm);
 				await this.refreshData();
-				router.push('/login');
+				router.push({ name: 'login' });
 				this.errors.length = 0;
 			} catch (e) {
 				this.handleFormError(e.response.data);
