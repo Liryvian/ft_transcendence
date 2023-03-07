@@ -4,7 +4,7 @@
 			<div class="page_box">
 				<h1>GAME RULES</h1>
 				<div class="table c_block">
-					- a default game is played up to 10 points<br />
+					- a default game is played up to 11 points<br />
 					- movement: 'W' = up & 'S' = down<br />
 					- Game starts straight after accepting a game request<br />
 				</div>
