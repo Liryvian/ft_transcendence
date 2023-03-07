@@ -2,7 +2,7 @@
 	<div class="page_box_wrapper">
 		<div class="page_box">
 			<VerticalAvatarAndUserName
-				:profile_picture="user.avatar"
+				:profile_picture="user.avatar ?? 'tmp_default_avatar.png'"
 				:profile_name="user.name"
 			/>
 			<OverviewWithMidline :data-array="dataArray" />

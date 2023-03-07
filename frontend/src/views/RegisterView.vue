@@ -26,7 +26,7 @@
 					v-model="registerForm.password_confirm"
 				/>
 				<div class="c_block c_split">
-					<p><a href="/login">back</a></p>
+					<p><RouterLink :to="{ name: 'login' }">back</RouterLink></p>
 					<p>
 						<input
 							tabindex="4"
@@ -51,11 +51,13 @@ import InputField from '@/components/input-fields/InputField.vue';
 import { useUserStore } from '@/stores/userStore';
 import { defineComponent, reactive } from 'vue';
 import type { RegisterForm } from '@/types/User';
+import { RouterLink } from 'vue-router';
 
 export default defineComponent({
 	name: 'RegisterView',
 	components: {
 		InputField,
+		RouterLink,
 	},
 
 	setup() {

@@ -133,10 +133,9 @@ export default defineComponent({
 				const newGame = (await postRequest('games', createdGameForm))
 					.data;
 				newMessage.sender_id = useUserStore().me.id;
-				newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await postRequest('messages', newMessage);
 				await useGameStore().refreshAllGames();
-
+				newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
 				await router.push(`/pong/${newGame.id}`);
 			} catch (e: any) {
 				this.handleFormError(e.response.data);
