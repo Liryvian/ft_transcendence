@@ -1,12 +1,22 @@
 <template>
 	<div class="c_conversation__header">
-		<div v-if="canInviteForAGame()">invite for a game</div>
+		<div v-if="canInviteForAGame()">
+			<RouterLink
+				:to="{
+					name: 'request-game',
+					params: { profile_id: otherUser.id, chat_id: chat.id },
+				}"
+			>
+				invite for a game
+			</RouterLink>
+		</div>
 		<div v-else-if="canLeaveChannel()">
 			<button class="link_button" @click.prevent="leaveChannel()">
 				leave channel
 			</button>
 		</div>
 		<div v-else></div>
+
 		<div>
 			<RouterLink
 				:to="to"
@@ -22,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import { RouterLink } from 'vue-router';
 import { defineComponent, type PropType } from 'vue';
 import {
 	permissionsEnum,
@@ -36,6 +47,7 @@ export default defineComponent({
 	name: 'ChatHeader',
 	components: {
 		ChatProfileImages,
+		RouterLink,
 	},
 	props: {
 		chat: {
