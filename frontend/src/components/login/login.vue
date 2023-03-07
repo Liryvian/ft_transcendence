@@ -29,7 +29,9 @@
 					value="Login"
 				/>
 				/
-				<a tabindex="4" href="/register">Register</a>
+				<RouterLink tabindex="4" :to="{ name: 'register' }"
+					>Register</RouterLink
+				>
 			</p>
 			<p>
 				<a tabindex="5" href="/api/auth/authenticate">
@@ -37,24 +39,27 @@
 				</a>
 			</p>
 		</div>
-		<div v-if="userStore.errors.length">
-			<p v-for="error in userStore.errors" class="c_form--error">
-				!! {{ error }}
-			</p>
+		<div v-if="errors && errors.length">
+			<p v-for="error in errors" class="c_form--error">!! {{ error }}</p>
 		</div>
 	</form>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, type PropType } from 'vue';
 import InputField from '@/components/input-fields/InputField.vue';
 import type { LoginForm } from '@/types/User';
 import { useUserStore } from '@/stores/userStore';
+import { RouterLink } from 'vue-router';
 
 export default defineComponent({
 	name: 'LoginFormComponent',
 	components: {
 		InputField,
+		RouterLink,
+	},
+	props: {
+		errors: [] as PropType<String[]>,
 	},
 	setup() {
 		const userStore = useUserStore();
