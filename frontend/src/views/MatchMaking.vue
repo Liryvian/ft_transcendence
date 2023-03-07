@@ -7,11 +7,7 @@
 					method="Post"
 					action=""
 					class="c_block c_form_group"
-					@submit.prevent="
-						searchOrCreateChat(createGameForm),
-							findOpponent(createGameForm),
-							createGame(createGameForm, newMessage)
-					"
+					@submit.prevent="makeMatch()"
 				>
 					<div class="page_button pb_bottom">
 						<input type="submit" value="request" />
@@ -29,38 +25,16 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
-import InputField from '@/components/input-fields/InputField.vue';
-import CornerButton from '@/components/buttons/CornerButton.vue';
 import { useGameStore } from '@/stores/gameStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia';
 import type { CreateGameForm } from '@/types/game.fe';
 import type { NewMessage } from '@/types/Chat';
 import router from '@/router';
-import { postRequest } from '@/utils/apiRequests';
-import { useChatStore } from '@/stores/chatStore';
+import { getRequest, postRequest } from '@/utils/apiRequests';
 
 export default defineComponent({
 	name: 'Matchmaking',
-	components: {
-		InputField,
-		CornerButton,
-	},
-	props: {
-		profile_id: { type: String, required: true },
-		chat_id: { type: String, required: true },
-	},
-	computed: {
-		getNamePlayerTwo(): string {
-			const player_two = this.allUsers.find(
-				(user) => user.id === Number(this.profile_id),
-			)?.name;
-			if (player_two) {
-				return player_two;
-			}
-			return '!! Invalid user';
-		},
-	},
 	setup(props) {
 		const userStore = useUserStore();
 		userStore.refreshData();
@@ -74,13 +48,13 @@ export default defineComponent({
 			player_two: 0,
 		});
 		let newMessage: NewMessage = reactive({
-			sender_id: 0,
-			chat: 17,
-			// is_game_request: true,
+			sender_id: -1,
+			chat: -1,
 			content: 'Is this a Match? Wanna play PONG?',
 		});
 		const errors = reactive([]);
 		return {
+			userStore,
 			gameStore,
 			allUsers,
 			createGameForm,
@@ -104,60 +78,47 @@ export default defineComponent({
 			}
 		},
 
-		async findOpponent(createdGameForm: CreateGameForm) {
-			const userStore = useUserStore();
-			userStore.refreshData();
-			const { allUsers } = storeToRefs(userStore);
-			const { getOnlineStatus, me } = userStore;
+		async makeMatch() {
+			const opponent = await this.findOpponent();
+			console.log({ opponent });
+			this.createGameForm.player_one = this.userStore.me.id;
+			this.createGameForm.player_two = opponent.id;
 
-			allUsers.value.find((user) => {
-				if (getOnlineStatus(user.id) === true && user.id !== me.id) {
-					createdGameForm.player_two = user.id;
-				}
-			});
-			if (createdGameForm.player_two === 0) {
+			const dmId = (
+				await getRequest(
+					`chats/findOrCreateDm/${this.createGameForm.player_one}/${this.createGameForm.player_one}`,
+				)
+			).data;
+			console.log({ dmId });
+			this.newMessage.chat = dmId;
+
+			const newGame = (await postRequest('games', this.createGameForm))
+				.data;
+			console.log({ newGame });
+			this.newMessage.sender_id = useUserStore().me.id;
+			this.newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
+			console.log(
+				'newmsg',
+				await postRequest('messages', this.newMessage),
+			);
+			return await router.push(`/pong/${newGame.id}`);
+		},
+		async findOpponent() {
+			this.errors.length = 0;
+
+			const usersWithoutGame = (
+				await getRequest('users/without_game')
+			).data
+				.filter((user: any) => user.id !== this.userStore.me.id)
+				.filter((user: any) => this.userStore.getOnlineStatus(user.id));
+			if (usersWithoutGame.length === 0 || !usersWithoutGame[0]) {
 				this.errors.push(
 					'OH NO! No online members to play pong with, please try again later',
 				);
 				return;
 			}
-		},
-
-		async searchOrCreateChat(createdGameForm: CreateGameForm) {
-			const chatStore = useChatStore();
-			const { getAllChats } = storeToRefs(chatStore);
-			// console.log('ALL CHATS', getAllChats.find();
-			// if (useUserStore().me.value.find);
-			// if (getAllChats.find(
-			// 	(chat) => chat.sender_id === createdGameForm.player_one)){
-			// 	return chat;
-			// }
-		},
-
-		async createGame(
-			createdGameForm: CreateGameForm,
-			newMessage: NewMessage,
-		) {
-			try {
-				this.errors.length = 0;
-				if (
-					/^#[a-fA-F0-9]{6}$/.test(
-						createdGameForm.background_color,
-					) === false
-				) {
-					this.errors.push('Not a valid color');
-					return;
-				}
-				createdGameForm.player_one = useUserStore().me.id;
-				const newGame = (await postRequest('games', createdGameForm))
-					.data;
-				newMessage.sender_id = useUserStore().me.id;
-				newMessage.content = `<a href="/pong/${newGame.id}">wanna play PONG?</a>`;
-				const message = await postRequest('messages', newMessage);
-				await router.push(`/pong/${newGame.id}`);
-			} catch (e: any) {
-				this.handleFormError(e.response.data);
-			}
+			console.log({ usersWithoutGame });
+			return usersWithoutGame[0];
 		},
 	},
 });

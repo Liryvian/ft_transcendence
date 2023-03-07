@@ -157,6 +157,55 @@ export class ChatController {
 		});
 	}
 
+	@Get('findOrCreateDm/:u1/:u2')
+	async findOrCreateDM(@Param('u1') id1: number, @Param('u2') id2: number) {
+		const allDMs = await this.chatService.findAll({
+			where: {
+				type: 'dm',
+			},
+			relations: {
+				has_users: true,
+			},
+		});
+		const dmWithUsers = allDMs.filter((dm) =>
+			dm.users.filter((user) => user.id === id1 || user.id === id2),
+		);
+		if (dmWithUsers[0].users.length === 2) {
+			console.log('dm exists', dmWithUsers);
+			return dmWithUsers.id;
+		}
+		const newDm = await this.chatService.save({
+			type: 'dm',
+			name: crypto.pseudoRandomBytes(4).toString('hex'),
+		});
+
+		const u1 = [
+			permissionsEnum.OWNER,
+			permissionsEnum.READ,
+			permissionsEnum.POST,
+		].map((p) => ({
+			chat_id: newDm.id,
+			user_id: id1,
+			permission: p,
+		}));
+		const u2 = [
+			permissionsEnum.OWNER,
+			permissionsEnum.READ,
+			permissionsEnum.POST,
+		].map((p) => ({
+			chat_id: newDm.id,
+			user_id: id2,
+			permission: p,
+		}));
+
+		const userPermissions = await this.chatUserPermissionService.save([
+			...u1,
+			...u2,
+		]);
+		console.log({ newDm, userPermissions });
+		return newDm.id;
+	}
+
 	@Get(':id/messages')
 	async chatMessages(@Param('id') chatId: number, @Req() request: Request) {
 		try {
