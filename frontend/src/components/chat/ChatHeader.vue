@@ -1,7 +1,11 @@
 <template>
 	<div class="c_conversation__header">
 		<div v-if="canInviteForAGame()">invite for a game</div>
-		<div v-if="canEditChannelSettings()">channel settings</div>
+		<div v-if="canLeaveChannel()">
+			<button class="link_button" @click.prevent="leaveChannel()">
+				leave channel
+			</button>
+		</div>
 		<div>
 			<RouterLink
 				:to="to"
@@ -18,7 +22,11 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
-import type { Chat_List_Item, Chat_Member } from '@/types/Chat';
+import {
+	permissionsEnum,
+	type Chat_List_Item,
+	type Chat_Member,
+} from '@/types/Chat';
 import ChatProfileImages from '@/components/chat/ChatProfileImages.vue';
 import { useUserStore } from '@/stores/userStore';
 
@@ -76,10 +84,19 @@ export default defineComponent({
 			// logic here to check if there is not already a game going on between the two users
 			return this.chat.type === 'dm';
 		},
-		canEditChannelSettings() {
-			// logic here to get current users permissions in this chat
-			return this.chat.type === 'channel';
+		canLeaveChannel() {
+			if (this.chat.type === 'dm') {
+				return false;
+			}
+			const me = this.chat.users.find(
+				(user) => user.id === this.userStore.me.id,
+			);
+			if (me?.permissions.find((p) => p === permissionsEnum.OWNER)) {
+				return false;
+			}
+			return true;
 		},
+		leaveChannel() {},
 	},
 });
 </script>
