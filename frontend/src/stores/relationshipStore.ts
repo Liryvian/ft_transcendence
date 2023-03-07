@@ -32,7 +32,6 @@ export const useRelationshipStore = defineStore('relationship', {
 			this.isInitialized = true;
 			// await this.refreshMe();
 			await this.refreshRelationships();
-			console.log('relationships ready!');
 		},
 
 		async refreshRelationships() {
@@ -40,15 +39,6 @@ export const useRelationshipStore = defineStore('relationship', {
 				await getRequest('me/relationships')
 			).data;
 		},
-
-		// async refreshMe() {
-		// 	try {
-		// 		this.me = await (await getRequest(`me`)).data;
-		// 	} catch (e) {
-		// 		console.error(e);
-		// 		return [];
-		// 	}
-		// },
 
 		isMatchingRelationship(userId: number, rel: Relationship): boolean {
 			// const myId: number = useUserStore().me.id;

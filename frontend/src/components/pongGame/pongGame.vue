@@ -329,7 +329,7 @@ export default defineComponent({
 					this.score_player_two = scores.scorePlayerTwo;
 				},
 			);
-			this.socket.once('gameOver', () => {
+			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
 		},
@@ -346,6 +346,9 @@ export default defineComponent({
 			if (this.isPlayer) {
 				document.addEventListener('keydown', this.keyDown);
 				document.addEventListener('keyup', this.keyUp);
+				this.socket.on('disconnect', () => {
+					this.socket.emit('PlayerDisconnected', this.currentgameId);
+				});
 			}
 			this.socket.emit('joinGameRoom', this.getCurrentGame);
 			this.setSocketOn();
