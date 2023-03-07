@@ -102,7 +102,11 @@ export default defineComponent({
 		);
 		if (!currentGame) {
 			currentGame = allGames.value.find(
-				(game) => game.state === 'pending' && game.player_one.id === me.value.id || game.player_two.id === me.value.id)
+				(game) =>
+					(game.state === 'pending' &&
+						game.player_one.id === me.value.id) ||
+					game.player_two.id === me.value.id,
+			);
 		}
 		return {
 			me,
@@ -317,7 +321,7 @@ export default defineComponent({
 					this.score_player_two = scores.scorePlayerTwo;
 				},
 			);
-			this.socket.once('gameOver', () => {
+			this.socket.on('gameOver', () => {
 				router.push({ name: 'activeGames' });
 			});
 		},
@@ -329,11 +333,14 @@ export default defineComponent({
 			if (this.currentGame?.background_color) {
 				document.getElementById('GameCanvas')!.style.backgroundColor =
 					this.currentGame.background_color;
-			} 
-			
+			}
+
 			if (this.isPlayer) {
 				document.addEventListener('keydown', this.keyDown);
 				document.addEventListener('keyup', this.keyUp);
+				this.socket.on('disconnect', () => {
+					this.socket.emit('PlayerDisconnected', this.currentgameId);
+				});
 			}
 			this.socket.emit('joinGameRoom', this.getCurrentGame);
 			this.setSocketOn();
