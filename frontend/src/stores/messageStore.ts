@@ -50,6 +50,15 @@ export const useMessageStore = defineStore('messages', {
 				return;
 			}
 
+			// check if message allready exists
+			if (
+				this.messages[message.chat_id].find(
+					(msg) => msg.id === message.id,
+				) !== undefined
+			) {
+				return;
+			}
+
 			// temp store timestamp of last message
 			const shouldSort =
 				this.messages[message.chat_id] &&
