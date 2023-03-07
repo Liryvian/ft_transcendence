@@ -217,23 +217,20 @@ export class UserController {
 				},
 			});
 			user.games.forEach((game: Game) => {
-				if (game.state === gameStates.DONE) {
-					if (
-						game.player_one.id === user.id &&
-						game.score_player_one > game.score_player_two
-					) {
-						++gamesHistory.wins;
-					} else {
-						++gamesHistory.losses;
-					}
-					if (
-						game.player_two.id === user.id &&
-						game.score_player_two > game.score_player_one
-					) {
-						++gamesHistory.wins;
-					} else {
-						++gamesHistory.losses;
-					}
+				if (
+					game.player_one.id === user.id &&
+					game.score_player_one > game.score_player_two &&
+					game.state === gameStates.DONE
+				) {
+					++gamesHistory.wins;
+				} else if (
+					game.player_two.id === user.id &&
+					game.score_player_two > game.score_player_one &&
+					game.state === gameStates.DONE
+				) {
+					++gamesHistory.wins;
+				} else {
+					++gamesHistory.losses;
 				}
 			});
 			return gamesHistory;
