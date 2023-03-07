@@ -48,7 +48,10 @@ export default defineComponent({
 					params: { profile_id: this.otherUser.id },
 				};
 			}
-			return { name: 'channel', params: { channelId: this.chat.id } };
+			return {
+				name: 'channelMembers',
+				params: { channelId: this.chat.id },
+			};
 		},
 		otherUser(): Chat_Member {
 			return this.chat.users.filter(
