@@ -1,11 +1,12 @@
 <template>
 	<div class="c_conversation__header">
 		<div v-if="canInviteForAGame()">invite for a game</div>
-		<div v-if="canLeaveChannel()">
+		<div v-else-if="canLeaveChannel()">
 			<button class="link_button" @click.prevent="leaveChannel()">
 				leave channel
 			</button>
 		</div>
+		<div v-else></div>
 		<div>
 			<RouterLink
 				:to="to"
@@ -29,6 +30,7 @@ import {
 } from '@/types/Chat';
 import ChatProfileImages from '@/components/chat/ChatProfileImages.vue';
 import { useUserStore } from '@/stores/userStore';
+import { patchRequest } from '@/utils/apiRequests';
 
 export default defineComponent({
 	name: 'ChatHeader',
@@ -97,9 +99,23 @@ export default defineComponent({
 			if (me?.permissions.find((p) => p === permissionsEnum.OWNER)) {
 				return false;
 			}
+			if (
+				me?.permissions.find((p) => p === permissionsEnum.READ) ===
+				undefined
+			) {
+				return false;
+			}
 			return true;
 		},
-		leaveChannel() {},
+		async leaveChannel() {
+			const me = this.chat.users.find(
+				(user) => user.id === this.userStore.me.id,
+			);
+			if (!me) {
+				return;
+			}
+			await patchRequest(`chats/${this.chat.id}/kick/${me.id}`, {});
+		},
 	},
 });
 </script>
