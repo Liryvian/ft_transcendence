@@ -81,7 +81,7 @@ export default defineComponent({
 			}, 1500);
 		},
 		toggleTwoFa() {
-			if (this.loginStage === 'login') {
+			if (this.loginStage !== '2fa') {
 				this.loginStage = '2fa';
 			} else {
 				this.loginStage = 'login';
@@ -96,7 +96,12 @@ export default defineComponent({
 				useUserStore().finalizeLogin();
 				return router.push({ name: 'settings' });
 			}
-		} catch (e) {}
+		} catch (e) {
+			const needs_2fa = (await getRequest('auth/needs_2fa')).data;
+			if (needs_2fa === true) {
+				this.toggleTwoFa();
+			}
+		}
 	},
 	setup() {
 		const userStore = useUserStore();
