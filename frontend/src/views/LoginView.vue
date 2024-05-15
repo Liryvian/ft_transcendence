@@ -64,7 +64,6 @@ export default defineComponent({
 			try {
 				this.loginStage = 'loading';
 				const user: User = (await postRequest('login', loginForm)).data;
-				console.log({ user });
 				if (user.two_factor_required === true) {
 					this.toggleTwoFa();
 					return;
